@@ -1,6 +1,6 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { HashRouter  as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import './App.css';
 
@@ -22,7 +22,7 @@ import PrivacyAgreement from './pages/auth/PrivacyAgreement';
 
 // Dashboard Pages (diferentes por rol)
 import UserDashboard from './pages/dashboard/UserDashboard';
-import CommitteeDashboard from './pages/dashboard/CommitteeDashboard';
+import CommitteeDashboard from './pages/committee/CommitteeDashboard';
 import AdminDashboard from './pages/dashboard/AdminDashboard';
 
 // Certifications
@@ -44,33 +44,18 @@ import SystemConfig from './pages/admin/SystemConfig';
 
 // Committee Modules
 import CommitteeReview from './pages/committee/CommitteeReview';
+import CertificationReview from './pages/committee/CertificationReview';
+import DocumentReview from './pages/committee/DocumentReview';
+import CommitteeAlerts from './pages/committee/CommitteeAlerts';
+import CommitteeProfile from './pages/committee/CommitteeProfile';
+/*import CommitteeAssignments from './pages/committee/CommitteeAssignments';
+import CommitteeMetrics from './pages/committee/CommitteeMetrics';*/
 
 // Mapa del sitio
 import SiteMap from './pages/sitemap/SiteMap';
 
-// Crear tema MUI
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#2c3e50',
-    },
-    secondary: {
-      main: '#3498db',
-    },
-    success: {
-      main: '#27ae60',
-    },
-    warning: {
-      main: '#f39c12',
-    },
-    error: {
-      main: '#e74c3c',
-    },
-    background: {
-      default: '#f5f7fa',
-    },
-  },
-});
+// Importar tema personalizado
+import theme from './theme';
 
 function App() {
   return (
@@ -88,8 +73,14 @@ function App() {
             </Route>
 
             {/* Rutas para USUARIO AGENTE */}
-            <Route element={<ProtectedRoute allowedRoles={['agente', 'profesionista', 'empresario']}><MainLayout /></ProtectedRoute>}>
-              <Route path="/" element={<UserDashboard />} />
+            <Route 
+              element={
+                <ProtectedRoute allowedRoles={['agente', 'profesionista', 'empresario']}>
+                  <MainLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route path="/" element={<Navigate to="/dashboard" />} />
               <Route path="/dashboard" element={<UserDashboard />} />
               <Route path="/certifications" element={<Certifications />} />
               <Route path="/certifications/new" element={<NewCertification />} />
@@ -100,20 +91,42 @@ function App() {
             </Route>
 
             {/* Rutas para COMITÉ */}
-            <Route element={<ProtectedRoute allowedRoles={['comite']}><CommitteeLayout /></ProtectedRoute>}>
-              <Route path="/committee/dashboard" element={<CommitteeDashboard />} />
-              <Route path="/committee/review" element={<CommitteeReview />} />
-              <Route path="/committee/certifications/:id" element={<CertificationDetail />} />
+            <Route 
+              path="/committee" 
+              element={
+                <ProtectedRoute allowedRoles={['comite']}>
+                  <CommitteeLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Navigate to="dashboard" />} />
+              <Route path="dashboard" element={<CommitteeDashboard />} />
+              <Route path="review" element={<CommitteeReview />} /> {/* Lista de revisiones */}
+              <Route path="review/:id" element={<CertificationReview />} /> {/* Revisión específica */}
+              <Route path="document/:certId/:docId" element={<DocumentReview />} /> {/* Visor documento */}
+              <Route path="alerts" element={<CommitteeAlerts />} />
+              {/*<Route path="assignments" element={<CommitteeAssignments />} />
+              <Route path="metrics" element={<CommitteeMetrics />} />*/}
+              <Route path="profile" element={<CommitteeProfile />} />
             </Route>
 
             {/* Rutas para ADMIN */}
-            <Route element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout /></ProtectedRoute>}>
+            <Route 
+              element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <AdminLayout />
+                </ProtectedRoute>
+              }
+            >
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/users" element={<UserManagement />} />
               <Route path="/admin/users/:id/review" element={<UserReview />} />
               <Route path="/admin/system-config" element={<SystemConfig />} />
               <Route path="/admin/expediente-config" element={<ExpedienteConfig />} />
             </Route>
+
+            {/* Redirección por defecto */}
+            <Route path="/" element={<Navigate to="/dashboard" />} />
 
             {/* Ruta 404 */}
             <Route path="*" element={<div style={{ padding: '50px', textAlign: 'center' }}>404 - Página no encontrada</div>} />

@@ -1,196 +1,158 @@
-// src/pages/committee/CommitteeReview.jsx
+// src/pages/committee/CommitteeDashboard.jsx
 import React, { useState } from 'react';
 import {
   Box,
+  Grid,
   Paper,
   Typography,
-  Grid,
   Card,
   CardContent,
+  Button,
+  Chip,
+  Stack,
+  TextField,
+  MenuItem,
+  IconButton,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Button,
-  Chip,
-  IconButton,
-  Stack,
-  TextField,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
-  // NUEVOS COMPONENTES
-  Tooltip,
-  Badge,
-  Avatar,
+  InputAdornment,
   LinearProgress,
   Divider,
-  InputAdornment,
+  FormControl,
+  InputLabel,
+  Select,
+  // NUEVOS COMPONENTES
+  Tooltip,
+  Avatar,
+  Badge,
   Tabs,
   Tab,
-  Switch,
-  FormControlLabel,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   CircularProgress,
-  Alert
+  Switch,
+  FormControlLabel
 } from '@mui/material';
 import {
   Search as SearchIcon,
   FilterList as FilterIcon,
   Download as DownloadIcon,
-  Visibility as VisibilityIcon,
   Gavel as GavelIcon,
-  Event as EventIcon,
+  TrendingUp as TrendingUpIcon,
+  Assessment as AssessmentIcon,
+  Notifications as NotificationsIcon,
   Person as PersonIcon,
   Place as PlaceIcon,
-  // NUEVOS ICONOS
-  Sort as SortIcon,
-  Refresh as RefreshIcon,
-  ViewColumn as ViewColumnIcon,
-  MoreVert as MoreVertIcon,
-  Timer as TimerIcon,
-  PriorityHigh as PriorityHighIcon,
-  Assignment as AssignmentIcon,
-  Speed as SpeedIcon,
+  Event as EventIcon,
   CheckCircle as CheckCircleIcon,
   Warning as WarningIcon,
   Error as ErrorIcon,
+  // NUEVOS ICONOS
+  Speed as SpeedIcon,
+  Timer as TimerIcon,
+  Assignment as AssignmentIcon,
+  PriorityHigh as PriorityHighIcon,
   Info as InfoIcon,
-  ArrowForward as ArrowForwardIcon,
+  Refresh as RefreshIcon,
+  ViewColumn as ViewColumnIcon,
+  Sort as SortIcon,
+  MoreVert as MoreVertIcon,
   AutoAwesome as AutoAwesomeIcon,
   Insights as InsightsIcon,
+  BarChart as BarChartIcon,
   FolderOpen as FolderOpenIcon,
-  CalendarMonth as CalendarMonthIcon
+  RocketLaunch as RocketLaunchIcon,
+  ArrowForward as ArrowForwardIcon
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
-const CommitteeReview = () => {
+const CommitteeDashboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [filterType, setFilterType] = useState('all');
+  const [filterRegion, setFilterRegion] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterPriority, setFilterPriority] = useState('all');
-  const [filterRegion, setFilterRegion] = useState('all');
-  const [filterType, setFilterType] = useState('all');
-  const [sortBy, setSortBy] = useState('priority');
-  const [activeView, setActiveView] = useState('list'); // 'list' o 'grid'
+  const [activeView, setActiveView] = useState('grid'); // 'grid' o 'list'
+  const [sortBy, setSortBy] = useState('priority'); // 'priority', 'date', 'days'
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
-  const [selectedRows, setSelectedRows] = useState([]);
-  const [batchActionDialog, setBatchActionDialog] = useState(false);
+  const [autoRefresh, setAutoRefresh] = useState(false);
 
-  // Datos mock mejorados para revisión
+  // Datos mock mejorados
   const certifications = [
     { 
       id: 1, 
       type: 'PATENTE ADUANAL', 
-      code: 'PA-2026-00145',
-      applicant: { 
-        name: 'Luis Rodríguez', 
-        type: 'agente', 
-        avatar: 'LR',
-        complianceScore: 85,
-        level: 'Avanzado'
-      }, 
+      applicant: { name: 'Luis Rodríguez', type: 'agente', avatar: 'LR', complianceScore: 85 }, 
       region: 'Norte', 
       uploadDate: '15/01/2026',
       daysPending: 2,
-      dueDate: '17/01/2026',
+      dueDate: '17/01/2026', // Más cercano
       status: 'PENDIENTE', 
       priority: 'ALTA',
       documents: { total: 5, completed: 4, pending: 1 },
+      reviewTime: '2.3 días', // Tiempo promedio de revisión
       category: 'Regulatoria',
+      lastAction: 'Asignado a Comité',
       assignedTo: 'María González',
-      lastActivity: 'Hace 2 horas',
-      reviewEstimate: '1.5 horas',
       color: '#1a237e'
     },
     { 
       id: 2, 
       type: 'OPINIÓN SAT POSITIVA', 
-      code: 'OS-2025-03421',
-      applicant: { 
-        name: 'Carlos Martínez', 
-        type: 'empresario', 
-        avatar: 'CM',
-        complianceScore: 78,
-        level: 'Intermedio'
-      }, 
-      region: 'Sur', 
+      applicant: { name: 'Ana López', type: 'profesionista', avatar: 'AL', complianceScore: 92 }, 
+      region: 'Centro', 
       uploadDate: '14/01/2026',
       daysPending: 3,
       dueDate: '28/01/2026',
       status: 'EN REVISIÓN', 
       priority: 'ALTA',
       documents: { total: 3, completed: 3, pending: 0 },
+      reviewTime: '1.8 días',
       category: 'Fiscal',
+      lastAction: 'En validación técnica',
       assignedTo: 'Carlos Ruiz',
-      lastActivity: 'En progreso',
-      reviewEstimate: '45 minutos',
       color: '#2e7d32'
     },
     { 
       id: 3, 
       type: 'CÉDULA PROFESIONAL', 
-      code: 'CP-2024-56789',
-      applicant: { 
-        name: 'Ana López', 
-        type: 'profesionista', 
-        avatar: 'AL',
-        complianceScore: 92,
-        level: 'Avanzado'
-      }, 
-      region: 'Centro', 
+      applicant: { name: 'Carlos Martínez', type: 'empresario', avatar: 'CM', complianceScore: 78 }, 
+      region: 'Sur', 
       uploadDate: '13/01/2026',
       daysPending: 4,
       dueDate: '25/01/2026',
       status: 'PENDIENTE', 
       priority: 'MEDIA',
       documents: { total: 4, completed: 2, pending: 2 },
+      reviewTime: '3.1 días',
       category: 'Profesional',
+      lastAction: 'Esperando documentación',
       assignedTo: 'Laura Díaz',
-      lastActivity: 'Hace 1 día',
-      reviewEstimate: '2 horas',
       color: '#9c27b0'
     },
     { 
       id: 4, 
       type: 'PODER NOTARIAL', 
-      code: 'PN-2025-12345',
-      applicant: { 
-        name: 'Pedro Sánchez', 
-        type: 'agente', 
-        avatar: 'PS',
-        complianceScore: 65,
-        level: 'Básico'
-      }, 
+      applicant: { name: 'María González', type: 'agente', avatar: 'MG', complianceScore: 65 }, 
       region: 'Metropolitana', 
       uploadDate: '12/01/2026',
       daysPending: 5,
-      dueDate: '18/01/2026',
+      dueDate: '18/01/2026', // Urgente
       status: 'REQUIERE INFO', 
       priority: 'ALTA',
       documents: { total: 2, completed: 1, pending: 1 },
+      reviewTime: '4.2 días',
       category: 'Legal',
+      lastAction: 'Solicitada información adicional',
       assignedTo: 'Pedro Sánchez',
-      lastActivity: 'Esperando respuesta',
-      reviewEstimate: '30 minutos',
       color: '#ed6c02'
     },
     { 
       id: 5, 
       type: 'CONSTANCIA FISCAL', 
-      code: 'CF-2025-78901',
-      applicant: { 
-        name: 'Laura Díaz', 
-        type: 'profesionista', 
-        avatar: 'LD',
-        complianceScore: 88,
-        level: 'Avanzado'
-      }, 
+      applicant: { name: 'Pedro Sánchez', type: 'profesionista', avatar: 'PS', complianceScore: 88 }, 
       region: 'Norte', 
       uploadDate: '11/01/2026',
       daysPending: 6,
@@ -198,17 +160,19 @@ const CommitteeReview = () => {
       status: 'PENDIENTE', 
       priority: 'MEDIA',
       documents: { total: 6, completed: 5, pending: 1 },
+      reviewTime: '2.1 días',
       category: 'Fiscal',
+      lastAction: 'En cola de revisión',
       assignedTo: 'Ana López',
-      lastActivity: 'Hace 2 días',
-      reviewEstimate: '1 hora',
       color: '#0288d1'
     },
   ];
 
-  // Estadísticas dinámicas
+  // Calcular estadísticas dinámicas
   const calculateStats = () => {
-    const urgentThreshold = 3; // días para ser considerado urgente
+    const today = new Date();
+    const urgentThreshold = new Date();
+    urgentThreshold.setDate(today.getDate() + 3); // 3 días para urgente
     
     return {
       total: certifications.length,
@@ -216,20 +180,26 @@ const CommitteeReview = () => {
       inReview: certifications.filter(c => c.status === 'EN REVISIÓN').length,
       requiresInfo: certifications.filter(c => c.status === 'REQUIERE INFO').length,
       highPriority: certifications.filter(c => c.priority === 'ALTA').length,
-      urgent: certifications.filter(c => c.daysPending <= urgentThreshold).length,
+      urgent: certifications.filter(c => {
+        const dueDate = new Date(c.dueDate.split('/').reverse().join('-'));
+        return dueDate <= urgentThreshold;
+      }).length,
       assignedToMe: certifications.filter(c => c.assignedTo === 'María González').length,
-      avgReviewTime: '1.8 horas'
+      avgReviewTime: (certifications.reduce((sum, c) => {
+        const time = parseFloat(c.reviewTime);
+        return sum + (isNaN(time) ? 0 : time);
+      }, 0) / certifications.length).toFixed(1)
     };
   };
 
   const stats = calculateStats();
 
-  // Filtros y opciones
-  const statusOptions = ['PENDIENTE', 'EN REVISIÓN', 'REQUIERE INFO', 'APROBADA', 'RECHAZADA'];
-  const priorityOptions = ['ALTA', 'MEDIA', 'BAJA'];
-  const regionOptions = ['Norte', 'Centro', 'Sur', 'Metropolitana', 'Occidente'];
-  const typeOptions = ['PATENTE ADUANAL', 'OPINIÓN SAT', 'CÉDULA PROFESIONAL', 'PODER NOTARIAL', 'CONSTANCIA FISCAL'];
-  const categoryOptions = ['Regulatoria', 'Fiscal', 'Legal', 'Profesional'];
+  // Filtros disponibles
+  const types = ['PATENTE ADUANAL', 'OPINIÓN SAT', 'CÉDULA PROFESIONAL', 'PODER NOTARIAL', 'CONSTANCIA FISCAL'];
+  const regions = ['Norte', 'Centro', 'Sur', 'Metropolitana', 'Occidente'];
+  const statuses = ['PENDIENTE', 'EN REVISIÓN', 'REQUIERE INFO', 'APROBADA', 'RECHAZADA'];
+  const priorities = ['ALTA', 'MEDIA', 'BAJA'];
+  const categories = ['Regulatoria', 'Fiscal', 'Legal', 'Profesional'];
 
   const getStatusColor = (status) => {
     switch(status) {
@@ -251,35 +221,36 @@ const CommitteeReview = () => {
     }
   };
 
+  const getUserTypeColor = (type) => {
+    switch(type) {
+      case 'agente': return '#1a237e';
+      case 'profesionista': return '#2e7d32';
+      case 'empresario': return '#ed6c02';
+      default: return '#7f8c8d';
+    }
+  };
+
   const getDaysColor = (days) => {
     if (days <= 2) return '#e74c3c';
     if (days <= 4) return '#f39c12';
     return '#27ae60';
   };
 
-  const getComplianceColor = (score) => {
-    if (score >= 85) return '#27ae60';
-    if (score >= 70) return '#f39c12';
-    return '#e74c3c';
-  };
-
-  // Filtrado y ordenamiento
   const filteredCertifications = certifications.filter(cert => {
     const matchesSearch = 
       cert.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
       cert.applicant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      cert.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
       cert.category.toLowerCase().includes(searchTerm.toLowerCase());
     
+    const matchesType = filterType === 'all' || cert.type === filterType;
+    const matchesRegion = filterRegion === 'all' || cert.region === filterRegion;
     const matchesStatus = filterStatus === 'all' || cert.status === filterStatus;
     const matchesPriority = filterPriority === 'all' || cert.priority === filterPriority;
-    const matchesRegion = filterRegion === 'all' || cert.region === filterRegion;
-    const matchesType = filterType === 'all' || cert.type === filterType;
 
-    return matchesSearch && matchesStatus && matchesPriority && matchesRegion && matchesType;
+    return matchesSearch && matchesType && matchesRegion && matchesStatus && matchesPriority;
   });
 
-  // Ordenamiento
+  // Ordenar certificaciones
   const sortedCertifications = [...filteredCertifications].sort((a, b) => {
     switch(sortBy) {
       case 'priority':
@@ -290,35 +261,10 @@ const CommitteeReview = () => {
       case 'date':
         return new Date(b.uploadDate.split('/').reverse().join('-')) - 
                new Date(a.uploadDate.split('/').reverse().join('-'));
-      case 'compliance':
-        return b.applicant.complianceScore - a.applicant.complianceScore;
       default:
         return 0;
     }
   });
-
-  // Manejo de selección múltiple
-  const handleRowSelect = (id) => {
-    setSelectedRows(prev => 
-      prev.includes(id) 
-        ? prev.filter(rowId => rowId !== id)
-        : [...prev, id]
-    );
-  };
-
-  const handleSelectAll = () => {
-    if (selectedRows.length === sortedCertifications.length) {
-      setSelectedRows([]);
-    } else {
-      setSelectedRows(sortedCertifications.map(cert => cert.id));
-    }
-  };
-
-  const handleBatchAction = (action) => {
-    console.log(`Acción ${action} en certificaciones:`, selectedRows);
-    setBatchActionDialog(false);
-    setSelectedRows([]);
-  };
 
   return (
     <Box sx={{ 
@@ -333,15 +279,29 @@ const CommitteeReview = () => {
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
           <Box>
             <Typography variant="h5" sx={{ color: '#2c3e50', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
-              <GavelIcon sx={{ color: '#1a237e' }} />
-              Revisión de Certificaciones
+              <InsightsIcon sx={{ color: '#1a237e' }} />
+              Panel de Control del Comité
             </Typography>
             <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-              Validación individual de certificaciones - Comité de Cumplimiento
+              Gestión y validación de certificaciones individuales
             </Typography>
           </Box>
           
-          <Stack direction="row" spacing={1}>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <FormControlLabel
+              control={
+                <Switch
+                  size="small"
+                  checked={autoRefresh}
+                  onChange={(e) => setAutoRefresh(e.target.checked)}
+                />
+              }
+              label={
+                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                  Auto-refresh
+                </Typography>
+              }
+            />
             <Button
               variant="outlined"
               size="small"
@@ -349,17 +309,16 @@ const CommitteeReview = () => {
             >
               Exportar
             </Button>
-            {selectedRows.length > 0 && (
-              <Button
-                variant="contained"
-                size="small"
-                startIcon={<AssignmentIcon />}
-                onClick={() => setBatchActionDialog(true)}
-                sx={{ bgcolor: '#1a237e' }}
-              >
-                Acciones ({selectedRows.length})
-              </Button>
-            )}
+            <Button
+              variant="contained"
+              size="small"
+              startIcon={<RocketLaunchIcon />}
+              sx={{ bgcolor: '#1a237e' }}
+              component={Link}
+              to="/committee/review"
+            >
+              Revisión Rápida
+            </Button>
           </Stack>
         </Box>
 
@@ -392,22 +351,6 @@ const CommitteeReview = () => {
             
             <Grid item xs={12} md={2}>
               <FormControl fullWidth size="small">
-                <InputLabel>Estado</InputLabel>
-                <Select
-                  value={filterStatus}
-                  label="Estado"
-                  onChange={(e) => setFilterStatus(e.target.value)}
-                >
-                  <MenuItem value="all">Todos</MenuItem>
-                  {statusOptions.map(status => (
-                    <MenuItem key={status} value={status}>{status}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            
-            <Grid item xs={12} md={2}>
-              <FormControl fullWidth size="small">
                 <InputLabel>Prioridad</InputLabel>
                 <Select
                   value={filterPriority}
@@ -415,9 +358,25 @@ const CommitteeReview = () => {
                   onChange={(e) => setFilterPriority(e.target.value)}
                 >
                   <MenuItem value="all">Todas</MenuItem>
-                  {priorityOptions.map(priority => (
-                    <MenuItem key={priority} value={priority}>{priority}</MenuItem>
-                  ))}
+                  <MenuItem value="ALTA">Alta</MenuItem>
+                  <MenuItem value="MEDIA">Media</MenuItem>
+                  <MenuItem value="BAJA">Baja</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            
+            <Grid item xs={12} md={2}>
+              <FormControl fullWidth size="small">
+                <InputLabel>Estado</InputLabel>
+                <Select
+                  value={filterStatus}
+                  label="Estado"
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                >
+                  <MenuItem value="all">Todos</MenuItem>
+                  <MenuItem value="PENDIENTE">Pendiente</MenuItem>
+                  <MenuItem value="EN REVISIÓN">En Revisión</MenuItem>
+                  <MenuItem value="REQUIERE INFO">Requiere Info</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -431,7 +390,7 @@ const CommitteeReview = () => {
                   onChange={(e) => setFilterRegion(e.target.value)}
                 >
                   <MenuItem value="all">Todas</MenuItem>
-                  {regionOptions.map(region => (
+                  {regions.map(region => (
                     <MenuItem key={region} value={region}>{region}</MenuItem>
                   ))}
                 </Select>
@@ -440,7 +399,7 @@ const CommitteeReview = () => {
             
             <Grid item xs={12} md={2}>
               <Stack direction="row" spacing={1}>
-                <Tooltip title="Filtros avanzados">
+                <Tooltip title="Vista avanzada">
                   <IconButton 
                     size="small"
                     onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
@@ -457,7 +416,7 @@ const CommitteeReview = () => {
                 <Tooltip title="Cambiar vista">
                   <IconButton 
                     size="small"
-                    onClick={() => setActiveView(activeView === 'list' ? 'grid' : 'list')}
+                    onClick={() => setActiveView(activeView === 'grid' ? 'list' : 'grid')}
                   >
                     <ViewColumnIcon />
                   </IconButton>
@@ -479,11 +438,26 @@ const CommitteeReview = () => {
                       onChange={(e) => setFilterType(e.target.value)}
                     >
                       <MenuItem value="all">Todos</MenuItem>
-                      {typeOptions.map(type => (
+                      {types.map(type => (
                         <MenuItem key={type} value={type}>{type}</MenuItem>
                       ))}
                     </Select>
                   </FormControl>
+                </Grid>
+                
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    select
+                    fullWidth
+                    size="small"
+                    label="Categoría"
+                    value="all"
+                  >
+                    <MenuItem value="all">Todas</MenuItem>
+                    {categories.map(cat => (
+                      <MenuItem key={cat} value={cat}>{cat}</MenuItem>
+                    ))}
+                  </TextField>
                 </Grid>
                 
                 <Grid item xs={12} md={3}>
@@ -498,22 +472,6 @@ const CommitteeReview = () => {
                     <MenuItem value="priority">Prioridad</MenuItem>
                     <MenuItem value="days">Días pendientes</MenuItem>
                     <MenuItem value="date">Fecha de carga</MenuItem>
-                    <MenuItem value="compliance">Cumplimiento</MenuItem>
-                  </TextField>
-                </Grid>
-                
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    select
-                    fullWidth
-                    size="small"
-                    label="Categoría"
-                    value="all"
-                  >
-                    <MenuItem value="all">Todas</MenuItem>
-                    {categoryOptions.map(cat => (
-                      <MenuItem key={cat} value={cat}>{cat}</MenuItem>
-                    ))}
                   </TextField>
                 </Grid>
                 
@@ -522,14 +480,12 @@ const CommitteeReview = () => {
                     fullWidth
                     size="small"
                     variant="outlined"
-                    startIcon={<RefreshIcon />}
                     onClick={() => {
+                      setFilterType('all');
+                      setFilterRegion('all');
                       setFilterStatus('all');
                       setFilterPriority('all');
-                      setFilterRegion('all');
-                      setFilterType('all');
                       setSearchTerm('');
-                      setSortBy('priority');
                     }}
                   >
                     Limpiar Filtros
@@ -546,7 +502,7 @@ const CommitteeReview = () => {
         <Grid container spacing={2} sx={{ height: '100%' }}>
           {/* Columna Principal - 70% */}
           <Grid item xs={12} lg={8} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            {/* KPI Rápidas */}
+            {/* KPI Cards Compactas */}
             <Grid container spacing={1.5} sx={{ mb: 2 }}>
               {[
                 { 
@@ -564,30 +520,30 @@ const CommitteeReview = () => {
                   tooltip: 'Certificaciones pendientes de revisión'
                 },
                 { 
-                  label: 'Asignadas a mí', 
+                  label: 'Asignadas', 
                   value: stats.assignedToMe, 
                   color: '#1a237e', 
                   icon: <AssignmentIcon />,
-                  tooltip: 'Certificaciones asignadas a tu usuario'
+                  tooltip: 'Certificaciones asignadas a mí'
                 },
                 { 
-                  label: 'Alta Prioridad', 
-                  value: stats.highPriority, 
-                  color: '#9b59b6', 
-                  icon: <WarningIcon />,
-                  tooltip: 'Certificaciones con prioridad ALTA'
+                  label: 'En Revisión', 
+                  value: stats.inReview, 
+                  color: '#3498db', 
+                  icon: <AssessmentIcon />,
+                  tooltip: 'Certificaciones en proceso de revisión'
                 },
                 { 
                   label: 'Tiempo Prom.', 
-                  value: stats.avgReviewTime, 
-                  color: '#3498db', 
+                  value: `${stats.avgReviewTime}d`, 
+                  color: '#27ae60', 
                   icon: <SpeedIcon />,
                   tooltip: 'Tiempo promedio de revisión'
                 },
                 { 
                   label: 'Total', 
                   value: stats.total, 
-                  color: '#27ae60', 
+                  color: '#9b59b6', 
                   icon: <FolderOpenIcon />,
                   tooltip: 'Total de certificaciones activas'
                 },
@@ -621,51 +577,40 @@ const CommitteeReview = () => {
               ))}
             </Grid>
 
-            {/* Tabla de Certificaciones */}
+            {/* Vista de Certificaciones */}
             <Paper elevation={1} sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
               <Box sx={{ 
                 p: 2, 
                 borderBottom: '1px solid #e0e0e0',
                 display: 'flex',
                 justifyContent: 'space-between',
-                alignItems: 'center',
-                bgcolor: '#f8f9fa'
+                alignItems: 'center'
               }}>
                 <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
                   {sortedCertifications.length} certificaciones para revisión
                 </Typography>
-                
-                <Stack direction="row" spacing={1} alignItems="center">
-                  {selectedRows.length > 0 && (
-                    <Chip 
-                      label={`${selectedRows.length} seleccionadas`}
-                      size="small"
-                      color="primary"
-                      onDelete={() => setSelectedRows([])}
-                    />
-                  )}
-                  <IconButton size="small">
-                    <MoreVertIcon />
-                  </IconButton>
+                <Stack direction="row" spacing={1}>
+                  <Chip 
+                    label={`${stats.highPriority} PRIORIDAD ALTA`}
+                    size="small"
+                    color="error"
+                    icon={<PriorityHighIcon />}
+                  />
+                  <Chip 
+                    label={`${stats.urgent} URGENTES`}
+                    size="small"
+                    color="warning"
+                    icon={<WarningIcon />}
+                  />
                 </Stack>
               </Box>
 
-              {/* Tabla - Scroll Interno */}
+              {/* Tabla de Certificaciones - Scroll Interno */}
               <Box sx={{ flex: 1, overflowY: 'auto' }}>
                 <TableContainer>
                   <Table size="small" stickyHeader>
                     <TableHead>
                       <TableRow>
-                        <TableCell padding="checkbox" sx={{ width: 40 }}>
-                          <Tooltip title="Seleccionar todo">
-                            <input
-                              type="checkbox"
-                              checked={selectedRows.length === sortedCertifications.length && sortedCertifications.length > 0}
-                              onChange={handleSelectAll}
-                              style={{ cursor: 'pointer' }}
-                            />
-                          </Tooltip>
-                        </TableCell>
                         <TableCell sx={{ fontWeight: 'bold', width: '25%' }}>Certificación</TableCell>
                         <TableCell sx={{ fontWeight: 'bold', width: '20%' }}>Solicitante</TableCell>
                         <TableCell sx={{ fontWeight: 'bold', width: '10%' }}>Estado</TableCell>
@@ -679,33 +624,20 @@ const CommitteeReview = () => {
                         <TableRow 
                           key={cert.id} 
                           hover
-                          selected={selectedRows.includes(cert.id)}
-                          onClick={() => handleRowSelect(cert.id)}
                           sx={{ 
-                            cursor: 'pointer',
                             '&:hover': { bgcolor: '#f8f9fa' },
-                            borderLeft: `4px solid ${cert.color}`,
-                            bgcolor: selectedRows.includes(cert.id) ? '#e8f4f8' : 'transparent'
+                            borderLeft: `4px solid ${cert.color}`
                           }}
                         >
-                          <TableCell padding="checkbox">
-                            <input
-                              type="checkbox"
-                              checked={selectedRows.includes(cert.id)}
-                              onChange={() => handleRowSelect(cert.id)}
-                              onClick={(e) => e.stopPropagation()}
-                              style={{ cursor: 'pointer' }}
-                            />
-                          </TableCell>
-                          
                           <TableCell>
                             <Box>
                               <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
                                 {cert.type}
                               </Typography>
                               <Stack direction="row" spacing={0.5} alignItems="center" sx={{ mt: 0.5 }}>
-                                <Typography variant="caption" sx={{ color: '#7f8c8d', fontFamily: 'monospace' }}>
-                                  {cert.code}
+                                <PlaceIcon sx={{ color: '#7f8c8d', fontSize: 12 }} />
+                                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                  {cert.region}
                                 </Typography>
                                 <Chip 
                                   label={cert.category}
@@ -724,7 +656,7 @@ const CommitteeReview = () => {
                                   width: 28, 
                                   height: 28, 
                                   fontSize: '0.75rem',
-                                  bgcolor: '#1a237e'
+                                  bgcolor: getUserTypeColor(cert.applicant.type)
                                 }}
                               >
                                 {cert.applicant.avatar}
@@ -740,11 +672,7 @@ const CommitteeReview = () => {
                                     sx={{ 
                                       width: 40, 
                                       height: 4,
-                                      borderRadius: 2,
-                                      bgcolor: '#f0f0f0',
-                                      '& .MuiLinearProgress-bar': {
-                                        bgcolor: getComplianceColor(cert.applicant.complianceScore)
-                                      }
+                                      borderRadius: 2
                                     }}
                                   />
                                   <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
@@ -785,13 +713,13 @@ const CommitteeReview = () => {
                                 Vence: {cert.dueDate}
                               </Typography>
                               <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block' }}>
-                                Est: {cert.reviewEstimate}
+                                Prom: {cert.reviewTime}
                               </Typography>
                             </Box>
                           </TableCell>
                           
                           <TableCell>
-                            <Tooltip title={`${cert.documents.completed}/${cert.documents.total} documentos`}>
+                            <Tooltip title={`${cert.documents.completed}/${cert.documents.total} documentos completos`}>
                               <Box>
                                 <LinearProgress 
                                   variant="determinate" 
@@ -812,16 +740,6 @@ const CommitteeReview = () => {
                           
                           <TableCell align="right">
                             <Stack direction="row" spacing={0.5} justifyContent="flex-end">
-                              <Tooltip title="Ver detalles">
-                                <IconButton 
-                                  size="small"
-                                  component={Link}
-                                  to={`/committee/review/${cert.id}`}
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  <VisibilityIcon fontSize="small" />
-                                </IconButton>
-                              </Tooltip>
                               <Tooltip title="Revisar certificación">
                                 <Button
                                   component={Link}
@@ -829,7 +747,6 @@ const CommitteeReview = () => {
                                   variant="contained"
                                   size="small"
                                   startIcon={<GavelIcon />}
-                                  onClick={(e) => e.stopPropagation()}
                                   sx={{ 
                                     bgcolor: '#1a237e',
                                     '&:hover': { bgcolor: '#283593' },
@@ -840,6 +757,11 @@ const CommitteeReview = () => {
                                   Revisar
                                 </Button>
                               </Tooltip>
+                              <Tooltip title="Más opciones">
+                                <IconButton size="small">
+                                  <MoreVertIcon fontSize="small" />
+                                </IconButton>
+                              </Tooltip>
                             </Stack>
                           </TableCell>
                         </TableRow>
@@ -847,112 +769,187 @@ const CommitteeReview = () => {
                     </TableBody>
                   </Table>
                 </TableContainer>
-
-                {sortedCertifications.length === 0 && (
-                  <Box sx={{ p: 8, textAlign: 'center' }}>
-                    <FolderOpenIcon sx={{ fontSize: 60, color: '#bdc3c7', mb: 2 }} />
-                    <Typography variant="h6" sx={{ color: '#7f8c8d', mb: 1 }}>
-                      No hay certificaciones que coincidan
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#95a5a6' }}>
-                      Intenta ajustar los filtros de búsqueda
-                    </Typography>
-                  </Box>
-                )}
               </Box>
             </Paper>
           </Grid>
 
           {/* Columna Derecha - 30% */}
           <Grid item xs={12} lg={4} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            {/* Guía Rápida de Revisión */}
-            <Paper elevation={1} sx={{ p: 2.5, mb: 2, flex: 1 }}>
+            {/* Alertas Inmediatas */}
+            <Paper elevation={1} sx={{ p: 2, mb: 2, flex: 1 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#2c3e50', display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <NotificationsIcon sx={{ color: '#e74c3c' }} />
+                  Alertas Críticas
+                </Typography>
+                <Badge badgeContent={3} color="error">
+                  <IconButton size="small">
+                    <MoreVertIcon />
+                  </IconButton>
+                </Badge>
+              </Box>
+              
+              <Stack spacing={1.5}>
+                {[
+                  { 
+                    type: 'error', 
+                    title: 'Vencimiento Inminente', 
+                    message: 'Patente Aduanal vence mañana', 
+                    cert: 'PA-2026-00145',
+                    time: 'Hace 30 min',
+                    action: 'revisar'
+                  },
+                  { 
+                    type: 'warning', 
+                    title: 'Documentación Pendiente', 
+                    message: 'Falta 1 documento en Cédula Profesional', 
+                    cert: 'CP-2024-56789',
+                    time: 'Hace 2 horas',
+                    action: 'solicitar'
+                  },
+                  { 
+                    type: 'info', 
+                    title: 'Nueva Asignación', 
+                    message: 'Te han asignado Constancia Fiscal', 
+                    cert: 'CF-2025-78901',
+                    time: 'Hace 3 horas',
+                    action: 'revisar'
+                  },
+                ].map((alert, idx) => (
+                  <Card 
+                    key={idx} 
+                    variant="outlined"
+                    sx={{ 
+                      p: 1.5,
+                      borderLeft: `3px solid ${
+                        alert.type === 'error' ? '#e74c3c' :
+                        alert.type === 'warning' ? '#f39c12' : '#3498db'
+                      }`
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                        {alert.title}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                        {alert.time}
+                      </Typography>
+                    </Box>
+                    <Typography variant="caption" sx={{ color: '#5a6c7d', mb: 1, display: 'block' }}>
+                      {alert.message}
+                    </Typography>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Chip 
+                        label={alert.cert}
+                        size="small"
+                        variant="outlined"
+                      />
+                      <Button
+                        size="small"
+                        variant="text"
+                        endIcon={<ArrowForwardIcon />}
+                        sx={{ textTransform: 'none' }}
+                      >
+                        {alert.action === 'revisar' ? 'Revisar ahora' : 'Solicitar'}
+                      </Button>
+                    </Box>
+                  </Card>
+                ))}
+              </Stack>
+              
+              <Button
+                fullWidth
+                variant="outlined"
+                component={Link}
+                to="/committee/alerts"
+                sx={{ mt: 2 }}
+              >
+                Ver todas las alertas
+              </Button>
+            </Paper>
+
+            {/* Métricas Personales */}
+            <Paper elevation={1} sx={{ p: 2, mb: 2, flex: 1 }}>
               <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: '#2c3e50', display: 'flex', alignItems: 'center', gap: 1 }}>
-                <InsightsIcon /> Guía de Revisión
+                <AutoAwesomeIcon /> Mi Desempeño
               </Typography>
               
               <Stack spacing={2}>
-                <Card variant="outlined" sx={{ p: 1.5 }}>
-                  <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold', color: '#2c3e50' }}>
-                    📋 Procedimiento Estándar
+                <Box>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                      Revisadas este mes
+                    </Typography>
+                    <Typography variant="caption" sx={{ fontWeight: 'bold', color: '#1a237e' }}>
+                      15/20 (75%)
+                    </Typography>
+                  </Box>
+                  <LinearProgress 
+                    variant="determinate" 
+                    value={75}
+                    sx={{ height: 6, borderRadius: 3 }}
+                  />
+                </Box>
+                
+                <Grid container spacing={1}>
+                  <Grid item xs={6}>
+                    <Card variant="outlined" sx={{ p: 1.5, textAlign: 'center' }}>
+                      <Typography variant="h6" sx={{ color: '#27ae60', fontWeight: 'bold' }}>
+                        92%
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                        Aprobación
+                      </Typography>
+                    </Card>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Card variant="outlined" sx={{ p: 1.5, textAlign: 'center' }}>
+                      <Typography variant="h6" sx={{ color: '#3498db', fontWeight: 'bold' }}>
+                        2.3d
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                        Tiempo promedio
+                      </Typography>
+                    </Card>
+                  </Grid>
+                </Grid>
+                
+                <Box>
+                  <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', mb: 1 }}>
+                    Próximas revisiones programadas:
                   </Typography>
                   <Stack spacing={0.5}>
-                    {[
-                      '1. Verificar completitud documental',
-                      '2. Validar autenticidad y vigencia',
-                      '3. Revisar cumplimiento normativo',
-                      '4. Evaluar fundamentación técnica',
-                      '5. Emitir dictamen individual'
-                    ].map((step, idx) => (
-                      <Typography key={idx} variant="caption" sx={{ color: '#5a6c7d' }}>
-                        {step}
-                      </Typography>
-                    ))}
-                  </Stack>
-                </Card>
-                
-                <Card variant="outlined" sx={{ p: 1.5 }}>
-                  <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold', color: '#2c3e50' }}>
-                    🚨 Criterios de Prioridad
-                  </Typography>
-                  <Stack spacing={1}>
-                    {[
-                      { label: 'ALTA', color: '#e74c3c', criteria: 'Vencimiento ≤ 3 días / Crítico' },
-                      { label: 'MEDIA', color: '#f39c12', criteria: 'Requiere validación adicional' },
-                      { label: 'BAJA', color: '#27ae60', criteria: 'Sin observaciones / Lejano' }
-                    ].map((item, idx) => (
-                      <Box key={idx} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <Chip 
-                          label={item.label}
-                          size="small"
-                          sx={{ 
-                            bgcolor: item.color, 
-                            color: 'white',
-                            fontWeight: 'bold',
-                            height: 20
-                          }}
-                        />
-                        <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                          {item.criteria}
+                    {['Hoy - 10:00 AM', 'Hoy - 2:00 PM', 'Mañana - 9:00 AM'].map((time, idx) => (
+                      <Box key={idx} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 1 }}>
+                        <Typography variant="caption">
+                          {time}
                         </Typography>
+                        <Chip 
+                          label="Programado"
+                          size="small"
+                          color="info"
+                          variant="outlined"
+                        />
                       </Box>
                     ))}
                   </Stack>
-                </Card>
-                
-                <Card variant="outlined" sx={{ p: 1.5 }}>
-                  <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold', color: '#2c3e50' }}>
-                    ⚖️ Consideraciones Clave
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#5a6c7d', display: 'block', mb: 0.5 }}>
-                    • Revisar cada certificación INDIVIDUALMENTE
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#5a6c7d', display: 'block', mb: 0.5 }}>
-                    • Fundamentación técnica obligatoria
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#5a6c7d', display: 'block', mb: 0.5 }}>
-                    • No aprobar expedientes completos
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#5a6c7d', display: 'block' }}>
-                    • Registrar observaciones específicas
-                  </Typography>
-                </Card>
+                </Box>
               </Stack>
             </Paper>
 
-            {/* Acciones Rápidas y Estadísticas */}
-            <Paper elevation={1} sx={{ p: 2.5, flex: 1 }}>
-              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: '#2c3e50', display: 'flex', alignItems: 'center', gap: 1 }}>
-                <AutoAwesomeIcon /> Acciones Directas
+            {/* Acciones Rápidas */}
+            <Paper elevation={1} sx={{ p: 2 }}>
+              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: '#2c3e50' }}>
+                Acciones Directas
               </Typography>
               
-              <Stack spacing={1.5}>
+              <Stack spacing={1}>
                 <Button
                   fullWidth
                   variant="contained"
                   startIcon={<GavelIcon />}
                   component={Link}
-                  to="/committee/review/new"
+                  to="/committee/review"
                   sx={{ justifyContent: 'flex-start', bgcolor: '#1a237e' }}
                 >
                   Iniciar nueva revisión
@@ -961,10 +958,12 @@ const CommitteeReview = () => {
                 <Button
                   fullWidth
                   variant="outlined"
-                  startIcon={<CalendarMonthIcon />}
+                  startIcon={<BarChartIcon />}
+                  component={Link}
+                  to="/committee/metrics"
                   sx={{ justifyContent: 'flex-start' }}
                 >
-                  Programar revisiones
+                  Ver métricas completas
                 </Button>
                 
                 <Button
@@ -973,114 +972,25 @@ const CommitteeReview = () => {
                   startIcon={<DownloadIcon />}
                   sx={{ justifyContent: 'flex-start' }}
                 >
-                  Descargar checklist
+                  Descargar reporte
                 </Button>
                 
-                <Divider sx={{ my: 1 }} />
-                
-                <Box>
-                  <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', mb: 1 }}>
-                    Tu productividad hoy:
-                  </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                    <Box sx={{ position: 'relative', display: 'inline-flex' }}>
-                      <CircularProgress 
-                        variant="determinate" 
-                        value={75}
-                        size={60}
-                        thickness={4}
-                      />
-                      <Box
-                        sx={{
-                          top: 0,
-                          left: 0,
-                          bottom: 0,
-                          right: 0,
-                          position: 'absolute',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}
-                      >
-                        <Typography variant="caption" component="div" sx={{ fontWeight: 'bold' }}>
-                          3/4
-                        </Typography>
-                      </Box>
-                    </Box>
-                    <Box>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block' }}>
-                        Revisiones completadas
-                      </Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                        75% de tu meta diaria
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Box>
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  startIcon={<RefreshIcon />}
+                  onClick={() => window.location.reload()}
+                  sx={{ justifyContent: 'flex-start' }}
+                >
+                  Actualizar datos
+                </Button>
               </Stack>
             </Paper>
           </Grid>
         </Grid>
       </Box>
-
-      {/* Diálogo de Acciones Masivas */}
-      <Dialog open={batchActionDialog} onClose={() => setBatchActionDialog(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>
-          Acciones en Lote ({selectedRows.length} certificaciones)
-        </DialogTitle>
-        <DialogContent>
-          <Typography variant="body2" sx={{ mb: 3, color: '#5a6c7d' }}>
-            Selecciona una acción para aplicar a todas las certificaciones seleccionadas:
-          </Typography>
-          
-          <Grid container spacing={2}>
-            {[
-              { icon: <AssignmentIcon />, label: 'Asignar a', color: '#3498db' },
-              { icon: <CheckCircleIcon />, label: 'Marcar como revisadas', color: '#27ae60' },
-              { icon: <WarningIcon />, label: 'Cambiar prioridad', color: '#f39c12' },
-              { icon: <DownloadIcon />, label: 'Exportar selección', color: '#9b59b6' },
-            ].map((action, idx) => (
-              <Grid item xs={6} key={idx}>
-                <Card 
-                  sx={{ 
-                    p: 2, 
-                    textAlign: 'center',
-                    cursor: 'pointer',
-                    border: '1px solid #e0e0e0',
-                    '&:hover': {
-                      borderColor: action.color,
-                      bgcolor: `${action.color}10`
-                    }
-                  }}
-                  onClick={() => handleBatchAction(action.label.toLowerCase())}
-                >
-                  <Box sx={{ color: action.color, mb: 1 }}>
-                    {action.icon}
-                  </Box>
-                  <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-                    {action.label}
-                  </Typography>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-          
-          <Alert severity="info" sx={{ mt: 3, fontSize: '0.8rem' }}>
-            Esta acción se aplicará a {selectedRows.length} certificaciones seleccionadas.
-          </Alert>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setBatchActionDialog(false)}>Cancelar</Button>
-          <Button 
-            onClick={() => setBatchActionDialog(false)}
-            variant="outlined"
-          >
-            Continuar después
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   );
 };
 
-export default CommitteeReview;
+export default CommitteeDashboard;
