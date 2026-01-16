@@ -52,14 +52,7 @@ const Profile = () => {
         <Typography variant="h4" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
           Mi Perfil
         </Typography>
-        <Button
-          variant={editMode ? 'contained' : 'outlined'}
-          startIcon={editMode ? <SaveIcon /> : <EditIcon />}
-          onClick={editMode ? handleSave : () => setEditMode(true)}
-          color={editMode ? 'success' : 'primary'}
-        >
-          {editMode ? 'Guardar Cambios' : 'Editar Perfil'}
-        </Button>
+        
       </Box>
 
       {/* ===== FILA SUPERIOR: TRES APARTADOS ===== */}
@@ -425,23 +418,39 @@ const Profile = () => {
         <Grid item xs={12}>
           <Card>
             <CardContent>
-              <Typography variant="h6" sx={{ 
-                mb: 3, 
-                fontWeight: 'bold', 
-                color: '#2c3e50',
-                display: 'flex',
-                alignItems: 'center'
+              {/* Header del Card de Información Personal con botón a la derecha */}
+              <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center', 
+                mb: 3
               }}>
-                Información Personal
-                {editMode && (
-                  <Chip 
-                    label="Modo Edición" 
-                    color="warning" 
-                    size="small" 
-                    sx={{ ml: 2 }} 
-                  />
-                )}
-              </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Typography variant="h6" sx={{ 
+                    fontWeight: 'bold', 
+                    color: '#2c3e50',
+                    mr: 2
+                  }}>
+                    Información Personal
+                  </Typography>
+                  {editMode && (
+                    <Chip 
+                      label="Modo Edición" 
+                      color="warning" 
+                      size="small" 
+                    />
+                  )}
+                </Box>
+                
+                <Button
+                  variant={editMode ? 'contained' : 'outlined'}
+                  startIcon={editMode ? <SaveIcon /> : <EditIcon />}
+                  onClick={editMode ? handleSave : () => setEditMode(true)}
+                  color={editMode ? 'success' : 'primary'}
+                >
+                  {editMode ? 'Guardar Cambios' : 'Editar Perfil'}
+                </Button>
+              </Box>
 
               <Grid container spacing={3}>
                 <Grid item xs={12} md={6}>

@@ -132,18 +132,50 @@ const VistaCertificacion = () => {
             </Typography>
 
             {/* Nuevo campo agregado: Número de Certificado */}
+           
+
+            {/* Tres campos adicionales de vista para detalles de certificación */}
             <Box sx={{ mb: 2 }}>
               <Typography sx={{ mb: 1, fontWeight: 500 }}>
-                Número de Certificado
+                Tipo de Certificación
               </Typography>
               <TextField
-                placeholder="Ingrese el número de certificado"
+                value="Patente Aduanal"
                 fullWidth
                 size="small"
+                InputProps={{
+                  readOnly: true,
+                }}
               />
             </Box>
 
-            
+            <Box sx={{ mb: 2 }}>
+              <Typography sx={{ mb: 1, fontWeight: 500 }}>
+                Institución Emisora
+              </Typography>
+              <TextField
+                value="Servicio de Administración Tributaria (SAT)"
+                fullWidth
+                size="small"
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
+            </Box>
+
+            <Box sx={{ mb: 2 }}>
+              <Typography sx={{ mb: 1, fontWeight: 500 }}>
+                Ámbito de Validez
+              </Typography>
+              <TextField
+                value="Nacional"
+                fullWidth
+                size="small"
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
+            </Box>
 
             {/* Cambios en las fechas: */}
             <Grid container spacing={2}>
@@ -170,18 +202,7 @@ const VistaCertificacion = () => {
             </Grid>
 
             {/* Nuevo campo agregado: Observaciones */}
-            <Box sx={{ mt: 3 }}>
-              <Typography sx={{ mb: 1, fontWeight: 500 }}>
-                Observaciones
-              </Typography>
-              <TextField
-                placeholder="Ingrese observaciones adicionales"
-                fullWidth
-                multiline
-                rows={3}
-                size="small"
-              />
-            </Box>
+            
           </Paper>
         </Grid>
 
