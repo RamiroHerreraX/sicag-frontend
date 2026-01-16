@@ -29,6 +29,8 @@ import AdminDashboard from './pages/dashboard/AdminDashboard';
 import Certifications from './pages/certifications/Certifications';
 import CertificationDetail from './pages/certifications/CertificationDetail';
 import NewCertification from './pages/certifications/NewCertification';
+import NewUserCertification from './pages/expediente/NewUserCertification';
+import VistaCertificacion from './pages/certifications/VistaCertificacion';
 
 // Expediente
 import Expediente from './pages/expediente/Expediente';
@@ -94,6 +96,9 @@ function App() {
               <Route path="/certifications" element={<Certifications />} />
               <Route path="/certifications/new" element={<NewCertification />} />
               <Route path="/certifications/:id" element={<CertificationDetail />} />
+              <Route path="/new-user-certification" element={<NewUserCertification />} />
+              <Route path="/vista-certification" element={<VistaCertificacion />} 
+/>
               <Route path="/expediente" element={<Expediente />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/sitemap" element={<SiteMap />} />

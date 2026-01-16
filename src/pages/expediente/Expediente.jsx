@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Grid,
@@ -45,6 +46,7 @@ import {
 } from '@mui/icons-material';
 
 const Expediente = () => {
+  const navigate = useNavigate();
   const [editMode, setEditMode] = useState(false);
   const [expanded, setExpanded] = useState('panel1');
   const [addDialog, setAddDialog] = useState(false);
@@ -76,6 +78,13 @@ const Expediente = () => {
   const handleSave = () => {
     setEditMode(false);
     // En una implementación real, aquí se enviarían los datos al servidor
+  };
+
+  const handleUploadCertification = () => {
+    navigate('/new-user-certification');
+  };
+  const handleSeeCertification = () => {
+    navigate('/vista-certification');
   };
 
   // Datos complementarios (reorganizados según la imagen)
@@ -433,6 +442,7 @@ const Expediente = () => {
                           size="small"
                           startIcon={<VisibilityIcon />}
                           variant="outlined"
+                          onClick={handleSeeCertification}
                           sx={{ 
                             fontSize: '0.75rem', 
                             py: 0.5,
@@ -446,6 +456,7 @@ const Expediente = () => {
                           size="small"
                           startIcon={<CloudUploadIcon />}
                           variant="outlined"
+                          onClick={handleUploadCertification}
                           sx={{ 
                             fontSize: '0.75rem', 
                             py: 0.5,
