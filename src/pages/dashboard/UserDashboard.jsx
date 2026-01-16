@@ -42,40 +42,85 @@ const UserDashboard = () => {
   ];
 
   return (
-    <Box>
+    <Box sx={{ maxWidth: '1400px', margin: '0 auto', px: { xs: 2, sm: 3 } }}>
       {/* Header */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 1 }}>
+      <Box sx={{ mb: 5 }}>
+        <Typography variant="h4" sx={{ 
+          color: '#2c3e50', 
+          fontWeight: '800', 
+          mb: 1.5,
+          fontSize: { xs: '1.75rem', sm: '2rem' }
+        }}>
           Dashboard de Cumplimiento
         </Typography>
-        <Typography variant="body1" sx={{ color: '#7f8c8d' }}>
+        <Typography variant="body1" sx={{ 
+          color: '#7f8c8d',
+          fontSize: { xs: '0.95rem', sm: '1rem' }
+        }}>
           Bienvenido al Sistema Integral de Consultoría y Asesoría Gerencial
         </Typography>
       </Box>
 
       {/* Estatus Global */}
-      <Card sx={{ mb: 4, bgcolor: '#e8f5e9' }}>
-        <CardContent>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <Card sx={{ 
+        mb: 5, 
+        bgcolor: '#e8f5e9',
+        borderRadius: 2,
+        boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+        border: '1px solid rgba(46, 125, 50, 0.1)'
+      }}>
+        <CardContent sx={{ p: 3 }}>
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: { xs: 'column', sm: 'row' },
+            alignItems: { xs: 'flex-start', sm: 'center' },
+            justifyContent: 'space-between',
+            gap: 3
+          }}>
             <Box>
-              <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
+              <Typography variant="h6" sx={{ 
+                color: '#2c3e50', 
+                fontWeight: '700',
+                fontSize: '1.1rem',
+                mb: 1
+              }}>
                 ESTATUS GLOBAL
               </Typography>
-              <Typography variant="body2" sx={{ color: '#27ae60', mt: 1 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
                 <Chip 
                   label="ALTO CUMPLIMIENTO" 
                   color="success" 
-                  size="small" 
-                  sx={{ mr: 1 }}
+                  size="medium"
+                  sx={{ 
+                    fontWeight: '600',
+                    fontSize: '0.75rem'
+                  }}
                 />
-                Todas tus certificaciones están vigentes
-              </Typography>
+                <Typography variant="body2" sx={{ 
+                  color: '#27ae60',
+                  fontWeight: '500'
+                }}>
+                  Todas tus certificaciones están vigentes
+                </Typography>
+              </Box>
             </Box>
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="h4" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
+            <Box sx={{ 
+              textAlign: { xs: 'left', sm: 'center' },
+              borderLeft: { sm: '1px solid rgba(0,0,0,0.1)' },
+              pl: { sm: 3 }
+            }}>
+              <Typography variant="h4" sx={{ 
+                color: '#2c3e50', 
+                fontWeight: '800',
+                fontSize: { xs: '2rem', sm: '2.5rem' }
+              }}>
                 NIVEL AVANZADO
               </Typography>
-              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+              <Typography variant="caption" sx={{ 
+                color: '#7f8c8d',
+                fontSize: '0.85rem',
+                fontWeight: '500'
+              }}>
                 Próxima revisión 12/2025
               </Typography>
             </Box>
@@ -84,24 +129,51 @@ const UserDashboard = () => {
       </Card>
 
       {/* Estadísticas */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
+      <Grid container spacing={3} sx={{ mb: 5 }}>
         {stats.map((stat, index) => (
           <Grid item xs={12} sm={6} md={3} key={index}>
-            <Card sx={{ height: '100%' }}>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Card sx={{ 
+              height: '100%',
+              borderRadius: 2,
+              boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+              transition: 'transform 0.2s, box-shadow 0.2s',
+              '&:hover': {
+                transform: 'translateY(-4px)',
+                boxShadow: '0 8px 20px rgba(0,0,0,0.1)'
+              }
+            }}>
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'space-between',
+                  mb: 1
+                }}>
                   <Box>
-                    <Typography variant="h3" sx={{ color: stat.color, fontWeight: 'bold' }}>
+                    <Typography variant="h3" sx={{ 
+                      color: stat.color, 
+                      fontWeight: '800',
+                      fontSize: { xs: '2.5rem', sm: '3rem' },
+                      lineHeight: 1
+                    }}>
                       {stat.value}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: '#7f8c8d', mt: 1 }}>
-                      {stat.title}
-                    </Typography>
                   </Box>
-                  <Box sx={{ color: stat.color }}>
+                  <Box sx={{ 
+                    color: stat.color,
+                    fontSize: { xs: '2rem', sm: '2.5rem' }
+                  }}>
                     {stat.icon}
                   </Box>
                 </Box>
+                <Typography variant="body2" sx={{ 
+                  color: '#7f8c8d',
+                  fontWeight: '500',
+                  fontSize: '0.9rem',
+                  mt: 2
+                }}>
+                  {stat.title}
+                </Typography>
               </CardContent>
             </Card>
           </Grid>
@@ -111,32 +183,94 @@ const UserDashboard = () => {
       <Grid container spacing={3}>
         {/* Resumen de Certificaciones */}
         <Grid item xs={12} md={7}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" sx={{ color: '#2c3e50', mb: 3, fontWeight: 'bold' }}>
-                RESUMEN DE CERTIFICACIONES
-              </Typography>
+          <Card sx={{ 
+            borderRadius: 2,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+            height: '100%'
+          }}>
+            <CardContent sx={{ p: 3 }}>
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'space-between',
+                mb: 3,
+                pb: 2,
+                borderBottom: '1px solid rgba(0,0,0,0.08)'
+              }}>
+                <Typography variant="h6" sx={{ 
+                  color: '#2c3e50', 
+                  fontWeight: '700',
+                  fontSize: '1.1rem'
+                }}>
+                  RESUMEN DE CERTIFICACIONES
+                </Typography>
+                <Chip 
+                  label={`${recentCertifications.length} certificaciones`}
+                  size="small"
+                  sx={{ 
+                    backgroundColor: '#e3f2fd',
+                    color: '#1976d2',
+                    fontWeight: '500'
+                  }}
+                />
+              </Box>
               
-              <Stack spacing={2}>
+              <Stack spacing={2.5}>
                 {recentCertifications.map((cert, index) => (
-                  <Paper key={index} variant="outlined" sx={{ p: 2 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                      <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                  <Paper 
+                    key={index} 
+                    variant="outlined" 
+                    sx={{ 
+                      p: 2.5,
+                      borderRadius: 1.5,
+                      border: '1px solid rgba(0,0,0,0.1)',
+                      transition: 'border-color 0.2s',
+                      '&:hover': {
+                        borderColor: '#3498db'
+                      }
+                    }}
+                  >
+                    <Box sx={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between', 
+                      alignItems: 'flex-start',
+                      mb: 2,
+                      flexDirection: { xs: 'column', sm: 'row' },
+                      gap: { xs: 1, sm: 0 }
+                    }}>
+                      <Typography variant="subtitle1" sx={{ 
+                        fontWeight: '600',
+                        fontSize: '1rem',
+                        color: '#2c3e50'
+                      }}>
                         {cert.name}
                       </Typography>
                       <Chip 
                         label={cert.status}
                         size="small"
-                        color={
-                          cert.status === 'Vigente' ? 'success' :
-                          cert.status === 'Por Vencer' ? 'warning' : 'error'
-                        }
+                        sx={{ 
+                          fontWeight: '600',
+                          fontSize: '0.75rem',
+                          backgroundColor: 
+                            cert.status === 'Vigente' ? '#e8f5e9' :
+                            cert.status === 'Por Vencer' ? '#fff3e0' : '#ffebee',
+                          color: 
+                            cert.status === 'Vigente' ? '#2e7d32' :
+                            cert.status === 'Por Vencer' ? '#f57c00' : '#d32f2f'
+                        }}
                       />
                     </Box>
                     
-                    <Box sx={{ mb: 1 }}>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        Vencimiento: {cert.expiration}
+                    <Box sx={{ mb: 2.5 }}>
+                      <Typography variant="caption" sx={{ 
+                        color: '#7f8c8d',
+                        fontWeight: '500',
+                        fontSize: '0.85rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 0.5
+                      }}>
+                        <span style={{ fontWeight: '600' }}>Vencimiento:</span> {cert.expiration}
                       </Typography>
                     </Box>
                     
@@ -148,8 +282,9 @@ const UserDashboard = () => {
                           sx={{ 
                             height: 8, 
                             borderRadius: 4,
-                            backgroundColor: '#f0f0f0',
+                            backgroundColor: '#f5f5f5',
                             '& .MuiLinearProgress-bar': {
+                              borderRadius: 4,
                               backgroundColor: 
                                 cert.progress > 70 ? '#27ae60' :
                                 cert.progress > 30 ? '#f39c12' : '#e74c3c'
@@ -157,7 +292,12 @@ const UserDashboard = () => {
                           }}
                         />
                       </Box>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                      <Typography variant="caption" sx={{ 
+                        color: '#2c3e50',
+                        fontWeight: '600',
+                        fontSize: '0.85rem',
+                        minWidth: '40px'
+                      }}>
                         {cert.progress}%
                       </Typography>
                     </Box>
@@ -165,8 +305,22 @@ const UserDashboard = () => {
                 ))}
               </Stack>
               
-              <Box sx={{ mt: 3, textAlign: 'center' }}>
-                <Button variant="outlined" color="primary">
+              <Box sx={{ 
+                mt: 4, 
+                textAlign: 'center',
+                pt: 3,
+                borderTop: '1px solid rgba(0,0,0,0.08)'
+              }}>
+                <Button 
+                  variant="outlined" 
+                  color="primary"
+                  sx={{ 
+                    fontWeight: '600',
+                    textTransform: 'none',
+                    px: 4,
+                    py: 1
+                  }}
+                >
                   Ver todas las certificaciones
                 </Button>
               </Box>
@@ -176,65 +330,188 @@ const UserDashboard = () => {
 
         {/* Alertas y Notificaciones */}
         <Grid item xs={12} md={5}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                <NotificationsIcon sx={{ mr: 1, color: '#f39c12' }} />
-                <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
+          <Card sx={{ 
+            borderRadius: 2,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+            height: '100%'
+          }}>
+            <CardContent sx={{ p: 3 }}>
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                mb: 3,
+                pb: 2,
+                borderBottom: '1px solid rgba(0,0,0,0.08)'
+              }}>
+                <NotificationsIcon sx={{ 
+                  mr: 1.5, 
+                  color: '#f39c12',
+                  fontSize: '1.5rem'
+                }} />
+                <Typography variant="h6" sx={{ 
+                  color: '#2c3e50', 
+                  fontWeight: '700',
+                  fontSize: '1.1rem'
+                }}>
                   Alertas y Notificaciones
                 </Typography>
+                <Chip 
+                  label="3 nuevas" 
+                  color="warning" 
+                  size="small"
+                  sx={{ 
+                    ml: 'auto',
+                    fontWeight: '600'
+                  }}
+                />
               </Box>
 
-              <Stack spacing={2}>
+              <Stack spacing={3}>
                 <Box>
-                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1, fontWeight: 'bold' }}>
+                  <Typography variant="subtitle2" sx={{ 
+                    color: '#2c3e50', 
+                    mb: 1.5, 
+                    fontWeight: '600',
+                    fontSize: '0.95rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5
+                  }}>
+                    <WarningIcon sx={{ fontSize: '1rem', color: '#f39c12' }} />
                     Vencimientos Próximos
                   </Typography>
-                  <Paper variant="outlined" sx={{ p: 2, bgcolor: '#fffde7' }}>
-                    <Typography variant="body2">
-                      • Certificación de Patente Aduanal vence en 15 días
-                    </Typography>
-                    <Typography variant="body2">
-                      • Poder Notarial requiere actualización
-                    </Typography>
-                    <Typography variant="body2">
-                      • Opinión SAT Positiva (15 días)
-                    </Typography>
+                  <Paper variant="outlined" sx={{ 
+                    p: 2.5, 
+                    bgcolor: '#fffde7',
+                    borderRadius: 1.5,
+                    border: '1px solid #fff3e0'
+                  }}>
+                    {['Certificación de Patente Aduanal vence en 15 días', 
+                      'Poder Notarial requiere actualización', 
+                      'Opinión SAT Positiva (15 días)'].map((item, idx) => (
+                      <Box key={idx} sx={{ 
+                        display: 'flex', 
+                        alignItems: 'flex-start',
+                        mb: idx < 2 ? 1.5 : 0
+                      }}>
+                        <Box sx={{ 
+                          width: 6, 
+                          height: 6, 
+                          backgroundColor: '#f39c12',
+                          borderRadius: '50%',
+                          mt: 0.75,
+                          mr: 1.5
+                        }} />
+                        <Typography variant="body2" sx={{ 
+                          color: '#5d4037',
+                          fontWeight: '500',
+                          fontSize: '0.9rem'
+                        }}>
+                          {item}
+                        </Typography>
+                      </Box>
+                    ))}
                   </Paper>
                 </Box>
 
                 <Box>
-                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1, fontWeight: 'bold' }}>
+                  <Typography variant="subtitle2" sx={{ 
+                    color: '#2c3e50', 
+                    mb: 1.5, 
+                    fontWeight: '600',
+                    fontSize: '0.95rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5
+                  }}>
+                    <ErrorIcon sx={{ fontSize: '1rem', color: '#e74c3c' }} />
                     Observaciones Pendientes
                   </Typography>
-                  <Paper variant="outlined" sx={{ p: 2, bgcolor: '#ffebee' }}>
-                    <Typography variant="body2">
-                      • Cédula Profesional: Mejorar legibilidad
-                    </Typography>
-                    <Typography variant="body2">
-                      • Opinión SAT: Adjuntar línea de captura
-                    </Typography>
-                    <Typography variant="body2">
-                      • Contrato Laboral: Falta firma
-                    </Typography>
+                  <Paper variant="outlined" sx={{ 
+                    p: 2.5, 
+                    bgcolor: '#ffebee',
+                    borderRadius: 1.5,
+                    border: '1px solid #ffcdd2'
+                  }}>
+                    {['Cédula Profesional: Mejorar legibilidad', 
+                      'Opinión SAT: Adjuntar línea de captura', 
+                      'Contrato Laboral: Falta firma'].map((item, idx) => (
+                      <Box key={idx} sx={{ 
+                        display: 'flex', 
+                        alignItems: 'flex-start',
+                        mb: idx < 2 ? 1.5 : 0
+                      }}>
+                        <Box sx={{ 
+                          width: 6, 
+                          height: 6, 
+                          backgroundColor: '#e74c3c',
+                          borderRadius: '50%',
+                          mt: 0.75,
+                          mr: 1.5
+                        }} />
+                        <Typography variant="body2" sx={{ 
+                          color: '#c62828',
+                          fontWeight: '500',
+                          fontSize: '0.9rem'
+                        }}>
+                          {item}
+                        </Typography>
+                      </Box>
+                    ))}
                   </Paper>
                 </Box>
 
                 <Box>
-                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1, fontWeight: 'bold' }}>
+                  <Typography variant="subtitle2" sx={{ 
+                    color: '#2c3e50', 
+                    mb: 1.5, 
+                    fontWeight: '600',
+                    fontSize: '0.95rem'
+                  }}>
                     Historial de Alertas
                   </Typography>
-                  <Paper variant="outlined" sx={{ p: 2 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                      <Chip label="Rechazo" color="error" size="small" />
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                  <Paper variant="outlined" sx={{ 
+                    p: 2.5, 
+                    borderRadius: 1.5,
+                    border: '1px solid rgba(0,0,0,0.1)'
+                  }}>
+                    <Box sx={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between', 
+                      alignItems: 'center', 
+                      mb: 1.5
+                    }}>
+                      <Chip 
+                        label="Rechazo" 
+                        size="small"
+                        sx={{ 
+                          backgroundColor: '#ffebee',
+                          color: '#d32f2f',
+                          fontWeight: '600'
+                        }}
+                      />
+                      <Typography variant="caption" sx={{ 
+                        color: '#7f8c8d',
+                        fontWeight: '500',
+                        fontSize: '0.8rem'
+                      }}>
                         05/01/2026
                       </Typography>
                     </Box>
-                    <Typography variant="body2">
+                    <Typography variant="body2" sx={{ 
+                      color: '#2c3e50',
+                      fontWeight: '500',
+                      mb: 1,
+                      fontSize: '0.9rem'
+                    }}>
                       Certificación de Representación Legal rechazada
                     </Typography>
-                    <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', mt: 1 }}>
+                    <Typography variant="caption" sx={{ 
+                      color: '#f39c12',
+                      fontWeight: '600',
+                      fontSize: '0.8rem',
+                      display: 'block'
+                    }}>
                       Estado: No Leído
                     </Typography>
                   </Paper>
