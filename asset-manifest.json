@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/sicag-frontend/static/css/main.2035f72c.css",
+    "main.js": "/sicag-frontend/static/js/main.a792abde.js",
+    "index.html": "/sicag-frontend/index.html",
+    "main.2035f72c.css.map": "/sicag-frontend/static/css/main.2035f72c.css.map",
+    "main.a792abde.js.map": "/sicag-frontend/static/js/main.a792abde.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.2035f72c.css",
+    "static/js/main.a792abde.js"
+  ]
+}
