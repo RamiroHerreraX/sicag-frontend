@@ -100,7 +100,7 @@ const Login = () => {
           LUIS RODRIGUEZ
         </Typography>
         <Typography variant="body1" sx={{ color: '#7f8c8d', mt: 2 }}>
-          Sistema Integral de Consultoría y Asesoría Gerencial
+          Sistema Integral de Consultoría y Asesoría Gremial
         </Typography>
       </Box>
 

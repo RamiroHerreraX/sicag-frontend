@@ -114,7 +114,7 @@ const SiteMap = () => {
           Mapa del Sitio
         </Typography>
         <Typography variant="h6" sx={{ color: '#7f8c8d', maxWidth: 800, mx: 'auto' }}>
-          Explore la estructura completa del Sistema Integral de Consultoría y Asesoría Gerencial
+          Explore la estructura completa del Sistema Integral de Consultoría y Asesoría Gremial
         </Typography>
       </Box>
 
@@ -245,7 +245,7 @@ const SiteMap = () => {
           soporte@sicag.com | +52 55 1234 5678
         </Typography>
         <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', mt: 2 }}>
-          © 2026 SICAG - Sistema Integral de Consultoría y Asesoría Gerencial
+          © 2026 SICAG - Sistema Integral de Consultoría y Asesoría Gremial
         </Typography>
       </Box>
     </Box>

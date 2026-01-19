@@ -312,7 +312,7 @@ const PrivacyAgreement = () => {
             <Link href="mailto:dpd@sicag.com" sx={{ ml: 1 }}>dpd@sicag.com</Link>
           </Typography>
           <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', textAlign: 'center', mt: 2 }}>
-            © 2026 SICAG - Sistema Integral de Consultoría y Asesoría Gerencial. Todos los derechos reservados.
+            © 2026 SICAG - Sistema Integral de Consultoría y Asesoría Gremial. Todos los derechos reservados.
           </Typography>
         </Box>
       </Paper>

@@ -57,7 +57,7 @@ const UserDashboard = () => {
           color: '#7f8c8d',
           fontSize: { xs: '0.95rem', sm: '1rem' }
         }}>
-          Bienvenido al Sistema Integral de Consultoría y Asesoría Gerencial
+          Bienvenido al Sistema Integral de Consultoría y Asesoría Gremial
         </Typography>
       </Box>
 
