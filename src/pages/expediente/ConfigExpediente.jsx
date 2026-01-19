@@ -1,3 +1,4 @@
+// src/pages/expediente/ConfigExpediente.jsx
 import React, { useState } from 'react';
 import {
   Box,
@@ -22,7 +23,16 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  MenuItem
+  MenuItem,
+  Stack,
+  Tooltip,
+  Badge,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  InputAdornment,
+  Avatar,
+  LinearProgress
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -33,7 +43,21 @@ import {
   Folder as FolderIcon,
   Description as DescriptionIcon,
   Security as SecurityIcon,
-  CloudUpload as CloudUploadIcon
+  CloudUpload as CloudUploadIcon,
+  ExpandMore as ExpandMoreIcon,
+  CheckCircle as CheckCircleIcon,
+  Error as ErrorIcon,
+  Warning as WarningIcon,
+  Settings as SettingsIcon,
+  Download as DownloadIcon,
+  Upload as UploadIcon,
+  Visibility as VisibilityIcon,
+  Lock as LockIcon,
+  Public as PublicIcon,
+  GridView as GridViewIcon,
+  List as ListIcon,
+  Sort as SortIcon,
+  FilterList as FilterIcon
 } from '@mui/icons-material';
 
 const ConfigExpediente = () => {
@@ -41,46 +65,155 @@ const ConfigExpediente = () => {
     {
       id: 1,
       name: 'DOCUMENTACIÓN PERSONAL',
+      description: 'Documentos de identificación y datos personales',
       required: true,
+      icon: '👤',
+      color: '#3498db',
       documents: [
-        { id: 101, name: 'Identificación Oficial', required: true, format: 'PDF/JPG', maxSize: '5MB' },
-        { id: 102, name: 'Comprobante de Domicilio', required: true, format: 'PDF', maxSize: '5MB' },
-        { id: 103, name: 'Acta de Nacimiento', required: true, format: 'PDF', maxSize: '10MB' },
-      ]
+        { 
+          id: 101, 
+          name: 'Identificación Oficial', 
+          description: 'INE, Pasaporte o Cédula profesional', 
+          required: true, 
+          format: 'PDF/JPG/PNG', 
+          maxSize: '5MB',
+          validation: 'OCR y validez',
+          tags: ['obligatorio', 'identificación'],
+          order: 1
+        },
+        { 
+          id: 102, 
+          name: 'Comprobante de Domicilio', 
+          description: 'No mayor a 3 meses de antigüedad', 
+          required: true, 
+          format: 'PDF', 
+          maxSize: '5MB',
+          validation: 'Fecha y domicilio',
+          tags: ['obligatorio', 'domicilio'],
+          order: 2
+        },
+        { 
+          id: 103, 
+          name: 'Acta de Nacimiento', 
+          description: 'Documento oficial vigente', 
+          required: true, 
+          format: 'PDF', 
+          maxSize: '10MB',
+          validation: 'Autenticidad',
+          tags: ['obligatorio', 'identificación'],
+          order: 3
+        },
+      ],
+      order: 1
     },
     {
       id: 2,
       name: 'CERTIFICACIONES PROFESIONALES',
+      description: 'Certificaciones y credenciales profesionales',
       required: true,
+      icon: '🎓',
+      color: '#2ecc71',
       documents: [
-        { id: 201, name: 'Patente Aduanal', required: true, format: 'PDF', maxSize: '10MB' },
-        { id: 202, name: 'Cédula Profesional', required: true, format: 'PDF', maxSize: '10MB' },
-        { id: 203, name: 'Opinión SAT', required: false, format: 'PDF', maxSize: '5MB' },
-      ]
+        { 
+          id: 201, 
+          name: 'Patente Aduanal', 
+          description: 'Vigente y legible', 
+          required: true, 
+          format: 'PDF', 
+          maxSize: '10MB',
+          validation: 'Vigencia y registro',
+          tags: ['obligatorio', 'profesional'],
+          order: 1
+        },
+        { 
+          id: 202, 
+          name: 'Cédula Profesional', 
+          description: 'Registro profesional vigente', 
+          required: true, 
+          format: 'PDF', 
+          maxSize: '10MB',
+          validation: 'Registro y especialidad',
+          tags: ['obligatorio', 'profesional'],
+          order: 2
+        },
+        { 
+          id: 203, 
+          name: 'Opinión SAT', 
+          description: 'Opinión positiva del SAT', 
+          required: false, 
+          format: 'PDF', 
+          maxSize: '5MB',
+          validation: 'Vigencia y folio',
+          tags: ['opcional', 'fiscal'],
+          order: 3
+        },
+      ],
+      order: 2
     },
     {
       id: 3,
       name: 'DOCUMENTACIÓN LEGAL',
+      description: 'Documentos legales y poderes',
       required: false,
+      icon: '⚖️',
+      color: '#9b59b6',
       documents: [
-        { id: 301, name: 'Poder Notarial', required: false, format: 'PDF', maxSize: '15MB' },
-        { id: 302, name: 'Constancia Fiscal', required: true, format: 'PDF', maxSize: '5MB' },
-      ]
+        { 
+          id: 301, 
+          name: 'Poder Notarial', 
+          description: 'Poder vigente y autenticado', 
+          required: false, 
+          format: 'PDF', 
+          maxSize: '15MB',
+          validation: 'Firma y registro',
+          tags: ['legal', 'poder'],
+          order: 1
+        },
+        { 
+          id: 302, 
+          name: 'Constancia Fiscal', 
+          description: 'Constancia de situación fiscal', 
+          required: true, 
+          format: 'PDF', 
+          maxSize: '5MB',
+          validation: 'Vigencia y RFC',
+          tags: ['obligatorio', 'fiscal'],
+          order: 2
+        },
+      ],
+      order: 3
     }
   ]);
 
   const [editDialog, setEditDialog] = useState(false);
   const [currentCategory, setCurrentCategory] = useState(null);
   const [currentDocument, setCurrentDocument] = useState(null);
-  const [editMode, setEditMode] = useState('category'); // 'category' or 'document'
+  const [editMode, setEditMode] = useState('category');
+  const [viewMode, setViewMode] = useState('list'); // 'list' o 'grid'
+  const [expandedCategory, setExpandedCategory] = useState(1);
+  const [generalConfig, setGeneralConfig] = useState({
+    maxExpedienteSize: '100',
+    daysToComplete: '30',
+    periodicReview: '180',
+    mainFormat: 'PDF',
+    autoValidation: true,
+    versionControl: true,
+    requireDigitalSignature: false,
+    retentionYears: '5',
+    maxDocumentsPerExpediente: '50'
+  });
 
   const handleAddCategory = () => {
     setEditMode('category');
     setCurrentCategory({
       id: Date.now(),
       name: '',
+      description: '',
       required: false,
-      documents: []
+      icon: '📁',
+      color: '#7f8c8d',
+      documents: [],
+      order: categories.length + 1
     });
     setEditDialog(true);
   };
@@ -93,14 +226,19 @@ const ConfigExpediente = () => {
 
   const handleAddDocument = (categoryId) => {
     setEditMode('document');
+    const category = categories.find(c => c.id === categoryId);
     setCurrentDocument({
       id: Date.now(),
       name: '',
+      description: '',
       required: false,
       format: 'PDF',
-      maxSize: '5MB'
+      maxSize: '5MB',
+      validation: '',
+      tags: [],
+      order: category.documents.length + 1
     });
-    setCurrentCategory(categories.find(c => c.id === categoryId));
+    setCurrentCategory(category);
     setEditDialog(true);
   };
 
@@ -174,323 +312,807 @@ const ConfigExpediente = () => {
     }));
   };
 
+  const handleCategoryExpand = (categoryId) => {
+    setExpandedCategory(expandedCategory === categoryId ? null : categoryId);
+  };
+
+  const handleGeneralConfigChange = (field) => (event) => {
+    const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+    setGeneralConfig({
+      ...generalConfig,
+      [field]: value
+    });
+  };
+
+  // Estadísticas
+  const stats = {
+    totalCategories: categories.length,
+    totalDocuments: categories.reduce((total, cat) => total + cat.documents.length, 0),
+    requiredDocuments: categories.reduce((total, cat) => 
+      total + cat.documents.filter(doc => doc.required).length, 0),
+    optionalDocuments: categories.reduce((total, cat) => 
+      total + cat.documents.filter(doc => !doc.required).length, 0),
+    requiredCategories: categories.filter(cat => cat.required).length
+  };
+
+  const formatOptions = ['PDF', 'JPG', 'PNG', 'DOC', 'DOCX', 'XLS', 'XLSX', 'TXT'];
+  const sizeOptions = ['1MB', '5MB', '10MB', '25MB', '50MB', '100MB'];
+  const tagOptions = ['obligatorio', 'identificación', 'fiscal', 'legal', 'profesional', 'domicilio', 'poder', 'opcional'];
+
   return (
-    <Box>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 1 }}>
-          Configuración de Expedientes
-        </Typography>
-        <Typography variant="body1" sx={{ color: '#7f8c8d' }}>
-          Defina la estructura y requisitos de los expedientes digitales
-        </Typography>
-      </Box>
+      <Box sx={{ mb: 3 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+          <Box>
+            <Typography variant="h5" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 0.5 }}>
+              Configuración de Expedientes
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+              Defina la estructura y requisitos de los expedientes digitales
+            </Typography>
+          </Box>
+          
+          <Stack direction="row" spacing={1}>
+            <Button
+              variant="outlined"
+              startIcon={<DownloadIcon />}
+              size="small"
+            >
+              Exportar Config
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={<UploadIcon />}
+              size="small"
+            >
+              Importar Config
+            </Button>
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={handleAddCategory}
+              sx={{ bgcolor: '#2c3e50' }}
+            >
+              Nueva Categoría
+            </Button>
+          </Stack>
+        </Box>
 
-      {/* Estadísticas */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ borderLeft: '4px solid #3498db' }}>
-            <CardContent>
-              <Typography variant="h3" sx={{ color: '#3498db', fontWeight: 'bold', mb: 1 }}>
-                {categories.length}
-              </Typography>
-              <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                Categorías
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ borderLeft: '4px solid #2ecc71' }}>
-            <CardContent>
-              <Typography variant="h3" sx={{ color: '#2ecc71', fontWeight: 'bold', mb: 1 }}>
-                {categories.reduce((total, cat) => total + cat.documents.length, 0)}
-              </Typography>
-              <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                Documentos Totales
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ borderLeft: '4px solid #f39c12' }}>
-            <CardContent>
-              <Typography variant="h3" sx={{ color: '#f39c12', fontWeight: 'bold', mb: 1 }}>
-                {categories.reduce((total, cat) => 
-                  total + cat.documents.filter(doc => doc.required).length, 0)}
-              </Typography>
-              <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                Obligatorios
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ borderLeft: '4px solid #9b59b6' }}>
-            <CardContent>
-              <Typography variant="h3" sx={{ color: '#9b59b6', fontWeight: 'bold', mb: 1 }}>
-                {categories.filter(cat => cat.required).length}
-              </Typography>
-              <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                Categorías Obligatorias
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-
-      {/* Botón agregar categoría */}
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={handleAddCategory}
-          sx={{ bgcolor: '#2c3e50', '&:hover': { bgcolor: '#34495e' } }}
-        >
-          Nueva Categoría
-        </Button>
-      </Box>
-
-      {/* Lista de categorías */}
-      <Grid container spacing={3}>
-        {categories.map((category) => (
-          <Grid item xs={12} key={category.id}>
-            <Card>
-              <CardContent>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <FolderIcon sx={{ mr: 2, color: category.required ? '#e74c3c' : '#7f8c8d' }} />
-                    <Box>
-                      <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
-                        {category.name}
-                      </Typography>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
-                        <Chip 
-                          label={category.required ? 'OBLIGATORIO' : 'OPCIONAL'} 
-                          color={category.required ? 'error' : 'default'}
-                          size="small"
-                        />
-                        <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                          {category.documents.length} documentos
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </Box>
-                  <Box>
-                    <IconButton 
-                      size="small" 
-                      onClick={() => handleEditCategory(category)}
-                      sx={{ color: '#3498db' }}
-                    >
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton 
-                      size="small" 
-                      onClick={() => handleDeleteCategory(category.id)}
-                      sx={{ color: '#e74c3c' }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </Box>
-                </Box>
-
-                <List>
-                  {category.documents.map((document) => (
-                    <ListItem 
-                      key={document.id}
-                      sx={{ 
-                        bgcolor: '#f8f9fa',
-                        mb: 1,
-                        borderRadius: 1
-                      }}
-                    >
-                      <ListItemIcon sx={{ minWidth: 36 }}>
-                        <DragIndicatorIcon sx={{ color: '#7f8c8d' }} />
-                      </ListItemIcon>
-                      <ListItemIcon sx={{ minWidth: 36 }}>
-                        <DescriptionIcon sx={{ color: document.required ? '#e74c3c' : '#7f8c8d' }} />
-                      </ListItemIcon>
-                      <ListItemText 
-                        primary={
-                          <Box>
-                            <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                              {document.name}
-                            </Typography>
-                            <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                              Formato: {document.format} • Máx: {document.maxSize}
-                            </Typography>
-                          </Box>
-                        }
-                      />
-                      <ListItemSecondaryAction>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <FormControlLabel
-                            control={
-                              <Switch
-                                size="small"
-                                checked={document.required}
-                                onChange={() => handleToggleRequired(category.id, document.id)}
-                                color="primary"
-                              />
-                            }
-                            label={
-                              <Typography variant="caption">
-                                {document.required ? 'Obligatorio' : 'Opcional'}
-                              </Typography>
-                            }
-                          />
-                          <IconButton 
-                            size="small" 
-                            onClick={() => handleEditDocument(category, document)}
-                            sx={{ color: '#f39c12' }}
-                          >
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton 
-                            size="small" 
-                            onClick={() => handleDeleteDocument(category.id, document.id)}
-                            sx={{ color: '#e74c3c' }}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </Box>
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                  ))}
-                </List>
-
-                <Button
-                  startIcon={<AddIcon />}
-                  size="small"
-                  onClick={() => handleAddDocument(category.id)}
-                  sx={{ mt: 2 }}
-                >
-                  Agregar Documento
-                </Button>
+        {/* Estadísticas */}
+        <Grid container spacing={2} sx={{ mb: 3 }}>
+          <Grid item xs={6} sm={4} md={2}>
+            <Card sx={{ borderLeft: '4px solid #3498db' }}>
+              <CardContent sx={{ p: 2, textAlign: 'center' }}>
+                <Typography variant="h4" sx={{ color: '#3498db', fontWeight: 'bold', mb: 0.5 }}>
+                  {stats.totalCategories}
+                </Typography>
+                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                  Categorías
+                </Typography>
               </CardContent>
             </Card>
           </Grid>
-        ))}
-      </Grid>
+          <Grid item xs={6} sm={4} md={2}>
+            <Card sx={{ borderLeft: '4px solid #2ecc71' }}>
+              <CardContent sx={{ p: 2, textAlign: 'center' }}>
+                <Typography variant="h4" sx={{ color: '#2ecc71', fontWeight: 'bold', mb: 0.5 }}>
+                  {stats.totalDocuments}
+                </Typography>
+                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                  Documentos
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={6} sm={4} md={2}>
+            <Card sx={{ borderLeft: '4px solid #f39c12' }}>
+              <CardContent sx={{ p: 2, textAlign: 'center' }}>
+                <Typography variant="h4" sx={{ color: '#f39c12', fontWeight: 'bold', mb: 0.5 }}>
+                  {stats.requiredDocuments}
+                </Typography>
+                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                  Obligatorios
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={6} sm={4} md={2}>
+            <Card sx={{ borderLeft: '4px solid #9b59b6' }}>
+              <CardContent sx={{ p: 2, textAlign: 'center' }}>
+                <Typography variant="h4" sx={{ color: '#9b59b6', fontWeight: 'bold', mb: 0.5 }}>
+                  {stats.optionalDocuments}
+                </Typography>
+                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                  Opcionales
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={6} sm={4} md={2}>
+            <Card sx={{ borderLeft: '4px solid #e74c3c' }}>
+              <CardContent sx={{ p: 2, textAlign: 'center' }}>
+                <Typography variant="h4" sx={{ color: '#e74c3c', fontWeight: 'bold', mb: 0.5 }}>
+                  {stats.requiredCategories}
+                </Typography>
+                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                  Cat. Obligatorias
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={6} sm={4} md={2}>
+            <Card sx={{ borderLeft: '4px solid #1abc9c' }}>
+              <CardContent sx={{ p: 2, textAlign: 'center' }}>
+                <Typography variant="h4" sx={{ color: '#1abc9c', fontWeight: 'bold', mb: 0.5 }}>
+                  {parseInt(generalConfig.maxExpedienteSize) * stats.totalDocuments}MB
+                </Typography>
+                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                  Capacidad Total
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      </Box>
 
-      {/* Configuración general */}
-      <Card sx={{ mt: 4 }}>
-        <CardContent>
-          <Typography variant="h6" sx={{ color: '#2c3e50', mb: 3, fontWeight: 'bold' }}>
-            Configuración General de Expedientes
-          </Typography>
+      {/* Contenido principal */}
+      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+        <Grid container spacing={2} sx={{ flex: 1 }}>
+          {/* Columna izquierda - Categorías y documentos */}
+          <Grid item xs={12} md={8} sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Paper elevation={1} sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+              <Box sx={{ 
+                p: 2, 
+                borderBottom: '1px solid #e0e0e0',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}>
+                <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
+                  Estructura del Expediente
+                </Typography>
+                
+                <Stack direction="row" spacing={1}>
+                  <Tooltip title="Vista de lista">
+                    <IconButton 
+                      size="small" 
+                      onClick={() => setViewMode('list')}
+                      color={viewMode === 'list' ? 'primary' : 'default'}
+                    >
+                      <ListIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Vista de grid">
+                    <IconButton 
+                      size="small" 
+                      onClick={() => setViewMode('grid')}
+                      color={viewMode === 'grid' ? 'primary' : 'default'}
+                    >
+                      <GridViewIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Ordenar">
+                    <IconButton size="small">
+                      <SortIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Filtrar">
+                    <IconButton size="small">
+                      <FilterIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Stack>
+              </Box>
 
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6} md={3}>
-              <TextField
-                fullWidth
-                label="Tamaño Máximo por Expediente"
-                defaultValue="100"
-                InputProps={{
-                  endAdornment: <Typography variant="caption">MB</Typography>,
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <TextField
-                fullWidth
-                label="Días para Completar Expediente"
-                defaultValue="30"
-                InputProps={{
-                  endAdornment: <Typography variant="caption">días</Typography>,
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <TextField
-                fullWidth
-                label="Revisión Periódica"
-                defaultValue="180"
-                InputProps={{
-                  endAdornment: <Typography variant="caption">días</Typography>,
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <TextField
-                fullWidth
-                select
-                label="Formato Principal"
-                defaultValue="PDF"
-              >
-                <MenuItem value="PDF">PDF</MenuItem>
-                <MenuItem value="JPG">JPG/PNG</MenuItem>
-                <MenuItem value="AMBOS">Ambos</MenuItem>
-              </TextField>
-            </Grid>
+              {/* Lista de categorías */}
+              <Box sx={{ flex: 1, overflowY: 'auto', p: 2 }}>
+                {viewMode === 'list' ? (
+                  // Vista de lista
+                  categories.sort((a, b) => a.order - b.order).map((category) => (
+                    <Accordion 
+                      key={category.id}
+                      expanded={expandedCategory === category.id}
+                      onChange={() => handleCategoryExpand(category.id)}
+                      sx={{ mb: 2, borderRadius: '8px !important' }}
+                    >
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                          <Box sx={{ 
+                            width: 40, 
+                            height: 40, 
+                            borderRadius: '8px',
+                            bgcolor: `${category.color}20`,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            mr: 2
+                          }}>
+                            <Typography variant="h5" sx={{ color: category.color }}>
+                              {category.icon}
+                            </Typography>
+                          </Box>
+                          
+                          <Box sx={{ flex: 1 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                              <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                {category.name}
+                              </Typography>
+                              {category.required && (
+                                <Chip 
+                                  label="OBLIGATORIO" 
+                                  size="small" 
+                                  color="error"
+                                  sx={{ height: 20, fontSize: '0.65rem' }}
+                                />
+                              )}
+                              <Chip 
+                                label={`${category.documents.length} docs`}
+                                size="small"
+                                variant="outlined"
+                                sx={{ height: 20, fontSize: '0.65rem' }}
+                              />
+                            </Box>
+                            <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                              {category.description}
+                            </Typography>
+                          </Box>
+                          
+                          <Stack direction="row" spacing={0.5}>
+                            <Tooltip title="Editar categoría">
+                              <IconButton 
+                                size="small"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleEditCategory(category);
+                                }}
+                              >
+                                <EditIcon fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Eliminar categoría">
+                              <IconButton 
+                                size="small"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteCategory(category.id);
+                                }}
+                              >
+                                <DeleteIcon fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                          </Stack>
+                        </Box>
+                      </AccordionSummary>
+                      
+                      <AccordionDetails>
+                        <Box sx={{ pl: 6 }}>
+                          {/* Lista de documentos */}
+                          <List sx={{ p: 0 }}>
+                            {category.documents.sort((a, b) => a.order - b.order).map((document) => (
+                              <ListItem 
+                                key={document.id}
+                                sx={{ 
+                                  p: 1.5,
+                                  mb: 1,
+                                  borderRadius: '6px',
+                                  bgcolor: '#f8f9fa',
+                                  borderLeft: `3px solid ${document.required ? '#e74c3c' : '#7f8c8d'}`
+                                }}
+                              >
+                                <ListItemIcon sx={{ minWidth: 36 }}>
+                                  <DragIndicatorIcon sx={{ color: '#7f8c8d' }} />
+                                </ListItemIcon>
+                                
+                                <ListItemIcon sx={{ minWidth: 36 }}>
+                                  <DescriptionIcon sx={{ color: document.required ? '#e74c3c' : '#7f8c8d' }} />
+                                </ListItemIcon>
+                                
+                                <Box sx={{ flex: 1 }}>
+                                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                                    <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                      {document.name}
+                                    </Typography>
+                                    {document.required ? (
+                                      <Chip 
+                                        label="OBLIGATORIO" 
+                                        size="small" 
+                                        color="error"
+                                        sx={{ height: 18, fontSize: '0.6rem' }}
+                                      />
+                                    ) : (
+                                      <Chip 
+                                        label="OPCIONAL" 
+                                        size="small" 
+                                        color="default"
+                                        sx={{ height: 18, fontSize: '0.6rem' }}
+                                      />
+                                    )}
+                                    {document.tags.map((tag, idx) => (
+                                      <Chip 
+                                        key={idx}
+                                        label={tag}
+                                        size="small"
+                                        variant="outlined"
+                                        sx={{ height: 18, fontSize: '0.6rem' }}
+                                      />
+                                    ))}
+                                  </Box>
+                                  
+                                  <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', mb: 1 }}>
+                                    {document.description}
+                                  </Typography>
+                                  
+                                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                      <strong>Formato:</strong> {document.format}
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                      <strong>Máx:</strong> {document.maxSize}
+                                    </Typography>
+                                    {document.validation && (
+                                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                        <strong>Validación:</strong> {document.validation}
+                                      </Typography>
+                                    )}
+                                  </Box>
+                                </Box>
+                                
+                                <ListItemSecondaryAction>
+                                  <Stack direction="row" spacing={0.5}>
+                                    <Tooltip title={document.required ? "Marcar como opcional" : "Marcar como obligatorio"}>
+                                      <FormControlLabel
+                                        control={
+                                          <Switch
+                                            size="small"
+                                            checked={document.required}
+                                            onChange={() => handleToggleRequired(category.id, document.id)}
+                                            color="primary"
+                                          />
+                                        }
+                                        label=""
+                                      />
+                                    </Tooltip>
+                                    <Tooltip title="Editar documento">
+                                      <IconButton 
+                                        size="small"
+                                        onClick={() => handleEditDocument(category, document)}
+                                      >
+                                        <EditIcon fontSize="small" />
+                                      </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="Eliminar documento">
+                                      <IconButton 
+                                        size="small"
+                                        onClick={() => handleDeleteDocument(category.id, document.id)}
+                                      >
+                                        <DeleteIcon fontSize="small" />
+                                      </IconButton>
+                                    </Tooltip>
+                                  </Stack>
+                                </ListItemSecondaryAction>
+                              </ListItem>
+                            ))}
+                          </List>
+                          
+                          <Button
+                            startIcon={<AddIcon />}
+                            size="small"
+                            onClick={() => handleAddDocument(category.id)}
+                            sx={{ mt: 2 }}
+                          >
+                            Agregar Documento a esta Categoría
+                          </Button>
+                        </Box>
+                      </AccordionDetails>
+                    </Accordion>
+                  ))
+                ) : (
+                  // Vista de grid
+                  <Grid container spacing={2}>
+                    {categories.sort((a, b) => a.order - b.order).map((category) => (
+                      <Grid item xs={12} md={6} key={category.id}>
+                        <Card sx={{ height: '100%' }}>
+                          <CardContent>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                <Box sx={{ 
+                                  width: 48, 
+                                  height: 48, 
+                                  borderRadius: '8px',
+                                  bgcolor: `${category.color}20`,
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center'
+                                }}>
+                                  <Typography variant="h4" sx={{ color: category.color }}>
+                                    {category.icon}
+                                  </Typography>
+                                </Box>
+                                <Box>
+                                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                    {category.name}
+                                  </Typography>
+                                  <Chip 
+                                    label={category.required ? "OBLIGATORIO" : "OPCIONAL"}
+                                    size="small"
+                                    color={category.required ? "error" : "default"}
+                                    sx={{ height: 20, fontSize: '0.65rem' }}
+                                  />
+                                </Box>
+                              </Box>
+                              
+                              <Stack direction="row" spacing={0.5}>
+                                <IconButton size="small">
+                                  <EditIcon fontSize="small" />
+                                </IconButton>
+                              </Stack>
+                            </Box>
+                            
+                            <Typography variant="body2" sx={{ color: '#7f8c8d', mb: 2 }}>
+                              {category.description}
+                            </Typography>
+                            
+                            <Box sx={{ mb: 2 }}>
+                              <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', mb: 1 }}>
+                                Documentos ({category.documents.length}):
+                              </Typography>
+                              <Stack spacing={1}>
+                                {category.documents.slice(0, 3).map((doc) => (
+                                  <Box 
+                                    key={doc.id}
+                                    sx={{ 
+                                      p: 1,
+                                      borderRadius: '4px',
+                                      bgcolor: '#f8f9fa',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'space-between'
+                                    }}
+                                  >
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                      <DescriptionIcon sx={{ fontSize: 16, color: doc.required ? '#e74c3c' : '#7f8c8d' }} />
+                                      <Typography variant="caption" sx={{ color: '#2c3e50' }}>
+                                        {doc.name}
+                                      </Typography>
+                                    </Box>
+                                    <Chip 
+                                      label={doc.required ? "Req" : "Opc"}
+                                      size="small"
+                                      sx={{ 
+                                        height: 16,
+                                        fontSize: '0.6rem',
+                                        bgcolor: doc.required ? '#ffebee' : '#f5f5f5'
+                                      }}
+                                    />
+                                  </Box>
+                                ))}
+                              </Stack>
+                            </Box>
+                            
+                            <Button
+                              fullWidth
+                              size="small"
+                              variant="outlined"
+                              onClick={() => handleCategoryExpand(category.id)}
+                            >
+                              Ver todos los documentos
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      </Grid>
+                    ))}
+                  </Grid>
+                )}
+              </Box>
+            </Paper>
           </Grid>
 
-          <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
-            <Button
-              variant="contained"
-              startIcon={<SaveIcon />}
-              sx={{ minWidth: 200 }}
-            >
-              Guardar Configuración
-            </Button>
-          </Box>
-        </CardContent>
-      </Card>
+          {/* Columna derecha - Configuración general */}
+          <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Paper elevation={1} sx={{ p: 2, mb: 2, flex: 1 }}>
+              <Typography variant="h6" sx={{ color: '#2c3e50', mb: 3, fontWeight: 'bold' }}>
+                Configuración General
+              </Typography>
+
+              <Stack spacing={3}>
+                <Box>
+                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
+                    Tamaño Máximo por Expediente
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    value={generalConfig.maxExpedienteSize}
+                    onChange={handleGeneralConfigChange('maxExpedienteSize')}
+                    InputProps={{
+                      endAdornment: <InputAdornment position="end">MB</InputAdornment>,
+                    }}
+                  />
+                </Box>
+                
+                <Box>
+                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
+                    Días para Completar Expediente
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    value={generalConfig.daysToComplete}
+                    onChange={handleGeneralConfigChange('daysToComplete')}
+                    InputProps={{
+                      endAdornment: <InputAdornment position="end">días</InputAdornment>,
+                    }}
+                  />
+                </Box>
+                
+                <Box>
+                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
+                    Revisión Periódica
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    value={generalConfig.periodicReview}
+                    onChange={handleGeneralConfigChange('periodicReview')}
+                    InputProps={{
+                      endAdornment: <InputAdornment position="end">días</InputAdornment>,
+                    }}
+                  />
+                </Box>
+                
+                <Box>
+                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
+                    Formato Principal
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    select
+                    value={generalConfig.mainFormat}
+                    onChange={handleGeneralConfigChange('mainFormat')}
+                  >
+                    <MenuItem value="PDF">PDF</MenuItem>
+                    <MenuItem value="JPG">JPG/PNG</MenuItem>
+                    <MenuItem value="AMBOS">Ambos</MenuItem>
+                    <MenuItem value="MULTI">Múltiples formatos</MenuItem>
+                  </TextField>
+                </Box>
+                
+                <Divider />
+                
+                <Box>
+                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 2 }}>
+                    Opciones Avanzadas
+                  </Typography>
+                  
+                  <Stack spacing={1.5}>
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          size="small"
+                          checked={generalConfig.autoValidation}
+                          onChange={handleGeneralConfigChange('autoValidation')}
+                        />
+                      }
+                      label="Validación Automática"
+                    />
+                    
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          size="small"
+                          checked={generalConfig.versionControl}
+                          onChange={handleGeneralConfigChange('versionControl')}
+                        />
+                      }
+                      label="Control de Versiones"
+                    />
+                    
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          size="small"
+                          checked={generalConfig.requireDigitalSignature}
+                          onChange={handleGeneralConfigChange('requireDigitalSignature')}
+                        />
+                      }
+                      label="Firma Digital Requerida"
+                    />
+                  </Stack>
+                </Box>
+                
+                <Box>
+                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
+                    Retención de Documentos
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    value={generalConfig.retentionYears}
+                    onChange={handleGeneralConfigChange('retentionYears')}
+                    InputProps={{
+                      endAdornment: <InputAdornment position="end">años</InputAdornment>,
+                    }}
+                  />
+                </Box>
+                
+                <Box>
+                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
+                    Máx. Documentos por Expediente
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    value={generalConfig.maxDocumentsPerExpediente}
+                    onChange={handleGeneralConfigChange('maxDocumentsPerExpediente')}
+                  />
+                </Box>
+              </Stack>
+              
+              <Button
+                fullWidth
+                variant="contained"
+                startIcon={<SaveIcon />}
+                sx={{ mt: 3 }}
+              >
+                Guardar Configuración
+              </Button>
+            </Paper>
+
+            {/* Resumen */}
+            <Paper elevation={1} sx={{ p: 2 }}>
+              <Typography variant="h6" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
+                Resumen del Expediente
+              </Typography>
+              
+              <Stack spacing={1.5}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                    Categorías configuradas:
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                    {stats.totalCategories}
+                  </Typography>
+                </Box>
+                
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                    Documentos totales:
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                    {stats.totalDocuments}
+                  </Typography>
+                </Box>
+                
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                    Documentos obligatorios:
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                    {stats.requiredDocuments}
+                  </Typography>
+                </Box>
+                
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                    Tamaño máximo:
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                    {generalConfig.maxExpedienteSize} MB
+                  </Typography>
+                </Box>
+                
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                    Tiempo para completar:
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                    {generalConfig.daysToComplete} días
+                  </Typography>
+                </Box>
+              </Stack>
+              
+              <Box sx={{ mt: 2, p: 1.5, bgcolor: '#f8f9fa', borderRadius: '6px' }}>
+                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                  <strong>Nota:</strong> Los cambios se aplican a todos los nuevos expedientes. Los expedientes existentes mantienen su configuración original.
+                </Typography>
+              </Box>
+            </Paper>
+          </Grid>
+        </Grid>
+      </Box>
 
       {/* Diálogo de edición */}
-      <Dialog open={editDialog} onClose={() => setEditDialog(false)} maxWidth="sm" fullWidth>
+      <Dialog 
+        open={editDialog} 
+        onClose={() => setEditDialog(false)} 
+        maxWidth="sm" 
+        fullWidth
+        PaperProps={{
+          sx: { borderRadius: '12px' }
+        }}
+      >
         <DialogTitle>
           {editMode === 'category' ? 
             (currentCategory?.id > 100 ? 'Nueva Categoría' : 'Editar Categoría') : 
             (currentDocument?.id > 1000 ? 'Nuevo Documento' : 'Editar Documento')}
         </DialogTitle>
+        
         <DialogContent>
           {editMode === 'category' ? (
-            <Grid container spacing={2} sx={{ mt: 1 }}>
-              <Grid item xs={12}>
+            <Stack spacing={2} sx={{ mt: 1 }}>
+              <TextField
+                fullWidth
+                label="Nombre de la Categoría"
+                value={currentCategory?.name || ''}
+                onChange={(e) => setCurrentCategory({...currentCategory, name: e.target.value})}
+              />
+              
+              <TextField
+                fullWidth
+                label="Descripción"
+                multiline
+                rows={2}
+                value={currentCategory?.description || ''}
+                onChange={(e) => setCurrentCategory({...currentCategory, description: e.target.value})}
+              />
+              
+              <Box sx={{ display: 'flex', gap: 2 }}>
                 <TextField
                   fullWidth
-                  label="Nombre de la Categoría"
-                  value={currentCategory?.name || ''}
-                  onChange={(e) => setCurrentCategory({...currentCategory, name: e.target.value})}
+                  label="Ícono"
+                  value={currentCategory?.icon || ''}
+                  onChange={(e) => setCurrentCategory({...currentCategory, icon: e.target.value})}
+                  helperText="Emoji o código"
                 />
-              </Grid>
-              <Grid item xs={12}>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={currentCategory?.required || false}
-                      onChange={(e) => setCurrentCategory({...currentCategory, required: e.target.checked})}
-                      color="primary"
-                    />
-                  }
-                  label="Categoría Obligatoria"
+                
+                <TextField
+                  fullWidth
+                  type="color"
+                  label="Color"
+                  value={currentCategory?.color || '#7f8c8d'}
+                  onChange={(e) => setCurrentCategory({...currentCategory, color: e.target.value})}
                 />
-              </Grid>
-            </Grid>
+              </Box>
+              
+              <TextField
+                fullWidth
+                label="Orden"
+                type="number"
+                value={currentCategory?.order || 1}
+                onChange={(e) => setCurrentCategory({...currentCategory, order: parseInt(e.target.value)})}
+              />
+              
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={currentCategory?.required || false}
+                    onChange={(e) => setCurrentCategory({...currentCategory, required: e.target.checked})}
+                  />
+                }
+                label="Categoría Obligatoria"
+              />
+            </Stack>
           ) : (
-            <Grid container spacing={2} sx={{ mt: 1 }}>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Nombre del Documento"
-                  value={currentDocument?.name || ''}
-                  onChange={(e) => setCurrentDocument({...currentDocument, name: e.target.value})}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={currentDocument?.required || false}
-                      onChange={(e) => setCurrentDocument({...currentDocument, required: e.target.checked})}
-                      color="primary"
-                    />
-                  }
-                  label="Documento Obligatorio"
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
+            <Stack spacing={2} sx={{ mt: 1 }}>
+              <TextField
+                fullWidth
+                label="Nombre del Documento"
+                value={currentDocument?.name || ''}
+                onChange={(e) => setCurrentDocument({...currentDocument, name: e.target.value})}
+              />
+              
+              <TextField
+                fullWidth
+                label="Descripción"
+                multiline
+                rows={2}
+                value={currentDocument?.description || ''}
+                onChange={(e) => setCurrentDocument({...currentDocument, description: e.target.value})}
+              />
+              
+              <Box sx={{ display: 'flex', gap: 2 }}>
                 <TextField
                   fullWidth
                   select
@@ -498,14 +1120,11 @@ const ConfigExpediente = () => {
                   value={currentDocument?.format || 'PDF'}
                   onChange={(e) => setCurrentDocument({...currentDocument, format: e.target.value})}
                 >
-                  <MenuItem value="PDF">PDF</MenuItem>
-                  <MenuItem value="JPG">JPG</MenuItem>
-                  <MenuItem value="PNG">PNG</MenuItem>
-                  <MenuItem value="DOC">DOC/DOCX</MenuItem>
-                  <MenuItem value="OTRO">Otro</MenuItem>
+                  {formatOptions.map(format => (
+                    <MenuItem key={format} value={format}>{format}</MenuItem>
+                  ))}
                 </TextField>
-              </Grid>
-              <Grid item xs={12} sm={6}>
+                
                 <TextField
                   fullWidth
                   select
@@ -513,16 +1132,49 @@ const ConfigExpediente = () => {
                   value={currentDocument?.maxSize || '5MB'}
                   onChange={(e) => setCurrentDocument({...currentDocument, maxSize: e.target.value})}
                 >
-                  <MenuItem value="1MB">1 MB</MenuItem>
-                  <MenuItem value="5MB">5 MB</MenuItem>
-                  <MenuItem value="10MB">10 MB</MenuItem>
-                  <MenuItem value="25MB">25 MB</MenuItem>
-                  <MenuItem value="50MB">50 MB</MenuItem>
+                  {sizeOptions.map(size => (
+                    <MenuItem key={size} value={size}>{size}</MenuItem>
+                  ))}
                 </TextField>
-              </Grid>
-            </Grid>
+              </Box>
+              
+              <TextField
+                fullWidth
+                label="Validación Requerida"
+                value={currentDocument?.validation || ''}
+                onChange={(e) => setCurrentDocument({...currentDocument, validation: e.target.value})}
+                helperText="Ej: OCR, Vigencia, Firma, etc."
+              />
+              
+              <TextField
+                fullWidth
+                label="Etiquetas"
+                value={currentDocument?.tags?.join(', ') || ''}
+                onChange={(e) => setCurrentDocument({...currentDocument, tags: e.target.value.split(', ')})}
+                helperText="Separar por comas"
+              />
+              
+              <TextField
+                fullWidth
+                label="Orden"
+                type="number"
+                value={currentDocument?.order || 1}
+                onChange={(e) => setCurrentDocument({...currentDocument, order: parseInt(e.target.value)})}
+              />
+              
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={currentDocument?.required || false}
+                    onChange={(e) => setCurrentDocument({...currentDocument, required: e.target.checked})}
+                  />
+                }
+                label="Documento Obligatorio"
+              />
+            </Stack>
           )}
         </DialogContent>
+        
         <DialogActions>
           <Button onClick={() => setEditDialog(false)}>Cancelar</Button>
           <Button 

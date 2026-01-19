@@ -21,27 +21,8 @@ const AuthLayout = () => {
     >
       <Container maxWidth="sm">
         <Box sx={{ textAlign: 'center', mb: 4 }}>
-          <Typography variant="h2" sx={{ 
-            color: userTheme.primary, 
-            fontWeight: 'bold', 
-            mb: 1,
-            letterSpacing: '1px'
-          }}>
-            SICAG
-          </Typography>
-          <Typography variant="h6" sx={{ 
-            color: '#7f8c8d',
-            fontWeight: 500
-          }}>
-            LUIS RODRIGUEZ
-          </Typography>
-          <Typography variant="body1" sx={{ 
-            color: '#7f8c8d', 
-            mt: 2,
-            fontSize: '0.95rem'
-          }}>
-            Sistema Integral de Consultoría y Asesoría Gerencial
-          </Typography>
+          
+            
         </Box>
         <Outlet />
       </Container>

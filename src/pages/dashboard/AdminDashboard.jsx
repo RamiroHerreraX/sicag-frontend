@@ -17,7 +17,10 @@ import {
   TableHead,
   TableRow,
   IconButton,
-  LinearProgress
+  LinearProgress,
+  Badge,
+  Avatar,
+  AvatarGroup
 } from '@mui/material';
 import {
   People as PeopleIcon,
@@ -29,38 +32,47 @@ import {
   Download as DownloadIcon,
   Visibility as VisibilityIcon,
   CheckCircle as CheckCircleIcon,
-  Cancel as CancelIcon
+  Cancel as CancelIcon,
+  Refresh as RefreshIcon,
+  FilterList as FilterIcon,
+  MoreVert as MoreIcon
 } from '@mui/icons-material';
 
 const AdminDashboard = () => {
-  // Datos mock para el dashboard de admin
+  // Datos mock optimizados para vista compacta
   const systemStats = [
-    { title: 'Usuarios Activos', value: '156', change: '+12%', icon: <PeopleIcon />, color: '#3498db' },
-    { title: 'Certificaciones Hoy', value: '24', change: '+5%', icon: <DescriptionIcon />, color: '#2ecc71' },
-    { title: 'Pendientes Revisión', value: '18', change: '-3%', icon: <WarningIcon />, color: '#f39c12' },
-    { title: 'Tasa Cumplimiento', value: '92%', change: '+2%', icon: <TrendingUpIcon />, color: '#9b59b6' },
+    { title: 'Usuarios Activos', value: '156', change: '+12%', icon: <PeopleIcon />, color: '#3498db', trend: 'up', detail: 'De 180 totales' },
+    { title: 'Certificaciones Hoy', value: '24', change: '+5%', icon: <DescriptionIcon />, color: '#2ecc71', trend: 'up', detail: 'Meta: 30 diarias' },
+    { title: 'Pendientes Revisión', value: '18', change: '-3%', icon: <WarningIcon />, color: '#f39c12', trend: 'down', detail: 'Reducción semanal' },
+    { title: 'Tasa Cumplimiento', value: '92%', change: '+2%', icon: <TrendingUpIcon />, color: '#9b59b6', trend: 'up', detail: 'Óptimo: >90%' },
   ];
 
   const alerts = [
-    { id: 1, type: 'warning', title: 'Certificaciones Pendientes', count: 5, icon: <WarningIcon /> },
-    { id: 2, type: 'error', title: 'Usuarios Inactivos', count: 8, icon: <PeopleIcon /> },
-    { id: 3, type: 'info', title: 'Vencimientos Próx.', count: 12, icon: <NotificationsIcon /> },
-    { id: 4, type: 'success', title: 'Sistema OK', count: 0, icon: <CheckCircleIcon /> },
+    { id: 1, type: 'warning', title: 'Certificaciones Pendientes', count: 5, icon: <WarningIcon />, time: 'Ahora' },
+    { id: 2, type: 'error', title: 'Usuarios Inactivos', count: 8, icon: <PeopleIcon />, time: '2 días' },
+    { id: 3, type: 'info', title: 'Vencimientos Próx.', count: 12, icon: <NotificationsIcon />, time: 'Próxima sem.' },
+    { id: 4, type: 'success', title: 'Sistema OK', count: 0, icon: <CheckCircleIcon />, time: 'Actualizado' },
   ];
 
   const recentActivities = [
-    { id: 1, user: 'Luis Rodríguez', action: 'Nueva certificación', time: 'Hace 15 min', type: 'add' },
-    { id: 2, user: 'María González', action: 'Certificación aprobada', time: 'Hace 30 min', type: 'approve' },
-    { id: 3, user: 'Carlos Martínez', action: 'Usuario creado', time: 'Hace 1 hora', type: 'user' },
-    { id: 4, user: 'Ana López', action: 'Config. actualizada', time: 'Hace 2 horas', type: 'config' },
-    { id: 5, user: 'Pedro Sánchez', action: 'Reporte generado', time: 'Hace 3 horas', type: 'report' },
+    { id: 1, user: 'Luis Rodríguez', action: 'Nueva certificación', time: '15 min', type: 'add', avatar: 'LR' },
+    { id: 2, user: 'María González', action: 'Certificación aprobada', time: '30 min', type: 'approve', avatar: 'MG' },
+    { id: 3, user: 'Carlos Martínez', action: 'Usuario creado', time: '1 h', type: 'user', avatar: 'CM' },
+    { id: 4, user: 'Ana López', action: 'Config. actualizada', time: '2 h', type: 'config', avatar: 'AL' },
   ];
 
   const regionalStats = [
-    { region: 'Norte', users: 45, certifications: 120, compliance: 95, status: 'excelente' },
-    { region: 'Centro', users: 68, certifications: 180, compliance: 92, status: 'bueno' },
-    { region: 'Sur', users: 32, certifications: 85, compliance: 88, status: 'regular' },
-    { region: 'Metropolitana', users: 56, certifications: 150, compliance: 96, status: 'excelente' },
+    { region: 'Norte', users: 45, certifications: 120, compliance: 95, status: 'excelente', trend: '+3%' },
+    { region: 'Centro', users: 68, certifications: 180, compliance: 92, status: 'bueno', trend: '+1%' },
+    { region: 'Sur', users: 32, certifications: 85, compliance: 88, status: 'regular', trend: '-2%' },
+    { region: 'Metropolitana', users: 56, certifications: 150, compliance: 96, status: 'excelente', trend: '+4%' },
+  ];
+
+  const committeeDashboard = [
+    { type: 'PATENTE ADUANAL', user: 'Luis Rodríguez', region: 'Norte', date: '15/01/2026', status: 'PENDIENTE', priority: 'alta', days: 2 },
+    { type: 'OPINIÓN SAT', user: 'Carlos Martínez', region: 'Sur', date: '14/01/2026', status: 'EN REVISIÓN', priority: 'media', days: 1 },
+    { type: 'CÉDULA PROFESIONAL', user: 'Ana López', region: 'Centro', date: '13/01/2026', status: 'PENDIENTE', priority: 'baja', days: 3 },
+    { type: 'PODER NOTARIAL', user: 'Pedro Sánchez', region: 'Metropolitana', date: '12/01/2026', status: 'REQUIERE INFO', priority: 'alta', days: 4 },
   ];
 
   const getStatusColor = (status) => {
@@ -75,236 +87,464 @@ const AdminDashboard = () => {
 
   const getActivityIcon = (type) => {
     switch(type) {
-      case 'add': return <DescriptionIcon sx={{ color: '#3498db' }} />;
-      case 'approve': return <CheckCircleIcon sx={{ color: '#27ae60' }} />;
-      case 'user': return <PeopleIcon sx={{ color: '#9b59b6' }} />;
-      case 'config': return <SettingsIcon sx={{ color: '#f39c12' }} />;
-      case 'report': return <DownloadIcon sx={{ color: '#34495e' }} />;
-      default: return <NotificationsIcon />;
+      case 'add': return <DescriptionIcon sx={{ color: '#3498db', fontSize: 16 }} />;
+      case 'approve': return <CheckCircleIcon sx={{ color: '#27ae60', fontSize: 16 }} />;
+      case 'user': return <PeopleIcon sx={{ color: '#9b59b6', fontSize: 16 }} />;
+      case 'config': return <SettingsIcon sx={{ color: '#f39c12', fontSize: 16 }} />;
+      case 'report': return <DownloadIcon sx={{ color: '#34495e', fontSize: 16 }} />;
+      default: return <NotificationsIcon sx={{ fontSize: 16 }} />;
+    }
+  };
+
+  const getPriorityBadge = (priority) => {
+    switch(priority) {
+      case 'alta': return { color: '#e74c3c', label: 'ALTA' };
+      case 'media': return { color: '#f39c12', label: 'MEDIA' };
+      case 'baja': return { color: '#3498db', label: 'BAJA' };
+      default: return { color: '#7f8c8d', label: 'NORMAL' };
     }
   };
 
   return (
-    <Box>
-      {/* Header */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 1 }}>
-          Dashboard Administrativo
-        </Typography>
-        <Typography variant="body1" sx={{ color: '#7f8c8d' }}>
-          Vista completa del sistema SICAG - Monitoreo y control total
-        </Typography>
+    <Box sx={{ 
+      p: 2.5,
+      backgroundColor: '#f5f7fa',
+      minHeight: '100vh',
+      maxWidth: '100vw',
+      overflowX: 'hidden'
+    }}>
+      {/* Header compacto */}
+      <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1.5 }}>
+        <Box>
+          <Typography variant="h5" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 0.5 }}>
+            Dashboard Administrativo
+          </Typography>
+          <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+            Vista completa del sistema SICAG - Monitoreo y control total
+          </Typography>
+        </Box>
+        
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button
+            variant="outlined"
+            size="small"
+            startIcon={<RefreshIcon />}
+          >
+            Actualizar
+          </Button>
+          <Button
+            variant="contained"
+            size="small"
+            startIcon={<DownloadIcon />}
+            sx={{ bgcolor: '#3498db' }}
+          >
+            Exportar
+          </Button>
+        </Box>
       </Box>
 
-      {/* Estadísticas del sistema */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        {systemStats.map((stat, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
-            <Card sx={{ height: '100%', borderLeft: `4px solid ${stat.color}` }}>
-              <CardContent>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <Box>
-                    <Typography variant="h3" sx={{ color: stat.color, fontWeight: 'bold', mb: 1 }}>
-                      {stat.value}
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#7f8c8d', mb: 1 }}>
-                      {stat.title}
-                    </Typography>
-                    <Chip 
-                      label={stat.change}
-                      size="small"
-                      color={stat.change.includes('+') ? 'success' : 'error'}
-                      sx={{ fontSize: '0.7rem' }}
-                    />
-                  </Box>
-                  <Box sx={{ color: stat.color, fontSize: 40 }}>
-                    {stat.icon}
-                  </Box>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-
-      <Grid container spacing={3}>
-        {/* Columna izquierda - Alertas y actividades */}
-        <Grid item xs={12} md={8}>
-          {/* Alertas del sistema */}
-          <Card sx={{ mb: 3 }}>
-            <CardContent>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
-                  Alertas del Sistema
-                </Typography>
-                <Button size="small" startIcon={<SettingsIcon />}>
-                  Configurar Alertas
-                </Button>
-              </Box>
-
-              <Grid container spacing={2}>
-                {alerts.map((alert) => (
-                  <Grid item xs={12} sm={6} key={alert.id}>
-                    <Paper 
-                      variant="outlined" 
-                      sx={{ 
-                        p: 2, 
-                        borderLeft: `4px solid ${
-                          alert.type === 'warning' ? '#f39c12' :
-                          alert.type === 'error' ? '#e74c3c' :
-                          alert.type === 'info' ? '#3498db' : '#27ae60'
-                        }`
-                      }}
-                    >
-                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                          <Box sx={{ 
-                            color: alert.type === 'warning' ? '#f39c12' :
-                                   alert.type === 'error' ? '#e74c3c' :
-                                   alert.type === 'info' ? '#3498db' : '#27ae60',
-                            mr: 2
-                          }}>
-                            {alert.icon}
+      {/* Layout principal: 2 columnas */}
+      <Grid container spacing={2}>
+        {/* Columna izquierda (más ancha) */}
+        <Grid item xs={12} lg={8}>
+          {/* KPI Cards - Reducidas */}
+          <Grid container spacing={2} sx={{ mb: 3 }}>
+            {systemStats.map((stat, index) => (
+              <Grid item xs={12} sm={6} md={3} key={index}>
+                <Card sx={{ 
+                  height: '100%', 
+                  borderLeft: `4px solid ${stat.color}`,
+                  transition: 'transform 0.2s',
+                  '&:hover': { transform: 'translateY(-2px)' }
+                }}>
+                  <CardContent sx={{ p: 2 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <Box sx={{ flex: 1 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                          <Box sx={{ color: stat.color }}>
+                            {stat.icon}
                           </Box>
-                          <Box>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                              {alert.title}
-                            </Typography>
-                            <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                              {alert.count > 0 ? `${alert.count} elementos` : 'Todo en orden'}
-                            </Typography>
-                          </Box>
+                          <Typography variant="caption" sx={{ color: '#7f8c8d', fontWeight: 500 }}>
+                            {stat.title}
+                          </Typography>
                         </Box>
-                        {alert.count > 0 && (
-                          <Chip 
-                            label={alert.count}
-                            size="small"
-                            color={alert.type === 'warning' ? 'warning' :
-                                   alert.type === 'error' ? 'error' :
-                                   alert.type === 'info' ? 'info' : 'success'}
-                          />
-                        )}
+                        <Typography variant="h4" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 0.5 }}>
+                          {stat.value}
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: '#95a5a6', display: 'block', mb: 1 }}>
+                          {stat.detail}
+                        </Typography>
+                        <Chip 
+                          label={stat.change}
+                          size="small"
+                          sx={{
+                            bgcolor: stat.trend === 'up' ? '#2ecc7120' : '#e74c3c20',
+                            color: stat.trend === 'up' ? '#27ae60' : '#e74c3c',
+                            fontWeight: 'bold',
+                            fontSize: '0.7rem',
+                            height: 20
+                          }}
+                        />
                       </Box>
-                    </Paper>
-                  </Grid>
-                ))}
+                    </Box>
+                  </CardContent>
+                </Card>
               </Grid>
-            </CardContent>
-          </Card>
+            ))}
+          </Grid>
 
-          {/* Actividad reciente */}
+          {/* Dos columnas dentro de la izquierda */}
+          <Grid container spacing={2} sx={{ mb: 2 }}>
+            {/* Alertas del sistema - Compactas */}
+            <Grid item xs={12} md={6}>
+              <Card>
+                <CardContent sx={{ p: 2 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                    <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold', fontSize: '1rem' }}>
+                      Alertas del Sistema
+                    </Typography>
+                    <IconButton size="small">
+                      <SettingsIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
+
+                  <Stack spacing={1.5}>
+                    {alerts.map((alert) => (
+                      <Paper 
+                        key={alert.id}
+                        variant="outlined" 
+                        sx={{ 
+                          p: 1.5, 
+                          borderLeft: `4px solid ${
+                            alert.type === 'warning' ? '#f39c12' :
+                            alert.type === 'error' ? '#e74c3c' :
+                            alert.type === 'info' ? '#3498db' : '#27ae60'
+                          }`
+                        }}
+                      >
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                            <Box sx={{ 
+                              color: alert.type === 'warning' ? '#f39c12' :
+                                     alert.type === 'error' ? '#e74c3c' :
+                                     alert.type === 'info' ? '#3498db' : '#27ae60'
+                            }}>
+                              {alert.icon}
+                            </Box>
+                            <Box>
+                              <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                {alert.title}
+                              </Typography>
+                              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                {alert.time}
+                              </Typography>
+                            </Box>
+                          </Box>
+                          {alert.count > 0 ? (
+                            <Badge 
+                              badgeContent={alert.count}
+                              color={alert.type === 'warning' ? 'warning' : 
+                                     alert.type === 'error' ? 'error' : 'info'}
+                              sx={{ '& .MuiBadge-badge': { fontWeight: 'bold' } }}
+                            />
+                          ) : (
+                            <CheckCircleIcon sx={{ color: '#27ae60', fontSize: 20 }} />
+                          )}
+                        </Box>
+                      </Paper>
+                    ))}
+                  </Stack>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Actividad reciente - Compacta */}
+            <Grid item xs={12} md={6}>
+              <Card>
+                <CardContent sx={{ p: 2 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                    <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold', fontSize: '1rem' }}>
+                      Actividad Reciente
+                    </Typography>
+                    <Button size="small" startIcon={<DownloadIcon />} sx={{ fontSize: '0.75rem' }}>
+                      Exportar
+                    </Button>
+                  </Box>
+
+                  <Stack spacing={1.5}>
+                    {recentActivities.map((activity) => (
+                      <Box
+                        key={activity.id}
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1.5,
+                          p: 1.5,
+                          borderRadius: 1,
+                          backgroundColor: '#f8f9fa',
+                          '&:hover': {
+                            backgroundColor: '#ecf0f1'
+                          }
+                        }}
+                      >
+                        <Avatar sx={{ 
+                          width: 32, 
+                          height: 32,
+                          fontSize: '0.75rem',
+                          bgcolor: activity.type === 'add' ? '#3498db' :
+                                   activity.type === 'approve' ? '#27ae60' :
+                                   activity.type === 'user' ? '#9b59b6' : '#f39c12'
+                        }}>
+                          {activity.avatar}
+                        </Avatar>
+                        <Box sx={{ flex: 1 }}>
+                          <Typography variant="body2" sx={{ fontWeight: '600', color: '#2c3e50' }}>
+                            {activity.user}
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                            {activity.action}
+                          </Typography>
+                        </Box>
+                        <Typography variant="caption" sx={{ 
+                          color: '#95a5a6',
+                          bgcolor: '#f1f5f9',
+                          px: 1,
+                          py: 0.25,
+                          borderRadius: 2,
+                          fontWeight: '500'
+                        }}>
+                          {activity.time}
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Stack>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+
+          {/* Dashboard del Comité - Compacto */}
           <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
-                  Actividad Reciente del Sistema
+            <CardContent sx={{ p: 2 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold', fontSize: '1rem' }}>
+                  Dashboard del Comité
                 </Typography>
-                <Button size="small" startIcon={<DownloadIcon />}>
-                  Exportar Log
-                </Button>
+                <Box sx={{ display: 'flex', gap: 0.5 }}>
+                  <Chip 
+                    label="5 PENDIENTES" 
+                    size="small"
+                    color="warning"
+                    sx={{ fontSize: '0.65rem', height: 22 }}
+                  />
+                  <Chip 
+                    label="3 VENCIMIENTOS" 
+                    size="small"
+                    color="error"
+                    sx={{ fontSize: '0.65rem', height: 22 }}
+                  />
+                </Box>
               </Box>
 
               <TableContainer>
                 <Table size="small">
                   <TableHead>
-                    <TableRow>
-                      <TableCell sx={{ fontWeight: 'bold', color: '#2c3e50' }}>Usuario</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', color: '#2c3e50' }}>Acción</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', color: '#2c3e50' }}>Hora</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', color: '#2c3e50' }}>Ver</TableCell>
+                    <TableRow sx={{ backgroundColor: '#f8f9fa' }}>
+                      <TableCell sx={{ fontWeight: 'bold', py: 1, fontSize: '0.75rem' }}>Tipo</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', py: 1, fontSize: '0.75rem' }}>Usuario</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', py: 1, fontSize: '0.75rem' }}>Fecha</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', py: 1, fontSize: '0.75rem' }}>Estado</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', py: 1, fontSize: '0.75rem' }}>Acción</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {recentActivities.map((activity) => (
-                      <TableRow key={activity.id} hover>
-                        <TableCell>
-                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            {getActivityIcon(activity.type)}
-                            <Typography sx={{ ml: 1, fontWeight: 'medium' }}>
-                              {activity.user}
-                            </Typography>
-                          </Box>
-                        </TableCell>
-                        <TableCell>{activity.action}</TableCell>
-                        <TableCell>
-                          <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                            {activity.time}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <IconButton size="small">
-                            <VisibilityIcon fontSize="small" />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    {committeeDashboard.map((row, index) => {
+                      const priority = getPriorityBadge(row.priority);
+                      return (
+                        <TableRow 
+                          key={index} 
+                          hover
+                          sx={{ '&:last-child td': { borderBottom: 0 } }}
+                        >
+                          <TableCell sx={{ py: 1 }}>
+                            <Box>
+                              <Typography variant="body2" sx={{ fontWeight: '500', color: '#2c3e50' }}>
+                                {row.type}
+                              </Typography>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
+                                <Chip 
+                                  label={priority.label}
+                                  size="small"
+                                  sx={{
+                                    bgcolor: `${priority.color}15`,
+                                    color: priority.color,
+                                    fontWeight: 'bold',
+                                    fontSize: '0.65rem',
+                                    height: 18
+                                  }}
+                                />
+                                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                  {row.region}
+                                </Typography>
+                              </Box>
+                            </Box>
+                          </TableCell>
+                          <TableCell sx={{ py: 1, fontSize: '0.875rem' }}>{row.user}</TableCell>
+                          <TableCell sx={{ py: 1, fontSize: '0.875rem' }}>{row.date}</TableCell>
+                          <TableCell sx={{ py: 1 }}>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                              <Chip 
+                                label={row.status}
+                                size="small"
+                                sx={{
+                                  bgcolor: row.status === 'PENDIENTE' ? '#f39c1220' :
+                                           row.status === 'EN REVISIÓN' ? '#3498db20' :
+                                           '#e74c3c20',
+                                  color: row.status === 'PENDIENTE' ? '#d35400' :
+                                         row.status === 'EN REVISIÓN' ? '#2980b9' :
+                                         '#c0392b',
+                                  fontWeight: 'bold',
+                                  fontSize: '0.7rem',
+                                  height: 20
+                                }}
+                              />
+                              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                {row.days} días
+                              </Typography>
+                            </Box>
+                          </TableCell>
+                          <TableCell sx={{ py: 1 }}>
+                            <Button 
+                              size="small" 
+                              variant="outlined"
+                              sx={{ 
+                                fontSize: '0.75rem',
+                                py: 0.25,
+                                minWidth: 'auto'
+                              }}
+                            >
+                              Evaluar
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </TableContainer>
+
+              <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center', 
+                mt: 2,
+                pt: 1.5,
+                borderTop: '1px solid #ecf0f1'
+              }}>
+                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                  Mostrando 4 de 18 certificaciones
+                </Typography>
+                <Button 
+                  size="small"
+                  startIcon={<DownloadIcon />}
+                  sx={{ fontSize: '0.75rem' }}
+                >
+                  Reporte completo
+                </Button>
+              </Box>
             </CardContent>
           </Card>
         </Grid>
 
-        {/* Columna derecha - Estadísticas regionales */}
-        <Grid item xs={12} md={4}>
-          <Card sx={{ height: '100%' }}>
-            <CardContent>
-              <Typography variant="h6" sx={{ color: '#2c3e50', mb: 3, fontWeight: 'bold' }}>
-                Cumplimiento por Región
-              </Typography>
+        {/* Columna derecha (más estrecha) */}
+        <Grid item xs={12} lg={4}>
+          <Stack spacing={2}>
+            {/* Cumplimiento por región */}
+            <Card>
+              <CardContent sx={{ p: 2 }}>
+                <Typography variant="h6" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold', fontSize: '1rem' }}>
+                  Cumplimiento por Región
+                </Typography>
 
-              <Stack spacing={3}>
-                {regionalStats.map((region, index) => (
-                  <Box key={index}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                      <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                        {region.region}
-                      </Typography>
-                      <Chip 
-                        label={`${region.compliance}%`}
-                        size="small"
-                        sx={{ 
-                          bgcolor: getStatusColor(region.status),
-                          color: 'white',
-                          fontWeight: 'bold'
-                        }}
-                      />
-                    </Box>
+                <Stack spacing={2}>
+                  {regionalStats.map((region, index) => (
+                    <Box key={index}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                          {region.region}
+                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                          <Typography variant="caption" sx={{ 
+                            color: region.trend.startsWith('+') ? '#27ae60' : '#e74c3c',
+                            fontWeight: 'bold'
+                          }}>
+                            {region.trend}
+                          </Typography>
+                          <Chip 
+                            label={`${region.compliance}%`}
+                            size="small"
+                            sx={{ 
+                              bgcolor: `${getStatusColor(region.status)}20`,
+                              color: getStatusColor(region.status),
+                              fontWeight: 'bold',
+                              fontSize: '0.7rem',
+                              height: 20
+                            }}
+                          />
+                        </Box>
+                      </Box>
 
-                    <Box sx={{ mb: 1 }}>
                       <LinearProgress 
                         variant="determinate" 
                         value={region.compliance}
                         sx={{ 
-                          height: 8,
-                          borderRadius: 4,
-                          backgroundColor: '#f0f0f0',
+                          height: 6,
+                          borderRadius: 3,
+                          backgroundColor: '#ecf0f1',
+                          mb: 1,
                           '& .MuiLinearProgress-bar': {
-                            backgroundColor: getStatusColor(region.status)
+                            backgroundColor: getStatusColor(region.status),
+                            borderRadius: 3
                           }
                         }}
                       />
-                    </Box>
 
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        👥 {region.users} usuarios
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        📄 {region.certifications} certs.
-                      </Typography>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                          👥 {region.users} usuarios
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                          📄 {region.certifications} certs.
+                        </Typography>
+                      </Box>
                     </Box>
+                  ))}
+                </Stack>
+
+                <Divider sx={{ my: 2 }} />
+
+                {/* Estado del sistema */}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                  <CheckCircleIcon sx={{ color: '#27ae60' }} />
+                  <Box>
+                    <Typography variant="subtitle2" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
+                      Sistema Operativo
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                      Todos los servicios funcionando
+                    </Typography>
                   </Box>
-                ))}
-              </Stack>
+                </Box>
+              </CardContent>
+            </Card>
 
-              <Divider sx={{ my: 3 }} />
-
-              {/* Acciones rápidas */}
-              <Box>
-                <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
+            {/* Acciones rápidas */}
+            <Card>
+              <CardContent sx={{ p: 2 }}>
+                <Typography variant="h6" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold', fontSize: '1rem' }}>
                   Acciones Rápidas
                 </Typography>
+                
                 <Grid container spacing={1}>
                   <Grid item xs={6}>
                     <Button
@@ -312,7 +552,11 @@ const AdminDashboard = () => {
                       variant="outlined"
                       size="small"
                       startIcon={<PeopleIcon />}
-                      sx={{ justifyContent: 'flex-start' }}
+                      sx={{ 
+                        justifyContent: 'flex-start',
+                        fontSize: '0.75rem',
+                        py: 0.75
+                      }}
                     >
                       Gestionar Usuarios
                     </Button>
@@ -323,7 +567,11 @@ const AdminDashboard = () => {
                       variant="outlined"
                       size="small"
                       startIcon={<DescriptionIcon />}
-                      sx={{ justifyContent: 'flex-start' }}
+                      sx={{ 
+                        justifyContent: 'flex-start',
+                        fontSize: '0.75rem',
+                        py: 0.75
+                      }}
                     >
                       Ver Reportes
                     </Button>
@@ -334,7 +582,11 @@ const AdminDashboard = () => {
                       variant="outlined"
                       size="small"
                       startIcon={<SettingsIcon />}
-                      sx={{ justifyContent: 'flex-start' }}
+                      sx={{ 
+                        justifyContent: 'flex-start',
+                        fontSize: '0.75rem',
+                        py: 0.75
+                      }}
                     >
                       Configurar
                     </Button>
@@ -345,101 +597,60 @@ const AdminDashboard = () => {
                       variant="outlined"
                       size="small"
                       startIcon={<NotificationsIcon />}
-                      sx={{ justifyContent: 'flex-start' }}
+                      sx={{ 
+                        justifyContent: 'flex-start',
+                        fontSize: '0.75rem',
+                        py: 0.75
+                      }}
                     >
                       Alertas
                     </Button>
                   </Grid>
                 </Grid>
-              </Box>
-            </CardContent>
-          </Card>
+
+                <Divider sx={{ my: 2 }} />
+
+                {/* Usuarios activos */}
+                <Box>
+                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1, fontWeight: 'bold' }}>
+                    Usuarios Activos Ahora
+                  </Typography>
+                  <AvatarGroup max={6} sx={{ justifyContent: 'flex-start', '& .MuiAvatar-root': { width: 28, height: 28, fontSize: '0.75rem' } }}>
+                    {['LR', 'MG', 'CM', 'AL', 'PS', 'JR', 'MM', 'RS'].map((initials, idx) => (
+                      <Avatar key={idx} sx={{ bgcolor: ['#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#e74c3c', '#34495e'][idx % 6] }}>
+                        {initials}
+                      </Avatar>
+                    ))}
+                  </AvatarGroup>
+                  <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', mt: 0.5 }}>
+                    8 usuarios activos en este momento
+                  </Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          </Stack>
         </Grid>
       </Grid>
 
-      {/* Sección inferior - Dashboard del Comité */}
-      <Card sx={{ mt: 4 }}>
-        <CardContent>
-          <Typography variant="h6" sx={{ color: '#2c3e50', mb: 3, fontWeight: 'bold' }}>
-            Dashboard del Comité - Vista Administrativa
-          </Typography>
-
-          <TableContainer>
-            <Table>
-              <TableHead sx={{ bgcolor: '#f5f7fa' }}>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold', color: '#2c3e50' }}>Tipo</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', color: '#2c3e50' }}>Asociado</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', color: '#2c3e50' }}>Región</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', color: '#2c3e50' }}>Fecha de Carga</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', color: '#2c3e50' }}>Estado</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', color: '#2c3e50' }}>Estatus</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', color: '#2c3e50' }}>Acciones</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {[
-                  { type: 'PATENTE ADUANAL', user: 'Luis Rodríguez', region: 'Norte', date: '15/01/2026', status: 'PENDIENTE', committeeStatus: 'REVISAR' },
-                  { type: 'OPINIÓN SAT', user: 'Carlos Martínez', region: 'Sur', date: '14/01/2026', status: 'EN REVISIÓN', committeeStatus: 'EN PROCESO' },
-                  { type: 'CÉDULA PROFESIONAL', user: 'Ana López', region: 'Centro', date: '13/01/2026', status: 'PENDIENTE', committeeStatus: 'N/A' },
-                  { type: 'PODER NOTARIAL', user: 'Pedro Sánchez', region: 'Metropolitana', date: '12/01/2026', status: 'REQUIERE INFO', committeeStatus: 'N/A' },
-                ].map((row, index) => (
-                  <TableRow key={index} hover>
-                    <TableCell>
-                      <Typography sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                        {row.type}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>{row.user}</TableCell>
-                    <TableCell>{row.region}</TableCell>
-                    <TableCell>{row.date}</TableCell>
-                    <TableCell>
-                      <Chip 
-                        label={row.status}
-                        size="small"
-                        color={
-                          row.status === 'PENDIENTE' ? 'warning' :
-                          row.status === 'EN REVISIÓN' ? 'info' :
-                          row.status === 'REQUIERE INFO' ? 'error' : 'default'
-                        }
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Chip 
-                        label={row.committeeStatus}
-                        size="small"
-                        variant="outlined"
-                        color={row.committeeStatus === 'REVISAR' ? 'primary' : 'default'}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Stack direction="row" spacing={1}>
-                        <Button size="small" variant="outlined">
-                          Evaluar
-                        </Button>
-                        <IconButton size="small">
-                          <VisibilityIcon fontSize="small" />
-                        </IconButton>
-                      </Stack>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 3 }}>
-            <Box>
-              <Chip label="5 CERTIFICACIONES PENDIENTES" color="warning" variant="outlined" sx={{ mr: 1 }} />
-              <Chip label="5 VALIDADAS HOY" color="success" variant="outlined" sx={{ mr: 1 }} />
-              <Chip label="3 VENCIMIENTOS" color="error" variant="outlined" />
-            </Box>
-            <Button variant="contained" startIcon={<DownloadIcon />}>
-              Descargar Reporte
-            </Button>
-          </Box>
-        </CardContent>
-      </Card>
+      {/* Footer compacto */}
+      <Box sx={{ 
+        mt: 3,
+        pt: 2,
+        borderTop: '1px solid #dfe6e9',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: 1
+      }}>
+        <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+          SICAG v2.1 • Última actualización: Hoy 10:30 AM
+        </Typography>
+        <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <CheckCircleIcon sx={{ fontSize: 12, color: '#27ae60' }} />
+          Sistema al 100%
+        </Typography>
+      </Box>
     </Box>
   );
 };

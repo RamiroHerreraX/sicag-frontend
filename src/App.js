@@ -43,6 +43,8 @@ import Profile from './pages/profile/Profile';
 import UserManagement from './pages/admin/UserManagement';
 import UserReview from './pages/admin/UserReview';
 import SystemConfig from './pages/admin/SystemConfig';
+import Reports from './pages/admin/Reports';
+import AuditLog from './pages/audit/AuditLog';
 
 // Committee Modules
 import CommitteeReview from './pages/committee/CommitteeReview';
@@ -128,6 +130,8 @@ function App() {
               <Route path="/admin/users/:id/review" element={<UserReview />} />
               <Route path="/admin/system-config" element={<SystemConfig />} />
               <Route path="/admin/expediente-config" element={<ExpedienteConfig />} />
+              <Route path="/admin/reports" element={<Reports />} />
+              <Route path="/admin/audit" element={<AuditLog />} />
             </Route>
 
             {/* Redirección por defecto */}
