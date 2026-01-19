@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Grid,
@@ -45,6 +46,7 @@ import {
 } from '@mui/icons-material';
 
 const Expediente = () => {
+  const navigate = useNavigate();
   const [editMode, setEditMode] = useState(false);
   const [expanded, setExpanded] = useState('panel1');
   const [addDialog, setAddDialog] = useState(false);
@@ -76,6 +78,13 @@ const Expediente = () => {
   const handleSave = () => {
     setEditMode(false);
     // En una implementación real, aquí se enviarían los datos al servidor
+  };
+
+  const handleUploadCertification = () => {
+    navigate('/new-user-certification');
+  };
+  const handleSeeCertification = () => {
+    navigate('/vista-certification');
   };
 
   // Datos complementarios (reorganizados según la imagen)
@@ -191,67 +200,143 @@ const Expediente = () => {
           >
             Exportar Expediente
           </Button>
-          <Button
-            variant={editMode ? 'contained' : 'outlined'}
-            startIcon={<EditIcon />}
-            onClick={() => setEditMode(!editMode)}
-            color={editMode ? 'success' : 'primary'}
-          >
-            {editMode ? 'Guardar Cambios' : 'Modificar'}
-          </Button>
+          {/* Botón Modificar eliminado - Solo queda el botón de Exportar */}
         </Stack>
       </Box>
 
-      {/* Indicador de cumplimiento */}
+      {/* Nivel de Cumplimiento con Resumen de Estado integrado - CORREGIDO */}
       <Card sx={{ mb: 4, bgcolor: compliance >= 90 ? '#e8f5e9' : 
                                      compliance >= 70 ? '#fffde7' : '#ffebee' }}>
         <CardContent>
-          <Grid container alignItems="center" spacing={2}>
-            <Grid item xs={12} md={8}>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold', mr: 2 }}>
-                  Nivel de Cumplimiento
-                </Typography>
-                <Chip 
-                  label={compliance >= 90 ? 'ALTO CUMPLIMIENTO' : 
-                         compliance >= 70 ? 'CUMPLIMIENTO MEDIO' : 'CUMPLIMIENTO BAJO'}
-                  color={compliance >= 90 ? 'success' : 
-                         compliance >= 70 ? 'warning' : 'error'}
-                  size="small"
-                />
-              </Box>
-              <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                {compliance >= 90 ? 'Tu expediente está completo y vigente' : 
-                 compliance >= 70 ? 'Faltan algunos documentos por completar' : 
-                 'Requiere atención inmediata para completar la documentación'}
-              </Typography>
+          <Grid container alignItems="center" spacing={3}>
+            {/* Sección izquierda: Porcentaje + Información de estado */}
+            <Grid item xs={12} md={7}>
+              <Grid container spacing={2} alignItems="center">
+                {/* Porcentaje grande */}
+                <Grid item xs={4} sm={3} md={3}>
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Typography variant="h2" sx={{ 
+                      color: compliance >= 90 ? '#27ae60' : 
+                             compliance >= 70 ? '#f39c12' : '#e74c3c',
+                      fontWeight: 'bold',
+                      mb: 0.5,
+                      fontSize: { xs: '3rem', sm: '3.5rem' }
+                    }}>
+                      {compliance}%
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: '#7f8c8d', fontWeight: '500' }}>
+                      Cumplimiento
+                    </Typography>
+                  </Box>
+                </Grid>
+                
+                {/* Separador vertical */}
+                <Grid item xs="auto" sx={{ display: { xs: 'none', sm: 'block' } }}>
+                  <Divider orientation="vertical" sx={{ height: '60px' }} />
+                </Grid>
+                
+                {/* Información de estado y progreso */}
+                <Grid item xs={8} sm={8} md={8}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, flexWrap: 'wrap', gap: 1 }}>
+                    <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold', fontSize: '1.1rem' }}>
+                      Nivel de Cumplimiento
+                    </Typography>
+                    <Chip 
+                      label={compliance >= 90 ? 'ALTO CUMPLIMIENTO' : 
+                             compliance >= 70 ? 'CUMPLIMIENTO MEDIO' : 'CUMPLIMIENTO BAJO'}
+                      color={compliance >= 90 ? 'success' : 
+                             compliance >= 70 ? 'warning' : 'error'}
+                      size="small"
+                      sx={{ height: '24px' }}
+                    />
+                  </Box>
+                  <Typography variant="body2" sx={{ color: '#7f8c8d', mb: 2 }}>
+                    {compliance >= 90 ? 'Tu expediente está completo y vigente' : 
+                     compliance >= 70 ? 'Faltan algunos documentos por completar' : 
+                     'Requiere atención inmediata para completar la documentación'}
+                  </Typography>
+                  
+                  <LinearProgress 
+                    variant="determinate" 
+                    value={compliance}
+                    sx={{ 
+                      height: 8,
+                      borderRadius: 5,
+                      backgroundColor: '#f0f0f0',
+                      '& .MuiLinearProgress-bar': {
+                        backgroundColor: compliance >= 90 ? '#27ae60' : 
+                                         compliance >= 70 ? '#f39c12' : '#e74c3c'
+                      }
+                    }}
+                  />
+                </Grid>
+              </Grid>
             </Grid>
+            
+            {/* Separador vertical principal */}
+            <Grid item xs="auto" sx={{ display: { xs: 'none', md: 'block' } }}>
+              <Divider orientation="vertical" sx={{ height: '80px' }} />
+            </Grid>
+            
+            {/* Sección derecha: Estadísticas del Resumen de Estado */}
             <Grid item xs={12} md={4}>
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="h2" sx={{ 
-                  color: compliance >= 90 ? '#27ae60' : 
-                         compliance >= 70 ? '#f39c12' : '#e74c3c',
-                  fontWeight: 'bold'
-                }}>
-                  {compliance}%
-                </Typography>
-                <LinearProgress 
-                  variant="determinate" 
-                  value={compliance}
-                  sx={{ 
-                    height: 10,
-                    borderRadius: 5,
-                    mt: 1,
-                    backgroundColor: '#f0f0f0',
-                    '& .MuiLinearProgress-bar': {
-                      backgroundColor: compliance >= 90 ? '#27ae60' : 
-                                       compliance >= 70 ? '#f39c12' : '#e74c3c'
-                    }
-                  }}
-                />
-              </Box>
+              <Grid container spacing={1.5}>
+                {/* Primera fila de estadísticas */}
+                <Grid item xs={6}>
+                  <Paper sx={{ p: 1.5, textAlign: 'center', borderRadius: 2, height: '100%' }}>
+                    <Typography variant="h5" sx={{ color: '#27ae60', fontWeight: 'bold', mb: 0.5 }}>
+                      3/5
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: '#7f8c8d', fontWeight: '500', fontSize: '0.7rem' }}>
+                      Certificaciones Vigentes
+                    </Typography>
+                  </Paper>
+                </Grid>
+                
+                <Grid item xs={6}>
+                  <Paper sx={{ p: 1.5, textAlign: 'center', borderRadius: 2, height: '100%' }}>
+                    <Typography variant="h5" sx={{ color: '#f39c12', fontWeight: 'bold', mb: 0.5 }}>
+                      2
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: '#7f8c8d', fontWeight: '500', fontSize: '0.7rem' }}>
+                      Próx. Vencimientos
+                    </Typography>
+                  </Paper>
+                </Grid>
+                
+                {/* Segunda fila de estadísticas */}
+                <Grid item xs={6}>
+                  <Paper sx={{ p: 1.5, textAlign: 'center', borderRadius: 2, height: '100%' }}>
+                    <Typography variant="h5" sx={{ color: '#e74c3c', fontWeight: 'bold', mb: 0.5 }}>
+                      1
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: '#7f8c8d', fontWeight: '500', fontSize: '0.7rem' }}>
+                      Observaciones
+                    </Typography>
+                  </Paper>
+                </Grid>
+                
+                <Grid item xs={6}>
+                  <Paper sx={{ p: 1.5, textAlign: 'center', borderRadius: 2, height: '100%' }}>
+                    <Typography variant="h6" sx={{ color: '#3498db', fontWeight: 'bold', mb: 0.5, fontSize: '1rem' }}>
+                      15/03/26
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: '#7f8c8d', fontWeight: '500', fontSize: '0.7rem' }}>
+                      Próx. Revisión
+                    </Typography>
+                  </Paper>
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
+          
+          <Divider sx={{ my: 2 }} />
+          
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+              El expediente se revisa semestralmente para mantenerlo actualizado.
+            </Typography>
+          </Box>
         </CardContent>
       </Card>
 
@@ -433,6 +518,7 @@ const Expediente = () => {
                           size="small"
                           startIcon={<VisibilityIcon />}
                           variant="outlined"
+                          onClick={handleSeeCertification}
                           sx={{ 
                             fontSize: '0.75rem', 
                             py: 0.5,
@@ -446,6 +532,7 @@ const Expediente = () => {
                           size="small"
                           startIcon={<CloudUploadIcon />}
                           variant="outlined"
+                          onClick={handleUploadCertification}
                           sx={{ 
                             fontSize: '0.75rem', 
                             py: 0.5,
@@ -789,76 +876,6 @@ const Expediente = () => {
                   </Button>
                 </Box>
               )}
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-
-      {/* Resumen de estado abajo de todo */}
-      <Grid container spacing={3} sx={{ mt: 2 }}>
-        <Grid item xs={12}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" sx={{ color: '#2c3e50', mb: 3, fontWeight: 'bold' }}>
-                Resumen de Estado
-              </Typography>
-              
-              <Grid container spacing={3}>
-                <Grid item xs={12} sm={6} md={3}>
-                  <Paper sx={{ p: 2, textAlign: 'center', borderRadius: 2 }}>
-                    <Typography variant="h4" sx={{ color: '#27ae60', fontWeight: 'bold', mb: 1 }}>
-                      {compliance}%
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#7f8c8d', fontWeight: '500' }}>
-                      Documentos Completos
-                    </Typography>
-                  </Paper>
-                </Grid>
-                
-                <Grid item xs={12} sm={6} md={3}>
-                  <Paper sx={{ p: 2, textAlign: 'center', borderRadius: 2 }}>
-                    <Typography variant="h4" sx={{ color: '#27ae60', fontWeight: 'bold', mb: 1 }}>
-                      3/5
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#7f8c8d', fontWeight: '500' }}>
-                      Certificaciones Vigentes
-                    </Typography>
-                  </Paper>
-                </Grid>
-                
-                <Grid item xs={12} sm={6} md={3}>
-                  <Paper sx={{ p: 2, textAlign: 'center', borderRadius: 2 }}>
-                    <Typography variant="h4" sx={{ color: '#f39c12', fontWeight: 'bold', mb: 1 }}>
-                      2
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#7f8c8d', fontWeight: '500' }}>
-                      Próximos Vencimientos
-                    </Typography>
-                  </Paper>
-                </Grid>
-                
-                <Grid item xs={12} sm={6} md={3}>
-                  <Paper sx={{ p: 2, textAlign: 'center', borderRadius: 2 }}>
-                    <Typography variant="h4" sx={{ color: '#e74c3c', fontWeight: 'bold', mb: 1 }}>
-                      1
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#7f8c8d', fontWeight: '500' }}>
-                      Observaciones Pendientes
-                    </Typography>
-                  </Paper>
-                </Grid>
-              </Grid>
-
-              <Divider sx={{ my: 3 }} />
-
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="body2" sx={{ color: '#7f8c8d', mb: 1 }}>
-                  <strong>Próxima Revisión:</strong> 15/03/2026
-                </Typography>
-                <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block' }}>
-                  El expediente se revisa semestralmente para mantenerlo actualizado.
-                </Typography>
-              </Box>
             </CardContent>
           </Card>
         </Grid>
