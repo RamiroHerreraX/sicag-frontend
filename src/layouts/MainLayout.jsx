@@ -17,7 +17,8 @@ import {
   Divider,
   Badge,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
+  alpha
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
@@ -33,8 +34,8 @@ import {
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 
-const drawerWidth = 200; // Reducido de 240
-const collapsedDrawerWidth = 60; // Reducido de 70
+const drawerWidth = 200; // Mantenido igual
+const collapsedDrawerWidth = 60; // Mantenido igual
 
 const MainLayout = () => {
   const { user, logout } = useAuth();
@@ -45,12 +46,16 @@ const MainLayout = () => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [open, setOpen] = React.useState(!isMobile);
 
-  // COLORES según nuestro diseño anterior
-  const primaryColor = '#526F78';
+  // COLORES VIVOS como en las imágenes de MANIFESTA+
+  const primaryColor = '#2E86C1'; // Azul vivo más brillante
+  const accentColor = '#1ABC9C'; // Color acento verde azulado como en la imagen
   const sidebarColor = '#FFFFFF';
   const activeColor = '#E8F4F8';
+  const hoverColor = '#F0F8FF'; // Azul muy claro para hover
   const textColor = '#000000';
-  const iconColor = '#526F78';
+  const lightTextColor = '#666666';
+  const iconColor = '#2E86C1';
+  const appBarGradient = 'linear-gradient(135deg, #2E86C1 0%, #3498DB 100%)'; // Gradiente más vivo
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -74,7 +79,6 @@ const MainLayout = () => {
     { text: 'MAPA DEL SITIO', icon: <SiteMapIcon />, path: '/sitemap' },
   ];
 
-  // Contenido del drawer modificado
   const drawerContent = (
     <Box sx={{ 
       display: 'flex', 
@@ -85,7 +89,7 @@ const MainLayout = () => {
     }}>
       {/* ESPACIO EN LA PARTE SUPERIOR PARA BAJAR EL CONTENIDO */}
       <Box sx={{ 
-        flex: 0, // Ajustado de 1 a 0
+        flex: 0,
         minHeight: 'auto',
         display: 'flex',
         alignItems: 'flex-start',
@@ -105,7 +109,7 @@ const MainLayout = () => {
                   fontWeight: 700,
                   fontSize: '0.8rem',
                   letterSpacing: '1px',
-                  color: '#000000',
+                  color: primaryColor, // Azul vivo
                   textTransform: 'uppercase',
                   textAlign: 'left',
                   lineHeight: 1.2,
@@ -115,8 +119,9 @@ const MainLayout = () => {
                 Funcionalidades
               </Typography>
               <Divider sx={{ 
-                backgroundColor: '#526F78',
-                opacity: 0.3,
+                backgroundColor: primaryColor, // Azul vivo
+                opacity: 0.5,
+                height: '2px',
               }} />
             </Box>
           ) : (
@@ -126,7 +131,7 @@ const MainLayout = () => {
                 sx={{ 
                   fontWeight: 700,
                   fontSize: '0.9rem',
-                  color: '#000000',
+                  color: primaryColor, // Azul vivo
                   lineHeight: 1.2,
                   mb: 0.5,
                 }}
@@ -134,8 +139,9 @@ const MainLayout = () => {
                 F
               </Typography>
               <Divider sx={{ 
-                backgroundColor: '#526F78',
-                opacity: 0.3,
+                backgroundColor: primaryColor, // Azul vivo
+                opacity: 0.5,
+                height: '2px',
               }} />
             </Box>
           )}
@@ -149,84 +155,92 @@ const MainLayout = () => {
         flexDirection: 'column',
         justifyContent: 'flex-start',
         minHeight: '50vh',
-        mt: 1, // Añadido margen superior para separar de la etiqueta
+        mt: 1,
       }}>
         <List sx={{ 
           padding: theme.spacing(1.5),
         }}>
-          {menuItems.map((item) => (
-            <ListItem 
-              key={item.text} 
-              disablePadding 
-              component={Link}
-              to={item.path}
-              sx={{ 
-                display: 'block',
-                textDecoration: 'none',
-                color: 'inherit',
-                marginBottom: 1,
-              }}
-            >
-              <ListItemButton
-                selected={location.pathname === item.path}
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? 'flex-start' : 'center',
-                  px: 2,
-                  py: 1.25,
-                  borderRadius: '4px',
-                  marginTop: 0.5,
-                  marginBottom: 0.5,
-                  '&.Mui-selected': {
-                    backgroundColor: activeColor,
-                    color: primaryColor,
-                    '&:hover': {
-                      backgroundColor: activeColor,
-                    },
-                    '& .MuiTypography-root': {
-                      fontWeight: 600,
-                      color: primaryColor,
-                    },
-                    '& .MuiListItemIcon-root': {
-                      color: primaryColor,
-                    }
-                  },
-                  '&:hover': {
-                    backgroundColor: '#f5f5f5',
-                  },
+          {menuItems.map((item) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <ListItem 
+                key={item.text} 
+                disablePadding 
+                component={Link}
+                to={item.path}
+                sx={{ 
+                  display: 'block',
+                  textDecoration: 'none',
+                  color: 'inherit',
+                  marginBottom: 1,
                 }}
               >
-                <ListItemIcon
+                <ListItemButton
+                  selected={isActive}
                   sx={{
-                    minWidth: 0,
-                    mr: open ? 2 : 'auto',
-                    justifyContent: 'center',
-                    color: iconColor,
+                    minHeight: 48,
+                    justifyContent: open ? 'flex-start' : 'center',
+                    px: 2,
+                    py: 1.25,
+                    borderRadius: '8px', // Bordes más redondeados
+                    marginTop: 0.5,
+                    marginBottom: 0.5,
+                    backgroundColor: isActive ? activeColor : 'transparent',
+                    borderLeft: isActive ? `3px solid ${accentColor}` : '3px solid transparent',
+                    transition: 'all 0.2s ease',
+                    '&.Mui-selected': {
+                      backgroundColor: activeColor,
+                      color: primaryColor,
+                      '&:hover': {
+                        backgroundColor: alpha(activeColor, 0.9),
+                      },
+                      '& .MuiTypography-root': {
+                        fontWeight: 700,
+                        color: primaryColor,
+                      },
+                      '& .MuiListItemIcon-root': {
+                        color: accentColor,
+                      }
+                    },
+                    '&:hover': {
+                      backgroundColor: hoverColor,
+                      transform: 'translateX(2px)',
+                    },
                   }}
                 >
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText 
-                  primary={item.text} 
-                  sx={{ 
-                    opacity: open ? 1 : 0,
-                    '& .MuiTypography-root': {
-                      fontSize: '0.8125rem',
-                      fontWeight: 500,
-                      letterSpacing: '0.3px',
-                      color: textColor,
-                    }
-                  }} 
-                />
-              </ListItemButton>
-            </ListItem>
-          ))}
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 2 : 'auto',
+                      justifyContent: 'center',
+                      color: isActive ? accentColor : iconColor,
+                      fontSize: '1.25rem',
+                    }}
+                  >
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText 
+                    primary={item.text} 
+                    sx={{ 
+                      opacity: open ? 1 : 0,
+                      '& .MuiTypography-root': {
+                        fontSize: '0.8125rem',
+                        fontWeight: isActive ? 700 : 500,
+                        letterSpacing: '0.3px',
+                        color: isActive ? primaryColor : textColor,
+                      }
+                    }} 
+                  />
+                </ListItemButton>
+              </ListItem>
+            );
+          })}
         </List>
       </Box>
 
       {/* Footer del Drawer - EN LA PARTE INFERIOR */}
       <Box sx={{ 
-        mt: 'auto', // Empuja hacia abajo automáticamente
+        mt: 'auto',
         p: 2, 
         borderTop: '1px solid #e0e0e0',
         backgroundColor: '#f8f9fa',
@@ -234,10 +248,12 @@ const MainLayout = () => {
         {open && (
           <Box sx={{ mb: 2 }}>
             <Typography variant="caption" sx={{ 
-              color: '#666',
+              color: primaryColor, // Azul vivo
               fontSize: '0.75rem',
+              fontWeight: 600,
               display: 'block',
               textAlign: 'center',
+              letterSpacing: '0.5px',
             }}>
               SICAG v1.0
             </Typography>
@@ -249,15 +265,20 @@ const MainLayout = () => {
             onClick={handleLogout}
             fullWidth
             sx={{
-              backgroundColor: '#f0f0f0',
-              color: textColor,
+              backgroundColor: '#FFFFFF',
+              color: primaryColor, // Azul vivo
+              border: '1px solid #e0e0e0',
               '&:hover': {
-                backgroundColor: '#e0e0e0',
+                backgroundColor: hoverColor,
+                borderColor: primaryColor,
+                transform: 'translateY(-1px)',
               },
               padding: '10px',
-              borderRadius: '4px',
+              borderRadius: '8px',
               textTransform: 'none',
               justifyContent: 'flex-start',
+              fontWeight: 600,
+              transition: 'all 0.2s ease',
             }}
           >
             Cerrar sesión
@@ -266,14 +287,18 @@ const MainLayout = () => {
           <IconButton
             onClick={handleLogout}
             sx={{
-              backgroundColor: '#f0f0f0',
-              color: textColor,
+              backgroundColor: '#FFFFFF',
+              color: primaryColor, // Azul vivo
+              border: '1px solid #e0e0e0',
               '&:hover': {
-                backgroundColor: '#e0e0e0',
+                backgroundColor: hoverColor,
+                borderColor: primaryColor,
+                transform: 'translateY(-1px)',
               },
               width: '100%',
               padding: '10px',
-              borderRadius: '4px',
+              borderRadius: '8px',
+              transition: 'all 0.2s ease',
             }}
           >
             <LogoutIcon />
@@ -289,10 +314,12 @@ const MainLayout = () => {
       <AppBar
         position="fixed"
         sx={{
-          backgroundColor: primaryColor,
+          background: appBarGradient,
           color: 'white',
           width: '100%',
           zIndex: theme.zIndex.drawer + 1,
+          boxShadow: '0 4px 20px rgba(46, 134, 193, 0.3)', // Sombra más pronunciada
+          borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
         }}
       >
         <Toolbar sx={{ 
@@ -307,23 +334,61 @@ const MainLayout = () => {
               aria-label="toggle drawer"
               onClick={isMobile ? handleDrawerToggle : handleDesktopDrawerToggle}
               edge="start"
-              sx={{ mr: 2 }}
+              sx={{ 
+                mr: 2,
+                backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.25)',
+                  transform: 'scale(1.05)',
+                },
+                transition: 'all 0.2s ease',
+              }}
             >
               <MenuIcon />
             </IconButton>
             
-            {/* Logo SICAG */}
-            <Typography 
-              variant="h6" 
-              noWrap 
-              component="div" 
-              sx={{ 
-                fontWeight: 'bold',
-                letterSpacing: '1px',
-              }}
-            >
-              SICAG
-            </Typography>
+            {/* Logo SICAG con estilo moderno */}
+            <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center',
+              gap: 1,
+            }}>
+              <Box sx={{
+                width: 34,
+                height: 34,
+                backgroundColor: '#FFFFFF',
+                borderRadius: '6px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+              }}>
+                <Typography 
+                  variant="h6" 
+                  sx={{ 
+                    fontWeight: 'bold',
+                    color: primaryColor,
+                    fontSize: '1.1rem',
+                    lineHeight: 1,
+                  }}
+                >
+                  S
+                </Typography>
+              </Box>
+              <Typography 
+                variant="h6" 
+                noWrap 
+                component="div" 
+                sx={{ 
+                  fontWeight: 'bold',
+                  letterSpacing: '1px',
+                  fontSize: '1.25rem',
+                  textShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
+                }}
+              >
+                SICAG
+              </Typography>
+            </Box>
           </Box>
 
           {/* Lado derecho - Información del usuario */}
@@ -340,8 +405,10 @@ const MainLayout = () => {
                 noWrap
                 sx={{ 
                   fontSize: '0.875rem',
-                  fontWeight: 600,
+                  fontWeight: 700,
                   lineHeight: 1.2,
+                  letterSpacing: '0.2px',
+                  color: '#FFFFFF',
                 }}
               >
                 {user?.name || 'LUIS RODRIGUEZ'}
@@ -350,7 +417,9 @@ const MainLayout = () => {
                 variant="caption" 
                 noWrap
                 sx={{ 
-                  color: 'rgba(255, 255, 255, 0.8)',
+                  color: 'rgba(255, 255, 255, 0.9)',
+                  fontWeight: 500,
+                  fontSize: '0.75rem',
                 }}
               >
                 {user?.role === 'agente' ? 'Agente Aduanal' : 
@@ -359,23 +428,38 @@ const MainLayout = () => {
               </Typography>
             </Box>
             
-            {/* Avatar */}
+            {/* Avatar con estilo mejorado */}
             <Avatar 
               sx={{ 
                 width: 36,
                 height: 36,
-                backgroundColor: '#6A8A94',
-                fontSize: '15px',
+                backgroundColor: '#FFFFFF',
+                color: primaryColor,
+                fontSize: '16px',
                 fontWeight: 'bold',
-                border: '2px solid rgba(255, 255, 255, 0.2)',
+                border: '2px solid rgba(255, 255, 255, 0.4)',
                 mr: 1,
+                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.15)',
+                '&:hover': {
+                  transform: 'scale(1.05)',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+                },
+                transition: 'all 0.2s ease',
               }}
             >
               {user?.name?.charAt(0) || 'U'}
             </Avatar>
             
             {/* Flecha hacia abajo */}
-            <IconButton color="inherit" size="small">
+            <IconButton 
+              color="inherit" 
+              size="small"
+              sx={{
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                },
+              }}
+            >
               <ArrowDropDownIcon />
             </IconButton>
             
@@ -384,16 +468,38 @@ const MainLayout = () => {
               orientation="vertical" 
               flexItem 
               sx={{ 
-                backgroundColor: 'rgba(255, 255, 255, 0.3)',
+                backgroundColor: 'rgba(255, 255, 255, 0.4)',
                 mx: 2,
                 height: '24px',
                 alignSelf: 'center',
               }}
             />
             
-            {/* Icono de notificaciones */}
-            <IconButton color="inherit">
-              <Badge badgeContent={3} color="error">
+            {/* Icono de notificaciones con estilo */}
+            <IconButton 
+              color="inherit"
+              sx={{
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  transform: 'scale(1.05)',
+                },
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <Badge 
+                badgeContent={3} 
+                color="error"
+                sx={{
+                  '& .MuiBadge-badge': {
+                    backgroundColor: '#E74C3C',
+                    fontSize: '0.6rem',
+                    height: '18px',
+                    minWidth: '18px',
+                    fontWeight: 'bold',
+                  }
+                }}
+              >
                 <NotificationsIcon />
               </Badge>
             </IconButton>
@@ -424,6 +530,8 @@ const MainLayout = () => {
               width: drawerWidth,
               backgroundColor: sidebarColor,
               color: textColor,
+              boxShadow: '2px 0 20px rgba(46, 134, 193, 0.15)',
+              borderRight: '1px solid #e0e0e0',
             },
           }}
         >
@@ -442,6 +550,7 @@ const MainLayout = () => {
               borderRight: '1px solid #e0e0e0',
               boxSizing: 'border-box',
               overflowX: 'hidden',
+              boxShadow: '1px 0 12px rgba(46, 134, 193, 0.1)',
               transition: theme.transitions.create('width', {
                 easing: theme.transitions.easing.sharp,
                 duration: theme.transitions.duration.enteringScreen,
@@ -470,6 +579,7 @@ const MainLayout = () => {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
           }),
+          backgroundColor: '#F8FAFF', // Fondo azul muy claro
         }}
       >
         <Outlet />
