@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/sicag-frontend/static/css/main.2035f72c.css",
-    "main.js": "/sicag-frontend/static/js/main.892ca2c3.js",
+    "main.js": "/sicag-frontend/static/js/main.d44c952a.js",
     "index.html": "/sicag-frontend/index.html",
     "main.2035f72c.css.map": "/sicag-frontend/static/css/main.2035f72c.css.map",
-    "main.892ca2c3.js.map": "/sicag-frontend/static/js/main.892ca2c3.js.map"
+    "main.d44c952a.js.map": "/sicag-frontend/static/js/main.d44c952a.js.map"
   },
   "entrypoints": [
     "static/css/main.2035f72c.css",
-    "static/js/main.892ca2c3.js"
+    "static/js/main.d44c952a.js"
   ]
 }
