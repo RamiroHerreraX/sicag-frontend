@@ -30,6 +30,7 @@ import Certifications from './pages/certifications/Certifications';
 import CertificationDetail from './pages/certifications/CertificationDetail';
 import NewCertification from './pages/certifications/NewCertification';
 import NewUserCertification from './pages/expediente/NewUserCertification';
+import Declaraciones from './pages/expediente/Declaraciones';
 import VistaCertificacion from './pages/certifications/VistaCertificacion';
 
 // Expediente
@@ -90,7 +91,8 @@ function App() {
               <Route path="/certifications/new" element={<NewCertification />} />
               <Route path="/certifications/:id" element={<CertificationDetail />} />
               <Route path="/new-user-certification" element={<NewUserCertification />} />
-              <Route path="/vista-certification" element={<VistaCertificacion />} 
+              <Route path="/vista-certification" element={<VistaCertificacion />} />
+              <Route path="/declaraciones" element={<Declaraciones />}
 />
               <Route path="/expediente" element={<Expediente />} />
               <Route path="/profile" element={<Profile />} />

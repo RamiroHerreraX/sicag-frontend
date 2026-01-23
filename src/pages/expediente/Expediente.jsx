@@ -25,7 +25,16 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  MenuItem
+  MenuItem,
+  Alert,
+  ToggleButtonGroup,
+  ToggleButton,
+  RadioGroup,
+  Radio,
+  FormControl,
+  FormLabel,
+  FormControlLabel, // AÑADIDO ESTE IMPORT
+  Collapse
 } from '@mui/material';
 import {
   ExpandMore as ExpandMoreIcon,
@@ -42,7 +51,13 @@ import {
   Business as BusinessIcon,
   Work as WorkIcon,
   Security as SecurityIcon,
-  CloudUpload as CloudUploadIcon
+  CloudUpload as CloudUploadIcon,
+  Gavel as GavelIcon,
+  Balance as BalanceIcon,
+  Verified as VerifiedIcon,
+  Check as CheckIcon,
+  Close as CloseIcon,
+  ArrowForward as ArrowForwardIcon
 } from '@mui/icons-material';
 
 const Expediente = () => {
@@ -64,6 +79,64 @@ const Expediente = () => {
     email: 'luis.rodriguez@ejemplo.com'
   });
 
+  // Estados para Conflictos de Intereses
+  const [conflictosData, setConflictosData] = useState({
+    preguntas: [
+      { 
+        id: 1, 
+        texto: "¿Tiene intereses comerciales directos con proveedores o clientes de la organización?", 
+        respuesta: null,
+        explicacion: ''
+      },
+      { 
+        id: 2, 
+        texto: "¿Participa en decisiones que puedan beneficiar a familiares cercanos?", 
+        respuesta: null,
+        explicacion: ''
+      },
+      { 
+        id: 3, 
+        texto: "¿Recibe compensaciones adicionales de terceros relacionados con la organización?", 
+        respuesta: null,
+        explicacion: ''
+      },
+      { 
+        id: 4, 
+        texto: "¿Participa en empresas competidoras o proveedores alternativos?", 
+        respuesta: null,
+        explicacion: ''
+      },
+      { 
+        id: 5, 
+        texto: "¿Tiene acceso a información privilegiada que podría usar para beneficio personal?", 
+        respuesta: null,
+        explicacion: ''
+      },
+    ],
+    guardado: false,
+    fechaDeclaracion: null
+  });
+
+  // Estados para Cumplimiento Organizacional
+  const [cumplimientoData, setCumplimientoData] = useState({
+    seguridadCadenaSuministro: {
+      descripcion: `Sistema de gestión de seguridad para la cadena de suministro que previene
+riesgos logísticos y asegura la integridad de los bienes.`,
+      vigencia: '',
+      documento: null,
+      estado: 'pendiente',
+      fechaRevision: null
+    },
+    antisobornos: {
+      descripcion: `Políticas y procedimientos para prevenir, detectar y responder
+a actos de soborno y corrupción en operaciones comerciales.`,
+      vigencia: '',
+      documento: null,
+      estado: 'pendiente',
+      fechaRevision: null
+    }
+  });
+
   const handleAccordionChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
@@ -83,12 +156,93 @@ const Expediente = () => {
   const handleUploadCertification = () => {
     navigate('/new-user-certification');
   };
+  
   const handleSeeCertification = () => {
     navigate('/vista-certification');
   };
 
-  // Datos complementarios (reorganizados según la imagen)
-  const datosComplementarios = [
+  // Funciones para Conflictos de Intereses - ACTUALIZADAS
+  const handleConflictosChange = (id, value) => {
+    const nuevasPreguntas = conflictosData.preguntas.map(pregunta =>
+      pregunta.id === id ? { ...pregunta, respuesta: value } : pregunta
+    );
+    setConflictosData({ ...conflictosData, preguntas: nuevasPreguntas });
+  };
+
+  const handleExplicacionChange = (id, explicacion) => {
+    const nuevasPreguntas = conflictosData.preguntas.map(pregunta =>
+      pregunta.id === id ? { ...pregunta, explicacion } : pregunta
+    );
+    setConflictosData({ ...conflictosData, preguntas: nuevasPreguntas });
+  };
+
+  const guardarDeclaracionConflictos = () => {
+    // Verificar que todas las preguntas estén respondidas
+    const todasRespondidas = conflictosData.preguntas.every(p => p.respuesta !== null);
+    
+    if (!todasRespondidas) {
+      alert('Por favor, responda todas las preguntas antes de guardar.');
+      return;
+    }
+    
+    setConflictosData({
+      ...conflictosData,
+      guardado: true,
+      fechaDeclaracion: new Date().toLocaleDateString()
+    });
+  };
+
+  const editarDeclaracionConflictos = () => {
+    setConflictosData({
+      ...conflictosData,
+      guardado: false
+    });
+  };
+
+  // Funciones para Cumplimiento Organizacional
+  const handleDocumentoUpload = (tipo) => {
+    const nuevoEstado = {
+      ...cumplimientoData,
+      [tipo]: {
+        ...cumplimientoData[tipo],
+        documento: `documento_${tipo}_${Date.now()}.pdf`,
+        estado: 'en_revision',
+        fechaRevision: new Date().toLocaleDateString()
+      }
+    };
+    setCumplimientoData(nuevoEstado);
+  };
+
+  const handleVerDocumento = (tipo) => {
+    alert(`Mostrando documento: ${cumplimientoData[tipo].documento}`);
+  };
+
+  // Función para manejar cambios en descripción
+  const handleDescripcionChange = (tipo, valor) => {
+    const nuevoEstado = {
+      ...cumplimientoData,
+      [tipo]: {
+        ...cumplimientoData[tipo],
+        descripcion: valor
+      }
+    };
+    setCumplimientoData(nuevoEstado);
+  };
+
+  // Función para manejar cambios en vigencia
+  const handleVigenciaChange = (tipo, valor) => {
+    const nuevoEstado = {
+      ...cumplimientoData,
+      [tipo]: {
+        ...cumplimientoData[tipo],
+        vigencia: valor
+      }
+    };
+    setCumplimientoData(nuevoEstado);
+  };
+
+  // Lista unificada de todos los apartados
+  const informacionComplementaria = [
     { 
       id: 'certificados',
       title: 'CERTIFICADOS',
@@ -98,6 +252,18 @@ const Expediente = () => {
         { name: 'Opinión SAT', status: 'completo', icon: <CheckCircleIcon /> },
         { name: 'Cédula Profesional', status: 'pendiente', icon: <WarningIcon /> },
       ]
+    },
+    { 
+      id: 'conflictos_intereses',
+      title: 'CONFLICTO DE INTERESES',
+      icon: <BalanceIcon />,
+      items: []
+    },
+    { 
+      id: 'cumplimiento_organizacional',
+      title: 'CUMPLIMIENTO ORGANIZACIONAL',
+      icon: <VerifiedIcon />,
+      items: []
     },
     { 
       id: 'documentacion',
@@ -173,12 +339,984 @@ const Expediente = () => {
   ];
 
   const calculateCompliance = () => {
-    const allItems = datosComplementarios.flatMap(section => section.items);
+    const allItems = informacionComplementaria.flatMap(section => section.items);
     const completed = allItems.filter(item => item.status === 'completo').length;
     return Math.round((completed / allItems.length) * 100);
   };
 
   const compliance = calculateCompliance();
+
+  // Función para renderizar Conflictos de Intereses - ACTUALIZADA
+  const renderConflictosIntereses = () => {
+    const section = informacionComplementaria.find(s => s.id === 'conflictos_intereses');
+    const preguntasContestadas = conflictosData.preguntas.filter(p => p.respuesta !== null).length;
+    const preguntasTotales = conflictosData.preguntas.length;
+    
+    return (
+      <Accordion 
+        key={section.id}
+        expanded={expanded === section.id}
+        onChange={handleAccordionChange(section.id)}
+        sx={{ 
+          mb: 2,
+          border: '2px solid',
+          borderColor: '#1976d2',
+          borderRadius: '8px !important',
+          boxShadow: '0 2px 12px rgba(25, 118, 210, 0.1)',
+          '&:before': { display: 'none' }
+        }}
+      >
+        <AccordionSummary 
+          expandIcon={<ExpandMoreIcon />}
+          sx={{ 
+            backgroundColor: expanded === section.id ? '#f0f7ff' : 'white',
+            borderRadius: '8px',
+            minHeight: '70px'
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
+            <Box sx={{ 
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 40,
+              height: 40,
+              borderRadius: '50%',
+              backgroundColor: '#e3f2fd',
+              color: '#1976d2'
+            }}>
+              {section.icon}
+            </Box>
+            
+            <Box sx={{ flexGrow: 1 }}>
+              <Typography sx={{ 
+                fontWeight: '700', 
+                color: '#333',
+                fontSize: '1rem',
+                mb: 0.5
+              }}>
+                {section.title}
+              </Typography>
+            </Box>
+            
+            <Chip 
+              label={conflictosData.guardado ? "COMPLETADO" : "PENDIENTE"}
+              size="small"
+              color={conflictosData.guardado ? "success" : "warning"}
+              sx={{ 
+                height: '24px',
+                fontSize: '0.75rem',
+                fontWeight: '600'
+              }}
+            />
+          </Box>
+        </AccordionSummary>
+        <AccordionDetails sx={{ pt: 3, pb: 3 }}>
+          {conflictosData.guardado ? (
+            <>
+              <Alert severity="success" sx={{ mb: 3 }}>
+                <Typography variant="body2" sx={{ fontWeight: '500' }}>
+                  Declaración de conflicto de intereses actualizada el {conflictosData.fechaDeclaracion}
+                </Typography>
+              </Alert>
+              <Box sx={{ mb: 3, p: 3, bgcolor: '#f8f9fa', borderRadius: 2, border: '1px solid #e0e0e0' }}>
+                <Typography variant="body2" sx={{ color: '#2c3e50', mb: 2, fontWeight: '500' }}>
+                  Resumen de su declaración:
+                </Typography>
+                {conflictosData.preguntas.map((pregunta) => (
+                  <Box key={pregunta.id} sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'space-between',
+                    mb: 2,
+                    p: 1.5,
+                    borderRadius: 1,
+                    backgroundColor: '#fff',
+                    border: '1px solid #f0f0f0'
+                  }}>
+                    <Typography variant="body2" sx={{ color: '#555', flex: 1 }}>
+                      {pregunta.texto}
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', ml: 2 }}>
+                      {pregunta.respuesta === true ? (
+                        <>
+                          <CheckCircleIcon sx={{ color: '#27ae60', mr: 0.5 }} />
+                          <Chip 
+                            label="SÍ"
+                            size="small"
+                            color="error"
+                            sx={{ fontWeight: '600' }}
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <CloseIcon sx={{ color: '#e74c3c', mr: 0.5 }} />
+                          <Chip 
+                            label="NO"
+                            size="small"
+                            color="success"
+                            sx={{ fontWeight: '600' }}
+                          />
+                        </>
+                      )}
+                    </Box>
+                  </Box>
+                ))}
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                <Button
+                  variant="outlined"
+                  onClick={editarDeclaracionConflictos}
+                  sx={{ textTransform: 'none', px: 4 }}
+                >
+                  Editar Declaración
+                </Button>
+              </Box>
+            </>
+          ) : (
+            <>
+              <Typography variant="body2" sx={{ color: '#666', mb: 3, lineHeight: 1.6 }}>
+                Por favor, responda las siguientes preguntas para completar su declaración de conflicto de intereses. 
+                Esta información es confidencial y se utilizará únicamente para fines de cumplimiento normativo.
+              </Typography>
+              
+              <Paper variant="outlined" sx={{ p: 3, borderRadius: 2, mb: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+                  <Typography variant="h6" sx={{ color: '#333', display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <BalanceIcon sx={{ color: '#1976d2' }} /> 
+                    Declaración de Conflicto de Intereses
+                  </Typography>
+                  
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <VerifiedIcon fontSize="small" sx={{ color: '#666' }} />
+                    <Typography variant="body2" sx={{ color: '#666' }}>
+                      {preguntasContestadas}/{preguntasTotales} preguntas respondidas
+                    </Typography>
+                  </Box>
+                </Box>
+                
+                <Alert severity="info" sx={{ mb: 3, backgroundColor: '#1976d210' }}>
+                  <Typography variant="body2">
+                    <strong>Instrucciones:</strong> Evalúe cada situación según su experiencia actual. 
+                    Seleccione "Sí" si se aplica a su situación o "No" si no se aplica.
+                  </Typography>
+                </Alert>
+                
+                {conflictosData.preguntas.map((pregunta, index) => (
+                  <Box key={pregunta.id} sx={{ mb: 3, p: 2.5, border: '1px solid #e0e0e0', borderRadius: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 2 }}>
+                      <Box sx={{ 
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: 32,
+                        height: 32,
+                        borderRadius: '50%',
+                        backgroundColor: '#1976d2',
+                        color: 'white',
+                        fontWeight: 'bold',
+                        flexShrink: 0
+                      }}>
+                        {index + 1}
+                      </Box>
+                      
+                      <Box sx={{ flex: 1 }}>
+                        <Typography variant="subtitle1" sx={{ fontWeight: '500', mb: 0.5 }}>
+                          {pregunta.texto}
+                        </Typography>
+                        
+                        {/* Estado de la respuesta */}
+                        {pregunta.respuesta !== null && (
+                          <Box sx={{ 
+                            display: 'inline-flex', 
+                            alignItems: 'center', 
+                            gap: 1,
+                            p: 1,
+                            borderRadius: 1,
+                            backgroundColor: pregunta.respuesta ? '#e8f5e9' : '#ffebee',
+                            border: `1px solid ${pregunta.respuesta ? '#4caf50' : '#f44336'}`,
+                            mb: 1
+                          }}>
+                            {pregunta.respuesta ? (
+                              <>
+                                <CheckCircleIcon sx={{ color: '#4caf50', fontSize: 20 }} />
+                                <Typography variant="body2" sx={{ color: '#2e7d32', fontWeight: '500' }}>
+                                  Se aplica a mi situación
+                                </Typography>
+                              </>
+                            ) : (
+                              <>
+                                <CloseIcon sx={{ color: '#f44336', fontSize: 20 }} />
+                                <Typography variant="body2" sx={{ color: '#c62828', fontWeight: '500' }}>
+                                  No se aplica a mi situación
+                                </Typography>
+                              </>
+                            )}
+                          </Box>
+                        )}
+                      </Box>
+                    </Box>
+                    
+                    <FormControl component="fieldset" sx={{ mb: 2, width: '100%' }}>
+                      <FormLabel component="legend" sx={{ fontWeight: '500', mb: 1 }}>
+                        ¿Esta situación se aplica a usted?
+                      </FormLabel>
+                      <RadioGroup
+                        row
+                        value={pregunta.respuesta === null ? '' : pregunta.respuesta.toString()}
+                        onChange={(e) => {
+                          const valor = e.target.value === 'true';
+                          handleConflictosChange(pregunta.id, valor);
+                        }}
+                        sx={{ gap: 2 }}
+                      >
+                        <FormControlLabel 
+                          value="true" 
+                          control={<Radio />} 
+                          label={
+                            <Box sx={{ 
+                              display: 'flex', 
+                              alignItems: 'center', 
+                              gap: 1,
+                              p: 1,
+                              borderRadius: 1,
+                              backgroundColor: pregunta.respuesta === true ? '#e8f5e9' : 'transparent',
+                              border: pregunta.respuesta === true ? '2px solid #4caf50' : '1px solid #e0e0e0'
+                            }}>
+                              <CheckCircleIcon sx={{ color: pregunta.respuesta === true ? '#4caf50' : '#9e9e9e' }} />
+                              <Typography sx={{ fontWeight: pregunta.respuesta === true ? '600' : '400' }}>
+                                Sí, se aplica
+                              </Typography>
+                            </Box>
+                          } 
+                          sx={{ m: 0 }}
+                        />
+                        <FormControlLabel 
+                          value="false" 
+                          control={<Radio />} 
+                          label={
+                            <Box sx={{ 
+                              display: 'flex', 
+                              alignItems: 'center', 
+                              gap: 1,
+                              p: 1,
+                              borderRadius: 1,
+                              backgroundColor: pregunta.respuesta === false ? '#ffebee' : 'transparent',
+                              border: pregunta.respuesta === false ? '2px solid #f44336' : '1px solid #e0e0e0'
+                            }}>
+                              <CloseIcon sx={{ color: pregunta.respuesta === false ? '#f44336' : '#9e9e9e' }} />
+                              <Typography sx={{ fontWeight: pregunta.respuesta === false ? '600' : '400' }}>
+                                No, no se aplica
+                              </Typography>
+                            </Box>
+                          } 
+                          sx={{ m: 0 }}
+                        />
+                      </RadioGroup>
+                    </FormControl>
+                    
+                    <Collapse in={pregunta.respuesta === false}>
+                      <Box sx={{ mt: 2, p: 2, backgroundColor: '#fff8e1', borderRadius: 1, border: '1px solid #ffd54f' }}>
+                        <Typography variant="body2" sx={{ mb: 1, color: '#f57c00', fontWeight: '500', display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <ArrowForwardIcon sx={{ fontSize: 16 }} />
+                          Situación identificada - Información adicional:
+                        </Typography>
+                        <TextField
+                          fullWidth
+                          multiline
+                          rows={3}
+                          placeholder="Proporcione detalles adicionales sobre esta situación de conflicto de intereses..."
+                          value={pregunta.explicacion}
+                          onChange={(e) => handleExplicacionChange(pregunta.id, e.target.value)}
+                          variant="outlined"
+                          size="small"
+                          sx={{ backgroundColor: 'white' }}
+                          helperText="Esta información será registrada para fines de seguimiento"
+                        />
+                      </Box>
+                    </Collapse>
+                  </Box>
+                ))}
+              </Paper>
+              
+              <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center', 
+                mt: 4,
+                p: 2.5,
+                backgroundColor: '#f8f9fa',
+                borderRadius: 2,
+                border: '1px solid #e0e0e0'
+              }}>
+                <Box>
+                  <Typography variant="body2" sx={{ color: '#2c3e50', fontWeight: '500' }}>
+                    Progreso de la declaración
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#95a5a6', display: 'block', mt: 0.5 }}>
+                    {preguntasContestadas} de {preguntasTotales} preguntas respondidas
+                  </Typography>
+                </Box>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={guardarDeclaracionConflictos}
+                  disabled={conflictosData.preguntas.some(p => p.respuesta === null)}
+                  sx={{ textTransform: 'none', px: 4, py: 1 }}
+                >
+                  Guardar Declaración
+                </Button>
+              </Box>
+            </>
+          )}
+        </AccordionDetails>
+      </Accordion>
+    );
+  };
+
+  // Función para renderizar Cumplimiento Organizacional
+  const renderCumplimientoOrganizacional = () => {
+    const section = informacionComplementaria.find(s => s.id === 'cumplimiento_organizacional');
+    
+    return (
+      <Accordion 
+        key={section.id}
+        expanded={expanded === section.id}
+        onChange={handleAccordionChange(section.id)}
+        sx={{ 
+          mb: 2,
+          border: '2px solid',
+          borderColor: '#2e7d32',
+          borderRadius: '8px !important',
+          boxShadow: '0 2px 12px rgba(46, 125, 50, 0.1)',
+          '&:before': { display: 'none' }
+        }}
+      >
+        <AccordionSummary 
+          expandIcon={<ExpandMoreIcon />}
+          sx={{ 
+            backgroundColor: expanded === section.id ? '#f1f8e9' : 'white',
+            borderRadius: '8px',
+            minHeight: '70px'
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
+            <Box sx={{ 
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 40,
+              height: 40,
+              borderRadius: '50%',
+              backgroundColor: '#e8f5e9',
+              color: '#2e7d32'
+            }}>
+              {section.icon}
+            </Box>
+            
+            <Box sx={{ flexGrow: 1 }}>
+              <Typography sx={{ 
+                fontWeight: '700', 
+                color: '#333',
+                fontSize: '1rem',
+                mb: 0.5
+              }}>
+                {section.title}
+              </Typography>
+            </Box>
+            
+            <Chip 
+              label={`${Object.values(cumplimientoData).filter(d => d.documento).length}/2`}
+              size="small"
+              color={Object.values(cumplimientoData).filter(d => d.documento).length === 2 ? "success" : "warning"}
+              sx={{ 
+                height: '24px',
+                fontSize: '0.75rem',
+                fontWeight: '600'
+              }}
+            />
+          </Box>
+        </AccordionSummary>
+        <AccordionDetails sx={{ pt: 3, pb: 3 }}>
+          {/* Subsección: Sistema de seguridad de Cadena de Suministros */}
+          <Paper 
+            variant="outlined" 
+            sx={{ 
+              p: 3, 
+              mb: 3,
+              borderRadius: 2,
+              border: '2px solid #e0e0e0',
+              '&:hover': {
+                borderColor: '#1976d2'
+              }
+            }}
+          >
+            <Typography variant="h6" sx={{ 
+              fontWeight: '600',
+              color: '#2c3e50',
+              mb: 3,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1.5
+            }}>
+              <SecurityIcon sx={{ color: '#1976d2' }} />
+              Sistema de seguridad de Cadena de Suministros
+            </Typography>
+            
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={4}
+                  label="Descripción del Sistema"
+                  value={cumplimientoData.seguridadCadenaSuministro.descripcion}
+                  onChange={(e) => handleDescripcionChange('seguridadCadenaSuministro', e.target.value)}
+                  sx={{ mb: 2 }}
+                  InputLabelProps={{ shrink: true }}
+                  helperText="Describa el sistema de gestión de seguridad para la cadena de suministro"
+                />
+              </Grid>
+              
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  type="date"
+                  label="Fecha de Vigencia"
+                  value={cumplimientoData.seguridadCadenaSuministro.vigencia || ''}
+                  onChange={(e) => handleVigenciaChange('seguridadCadenaSuministro', e.target.value)}
+                  sx={{ mb: 2 }}
+                  InputLabelProps={{ shrink: true }}
+                  helperText="Fecha hasta la cual es válido el sistema"
+                />
+              </Grid>
+              
+              <Grid item xs={12} md={6}>
+                <Box sx={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+                  {cumplimientoData.seguridadCadenaSuministro.documento ? (
+                    <Box sx={{ width: '100%' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
+                        <Typography variant="body2" sx={{ color: '#2c3e50', fontWeight: '500', flex: 1 }}>
+                          Documento cargado: {cumplimientoData.seguridadCadenaSuministro.documento}
+                        </Typography>
+                        <Chip 
+                          label={cumplimientoData.seguridadCadenaSuministro.estado === 'en_revision' ? "EN REVISIÓN" : "APROBADO"}
+                          size="small"
+                          color={cumplimientoData.seguridadCadenaSuministro.estado === 'en_revision' ? "warning" : "success"}
+                        />
+                      </Box>
+                      {cumplimientoData.seguridadCadenaSuministro.fechaRevision && (
+                        <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', mb: 2 }}>
+                          Última revisión: {cumplimientoData.seguridadCadenaSuministro.fechaRevision}
+                        </Typography>
+                      )}
+                      <Stack direction="row" spacing={2}>
+                        <Button
+                          size="small"
+                          startIcon={<VisibilityIcon />}
+                          variant="outlined"
+                          onClick={() => handleVerDocumento('seguridadCadenaSuministro')}
+                          sx={{ textTransform: 'none' }}
+                        >
+                          Ver Documento
+                        </Button>
+                        <Button
+                          size="small"
+                          startIcon={<CloudUploadIcon />}
+                          variant="outlined"
+                          onClick={() => handleDocumentoUpload('seguridadCadenaSuministro')}
+                          sx={{ textTransform: 'none' }}
+                        >
+                          Reemplazar
+                        </Button>
+                      </Stack>
+                    </Box>
+                  ) : (
+                    <Button
+                      fullWidth
+                      startIcon={<CloudUploadIcon />}
+                      variant="contained"
+                      onClick={() => handleDocumentoUpload('seguridadCadenaSuministro')}
+                      sx={{ textTransform: 'none', py: 1.5 }}
+                    >
+                      Cargar Documento del Sistema
+                    </Button>
+                  )}
+                </Box>
+              </Grid>
+            </Grid>
+          </Paper>
+
+          {/* Subsección: Antisobornos */}
+          <Paper 
+            variant="outlined" 
+            sx={{ 
+              p: 3, 
+              borderRadius: 2,
+              border: '2px solid #e0e0e0',
+              '&:hover': {
+                borderColor: '#d32f2f'
+              }
+            }}
+          >
+            <Typography variant="h6" sx={{ 
+              fontWeight: '600',
+              color: '#2c3e50',
+              mb: 3,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1.5
+            }}>
+              <GavelIcon sx={{ color: '#d32f2f' }} />
+              Políticas Antisobornos
+            </Typography>
+            
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={4}
+                  label="Descripción de las Políticas"
+                  value={cumplimientoData.antisobornos.descripcion}
+                  onChange={(e) => handleDescripcionChange('antisobornos', e.target.value)}
+                  sx={{ mb: 2 }}
+                  InputLabelProps={{ shrink: true }}
+                  helperText="Describa las políticas y procedimientos antisoborno"
+                />
+              </Grid>
+              
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  type="date"
+                  label="Fecha de Vigencia"
+                  value={cumplimientoData.antisobornos.vigencia || ''}
+                  onChange={(e) => handleVigenciaChange('antisobornos', e.target.value)}
+                  sx={{ mb: 2 }}
+                  InputLabelProps={{ shrink: true }}
+                  helperText="Fecha hasta la cual son válidas las políticas"
+                />
+              </Grid>
+              
+              <Grid item xs={12} md={6}>
+                <Box sx={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+                  {cumplimientoData.antisobornos.documento ? (
+                    <Box sx={{ width: '100%' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
+                        <Typography variant="body2" sx={{ color: '#2c3e50', fontWeight: '500', flex: 1 }}>
+                          Documento cargado: {cumplimientoData.antisobornos.documento}
+                        </Typography>
+                        <Chip 
+                          label={cumplimientoData.antisobornos.estado === 'en_revision' ? "EN REVISIÓN" : "APROBADO"}
+                          size="small"
+                          color={cumplimientoData.antisobornos.estado === 'en_revision' ? "warning" : "success"}
+                        />
+                      </Box>
+                      {cumplimientoData.antisobornos.fechaRevision && (
+                        <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', mb: 2 }}>
+                          Última revisión: {cumplimientoData.antisobornos.fechaRevision}
+                        </Typography>
+                      )}
+                      <Stack direction="row" spacing={2}>
+                        <Button
+                          size="small"
+                          startIcon={<VisibilityIcon />}
+                          variant="outlined"
+                          onClick={() => handleVerDocumento('antisobornos')}
+                          sx={{ textTransform: 'none' }}
+                        >
+                          Ver Documento
+                        </Button>
+                        <Button
+                          size="small"
+                          startIcon={<CloudUploadIcon />}
+                          variant="outlined"
+                          onClick={() => handleDocumentoUpload('antisobornos')}
+                          sx={{ textTransform: 'none' }}
+                        >
+                          Reemplazar
+                        </Button>
+                      </Stack>
+                    </Box>
+                  ) : (
+                    <Button
+                      fullWidth
+                      startIcon={<CloudUploadIcon />}
+                      variant="contained"
+                      color="error"
+                      onClick={() => handleDocumentoUpload('antisobornos')}
+                      sx={{ textTransform: 'none', py: 1.5 }}
+                    >
+                      Cargar Documento de Políticas
+                    </Button>
+                  )}
+                </Box>
+              </Grid>
+            </Grid>
+          </Paper>
+        </AccordionDetails>
+      </Accordion>
+    );
+  };
+
+  // Función para renderizar Documentación Oficial
+  const renderDocumentacionOficial = (section) => {
+    const completedDocs = section.items.filter(item => item.status === 'completo').length;
+    const totalDocs = section.items.length;
+    
+    return (
+      <Accordion 
+        key={section.id}
+        expanded={expanded === section.id}
+        onChange={handleAccordionChange(section.id)}
+        sx={{ 
+          mb: 2,
+          border: '2px solid',
+          borderColor: '#9c27b0',
+          borderRadius: '8px !important',
+          boxShadow: '0 2px 12px rgba(156, 39, 176, 0.1)',
+          '&:before': { display: 'none' }
+        }}
+      >
+        <AccordionSummary 
+          expandIcon={<ExpandMoreIcon />}
+          sx={{ 
+            backgroundColor: expanded === section.id ? '#f3e5f5' : 'white',
+            borderRadius: '8px',
+            minHeight: '70px'
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
+            <Box sx={{ 
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 40,
+              height: 40,
+              borderRadius: '50%',
+              backgroundColor: '#f3e5f5',
+              color: '#9c27b0'
+            }}>
+              {section.icon}
+            </Box>
+            
+            <Box sx={{ flexGrow: 1 }}>
+              <Typography sx={{ 
+                fontWeight: '700', 
+                color: '#333',
+                fontSize: '1rem',
+                mb: 0.5
+              }}>
+                {section.title}
+              </Typography>
+            </Box>
+            
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Chip 
+                label={`${completedDocs}/${totalDocs}`}
+                size="small"
+                color={completedDocs === totalDocs ? "success" : "warning"}
+                sx={{ 
+                  height: '24px',
+                  fontSize: '0.75rem',
+                  fontWeight: '600'
+                }}
+              />
+              <LinearProgress 
+                variant="determinate" 
+                value={(completedDocs / totalDocs) * 100}
+                sx={{ 
+                  width: '60px',
+                  height: '6px',
+                  borderRadius: '3px'
+                }}
+              />
+            </Box>
+          </Box>
+        </AccordionSummary>
+        <AccordionDetails sx={{ pt: 3, pb: 3 }}>
+          <Typography variant="body2" sx={{ color: '#666', mb: 3, lineHeight: 1.6 }}>
+            Documentación oficial requerida para el expediente. Verifique y actualice cada documento según corresponda.
+          </Typography>
+          
+          <Grid container spacing={2}>
+            {section.items.map((doc, index) => (
+              <Grid item xs={12} md={6} key={index}>
+                <Paper 
+                  variant="outlined" 
+                  sx={{ 
+                    p: 2.5, 
+                    borderRadius: 2,
+                    border: '2px solid #e0e0e0',
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    transition: 'all 0.2s',
+                    '&:hover': {
+                      borderColor: '#9c27b0',
+                      boxShadow: '0 4px 12px rgba(156, 39, 176, 0.1)'
+                    }
+                  }}
+                >
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                    <Typography variant="subtitle1" sx={{ 
+                      fontWeight: '600',
+                      color: '#2c3e50',
+                      fontSize: '0.95rem',
+                      lineHeight: 1.3,
+                      flex: 1
+                    }}>
+                      {doc.name}
+                    </Typography>
+                    <Box sx={{ ml: 1 }}>
+                      {doc.status === 'completo' ? (
+                        <CheckCircleIcon sx={{ color: '#27ae60', fontSize: '1.5rem' }} />
+                      ) : (
+                        <WarningIcon sx={{ color: '#f39c12', fontSize: '1.5rem' }} />
+                      )}
+                    </Box>
+                  </Box>
+                  
+                  <Box sx={{ flexGrow: 1 }} />
+                  
+                  <Stack direction="row" spacing={1.5} sx={{ mt: 2 }}>
+                    <Button
+                      fullWidth
+                      size="small"
+                      startIcon={<VisibilityIcon />}
+                      variant="outlined"
+                      onClick={handleSeeCertification}
+                      sx={{ 
+                        fontSize: '0.8rem', 
+                        py: 1,
+                        textTransform: 'none'
+                      }}
+                    >
+                      VER DOCUMENTO
+                    </Button>
+                    <Button
+                      fullWidth
+                      size="small"
+                      startIcon={<CloudUploadIcon />}
+                      variant="contained"
+                      color="secondary"
+                      onClick={handleUploadCertification}
+                      sx={{ 
+                        fontSize: '0.8rem', 
+                        py: 1,
+                        textTransform: 'none'
+                      }}
+                    >
+                      ACTUALIZAR
+                    </Button>
+                  </Stack>
+                </Paper>
+              </Grid>
+            ))}
+          </Grid>
+        </AccordionDetails>
+      </Accordion>
+    );
+  };
+
+  // Función para renderizar secciones normales
+  const renderSeccionNormal = (section) => {
+    const completedItems = section.items.filter(item => item.status === 'completo').length;
+    const totalItems = section.items.length;
+    const completionPercentage = totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
+    
+    return (
+      <Accordion 
+        key={section.id}
+        expanded={expanded === section.id}
+        onChange={handleAccordionChange(section.id)}
+        sx={{ 
+          mb: 2,
+          border: '2px solid',
+          borderColor: completionPercentage === 100 ? '#4caf50' : '#ff9800',
+          borderRadius: '8px !important',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.05)',
+          '&:before': { display: 'none' }
+        }}
+      >
+        <AccordionSummary 
+          expandIcon={<ExpandMoreIcon />}
+          sx={{ 
+            backgroundColor: expanded === section.id ? '#f8f9fa' : 'white',
+            borderRadius: '8px',
+            minHeight: '70px',
+            transition: 'all 0.2s'
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
+            <Box sx={{ 
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 40,
+              height: 40,
+              borderRadius: '50%',
+              backgroundColor: completionPercentage === 100 ? '#e8f5e9' : '#fff3e0',
+              color: completionPercentage === 100 ? '#4caf50' : '#ff9800'
+            }}>
+              {section.icon}
+            </Box>
+            
+            <Box sx={{ flexGrow: 1 }}>
+              <Typography sx={{ 
+                fontWeight: '700', 
+                color: '#333',
+                fontSize: '1rem',
+                mb: 0.5
+              }}>
+                {section.title}
+              </Typography>
+            </Box>
+            
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Box sx={{ textAlign: 'center', minWidth: '60px' }}>
+                <Typography variant="h6" sx={{ 
+                  color: completionPercentage === 100 ? '#4caf50' : '#ff9800',
+                  fontWeight: 'bold',
+                  fontSize: '1.1rem'
+                }}>
+                  {Math.round(completionPercentage)}%
+                </Typography>
+                <Typography variant="caption" sx={{ color: '#666', fontSize: '0.7rem' }}>
+                  Completado
+                </Typography>
+              </Box>
+              
+              <Chip 
+                label={`${completedItems}/${totalItems}`}
+                size="small"
+                color={completionPercentage === 100 ? "success" : "warning"}
+                sx={{ 
+                  height: '24px',
+                  fontSize: '0.75rem',
+                  fontWeight: '600'
+                }}
+              />
+            </Box>
+          </Box>
+        </AccordionSummary>
+        <AccordionDetails sx={{ pt: 3, pb: 3 }}>
+          <List dense sx={{ py: 0, mb: 3 }}>
+            {section.items.map((item, index) => (
+              <ListItem 
+                key={index}
+                sx={{ 
+                  py: 2,
+                  px: 2,
+                  mb: 1,
+                  borderRadius: 1,
+                  backgroundColor: '#fff',
+                  border: '1px solid #e0e0e0',
+                  '&:hover': {
+                    backgroundColor: '#f8f9fa',
+                    borderColor: '#1976d2'
+                  }
+                }}
+                secondaryAction={
+                  <Stack direction="row" spacing={1}>
+                    <IconButton 
+                      size="small" 
+                      sx={{ 
+                        color: '#1976d2',
+                        backgroundColor: '#e3f2fd',
+                        '&:hover': { backgroundColor: '#bbdefb' }
+                      }}
+                    >
+                      <VisibilityIcon fontSize="small" />
+                    </IconButton>
+                    <IconButton 
+                      size="small" 
+                      sx={{ 
+                        color: '#27ae60',
+                        backgroundColor: '#e8f5e9',
+                        '&:hover': { backgroundColor: '#c8e6c9' }
+                      }}
+                    >
+                      <DownloadIcon fontSize="small" />
+                    </IconButton>
+                    {editMode && (
+                      <IconButton 
+                        size="small" 
+                      sx={{ 
+                        color: '#e74c3c',
+                        backgroundColor: '#ffebee',
+                        '&:hover': { backgroundColor: '#ffcdd2' }
+                      }}
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                    )}
+                  </Stack>
+                }
+              >
+                <ListItemIcon sx={{ minWidth: 44 }}>
+                  {item.status === 'completo' ? (
+                    <CheckCircleIcon sx={{ 
+                      color: '#27ae60', 
+                      fontSize: '1.5rem',
+                      backgroundColor: '#e8f5e9',
+                      borderRadius: '50%',
+                      p: 0.5
+                    }} />
+                  ) : (
+                    <WarningIcon sx={{ 
+                      color: '#f39c12', 
+                      fontSize: '1.5rem',
+                      backgroundColor: '#fff3e0',
+                      borderRadius: '50%',
+                      p: 0.5
+                    }} />
+                  )}
+                </ListItemIcon>
+                <ListItemText 
+                  primary={item.name}
+                  primaryTypographyProps={{
+                    color: item.status === 'completo' ? '#2c3e50' : '#7f8c8d',
+                    fontWeight: item.status === 'completo' ? '600' : '500',
+                    fontSize: '0.95rem',
+                    lineHeight: 1.4
+                  }}
+                />
+              </ListItem>
+            ))}
+          </List>
+          
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            p: 2,
+            backgroundColor: '#f8f9fa',
+            borderRadius: 2,
+            border: '1px solid #e0e0e0'
+          }}>
+            <Typography variant="body2" sx={{ color: '#666' }}>
+              {section.items.length} documentos en esta sección
+            </Typography>
+            <Button
+              startIcon={<AddIcon />}
+              size="small"
+              variant="outlined"
+              disabled={!editMode}
+              sx={{ 
+                fontSize: '0.85rem', 
+                textTransform: 'none',
+                px: 3
+              }}
+            >
+              Agregar Documento
+            </Button>
+          </Box>
+        </AccordionDetails>
+      </Accordion>
+    );
+  };
 
   return (
     <Box>
@@ -197,14 +1335,14 @@ const Expediente = () => {
           <Button
             variant="outlined"
             startIcon={<DownloadIcon />}
+            sx={{ textTransform: 'none' }}
           >
             Exportar Expediente
           </Button>
-          {/* Botón Modificar eliminado - Solo queda el botón de Exportar */}
         </Stack>
       </Box>
 
-      {/* Nivel de Cumplimiento con Resumen de Estado integrado - CORREGIDO */}
+      {/* Nivel de Cumplimiento con Resumen de Estado integrado - RESTAURADO AL FORMATO DEL PRIMER CÓDIGO */}
       <Card sx={{ mb: 4, bgcolor: compliance >= 90 ? '#e8f5e9' : 
                                      compliance >= 70 ? '#fffde7' : '#ffebee' }}>
         <CardContent>
@@ -340,546 +1478,34 @@ const Expediente = () => {
         </CardContent>
       </Card>
 
-      {/* Layout de 3 columnas: Datos Complementarios | Documentación Oficial | Datos Generales */}
-      <Grid container spacing={3}>
-        {/* Columna 1: Datos Complementarios */}
-        <Grid item xs={12} md={4}>
-          <Card sx={{ height: '100%' }}>
-            <CardContent>
-              <Typography variant="h6" sx={{ 
-                color: '#2c3e50', 
-                mb: 3, 
-                fontWeight: 'bold',
-                fontSize: '1.1rem',
-                borderBottom: '2px solid #2c3e50',
-                pb: 1
-              }}>
-                # DATOS COMPLEMENTARIOS
-              </Typography>
-
-              {datosComplementarios
-                .filter(section => section.id !== 'documentacion')
-                .map((section) => (
-                  <Accordion 
-                    key={section.id}
-                    expanded={expanded === section.id}
-                    onChange={handleAccordionChange(section.id)}
-                    sx={{ 
-                      mb: 1,
-                      border: '1px solid rgba(0,0,0,0.1)',
-                      borderRadius: '8px !important',
-                      boxShadow: 'none',
-                      '&:before': { display: 'none' }
-                    }}
-                  >
-                    <AccordionSummary 
-                      expandIcon={<ExpandMoreIcon />}
-                      sx={{ 
-                        backgroundColor: expanded === section.id ? '#f5f5f5' : 'transparent',
-                        borderRadius: '8px',
-                        minHeight: '56px'
-                      }}
-                    >
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
-                        <Box sx={{ color: '#2c3e50' }}>
-                          {section.icon}
-                        </Box>
-                        <Typography sx={{ 
-                          fontWeight: '600', 
-                          color: '#2c3e50',
-                          fontSize: '0.95rem',
-                          flexGrow: 1
-                        }}>
-                          {section.title}
-                        </Typography>
-                        <Chip 
-                          label={`${section.items.filter(item => item.status === 'completo').length}/${section.items.length}`}
-                          size="small"
-                          sx={{ 
-                            height: '20px',
-                            fontSize: '0.7rem',
-                            fontWeight: '600'
-                          }}
-                        />
-                      </Box>
-                    </AccordionSummary>
-                    <AccordionDetails sx={{ pt: 2, pb: 2 }}>
-                      <List dense sx={{ py: 0 }}>
-                        {section.items.map((item, index) => (
-                          <ListItem 
-                            key={index}
-                            sx={{ 
-                              py: 1,
-                              px: 0,
-                              borderBottom: index < section.items.length - 1 ? '1px solid rgba(0,0,0,0.08)' : 'none'
-                            }}
-                            secondaryAction={
-                              <Stack direction="row" spacing={0.5}>
-                                <IconButton size="small" sx={{ color: '#3498db' }}>
-                                  <VisibilityIcon fontSize="small" />
-                                </IconButton>
-                                <IconButton size="small" sx={{ color: '#27ae60' }}>
-                                  <DownloadIcon fontSize="small" />
-                                </IconButton>
-                                {editMode && (
-                                  <IconButton size="small" color="error">
-                                    <DeleteIcon fontSize="small" />
-                                  </IconButton>
-                                )}
-                              </Stack>
-                            }
-                          >
-                            <ListItemIcon sx={{ minWidth: 36 }}>
-                              {item.status === 'completo' ? (
-                                <CheckCircleIcon sx={{ color: '#27ae60', fontSize: '1.1rem' }} />
-                              ) : (
-                                <WarningIcon sx={{ color: '#f39c12', fontSize: '1.1rem' }} />
-                              )}
-                            </ListItemIcon>
-                            <ListItemText 
-                              primary={item.name}
-                              primaryTypographyProps={{
-                                color: item.status === 'completo' ? '#2c3e50' : '#7f8c8d',
-                                fontWeight: item.status === 'completo' ? '500' : '400',
-                                fontSize: '0.9rem',
-                                lineHeight: 1.3
-                              }}
-                            />
-                          </ListItem>
-                        ))}
-                      </List>
-                      <Box sx={{ mt: 2 }}>
-                        <Button
-                          startIcon={<AddIcon />}
-                          size="small"
-                          disabled={!editMode}
-                          sx={{ fontSize: '0.8rem', textTransform: 'none' }}
-                        >
-                          Agregar Documento
-                        </Button>
-                      </Box>
-                    </AccordionDetails>
-                  </Accordion>
-                ))}
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {/* Columna 2: Documentación Oficial */}
-        <Grid item xs={12} md={3}>
-          <Card sx={{ height: '100%' }}>
-            <CardContent>
-              <Typography variant="h6" sx={{ 
-                color: '#2c3e50', 
-                mb: 3, 
-                fontWeight: 'bold',
-                fontSize: '1.1rem',
-                borderBottom: '2px solid #2c3e50',
-                pb: 1
-              }}>
-                # DOCUMENTACIÓN OFICIAL
-              </Typography>
-
-              <Stack spacing={2}>
-                {datosComplementarios
-                  .find(s => s.id === 'documentacion')
-                  ?.items.map((doc, index) => (
-                    <Paper 
-                      key={index} 
-                      variant="outlined" 
-                      sx={{ 
-                        p: 2, 
-                        borderRadius: 1,
-                        border: '1px solid rgba(0,0,0,0.1)',
-                        transition: 'border-color 0.2s',
-                        '&:hover': {
-                          borderColor: '#3498db'
-                        }
-                      }}
-                    >
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
-                        <Typography variant="body2" sx={{ 
-                          fontWeight: '500',
-                          color: '#2c3e50',
-                          fontSize: '0.9rem',
-                          lineHeight: 1.3
-                        }}>
-                          {doc.name}
-                        </Typography>
-                        {doc.status === 'completo' ? (
-                          <CheckCircleIcon sx={{ color: '#27ae60', fontSize: '1.1rem' }} />
-                        ) : (
-                          <WarningIcon sx={{ color: '#f39c12', fontSize: '1.1rem' }} />
-                        )}
-                      </Box>
-                      
-                      <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
-                        <Button
-                          size="small"
-                          startIcon={<VisibilityIcon />}
-                          variant="outlined"
-                          onClick={handleSeeCertification}
-                          sx={{ 
-                            fontSize: '0.75rem', 
-                            py: 0.5,
-                            flex: 1,
-                            textTransform: 'none'
-                          }}
-                        >
-                          VER
-                        </Button>
-                        <Button
-                          size="small"
-                          startIcon={<CloudUploadIcon />}
-                          variant="outlined"
-                          onClick={handleUploadCertification}
-                          sx={{ 
-                            fontSize: '0.75rem', 
-                            py: 0.5,
-                            flex: 1,
-                            textTransform: 'none'
-                          }}
-                        >
-                          SUBIR
-                        </Button>
-                      </Stack>
-                    </Paper>
-                  ))}
-              </Stack>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {/* Columna 3: Datos Generales */}
-        <Grid item xs={12} md={5}>
-          <Card sx={{ height: '100%' }}>
-            <CardContent>
-              <Box sx={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center', 
-                mb: 3,
-                pb: 2,
-                borderBottom: '2px solid #2c3e50'
-              }}>
-                <Typography variant="h6" sx={{ 
-                  color: '#2c3e50', 
-                  fontWeight: 'bold',
-                  fontSize: '1.1rem'
-                }}>
-                  # DATOS GENERALES
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  {!editMode ? (
-                    <Button
-                      startIcon={<EditIcon />}
-                      size="small"
-                      variant="outlined"
-                      onClick={() => setEditMode(true)}
-                      sx={{ 
-                        fontWeight: '600',
-                        textTransform: 'none',
-                        fontSize: '0.85rem'
-                      }}
-                    >
-                      MODIFICAR
-                    </Button>
-                  ) : (
-                    <Button
-                      startIcon={<EditIcon />}
-                      size="small"
-                      variant="contained"
-                      color="success"
-                      onClick={handleSave}
-                      sx={{ 
-                        fontWeight: '600',
-                        textTransform: 'none',
-                        fontSize: '0.85rem'
-                      }}
-                    >
-                      GUARDAR
-                    </Button>
-                  )}
-                  {editMode && (
-                    <Button
-                      startIcon={<AddIcon />}
-                      size="small"
-                      onClick={() => setAddDialog(true)}
-                      sx={{ 
-                        fontWeight: '600',
-                        textTransform: 'none',
-                        fontSize: '0.85rem'
-                      }}
-                    >
-                      Agregar Campo
-                    </Button>
-                  )}
-                </Box>
-              </Box>
-
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <Typography variant="subtitle2" sx={{ 
-                    color: '#2c3e50', 
-                    fontWeight: '600',
-                    mb: 0.5,
-                    fontSize: '0.9rem'
-                  }}>
-                    NOMBRE COMPLETO:
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    value={formData.nombre}
-                    onChange={handleInputChange('nombre')}
-                    disabled={!editMode}
-                    variant={editMode ? "outlined" : "filled"}
-                    size="small"
-                    sx={{ mb: 2 }}
-                  />
-                </Grid>
-                
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="subtitle2" sx={{ 
-                    color: '#2c3e50', 
-                    fontWeight: '600',
-                    mb: 0.5,
-                    fontSize: '0.9rem'
-                  }}>
-                    CURP:
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    value={formData.curp}
-                    onChange={handleInputChange('curp')}
-                    disabled={!editMode}
-                    variant={editMode ? "outlined" : "filled"}
-                    size="small"
-                    sx={{ mb: 2 }}
-                  />
-                </Grid>
-                
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="subtitle2" sx={{ 
-                    color: '#2c3e50', 
-                    fontWeight: '600',
-                    mb: 0.5,
-                    fontSize: '0.9rem'
-                  }}>
-                    RFC:
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    value={formData.rfc}
-                    onChange={handleInputChange('rfc')}
-                    disabled={!editMode}
-                    variant={editMode ? "outlined" : "filled"}
-                    size="small"
-                    sx={{ mb: 2 }}
-                  />
-                </Grid>
-                
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="subtitle2" sx={{ 
-                    color: '#2c3e50', 
-                    fontWeight: '600',
-                    mb: 0.5,
-                    fontSize: '0.9rem'
-                  }}>
-                    FECHA DE NACIMIENTO:
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    value={formData.fechaNacimiento}
-                    onChange={handleInputChange('fechaNacimiento')}
-                    disabled={!editMode}
-                    variant={editMode ? "outlined" : "filled"}
-                    size="small"
-                    sx={{ mb: 2 }}
-                  />
-                </Grid>
-                
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="subtitle2" sx={{ 
-                    color: '#2c3e50', 
-                    fontWeight: '600',
-                    mb: 0.5,
-                    fontSize: '0.9rem'
-                  }}>
-                    LUGAR DE NACIMIENTO:
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    value={formData.lugarNacimiento}
-                    onChange={handleInputChange('lugarNacimiento')}
-                    disabled={!editMode}
-                    variant={editMode ? "outlined" : "filled"}
-                    size="small"
-                    sx={{ mb: 2 }}
-                  />
-                </Grid>
-                
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="subtitle2" sx={{ 
-                    color: '#2c3e50', 
-                    fontWeight: '600',
-                    mb: 0.5,
-                    fontSize: '0.9rem'
-                  }}>
-                    NACIONALIDAD:
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    value={formData.nacionalidad}
-                    onChange={handleInputChange('nacionalidad')}
-                    disabled={!editMode}
-                    variant={editMode ? "outlined" : "filled"}
-                    size="small"
-                    sx={{ mb: 2 }}
-                  />
-                </Grid>
-                
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="subtitle2" sx={{ 
-                    color: '#2c3e50', 
-                    fontWeight: '600',
-                    mb: 0.5,
-                    fontSize: '0.9rem'
-                  }}>
-                    ESTADO CIVIL:
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    select
-                    value={formData.estadoCivil}
-                    onChange={handleInputChange('estadoCivil')}
-                    disabled={!editMode}
-                    variant={editMode ? "outlined" : "filled"}
-                    size="small"
-                    sx={{ mb: 2 }}
-                  >
-                    <MenuItem value="Soltero">Soltero</MenuItem>
-                    <MenuItem value="Casado">Casado</MenuItem>
-                    <MenuItem value="Divorciado">Divorciado</MenuItem>
-                    <MenuItem value="Viudo">Viudo</MenuItem>
-                    <MenuItem value="Unión Libre">Unión Libre</MenuItem>
-                  </TextField>
-                </Grid>
-                
-                <Grid item xs={12}>
-                  <Typography variant="subtitle2" sx={{ 
-                    color: '#2c3e50', 
-                    fontWeight: '600',
-                    mb: 0.5,
-                    fontSize: '0.9rem'
-                  }}>
-                    DOMICILIO FISCAL:
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    value={formData.domicilioFiscal}
-                    onChange={handleInputChange('domicilioFiscal')}
-                    disabled={!editMode}
-                    variant={editMode ? "outlined" : "filled"}
-                    size="small"
-                    multiline
-                    rows={2}
-                    sx={{ mb: 2 }}
-                  />
-                </Grid>
-                
-                <Grid item xs={12}>
-                  <Typography variant="subtitle2" sx={{ 
-                    color: '#2c3e50', 
-                    fontWeight: '600',
-                    mb: 0.5,
-                    fontSize: '0.9rem'
-                  }}>
-                    DOMICILIO PARTICULAR:
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    value={formData.domicilioParticular}
-                    onChange={handleInputChange('domicilioParticular')}
-                    disabled={!editMode}
-                    variant={editMode ? "outlined" : "filled"}
-                    size="small"
-                    multiline
-                    rows={2}
-                    sx={{ mb: 2 }}
-                  />
-                </Grid>
-                
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="subtitle2" sx={{ 
-                    color: '#2c3e50', 
-                    fontWeight: '600',
-                    mb: 0.5,
-                    fontSize: '0.9rem'
-                  }}>
-                    TELÉFONOS:
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    value={formData.telefono}
-                    onChange={handleInputChange('telefono')}
-                    disabled={!editMode}
-                    variant={editMode ? "outlined" : "filled"}
-                    size="small"
-                    sx={{ mb: 2 }}
-                  />
-                </Grid>
-                
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="subtitle2" sx={{ 
-                    color: '#2c3e50', 
-                    fontWeight: '600',
-                    mb: 0.5,
-                    fontSize: '0.9rem'
-                  }}>
-                    CORREO ELECTRÓNICO:
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    value={formData.email}
-                    onChange={handleInputChange('email')}
-                    disabled={!editMode}
-                    variant={editMode ? "outlined" : "filled"}
-                    size="small"
-                    sx={{ mb: 2 }}
-                  />
-                </Grid>
-              </Grid>
-
-              {editMode && (
-                <Box sx={{ 
-                  mt: 4, 
-                  display: 'flex', 
-                  justifyContent: 'flex-end', 
-                  gap: 2,
-                  pt: 2,
-                  borderTop: '1px solid rgba(0,0,0,0.1)'
-                }}>
-                  <Button 
-                    onClick={() => setEditMode(false)} 
-                    variant="outlined"
-                    sx={{ fontWeight: '600', textTransform: 'none' }}
-                  >
-                    Cancelar
-                  </Button>
-                  <Button 
-                    onClick={handleSave} 
-                    variant="contained" 
-                    color="success"
-                    sx={{ fontWeight: '600', textTransform: 'none' }}
-                  >
-                    Guardar Cambios
-                  </Button>
-                </Box>
-              )}
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+      {/* Lista completa de todos los apartados en una sola columna */}
+      <Box>
+        <Typography variant="h5" sx={{ 
+          color: '#2c3e50', 
+          mb: 3, 
+          fontWeight: 'bold',
+          borderBottom: '3px solid #2c3e50',
+          pb: 1.5,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1
+        }}>
+          # INFORMACIÓN COMPLEMENTARIA COMPLETA
+        </Typography>
+        
+        {/* Renderizar todos los apartados en orden */}
+        {informacionComplementaria.map((section) => {
+          if (section.id === 'conflictos_intereses') {
+            return renderConflictosIntereses();
+          } else if (section.id === 'cumplimiento_organizacional') {
+            return renderCumplimientoOrganizacional();
+          } else if (section.id === 'documentacion') {
+            return renderDocumentacionOficial(section);
+          } else {
+            return renderSeccionNormal(section);
+          }
+        })}
+      </Box>
 
       {/* Diálogo para agregar campo */}
       <Dialog open={addDialog} onClose={() => setAddDialog(false)} maxWidth="sm" fullWidth>

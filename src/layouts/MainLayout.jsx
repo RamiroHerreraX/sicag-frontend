@@ -22,6 +22,7 @@ import {
 import {
   Dashboard as DashboardIcon,
   Description as CertificationsIcon,
+  Assignment as DeclaracionesIcon,
   Folder as ExpedienteIcon,
   Person as ProfileIcon,
   Map as SiteMapIcon,
@@ -66,8 +67,9 @@ const MainLayout = () => {
 
   const menuItems = [
     { text: 'DASHBOARD', icon: <DashboardIcon />, path: '/dashboard' },
-    { text: 'CERTIFICACIONES', icon: <CertificationsIcon />, path: '/certifications' },
     { text: 'EXPEDIENTE', icon: <ExpedienteIcon />, path: '/expediente' },
+    { text: 'CERTIFICACIONES', icon: <CertificationsIcon />, path: '/certifications' },
+    { text: 'DECLARACIONES', icon: <DeclaracionesIcon />, path: '/declaraciones' },
     { text: 'PERFIL', icon: <ProfileIcon />, path: '/profile' },
     { text: 'MAPA DEL SITIO', icon: <SiteMapIcon />, path: '/sitemap' },
   ];

@@ -36,7 +36,11 @@ import {
   CheckCircle as CheckCircleIcon,
   Warning as WarningIcon,
   Error as ErrorIcon,
-  Event as EventIcon
+  Event as EventIcon,
+  Help as HelpIcon,
+  Cancel as CancelIcon,
+  Info as InfoIcon,
+  Description as DescriptionIcon,
 } from '@mui/icons-material';
 
 const Certifications = () => {
@@ -53,7 +57,7 @@ const Certifications = () => {
       number: 'PA-2026-00145', 
       issueDate: '11/01/2026', 
       expirationDate: '11/01/2029', 
-      status: 'VIGENTE',
+      status: 'Aceptados',
       progress: 100,
       documents: 5,
       lastUpdate: '15/01/2026'
@@ -64,7 +68,7 @@ const Certifications = () => {
       number: 'OS-2025-03421', 
       issueDate: '15/11/2025', 
       expirationDate: '15/11/2026', 
-      status: 'POR VENCER',
+      status: 'En revisión',
       progress: 30,
       documents: 3,
       lastUpdate: '10/01/2026'
@@ -75,7 +79,7 @@ const Certifications = () => {
       number: 'CP-2024-56789', 
       issueDate: '20/03/2024', 
       expirationDate: '20/03/2027', 
-      status: 'VIGENTE',
+      status: 'Aceptados',
       progress: 100,
       documents: 4,
       lastUpdate: '05/01/2026'
@@ -86,7 +90,7 @@ const Certifications = () => {
       number: 'PN-2025-12345', 
       issueDate: '10/08/2025', 
       expirationDate: '10/08/2026', 
-      status: 'OBSERVACIONES',
+      status: 'Información adicional',
       progress: 60,
       documents: 2,
       lastUpdate: '08/01/2026'
@@ -97,40 +101,64 @@ const Certifications = () => {
       number: 'CF-2026-00123', 
       issueDate: '05/01/2026', 
       expirationDate: '05/01/2027', 
-      status: 'EN REVISIÓN',
+      status: 'En revisión',
       progress: 40,
       documents: 3,
       lastUpdate: '14/01/2026'
     },
+      { 
+    id: 6, 
+    type: 'REGISTRO INICIAL', 
+    number: 'RI-2026-00001', 
+    issueDate: '01/01/2026', 
+    expirationDate: '01/01/2027', 
+    status: 'Registro',
+    progress: 20,
+    documents: 1,
+    lastUpdate: '01/01/2026'
+  },{ 
+    id: 7, 
+    type: 'CERTIFICADO RECHAZADO', 
+    number: 'CR-2025-99999', 
+    issueDate: '01/12/2025', 
+    expirationDate: '01/12/2026', 
+    status: 'Rechazado',
+    progress: 0,
+    documents: 0,
+    lastUpdate: '20/12/2025'
+  },
   ]);
 
   const stats = {
-    total: certifications.length,
-    valid: certifications.filter(c => c.status === 'VIGENTE').length,
-    expiring: certifications.filter(c => c.status === 'POR VENCER').length,
-    review: certifications.filter(c => c.status === 'EN REVISIÓN').length,
-  };
+  total: certifications.length,
+  registro: certifications.filter(c => c.status === 'Registro').length,
+  revision: certifications.filter(c => c.status === 'En revisión').length,
+  aceptados: certifications.filter(c => c.status === 'Aceptados').length,
+  adicional: certifications.filter(c => c.status === 'Información adicional').length,
+  rechazado: certifications.filter(c => c.status === 'Rechazado').length,
+};
 
-  const getStatusColor = (status) => {
-    switch(status) {
-      case 'VIGENTE': return 'success';
-      case 'POR VENCER': return 'warning';
-      case 'EN REVISIÓN': return 'info';
-      case 'OBSERVACIONES': return 'error';
-      case 'VENCIDA': return 'error';
-      default: return 'default';
-    }
-  };
+const getStatusColor = (status) => {
+  switch(status) {
+    case 'Registro': return 'info';
+    case 'En revisión': return 'warning';
+    case 'Aceptados': return 'success';
+    case 'Información adicional': return 'primary';
+    case 'Rechazado': return 'error';
+    default: return 'default';
+  }
+};
 
-  const getStatusIcon = (status) => {
-    switch(status) {
-      case 'VIGENTE': return <CheckCircleIcon />;
-      case 'POR VENCER': return <WarningIcon />;
-      case 'EN REVISIÓN': return <WarningIcon />;
-      case 'OBSERVACIONES': return <ErrorIcon />;
-      default: return <EventIcon />;
-    }
-  };
+const getStatusIcon = (status) => {
+  switch(status) {
+    case 'Registro': return <DescriptionIcon />;
+    case 'En revisión': return <VisibilityIcon />;
+    case 'Aceptados': return <CheckCircleIcon />;
+    case 'Información adicional': return <InfoIcon />;
+    case 'Rechazado': return <CancelIcon />;
+    default: return <HelpIcon />;
+  }
+};
 
   const handleDeleteClick = (cert) => {
     setSelectedCert(cert);
