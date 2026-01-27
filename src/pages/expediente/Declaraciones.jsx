@@ -302,10 +302,65 @@ const DeclaracionesCumplimientoAduanero = () => {
       puntuacionTotal: 0,
       maxPuntos: 100,
       color: '#9c27b0'
+    },
+
+    // NUEVO: Añadir apartado de conflictos de intereses aquí
+    conflictos_intereses: {
+      id: 'conflictos_intereses',
+      titulo: 'DECLARACIÓN DE CONFLICTO DE INTERESES',
+      descripcion: 'Evaluación de posibles conflictos de intereses en operaciones aduaneras',
+      articulo: 'CONFLICTOS',
+      preguntas: [
+        { 
+          id: 1, 
+          texto: "¿Tiene intereses comerciales directos con proveedores o clientes de la organización?", 
+          respuesta: null,
+          explicacion: '',
+          puntos: 20,
+          responsabilidad: 'Intereses Comerciales'
+        },
+        { 
+          id: 2, 
+          texto: "¿Participa en decisiones que puedan beneficiar a familiares cercanos?", 
+          respuesta: null,
+          explicacion: '',
+          puntos: 20,
+          responsabilidad: 'Beneficio Familiar'
+        },
+        { 
+          id: 3, 
+          texto: "¿Recibe compensaciones adicionales de terceros relacionados con la organización?", 
+          respuesta: null,
+          explicacion: '',
+          puntos: 20,
+          responsabilidad: 'Compensaciones Externas'
+        },
+        { 
+          id: 4, 
+          texto: "¿Participa en empresas competidoras o proveedores alternativos?", 
+          respuesta: null,
+          explicacion: '',
+          puntos: 20,
+          responsabilidad: 'Competencia Directa'
+        },
+        { 
+          id: 5, 
+          texto: "¿Tiene acceso a información privilegiada que podría usar para beneficio personal?", 
+          respuesta: null,
+          explicacion: '',
+          puntos: 20,
+          responsabilidad: 'Información Privilegiada'
+        },
+      ],
+      estado: 'pendiente',
+      guardado: false,
+      puntuacionTotal: 0,
+      maxPuntos: 100,
+      color: '#d32f2f'
     }
   };
 
-  // Estados para los apartados principales según artículos 95-98
+  // Estados para los apartados principales según artículos 95-98 + conflictos de intereses
   const [apartadosData, setApartadosData] = useState(estructuraBaseApartados);
 
   // Indicadores para la tabla superior
@@ -329,6 +384,12 @@ const DeclaracionesCumplimientoAduanero = () => {
       integridadOperaciones: { valor: 0, meta: 95 },
       reporteIncidentes: { valor: 0, meta: 90 },
       cumplimientoProcedimientos: { valor: 0, meta: 90 }
+    },
+    // NUEVO: Indicadores para conflictos de intereses
+    conflictosIntereses: {
+      transparencia: { valor: 0, meta: 100 },
+      declaracionOportuna: { valor: 0, meta: 95 },
+      gestionConflictos: { valor: 0, meta: 90 }
     }
   });
 
@@ -430,7 +491,7 @@ const DeclaracionesCumplimientoAduanero = () => {
     // Calcular puntuación de manera segura
     let puntuacionTotal = 0;
     apartado.preguntas.forEach(pregunta => {
-      if (pregunta && pregunta.respuesta === true) {
+      if (pregunta && pregunta.respuesta === false) { // NEGATIVO: En conflictos de intereses, "false" es bueno (no tiene conflicto)
         puntuacionTotal += pregunta.puntos || 0;
       }
     });
@@ -460,7 +521,7 @@ const DeclaracionesCumplimientoAduanero = () => {
     // Actualizar indicadores superiores según el apartado
     actualizarIndicadoresSuperiores(apartadoId, porcentaje);
 
-    alert(`Evaluación del Artículo ${apartado.articulo} guardada exitosamente. Puntuación: ${puntuacionTotal}/${maxPuntos} (${porcentaje}%)`);
+    alert(`Evaluación ${apartado.titulo} guardada exitosamente. Puntuación: ${puntuacionTotal}/${maxPuntos} (${porcentaje}%)`);
   };
 
   // Función para actualizar indicadores superiores
@@ -488,6 +549,11 @@ const DeclaracionesCumplimientoAduanero = () => {
           nuevosIndicadores.reglasMinimasSeguridad.integridadOperaciones.valor = porcentaje;
           nuevosIndicadores.reglasMinimasSeguridad.reporteIncidentes.valor = Math.min(porcentaje + 15, 100);
           nuevosIndicadores.reglasMinimasSeguridad.cumplimientoProcedimientos.valor = Math.min(porcentaje + 5, 100);
+          break;
+        case 'conflictos_intereses':
+          nuevosIndicadores.conflictosIntereses.transparencia.valor = porcentaje;
+          nuevosIndicadores.conflictosIntereses.declaracionOportuna.valor = Math.min(porcentaje + 10, 100);
+          nuevosIndicadores.conflictosIntereses.gestionConflictos.valor = Math.min(porcentaje + 5, 100);
           break;
       }
       
@@ -565,8 +631,27 @@ const DeclaracionesCumplimientoAduanero = () => {
         return <AssessmentIcon />;
       case 'reglas_minimas_seguridad':
         return <SecurityIcon />;
+      case 'conflictos_intereses':
+        return <PolicyIcon />;
       default:
         return <AssignmentIcon />;
+    }
+  };
+
+  // Función para obtener instrucciones según el tipo de apartado
+  const obtenerInstrucciones = (apartado) => {
+    if (apartado.id === 'conflictos_intereses') {
+      return (
+        <>
+          <strong>Instrucciones:</strong> Evalúe cada situación según su experiencia actual. Seleccione "Sí" si se aplica a su situación o "No" si no se aplica. En conflictos de intereses, es preferible marcar "No" (no se aplica).
+        </>
+      );
+    } else {
+      return (
+        <>
+          <strong>Instrucciones:</strong> Evalúe cada una de sus responsabilidades según el Artículo {apartado.articulo || ''}. Seleccione "Sí" si cumple consistentemente con la responsabilidad o "No" si identifica áreas de mejora.
+        </>
+      );
     }
   };
 
@@ -663,22 +748,21 @@ const DeclaracionesCumplimientoAduanero = () => {
           <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
               <Typography variant="h6" sx={{ color: '#333', display: 'flex', alignItems: 'center', gap: 1 }}>
-                <LawIcon sx={{ color: apartado.color || '#1976d2' }} /> 
-                Evaluación del Artículo {apartado.articulo || ''} - Responsabilidades del Agente Aduanal
+                {apartado.id === 'conflictos_intereses' ? <PolicyIcon sx={{ color: apartado.color || '#d32f2f' }} /> : <LawIcon sx={{ color: apartado.color || '#1976d2' }} />}
+                {apartado.id === 'conflictos_intereses' ? 'Declaración de Conflicto de Intereses' : `Evaluación del Artículo ${apartado.articulo || ''} - Responsabilidades del Agente Aduanal`}
               </Typography>
               
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <VerifiedUserIcon fontSize="small" sx={{ color: '#666' }} />
                 <Typography variant="body2" sx={{ color: '#666' }}>
-                  {preguntasContestadas}/{preguntasTotales} responsabilidades evaluadas
+                  {preguntasContestadas}/{preguntasTotales} {apartado.id === 'conflictos_intereses' ? 'situaciones evaluadas' : 'responsabilidades evaluadas'}
                 </Typography>
               </Box>
             </Box>
             
             <Alert severity="info" sx={{ mb: 3, backgroundColor: `${apartado.color || '#1976d2'}10` }}>
               <Typography variant="body2">
-                <strong>Instrucciones:</strong> Evalúe cada una de sus responsabilidades según el Artículo {apartado.articulo || ''}. 
-                Seleccione "Sí" si cumple consistentemente con la responsabilidad o "No" si identifica áreas de mejora.
+                {obtenerInstrucciones(apartado)}
               </Typography>
             </Alert>
             
@@ -731,24 +815,46 @@ const DeclaracionesCumplimientoAduanero = () => {
                           gap: 1,
                           p: 1,
                           borderRadius: 1,
-                          backgroundColor: pregunta.respuesta ? '#e8f5e9' : '#ffebee',
-                          border: `1px solid ${pregunta.respuesta ? '#4caf50' : '#f44336'}`,
+                          backgroundColor: apartado.id === 'conflictos_intereses' 
+                            ? (pregunta.respuesta === false ? '#e8f5e9' : '#ffebee') 
+                            : (pregunta.respuesta === true ? '#e8f5e9' : '#ffebee'),
+                          border: apartado.id === 'conflictos_intereses'
+                            ? `1px solid ${pregunta.respuesta === false ? '#4caf50' : '#f44336'}`
+                            : `1px solid ${pregunta.respuesta === true ? '#4caf50' : '#f44336'}`,
                           mb: 1
                         }}>
-                          {pregunta.respuesta ? (
-                            <>
-                              <CheckCircleIcon sx={{ color: '#4caf50', fontSize: 20 }} />
-                              <Typography variant="body2" sx={{ color: '#2e7d32', fontWeight: '500' }}>
-                                Cumple con esta responsabilidad
-                              </Typography>
-                            </>
+                          {apartado.id === 'conflictos_intereses' ? (
+                            pregunta.respuesta === false ? (
+                              <>
+                                <CheckCircleIcon sx={{ color: '#4caf50', fontSize: 20 }} />
+                                <Typography variant="body2" sx={{ color: '#2e7d32', fontWeight: '500' }}>
+                                  No se aplica a mi situación
+                                </Typography>
+                              </>
+                            ) : (
+                              <>
+                                <CloseIcon sx={{ color: '#f44336', fontSize: 20 }} />
+                                <Typography variant="body2" sx={{ color: '#c62828', fontWeight: '500' }}>
+                                  Se aplica a mi situación
+                                </Typography>
+                              </>
+                            )
                           ) : (
-                            <>
-                              <CloseIcon sx={{ color: '#f44336', fontSize: 20 }} />
-                              <Typography variant="body2" sx={{ color: '#c62828', fontWeight: '500' }}>
-                                No cumple completamente
-                              </Typography>
-                            </>
+                            pregunta.respuesta === true ? (
+                              <>
+                                <CheckCircleIcon sx={{ color: '#4caf50', fontSize: 20 }} />
+                                <Typography variant="body2" sx={{ color: '#2e7d32', fontWeight: '500' }}>
+                                  Cumple con esta responsabilidad
+                                </Typography>
+                              </>
+                            ) : (
+                              <>
+                                <CloseIcon sx={{ color: '#f44336', fontSize: 20 }} />
+                                <Typography variant="body2" sx={{ color: '#c62828', fontWeight: '500' }}>
+                                  No cumple completamente
+                                </Typography>
+                              </>
+                            )
                           )}
                         </Box>
                       )}
@@ -757,7 +863,7 @@ const DeclaracionesCumplimientoAduanero = () => {
                   
                   <FormControl component="fieldset" sx={{ mb: 2, width: '100%' }}>
                     <FormLabel component="legend" sx={{ fontWeight: '500', mb: 1 }}>
-                      Mi nivel de cumplimiento:
+                      {apartado.id === 'conflictos_intereses' ? '¿Esta situación se aplica a usted?' : 'Mi nivel de cumplimiento:'}
                     </FormLabel>
                     <RadioGroup
                       row
@@ -778,12 +884,20 @@ const DeclaracionesCumplimientoAduanero = () => {
                             gap: 1,
                             p: 1,
                             borderRadius: 1,
-                            backgroundColor: pregunta.respuesta === true ? '#e8f5e9' : 'transparent',
-                            border: pregunta.respuesta === true ? '2px solid #4caf50' : '1px solid #e0e0e0'
+                            backgroundColor: pregunta.respuesta === true ? 
+                              (apartado.id === 'conflictos_intereses' ? '#ffebee' : '#e8f5e9') 
+                              : 'transparent',
+                            border: pregunta.respuesta === true ? 
+                              (apartado.id === 'conflictos_intereses' ? '2px solid #f44336' : '2px solid #4caf50') 
+                              : '1px solid #e0e0e0'
                           }}>
-                            <CheckCircleIcon sx={{ color: pregunta.respuesta === true ? '#4caf50' : '#9e9e9e' }} />
+                            {apartado.id === 'conflictos_intereses' ? (
+                              <CloseIcon sx={{ color: pregunta.respuesta === true ? '#f44336' : '#9e9e9e' }} />
+                            ) : (
+                              <CheckCircleIcon sx={{ color: pregunta.respuesta === true ? '#4caf50' : '#9e9e9e' }} />
+                            )}
                             <Typography sx={{ fontWeight: pregunta.respuesta === true ? '600' : '400' }}>
-                              Sí, cumplo con esta responsabilidad
+                              {apartado.id === 'conflictos_intereses' ? 'Sí, se aplica' : 'Sí, cumplo con esta responsabilidad'}
                             </Typography>
                           </Box>
                         } 
@@ -799,12 +913,20 @@ const DeclaracionesCumplimientoAduanero = () => {
                             gap: 1,
                             p: 1,
                             borderRadius: 1,
-                            backgroundColor: pregunta.respuesta === false ? '#ffebee' : 'transparent',
-                            border: pregunta.respuesta === false ? '2px solid #f44336' : '1px solid #e0e0e0'
+                            backgroundColor: pregunta.respuesta === false ? 
+                              (apartado.id === 'conflictos_intereses' ? '#e8f5e9' : '#ffebee') 
+                              : 'transparent',
+                            border: pregunta.respuesta === false ? 
+                              (apartado.id === 'conflictos_intereses' ? '2px solid #4caf50' : '2px solid #f44336') 
+                              : '1px solid #e0e0e0'
                           }}>
-                            <CloseIcon sx={{ color: pregunta.respuesta === false ? '#f44336' : '#9e9e9e' }} />
+                            {apartado.id === 'conflictos_intereses' ? (
+                              <CheckCircleIcon sx={{ color: pregunta.respuesta === false ? '#4caf50' : '#9e9e9e' }} />
+                            ) : (
+                              <CloseIcon sx={{ color: pregunta.respuesta === false ? '#f44336' : '#9e9e9e' }} />
+                            )}
                             <Typography sx={{ fontWeight: pregunta.respuesta === false ? '600' : '400' }}>
-                              No, necesito mejorar en esta área
+                              {apartado.id === 'conflictos_intereses' ? 'No, no se aplica' : 'No, necesito mejorar en esta área'}
                             </Typography>
                           </Box>
                         } 
@@ -813,23 +935,29 @@ const DeclaracionesCumplimientoAduanero = () => {
                     </RadioGroup>
                   </FormControl>
                   
-                  <Collapse in={pregunta.respuesta === false}>
+                  <Collapse in={pregunta.respuesta === (apartado.id === 'conflictos_intereses' ? true : false)}>
                     <Box sx={{ mt: 2, p: 2, backgroundColor: '#fff8e1', borderRadius: 1, border: '1px solid #ffd54f' }}>
                       <Typography variant="body2" sx={{ mb: 1, color: '#f57c00', fontWeight: '500', display: 'flex', alignItems: 'center', gap: 1 }}>
                         <ArrowForwardIcon sx={{ fontSize: 16 }} />
-                        Área de mejora identificada - Plan de acción:
+                        {apartado.id === 'conflictos_intereses' 
+                          ? 'Situación identificada - Información adicional:' 
+                          : 'Área de mejora identificada - Plan de acción:'}
                       </Typography>
                       <TextField
                         fullWidth
                         multiline
                         rows={3}
-                        placeholder="Describa las acciones específicas que tomará para mejorar en esta responsabilidad..."
+                        placeholder={apartado.id === 'conflictos_intereses'
+                          ? "Proporcione detalles adicionales sobre esta situación de conflicto de intereses..."
+                          : "Describa las acciones específicas que tomará para mejorar en esta responsabilidad..."}
                         value={pregunta.explicacion || ''}
                         onChange={(e) => handleExplicacionChange(apartado.id, pregunta.id, e.target.value)}
                         variant="outlined"
                         size="small"
                         sx={{ backgroundColor: 'white' }}
-                        helperText="Este plan de mejora será registrado para seguimiento"
+                        helperText={apartado.id === 'conflictos_intereses'
+                          ? "Esta información será registrada para fines de seguimiento"
+                          : "Este plan de mejora será registrado para seguimiento"}
                       />
                     </Box>
                   </Collapse>
@@ -842,12 +970,14 @@ const DeclaracionesCumplimientoAduanero = () => {
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Box>
                 <Typography variant="body1" sx={{ fontWeight: '600', color: '#333', mb: 1 }}>
-                  Resumen del Artículo {apartado.articulo || ''}:
+                  {apartado.id === 'conflictos_intereses' 
+                    ? 'Resumen de su declaración:' 
+                    : `Resumen del Artículo ${apartado.articulo || ''}:`}
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                   <Box>
                     <Typography variant="body2" sx={{ color: '#666' }}>
-                      Responsabilidades evaluadas: {preguntasContestadas}/{preguntasTotales}
+                      {apartado.id === 'conflictos_intereses' ? 'Situaciones evaluadas:' : 'Responsabilidades evaluadas:'} {preguntasContestadas}/{preguntasTotales}
                     </Typography>
                     <Typography variant="body2" sx={{ color: '#666' }}>
                       Puntuación obtenida: {apartado.puntuacionTotal || 0}/{apartado.maxPuntos || 100} puntos
@@ -982,7 +1112,7 @@ const DeclaracionesCumplimientoAduanero = () => {
             Declaración de Cumplimiento Aduanero
           </Typography>
           <Typography variant="body1" sx={{ color: '#666' }}>
-            Evaluación de responsabilidades según Artículos 95, 96, 97 y 98 - Agente Aduanal
+            Evaluación de responsabilidades según Artículos 95, 96, 97 y 98 + Declaración de Conflictos de Intereses
           </Typography>
         </Box>
         
@@ -1005,7 +1135,7 @@ const DeclaracionesCumplimientoAduanero = () => {
         </Stack>
       </Box>
 
-      {/* Stepper de progreso */}
+      {/* Stepper de progreso actualizado */}
       <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
         <Step>
           <StepLabel>Artículo 95 - Principios Rectores</StepLabel>
@@ -1018,6 +1148,9 @@ const DeclaracionesCumplimientoAduanero = () => {
         </Step>
         <Step>
           <StepLabel>Artículo 98 - Reglas de Seguridad</StepLabel>
+        </Step>
+        <Step>
+          <StepLabel>Conflictos de Intereses</StepLabel>
         </Step>
       </Stepper>
 
@@ -1060,13 +1193,13 @@ const DeclaracionesCumplimientoAduanero = () => {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <LawIcon sx={{ color: '#1976d2', fontSize: 20 }} />
                   <Typography variant="body2">
-                    {indicadoresCalculados.guardados} de {indicadoresCalculados.totalApartados} artículos evaluados
+                    {indicadoresCalculados.guardados} de {indicadoresCalculados.totalApartados} apartados evaluados
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <CheckCircleIcon sx={{ color: '#4caf50', fontSize: 20 }} />
                   <Typography variant="body2">
-                    {indicadoresCalculados.altoCumplimiento} artículos con excelente cumplimiento
+                    {indicadoresCalculados.altoCumplimiento} apartados con excelente cumplimiento
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -1079,20 +1212,20 @@ const DeclaracionesCumplimientoAduanero = () => {
             </Box>
           </Box>
           
-          {/* Tabla de indicadores por apartado - ERROR CORREGIDO AQUÍ */}
+          {/* Tabla de indicadores por apartado */}
           <Box sx={{ mt: 3 }}>
             <Typography variant="h6" sx={{ mb: 2, color: '#333', display: 'flex', alignItems: 'center', gap: 1 }}>
-              <TrendingUpIcon /> Mi Cumplimiento por Artículo
+              <TrendingUpIcon /> Mi Cumplimiento por Apartado
             </Typography>
             <TableContainer component={Paper} variant="outlined">
               <Table size="small">
                 <TableHead>
                   <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-                    <TableCell sx={{ fontWeight: '600' }}>Artículo</TableCell>
+                    <TableCell sx={{ fontWeight: '600' }}>Apartado</TableCell>
                     <TableCell sx={{ fontWeight: '600' }}>Descripción</TableCell>
                     <TableCell sx={{ fontWeight: '600' }} align="center">Mi Cumplimiento</TableCell>
                     <TableCell sx={{ fontWeight: '600' }} align="center">Estado</TableCell>
-                    <TableCell sx={{ fontWeight: '600' }} align="center">Responsabilidades</TableCell>
+                    <TableCell sx={{ fontWeight: '600' }} align="center">Evaluaciones</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -1113,10 +1246,10 @@ const DeclaracionesCumplimientoAduanero = () => {
                             </Box>
                             <Box>
                               <Typography variant="body2" sx={{ fontWeight: '600' }}>
-                                Art. {apartado.articulo || ''}
+                                {apartado.id === 'conflictos_intereses' ? 'Conflictos de Intereses' : `Art. ${apartado.articulo || ''}`}
                               </Typography>
                               <Typography variant="caption" sx={{ color: '#666' }}>
-                                {apartado.titulo ? apartado.titulo.split(' - ')[1] : 'Artículo'}
+                                {apartado.titulo ? apartado.titulo.split(' - ')[1] || apartado.titulo : 'Apartado'}
                               </Typography>
                             </Box>
                           </Box>
@@ -1189,8 +1322,9 @@ const DeclaracionesCumplimientoAduanero = () => {
         icon={<HelpIcon />}
       >
         <Typography variant="body2">
-          <strong>Instrucciones importantes:</strong> Esta declaración evalúa su cumplimiento como Agente Aduanal según los Artículos 95, 96, 97 y 98. 
-          Responda con sinceridad cada responsabilidad. Las respuestas "No" deben incluir un plan de mejora específico. 
+          <strong>Instrucciones importantes:</strong> Esta declaración evalúa su cumplimiento como Agente Aduanal según los Artículos 95, 96, 97 y 98, 
+          más la declaración de conflictos de intereses. Responda con sinceridad cada responsabilidad y situación. 
+          En conflictos de intereses, es preferible marcar "No" (no se aplica). Las respuestas que requieren plan de mejora o explicación deben ser detalladas. 
           La declaración completa será enviada para validación y registro oficial.
         </Typography>
       </Alert>

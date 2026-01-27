@@ -33,7 +33,7 @@ import {
   Radio,
   FormControl,
   FormLabel,
-  FormControlLabel, // AÑADIDO ESTE IMPORT
+  FormControlLabel,
   Collapse
 } from '@mui/material';
 import {
@@ -57,7 +57,8 @@ import {
   Verified as VerifiedIcon,
   Check as CheckIcon,
   Close as CloseIcon,
-  ArrowForward as ArrowForwardIcon
+  ArrowForward as ArrowForwardIcon,
+  Send as SendIcon
 } from '@mui/icons-material';
 
 const Expediente = () => {
@@ -65,6 +66,14 @@ const Expediente = () => {
   const [editMode, setEditMode] = useState(false);
   const [expanded, setExpanded] = useState('panel1');
   const [addDialog, setAddDialog] = useState(false);
+  const [validacionDialog, setValidacionDialog] = useState({
+    open: false,
+    apartado: '',
+    titulo: '',
+    fecha: ''
+  });
+  const [estadosValidacion, setEstadosValidacion] = useState({});
+  
   const [formData, setFormData] = useState({
     nombre: 'Luis Rodríguez',
     curp: 'RODL800101HDFXYZ01',
@@ -77,44 +86,6 @@ const Expediente = () => {
     domicilioParticular: 'Calle Secundaria 456, Col. Juárez, CDMX',
     telefono: '+52 55 1234 5678',
     email: 'luis.rodriguez@ejemplo.com'
-  });
-
-  // Estados para Conflictos de Intereses
-  const [conflictosData, setConflictosData] = useState({
-    preguntas: [
-      { 
-        id: 1, 
-        texto: "¿Tiene intereses comerciales directos con proveedores o clientes de la organización?", 
-        respuesta: null,
-        explicacion: ''
-      },
-      { 
-        id: 2, 
-        texto: "¿Participa en decisiones que puedan beneficiar a familiares cercanos?", 
-        respuesta: null,
-        explicacion: ''
-      },
-      { 
-        id: 3, 
-        texto: "¿Recibe compensaciones adicionales de terceros relacionados con la organización?", 
-        respuesta: null,
-        explicacion: ''
-      },
-      { 
-        id: 4, 
-        texto: "¿Participa en empresas competidoras o proveedores alternativos?", 
-        respuesta: null,
-        explicacion: ''
-      },
-      { 
-        id: 5, 
-        texto: "¿Tiene acceso a información privilegiada que podría usar para beneficio personal?", 
-        respuesta: null,
-        explicacion: ''
-      },
-    ],
-    guardado: false,
-    fechaDeclaracion: null
   });
 
   // Estados para Cumplimiento Organizacional
@@ -161,44 +132,6 @@ a actos de soborno y corrupción en operaciones comerciales.`,
     navigate('/vista-certification');
   };
 
-  // Funciones para Conflictos de Intereses - ACTUALIZADAS
-  const handleConflictosChange = (id, value) => {
-    const nuevasPreguntas = conflictosData.preguntas.map(pregunta =>
-      pregunta.id === id ? { ...pregunta, respuesta: value } : pregunta
-    );
-    setConflictosData({ ...conflictosData, preguntas: nuevasPreguntas });
-  };
-
-  const handleExplicacionChange = (id, explicacion) => {
-    const nuevasPreguntas = conflictosData.preguntas.map(pregunta =>
-      pregunta.id === id ? { ...pregunta, explicacion } : pregunta
-    );
-    setConflictosData({ ...conflictosData, preguntas: nuevasPreguntas });
-  };
-
-  const guardarDeclaracionConflictos = () => {
-    // Verificar que todas las preguntas estén respondidas
-    const todasRespondidas = conflictosData.preguntas.every(p => p.respuesta !== null);
-    
-    if (!todasRespondidas) {
-      alert('Por favor, responda todas las preguntas antes de guardar.');
-      return;
-    }
-    
-    setConflictosData({
-      ...conflictosData,
-      guardado: true,
-      fechaDeclaracion: new Date().toLocaleDateString()
-    });
-  };
-
-  const editarDeclaracionConflictos = () => {
-    setConflictosData({
-      ...conflictosData,
-      guardado: false
-    });
-  };
-
   // Funciones para Cumplimiento Organizacional
   const handleDocumentoUpload = (tipo) => {
     const nuevoEstado = {
@@ -241,7 +174,61 @@ a actos de soborno y corrupción en operaciones comerciales.`,
     setCumplimientoData(nuevoEstado);
   };
 
-  // Lista unificada de todos los apartados
+  // Función para abrir el diálogo de validación
+  const handleAbrirValidacionDialog = (apartado, titulo) => {
+    const fechaActual = new Date().toLocaleDateString('es-MX', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    
+    setValidacionDialog({
+      open: true,
+      apartado,
+      titulo,
+      fecha: fechaActual
+    });
+  };
+
+  // Función para cerrar el diálogo de validación
+  const handleCerrarValidacionDialog = () => {
+    setValidacionDialog({
+      open: false,
+      apartado: '',
+      titulo: '',
+      fecha: ''
+    });
+  };
+
+  // Función para confirmar la validación
+  const handleConfirmarValidacion = () => {
+    const { apartado, fecha } = validacionDialog;
+    
+    // Actualizar el estado de validación para este apartado
+    setEstadosValidacion(prev => ({
+      ...prev,
+      [apartado]: {
+        enviado: true,
+        fechaEnvio: fecha,
+        estado: 'en_revision'
+      }
+    }));
+
+    // Mostrar mensaje de éxito
+    alert(`Documentos del apartado "${validacionDialog.titulo}" enviados exitosamente para revisión.`);
+    
+    // Cerrar el diálogo
+    handleCerrarValidacionDialog();
+  };
+
+  // Función para ver el estado de validación
+  const obtenerEstadoValidacion = (apartado) => {
+    return estadosValidacion[apartado] || { enviado: false, fechaEnvio: null, estado: 'pendiente' };
+  };
+
+  // Lista unificada de todos los apartados (SIN CONFLICTOS DE INTERESES)
   const informacionComplementaria = [
     { 
       id: 'certificados',
@@ -252,12 +239,6 @@ a actos de soborno y corrupción en operaciones comerciales.`,
         { name: 'Opinión SAT', status: 'completo', icon: <CheckCircleIcon /> },
         { name: 'Cédula Profesional', status: 'pendiente', icon: <WarningIcon /> },
       ]
-    },
-    { 
-      id: 'conflictos_intereses',
-      title: 'CONFLICTO DE INTERESES',
-      icon: <BalanceIcon />,
-      items: []
     },
     { 
       id: 'cumplimiento_organizacional',
@@ -346,337 +327,10 @@ a actos de soborno y corrupción en operaciones comerciales.`,
 
   const compliance = calculateCompliance();
 
-  // Función para renderizar Conflictos de Intereses - ACTUALIZADA
-  const renderConflictosIntereses = () => {
-    const section = informacionComplementaria.find(s => s.id === 'conflictos_intereses');
-    const preguntasContestadas = conflictosData.preguntas.filter(p => p.respuesta !== null).length;
-    const preguntasTotales = conflictosData.preguntas.length;
-    
-    return (
-      <Accordion 
-        key={section.id}
-        expanded={expanded === section.id}
-        onChange={handleAccordionChange(section.id)}
-        sx={{ 
-          mb: 2,
-          border: '2px solid',
-          borderColor: '#1976d2',
-          borderRadius: '8px !important',
-          boxShadow: '0 2px 12px rgba(25, 118, 210, 0.1)',
-          '&:before': { display: 'none' }
-        }}
-      >
-        <AccordionSummary 
-          expandIcon={<ExpandMoreIcon />}
-          sx={{ 
-            backgroundColor: expanded === section.id ? '#f0f7ff' : 'white',
-            borderRadius: '8px',
-            minHeight: '70px'
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
-            <Box sx={{ 
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: 40,
-              height: 40,
-              borderRadius: '50%',
-              backgroundColor: '#e3f2fd',
-              color: '#1976d2'
-            }}>
-              {section.icon}
-            </Box>
-            
-            <Box sx={{ flexGrow: 1 }}>
-              <Typography sx={{ 
-                fontWeight: '700', 
-                color: '#333',
-                fontSize: '1rem',
-                mb: 0.5
-              }}>
-                {section.title}
-              </Typography>
-            </Box>
-            
-            <Chip 
-              label={conflictosData.guardado ? "COMPLETADO" : "PENDIENTE"}
-              size="small"
-              color={conflictosData.guardado ? "success" : "warning"}
-              sx={{ 
-                height: '24px',
-                fontSize: '0.75rem',
-                fontWeight: '600'
-              }}
-            />
-          </Box>
-        </AccordionSummary>
-        <AccordionDetails sx={{ pt: 3, pb: 3 }}>
-          {conflictosData.guardado ? (
-            <>
-              <Alert severity="success" sx={{ mb: 3 }}>
-                <Typography variant="body2" sx={{ fontWeight: '500' }}>
-                  Declaración de conflicto de intereses actualizada el {conflictosData.fechaDeclaracion}
-                </Typography>
-              </Alert>
-              <Box sx={{ mb: 3, p: 3, bgcolor: '#f8f9fa', borderRadius: 2, border: '1px solid #e0e0e0' }}>
-                <Typography variant="body2" sx={{ color: '#2c3e50', mb: 2, fontWeight: '500' }}>
-                  Resumen de su declaración:
-                </Typography>
-                {conflictosData.preguntas.map((pregunta) => (
-                  <Box key={pregunta.id} sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'space-between',
-                    mb: 2,
-                    p: 1.5,
-                    borderRadius: 1,
-                    backgroundColor: '#fff',
-                    border: '1px solid #f0f0f0'
-                  }}>
-                    <Typography variant="body2" sx={{ color: '#555', flex: 1 }}>
-                      {pregunta.texto}
-                    </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', ml: 2 }}>
-                      {pregunta.respuesta === true ? (
-                        <>
-                          <CheckCircleIcon sx={{ color: '#27ae60', mr: 0.5 }} />
-                          <Chip 
-                            label="SÍ"
-                            size="small"
-                            color="error"
-                            sx={{ fontWeight: '600' }}
-                          />
-                        </>
-                      ) : (
-                        <>
-                          <CloseIcon sx={{ color: '#e74c3c', mr: 0.5 }} />
-                          <Chip 
-                            label="NO"
-                            size="small"
-                            color="success"
-                            sx={{ fontWeight: '600' }}
-                          />
-                        </>
-                      )}
-                    </Box>
-                  </Box>
-                ))}
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <Button
-                  variant="outlined"
-                  onClick={editarDeclaracionConflictos}
-                  sx={{ textTransform: 'none', px: 4 }}
-                >
-                  Editar Declaración
-                </Button>
-              </Box>
-            </>
-          ) : (
-            <>
-              <Typography variant="body2" sx={{ color: '#666', mb: 3, lineHeight: 1.6 }}>
-                Por favor, responda las siguientes preguntas para completar su declaración de conflicto de intereses. 
-                Esta información es confidencial y se utilizará únicamente para fines de cumplimiento normativo.
-              </Typography>
-              
-              <Paper variant="outlined" sx={{ p: 3, borderRadius: 2, mb: 3 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
-                  <Typography variant="h6" sx={{ color: '#333', display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <BalanceIcon sx={{ color: '#1976d2' }} /> 
-                    Declaración de Conflicto de Intereses
-                  </Typography>
-                  
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <VerifiedIcon fontSize="small" sx={{ color: '#666' }} />
-                    <Typography variant="body2" sx={{ color: '#666' }}>
-                      {preguntasContestadas}/{preguntasTotales} preguntas respondidas
-                    </Typography>
-                  </Box>
-                </Box>
-                
-                <Alert severity="info" sx={{ mb: 3, backgroundColor: '#1976d210' }}>
-                  <Typography variant="body2">
-                    <strong>Instrucciones:</strong> Evalúe cada situación según su experiencia actual. 
-                    Seleccione "Sí" si se aplica a su situación o "No" si no se aplica.
-                  </Typography>
-                </Alert>
-                
-                {conflictosData.preguntas.map((pregunta, index) => (
-                  <Box key={pregunta.id} sx={{ mb: 3, p: 2.5, border: '1px solid #e0e0e0', borderRadius: 2 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 2 }}>
-                      <Box sx={{ 
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: 32,
-                        height: 32,
-                        borderRadius: '50%',
-                        backgroundColor: '#1976d2',
-                        color: 'white',
-                        fontWeight: 'bold',
-                        flexShrink: 0
-                      }}>
-                        {index + 1}
-                      </Box>
-                      
-                      <Box sx={{ flex: 1 }}>
-                        <Typography variant="subtitle1" sx={{ fontWeight: '500', mb: 0.5 }}>
-                          {pregunta.texto}
-                        </Typography>
-                        
-                        {/* Estado de la respuesta */}
-                        {pregunta.respuesta !== null && (
-                          <Box sx={{ 
-                            display: 'inline-flex', 
-                            alignItems: 'center', 
-                            gap: 1,
-                            p: 1,
-                            borderRadius: 1,
-                            backgroundColor: pregunta.respuesta ? '#e8f5e9' : '#ffebee',
-                            border: `1px solid ${pregunta.respuesta ? '#4caf50' : '#f44336'}`,
-                            mb: 1
-                          }}>
-                            {pregunta.respuesta ? (
-                              <>
-                                <CheckCircleIcon sx={{ color: '#4caf50', fontSize: 20 }} />
-                                <Typography variant="body2" sx={{ color: '#2e7d32', fontWeight: '500' }}>
-                                  Se aplica a mi situación
-                                </Typography>
-                              </>
-                            ) : (
-                              <>
-                                <CloseIcon sx={{ color: '#f44336', fontSize: 20 }} />
-                                <Typography variant="body2" sx={{ color: '#c62828', fontWeight: '500' }}>
-                                  No se aplica a mi situación
-                                </Typography>
-                              </>
-                            )}
-                          </Box>
-                        )}
-                      </Box>
-                    </Box>
-                    
-                    <FormControl component="fieldset" sx={{ mb: 2, width: '100%' }}>
-                      <FormLabel component="legend" sx={{ fontWeight: '500', mb: 1 }}>
-                        ¿Esta situación se aplica a usted?
-                      </FormLabel>
-                      <RadioGroup
-                        row
-                        value={pregunta.respuesta === null ? '' : pregunta.respuesta.toString()}
-                        onChange={(e) => {
-                          const valor = e.target.value === 'true';
-                          handleConflictosChange(pregunta.id, valor);
-                        }}
-                        sx={{ gap: 2 }}
-                      >
-                        <FormControlLabel 
-                          value="true" 
-                          control={<Radio />} 
-                          label={
-                            <Box sx={{ 
-                              display: 'flex', 
-                              alignItems: 'center', 
-                              gap: 1,
-                              p: 1,
-                              borderRadius: 1,
-                              backgroundColor: pregunta.respuesta === true ? '#e8f5e9' : 'transparent',
-                              border: pregunta.respuesta === true ? '2px solid #4caf50' : '1px solid #e0e0e0'
-                            }}>
-                              <CheckCircleIcon sx={{ color: pregunta.respuesta === true ? '#4caf50' : '#9e9e9e' }} />
-                              <Typography sx={{ fontWeight: pregunta.respuesta === true ? '600' : '400' }}>
-                                Sí, se aplica
-                              </Typography>
-                            </Box>
-                          } 
-                          sx={{ m: 0 }}
-                        />
-                        <FormControlLabel 
-                          value="false" 
-                          control={<Radio />} 
-                          label={
-                            <Box sx={{ 
-                              display: 'flex', 
-                              alignItems: 'center', 
-                              gap: 1,
-                              p: 1,
-                              borderRadius: 1,
-                              backgroundColor: pregunta.respuesta === false ? '#ffebee' : 'transparent',
-                              border: pregunta.respuesta === false ? '2px solid #f44336' : '1px solid #e0e0e0'
-                            }}>
-                              <CloseIcon sx={{ color: pregunta.respuesta === false ? '#f44336' : '#9e9e9e' }} />
-                              <Typography sx={{ fontWeight: pregunta.respuesta === false ? '600' : '400' }}>
-                                No, no se aplica
-                              </Typography>
-                            </Box>
-                          } 
-                          sx={{ m: 0 }}
-                        />
-                      </RadioGroup>
-                    </FormControl>
-                    
-                    <Collapse in={pregunta.respuesta === false}>
-                      <Box sx={{ mt: 2, p: 2, backgroundColor: '#fff8e1', borderRadius: 1, border: '1px solid #ffd54f' }}>
-                        <Typography variant="body2" sx={{ mb: 1, color: '#f57c00', fontWeight: '500', display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <ArrowForwardIcon sx={{ fontSize: 16 }} />
-                          Situación identificada - Información adicional:
-                        </Typography>
-                        <TextField
-                          fullWidth
-                          multiline
-                          rows={3}
-                          placeholder="Proporcione detalles adicionales sobre esta situación de conflicto de intereses..."
-                          value={pregunta.explicacion}
-                          onChange={(e) => handleExplicacionChange(pregunta.id, e.target.value)}
-                          variant="outlined"
-                          size="small"
-                          sx={{ backgroundColor: 'white' }}
-                          helperText="Esta información será registrada para fines de seguimiento"
-                        />
-                      </Box>
-                    </Collapse>
-                  </Box>
-                ))}
-              </Paper>
-              
-              <Box sx={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center', 
-                mt: 4,
-                p: 2.5,
-                backgroundColor: '#f8f9fa',
-                borderRadius: 2,
-                border: '1px solid #e0e0e0'
-              }}>
-                <Box>
-                  <Typography variant="body2" sx={{ color: '#2c3e50', fontWeight: '500' }}>
-                    Progreso de la declaración
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#95a5a6', display: 'block', mt: 0.5 }}>
-                    {preguntasContestadas} de {preguntasTotales} preguntas respondidas
-                  </Typography>
-                </Box>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={guardarDeclaracionConflictos}
-                  disabled={conflictosData.preguntas.some(p => p.respuesta === null)}
-                  sx={{ textTransform: 'none', px: 4, py: 1 }}
-                >
-                  Guardar Declaración
-                </Button>
-              </Box>
-            </>
-          )}
-        </AccordionDetails>
-      </Accordion>
-    );
-  };
-
   // Función para renderizar Cumplimiento Organizacional
   const renderCumplimientoOrganizacional = () => {
     const section = informacionComplementaria.find(s => s.id === 'cumplimiento_organizacional');
+    const estadoValidacion = obtenerEstadoValidacion(section.id);
     
     return (
       <Accordion 
@@ -725,19 +379,46 @@ a actos de soborno y corrupción en operaciones comerciales.`,
               </Typography>
             </Box>
             
-            <Chip 
-              label={`${Object.values(cumplimientoData).filter(d => d.documento).length}/2`}
-              size="small"
-              color={Object.values(cumplimientoData).filter(d => d.documento).length === 2 ? "success" : "warning"}
-              sx={{ 
-                height: '24px',
-                fontSize: '0.75rem',
-                fontWeight: '600'
-              }}
-            />
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Chip 
+                label={`${Object.values(cumplimientoData).filter(d => d.documento).length}/2`}
+                size="small"
+                color={Object.values(cumplimientoData).filter(d => d.documento).length === 2 ? "success" : "warning"}
+                sx={{ 
+                  height: '24px',
+                  fontSize: '0.75rem',
+                  fontWeight: '600'
+                }}
+              />
+              {estadoValidacion.enviado && (
+                <Chip 
+                  icon={<CheckCircleIcon />}
+                  label="En revisión"
+                  size="small"
+                  color="info"
+                  sx={{ height: '24px' }}
+                />
+              )}
+            </Box>
           </Box>
         </AccordionSummary>
         <AccordionDetails sx={{ pt: 3, pb: 3 }}>
+          {/* Estado de validación si ya fue enviado */}
+          {estadoValidacion.enviado && (
+            <Alert 
+              severity="info" 
+              sx={{ mb: 3, backgroundColor: '#e3f2fd' }}
+              icon={<VerifiedIcon />}
+            >
+              <Typography variant="body2">
+                <strong>Documentos enviados a revisión por el comité</strong>
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 0.5 }}>
+                Los documentos de esta sección se enviaron el {estadoValidacion.fechaEnvio}
+              </Typography>
+            </Alert>
+          )}
+          
           {/* Subsección: Sistema de seguridad de Cadena de Suministros */}
           <Paper 
             variant="outlined" 
@@ -955,6 +636,41 @@ a actos de soborno y corrupción en operaciones comerciales.`,
               </Grid>
             </Grid>
           </Paper>
+          
+          {/* Botón de validación */}
+          <Box sx={{ 
+            mt: 3, 
+            p: 2.5, 
+            backgroundColor: '#f8f9fa', 
+            borderRadius: 2,
+            border: '1px solid #e0e0e0'
+          }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box>
+                <Typography variant="body1" sx={{ fontWeight: '600', color: '#333', mb: 0.5 }}>
+                  Validación de Documentos
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#666' }}>
+                  Una vez completados los documentos, envíelos para revisión por el comité
+                </Typography>
+              </Box>
+              
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<SendIcon />}
+                onClick={() => handleAbrirValidacionDialog(section.id, section.title)}
+                disabled={estadoValidacion.enviado}
+                sx={{ 
+                  textTransform: 'none',
+                  px: 3,
+                  py: 1
+                }}
+              >
+                {estadoValidacion.enviado ? 'Enviado para Revisión' : 'Enviar para Validación'}
+              </Button>
+            </Box>
+          </Box>
         </AccordionDetails>
       </Accordion>
     );
@@ -964,6 +680,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
   const renderDocumentacionOficial = (section) => {
     const completedDocs = section.items.filter(item => item.status === 'completo').length;
     const totalDocs = section.items.length;
+    const estadoValidacion = obtenerEstadoValidacion(section.id);
     
     return (
       <Accordion 
@@ -1023,6 +740,15 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                   fontWeight: '600'
                 }}
               />
+              {estadoValidacion.enviado && (
+                <Chip 
+                  icon={<CheckCircleIcon />}
+                  label="En revisión"
+                  size="small"
+                  color="info"
+                  sx={{ height: '24px' }}
+                />
+              )}
               <LinearProgress 
                 variant="determinate" 
                 value={(completedDocs / totalDocs) * 100}
@@ -1036,6 +762,22 @@ a actos de soborno y corrupción en operaciones comerciales.`,
           </Box>
         </AccordionSummary>
         <AccordionDetails sx={{ pt: 3, pb: 3 }}>
+          {/* Estado de validación si ya fue enviado */}
+          {estadoValidacion.enviado && (
+            <Alert 
+              severity="info" 
+              sx={{ mb: 3, backgroundColor: '#f3e5f5' }}
+              icon={<VerifiedIcon />}
+            >
+              <Typography variant="body2">
+                <strong>Documentos enviados a revisión por el comité</strong>
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 0.5 }}>
+                Los documentos de esta sección se enviaron el {estadoValidacion.fechaEnvio}
+              </Typography>
+            </Alert>
+          )}
+          
           <Typography variant="body2" sx={{ color: '#666', mb: 3, lineHeight: 1.6 }}>
             Documentación oficial requerida para el expediente. Verifique y actualice cada documento según corresponda.
           </Typography>
@@ -1115,6 +857,49 @@ a actos de soborno y corrupción en operaciones comerciales.`,
               </Grid>
             ))}
           </Grid>
+          
+          {/* Botón de validación */}
+          <Box sx={{ 
+            mt: 3, 
+            p: 2.5, 
+            backgroundColor: '#f8f9fa', 
+            borderRadius: 2,
+            border: '1px solid #e0e0e0'
+          }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box>
+                <Typography variant="body1" sx={{ fontWeight: '600', color: '#333', mb: 0.5 }}>
+                  Validación de Documentos
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#666' }}>
+                  Una vez completados los documentos, envíelos para revisión por el comité
+                </Typography>
+              </Box>
+              
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<SendIcon />}
+                onClick={() => handleAbrirValidacionDialog(section.id, section.title)}
+                disabled={estadoValidacion.enviado || completedDocs < totalDocs}
+                sx={{ 
+                  textTransform: 'none',
+                  px: 3,
+                  py: 1
+                }}
+              >
+                {estadoValidacion.enviado ? 'Enviado para Revisión' : 'Enviar para Validación'}
+              </Button>
+            </Box>
+            
+            {completedDocs < totalDocs && !estadoValidacion.enviado && (
+              <Alert severity="warning" sx={{ mt: 2, py: 1 }}>
+                <Typography variant="body2">
+                  Complete todos los documentos antes de enviar para validación
+                </Typography>
+              </Alert>
+            )}
+          </Box>
         </AccordionDetails>
       </Accordion>
     );
@@ -1125,6 +910,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
     const completedItems = section.items.filter(item => item.status === 'completo').length;
     const totalItems = section.items.length;
     const completionPercentage = totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
+    const estadoValidacion = obtenerEstadoValidacion(section.id);
     
     return (
       <Accordion 
@@ -1188,20 +974,47 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                 </Typography>
               </Box>
               
-              <Chip 
-                label={`${completedItems}/${totalItems}`}
-                size="small"
-                color={completionPercentage === 100 ? "success" : "warning"}
-                sx={{ 
-                  height: '24px',
-                  fontSize: '0.75rem',
-                  fontWeight: '600'
-                }}
-              />
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Chip 
+                  label={`${completedItems}/${totalItems}`}
+                  size="small"
+                  color={completionPercentage === 100 ? "success" : "warning"}
+                  sx={{ 
+                    height: '24px',
+                    fontSize: '0.75rem',
+                    fontWeight: '600'
+                  }}
+                />
+                {estadoValidacion.enviado && (
+                  <Chip 
+                    icon={<CheckCircleIcon />}
+                    label="En revisión"
+                    size="small"
+                    color="info"
+                    sx={{ height: '24px' }}
+                  />
+                )}
+              </Box>
             </Box>
           </Box>
         </AccordionSummary>
         <AccordionDetails sx={{ pt: 3, pb: 3 }}>
+          {/* Estado de validación si ya fue enviado */}
+          {estadoValidacion.enviado && (
+            <Alert 
+              severity="info" 
+              sx={{ mb: 3, backgroundColor: '#f8f9fa' }}
+              icon={<VerifiedIcon />}
+            >
+              <Typography variant="body2">
+                <strong>Documentos enviados a revisión por el comité</strong>
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 0.5 }}>
+                Los documentos de esta sección se enviaron el {estadoValidacion.fechaEnvio}
+              </Typography>
+            </Alert>
+          )}
+          
           <List dense sx={{ py: 0, mb: 3 }}>
             {section.items.map((item, index) => (
               <ListItem 
@@ -1313,6 +1126,49 @@ a actos de soborno y corrupción en operaciones comerciales.`,
               Agregar Documento
             </Button>
           </Box>
+          
+          {/* Botón de validación */}
+          <Box sx={{ 
+            mt: 3, 
+            p: 2.5, 
+            backgroundColor: '#f8f9fa', 
+            borderRadius: 2,
+            border: '1px solid #e0e0e0'
+          }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box>
+                <Typography variant="body1" sx={{ fontWeight: '600', color: '#333', mb: 0.5 }}>
+                  Validación de Documentos
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#666' }}>
+                  Una vez completados los documentos, envíelos para revisión por el comité
+                </Typography>
+              </Box>
+              
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<SendIcon />}
+                onClick={() => handleAbrirValidacionDialog(section.id, section.title)}
+                disabled={estadoValidacion.enviado || completedItems < totalItems}
+                sx={{ 
+                  textTransform: 'none',
+                  px: 3,
+                  py: 1
+                }}
+              >
+                {estadoValidacion.enviado ? 'Enviado para Revisión' : 'Enviar para Validación'}
+              </Button>
+            </Box>
+            
+            {completedItems < totalItems && !estadoValidacion.enviado && (
+              <Alert severity="warning" sx={{ mt: 2, py: 1 }}>
+                <Typography variant="body2">
+                  Complete todos los documentos ({completedItems}/{totalItems}) antes de enviar para validación
+                </Typography>
+              </Alert>
+            )}
+          </Box>
         </AccordionDetails>
       </Accordion>
     );
@@ -1342,7 +1198,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
         </Stack>
       </Box>
 
-      {/* Nivel de Cumplimiento con Resumen de Estado integrado - RESTAURADO AL FORMATO DEL PRIMER CÓDIGO */}
+      {/* Nivel de Cumplimiento con Resumen de Estado integrado */}
       <Card sx={{ mb: 4, bgcolor: compliance >= 90 ? '#e8f5e9' : 
                                      compliance >= 70 ? '#fffde7' : '#ffebee' }}>
         <CardContent>
@@ -1495,9 +1351,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
         
         {/* Renderizar todos los apartados en orden */}
         {informacionComplementaria.map((section) => {
-          if (section.id === 'conflictos_intereses') {
-            return renderConflictosIntereses();
-          } else if (section.id === 'cumplimiento_organizacional') {
+          if (section.id === 'cumplimiento_organizacional') {
             return renderCumplimientoOrganizacional();
           } else if (section.id === 'documentacion') {
             return renderDocumentacionOficial(section);
@@ -1539,6 +1393,86 @@ a actos de soborno y corrupción en operaciones comerciales.`,
           <Button onClick={() => setAddDialog(false)}>Cancelar</Button>
           <Button onClick={() => setAddDialog(false)} variant="contained">
             Agregar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Diálogo de confirmación de validación */}
+      <Dialog open={validacionDialog.open} onClose={handleCerrarValidacionDialog} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ borderBottom: '1px solid #e0e0e0', pb: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <SendIcon sx={{ color: '#1976d2' }} />
+            <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: '600' }}>
+              Enviar Documentos para Validación
+            </Typography>
+          </Box>
+        </DialogTitle>
+        <DialogContent sx={{ pt: 3, pb: 2 }}>
+          <Alert severity="info" sx={{ mb: 3, backgroundColor: '#e3f2fd' }}>
+            <Typography variant="body2" sx={{ fontWeight: '600', color: '#1976d2' }}>
+              Confirmación de Envío
+            </Typography>
+            <Typography variant="body2" sx={{ mt: 0.5 }}>
+              ¿Está seguro de enviar los documentos para revisión por el comité?
+            </Typography>
+          </Alert>
+          
+          <Paper variant="outlined" sx={{ p: 2.5, mb: 3, backgroundColor: '#f8f9fa' }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <Typography variant="body2" sx={{ color: '#666', fontWeight: '500', mb: 0.5 }}>
+                  Apartado a validar:
+                </Typography>
+                <Typography variant="body1" sx={{ color: '#2c3e50', fontWeight: '600' }}>
+                  {validacionDialog.titulo}
+                </Typography>
+              </Grid>
+              
+              <Grid item xs={12}>
+                <Typography variant="body2" sx={{ color: '#666', fontWeight: '500', mb: 0.5 }}>
+                  Fecha de envío:
+                </Typography>
+                <Typography variant="body1" sx={{ color: '#2c3e50', fontWeight: '600' }}>
+                  {validacionDialog.fecha}
+                </Typography>
+              </Grid>
+              
+              <Grid item xs={12}>
+                <Typography variant="body2" sx={{ color: '#666', fontWeight: '500', mb: 0.5 }}>
+                  Estado:
+                </Typography>
+                <Chip 
+                  label="Enviado a revisión por el comité"
+                  color="info"
+                  size="small"
+                  sx={{ fontWeight: '500' }}
+                />
+              </Grid>
+            </Grid>
+          </Paper>
+          
+          <Alert severity="warning" sx={{ backgroundColor: '#fff8e1' }}>
+            <Typography variant="body2">
+              <strong>Nota importante:</strong> Una vez enviados, los documentos no podrán ser modificados hasta que el comité complete la revisión.
+            </Typography>
+          </Alert>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, py: 2, borderTop: '1px solid #e0e0e0' }}>
+          <Button 
+            onClick={handleCerrarValidacionDialog}
+            variant="outlined"
+            sx={{ textTransform: 'none' }}
+          >
+            Cancelar
+          </Button>
+          <Button 
+            onClick={handleConfirmarValidacion}
+            variant="contained"
+            color="primary"
+            startIcon={<SendIcon />}
+            sx={{ textTransform: 'none' }}
+          >
+            Confirmar Envío
           </Button>
         </DialogActions>
       </Dialog>
