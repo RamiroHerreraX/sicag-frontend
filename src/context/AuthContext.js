@@ -33,6 +33,14 @@ export const AuthProvider = ({ children }) => {
       role: 'admin',
       region: 'Todas',
       avatar: 'AS'
+    },
+    asociacion: { // ✅ NUEVO ROL
+      id: 4,
+      name: 'Asociación Aduanal',
+      email: 'asociacion@ejemplo.com',
+      role: 'asociacion',
+      region: 'Regional',
+      avatar: 'AA'
     }
   };
 
@@ -48,17 +56,18 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = (credentials) => {
-    // Simular login según tipo de usuario
     let userData;
-    
+
     if (credentials.email.includes('comite')) {
       userData = mockUsers.comite;
     } else if (credentials.email.includes('admin')) {
       userData = mockUsers.admin;
+    } else if (credentials.email.includes('asociacion')) {
+      userData = mockUsers.asociacion; // ✅ ASOCIACIÓN
     } else {
       userData = mockUsers.agente;
     }
-    
+
     setUser(userData);
     localStorage.setItem('sicag_user', JSON.stringify(userData));
     return userData;
