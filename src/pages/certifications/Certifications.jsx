@@ -23,7 +23,9 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  InputAdornment
+  InputAdornment,
+  Alert,
+  Divider
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -36,11 +38,17 @@ import {
   CheckCircle as CheckCircleIcon,
   Warning as WarningIcon,
   Error as ErrorIcon,
-  Event as EventIcon,
   Help as HelpIcon,
   Cancel as CancelIcon,
   Info as InfoIcon,
   Description as DescriptionIcon,
+  Security as SecurityIcon,
+  Group as GroupIcon,
+  VerifiedUser as VerifiedUserIcon,
+  WarningAmber as WarningAmberIcon,
+  Check as CheckIcon,
+  Close as CloseIcon,
+  ArrowForward as ArrowForwardIcon
 } from '@mui/icons-material';
 
 const Certifications = () => {
@@ -48,6 +56,34 @@ const Certifications = () => {
   const [filter, setFilter] = useState('all');
   const [deleteDialog, setDeleteDialog] = useState(false);
   const [selectedCert, setSelectedCert] = useState(null);
+  const [associationDialog, setAssociationDialog] = useState(true);
+  const [associationConsent, setAssociationConsent] = useState(null);
+
+  // Datos de autorización con toda la información
+  const associationDetails = {
+    name: 'Asociación de Agentes Aduanales del Estado',
+    role: 'Rol auxiliar - Entidad Asociativa',
+    permissions: [
+      'Cargar evidencias institucionales (constancias, certificados)',
+      'Subir documentación de cursos y capacitaciones',
+      'Enviar documentación de pertenencia a la asociación',
+      'Visualizar información general de agentes asociados',
+      'Centralizar documentación común a varios agentes'
+    ],
+    restrictions: [
+      'No puede validar certificaciones individuales',
+      'No puede modificar expedientes personales',
+      'No sustituye la responsabilidad individual del agente',
+      'Acceso limitado a información específica',
+      'No puede tomar decisiones en nombre del agente'
+    ],
+    benefits: [
+     
+    ],
+    considerations: [
+      
+    ]
+  };
 
   // Datos mock de certificaciones
   const [certifications, setCertifications] = useState([
@@ -106,59 +142,59 @@ const Certifications = () => {
       documents: 3,
       lastUpdate: '14/01/2026'
     },
-      { 
-    id: 6, 
-    type: 'REGISTRO INICIAL', 
-    number: 'RI-2026-00001', 
-    issueDate: '01/01/2026', 
-    expirationDate: '01/01/2027', 
-    status: 'Registro',
-    progress: 20,
-    documents: 1,
-    lastUpdate: '01/01/2026'
-  },{ 
-    id: 7, 
-    type: 'CERTIFICADO RECHAZADO', 
-    number: 'CR-2025-99999', 
-    issueDate: '01/12/2025', 
-    expirationDate: '01/12/2026', 
-    status: 'Rechazado',
-    progress: 0,
-    documents: 0,
-    lastUpdate: '20/12/2025'
-  },
+    { 
+      id: 6, 
+      type: 'REGISTRO INICIAL', 
+      number: 'RI-2026-00001', 
+      issueDate: '01/01/2026', 
+      expirationDate: '01/01/2027', 
+      status: 'Registro',
+      progress: 20,
+      documents: 1,
+      lastUpdate: '01/01/2026'
+    },
+    { 
+      id: 7, 
+      type: 'CERTIFICADO RECHAZADO', 
+      number: 'CR-2025-99999', 
+      issueDate: '01/12/2025', 
+      expirationDate: '01/12/2026', 
+      status: 'Rechazado',
+      progress: 0,
+      documents: 0,
+      lastUpdate: '20/12/2025'
+    },
   ]);
 
+  // Estadísticas
   const stats = {
-  total: certifications.length,
-  registro: certifications.filter(c => c.status === 'Registro').length,
-  revision: certifications.filter(c => c.status === 'En revisión').length,
-  aceptados: certifications.filter(c => c.status === 'Aceptados').length,
-  adicional: certifications.filter(c => c.status === 'Información adicional').length,
-  rechazado: certifications.filter(c => c.status === 'Rechazado').length,
-};
+    total: certifications.length,
+    valid: certifications.filter(c => c.status === 'Aceptados').length,
+    expiring: certifications.filter(c => c.status === 'Por Vencer').length,
+    review: certifications.filter(c => c.status === 'En revisión' || c.status === 'Información adicional').length,
+  };
 
-const getStatusColor = (status) => {
-  switch(status) {
-    case 'Registro': return 'info';
-    case 'En revisión': return 'warning';
-    case 'Aceptados': return 'success';
-    case 'Información adicional': return 'primary';
-    case 'Rechazado': return 'error';
-    default: return 'default';
-  }
-};
+  const getStatusColor = (status) => {
+    switch(status) {
+      case 'Registro': return 'info';
+      case 'En revisión': return 'warning';
+      case 'Aceptados': return 'success';
+      case 'Información adicional': return 'primary';
+      case 'Rechazado': return 'error';
+      default: return 'default';
+    }
+  };
 
-const getStatusIcon = (status) => {
-  switch(status) {
-    case 'Registro': return <DescriptionIcon />;
-    case 'En revisión': return <VisibilityIcon />;
-    case 'Aceptados': return <CheckCircleIcon />;
-    case 'Información adicional': return <InfoIcon />;
-    case 'Rechazado': return <CancelIcon />;
-    default: return <HelpIcon />;
-  }
-};
+  const getStatusIcon = (status) => {
+    switch(status) {
+      case 'Registro': return <DescriptionIcon />;
+      case 'En revisión': return <VisibilityIcon />;
+      case 'Aceptados': return <CheckCircleIcon />;
+      case 'Información adicional': return <InfoIcon />;
+      case 'Rechazado': return <CancelIcon />;
+      default: return <HelpIcon />;
+    }
+  };
 
   const handleDeleteClick = (cert) => {
     setSelectedCert(cert);
@@ -173,20 +209,301 @@ const getStatusIcon = (status) => {
     }
   };
 
+  const handleAssociationConsent = (consent) => {
+    setAssociationConsent(consent);
+    setAssociationDialog(false);
+    console.log(`Usuario ${consent ? 'aceptó' : 'rechazó'} la autorización`);
+    alert(consent 
+      ? 'Has autorizado a tu asociación para cargar documentos en tu nombre. Podrás revocar esta autorización en cualquier momento desde la configuración de tu cuenta.'
+      : 'Has rechazado la autorización. Tu asociación no podrá cargar documentos en tu nombre. Podrás cambiar esta configuración más tarde si lo deseas.'
+    );
+  };
+
   const filteredCerts = certifications.filter(cert => {
     const matchesSearch = 
       cert.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
       cert.number.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesFilter = 
-      filter === 'all' || 
-      cert.status === filter;
-
+    const matchesFilter = filter === 'all' || cert.status === filter;
     return matchesSearch && matchesFilter;
   });
 
   return (
     <Box>
+      {/* Diálogo de Autorización MEJORADO - OCUPA TODA LA ALTURA */}
+      {associationDialog && associationConsent === null && (
+        <Dialog 
+          open={associationDialog} 
+          maxWidth="lg"
+          fullWidth
+          fullScreen={false}
+          PaperProps={{
+            sx: { 
+              height: '90vh',
+              maxHeight: '90vh',
+              display: 'flex',
+              flexDirection: 'column'
+            }
+          }}
+        >
+          <DialogTitle sx={{ 
+            bgcolor: '#2c3e50', 
+            color: 'white',
+            py: 2,
+            flexShrink: 0
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <SecurityIcon sx={{ fontSize: 28 }} />
+              <Box>
+                <Typography variant="h6" fontWeight="bold">
+                  Autorización para Asociación de Agentes Aduanales
+                </Typography>
+                <Typography variant="caption" sx={{ display: 'block', opacity: 0.9 }}>
+                  Decisión importante para la gestión de tus certificaciones
+                </Typography>
+              </Box>
+            </Box>
+          </DialogTitle>
+          
+          <DialogContent dividers sx={{ 
+            flex: 1,
+            overflow: 'auto',
+            py: 2,
+            px: 3
+          }}>
+            {/* Información de la asociación */}
+            <Alert severity="info" sx={{ mb: 3 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                <GroupIcon />
+                <Typography variant="subtitle2" fontWeight="bold">
+                  {associationDetails.name}
+                </Typography>
+              </Box>
+              <Typography variant="body2">
+                Esta asociación funciona como entidad auxiliar dentro del sistema, permitiendo centralizar información común y documentación compartida, sin sustituir tu responsabilidad individual.
+              </Typography>
+            </Alert>
+
+            {/* COMPARACIÓN LADO A LADO CON SCROLL INDEPENDIENTE */}
+            <Grid container spacing={3} sx={{ height: 'calc(100% - 120px)', mb: 2 }}>
+              {/* COLUMNA IZQUIERDA - ACEPTAR */}
+              <Grid item xs={12} md={6} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <Paper 
+                  elevation={3}
+                  sx={{ 
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    border: '2px solid #2ecc71',
+                    borderRadius: 2,
+                    overflow: 'hidden'
+                  }}
+                >
+                  {/* Encabezado */}
+                  <Box sx={{ 
+                    bgcolor: '#2ecc71', 
+                    p: 2,
+                    textAlign: 'center',
+                    flexShrink: 0
+                  }}>
+                    <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
+                      <CheckIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
+                      SI ACEPTAS LA AUTORIZACIÓN
+                    </Typography>
+                  </Box>
+
+                  {/* Contenido con scroll */}
+                  <Box sx={{ 
+                    flex: 1, 
+                    overflow: 'auto',
+                    p: 2.5
+                  }}>
+                    {/* Permisos */}
+                    <Box sx={{ mb: 3 }}>
+                      <Typography variant="subtitle1" fontWeight="bold" color="success.dark" sx={{ mb: 1.5, display: 'flex', alignItems: 'center' }}>
+                        <ArrowForwardIcon sx={{ mr: 1, fontSize: 18 }} />
+                        Tu asociación PODRÁ:
+                      </Typography>
+                      <Box sx={{ pl: 1 }}>
+                        {associationDetails.permissions.map((permission, index) => (
+                          <Box 
+                            key={index}
+                            sx={{ 
+                              display: 'flex', 
+                              alignItems: 'flex-start', 
+                              mb: 1.5
+                            }}
+                          >
+                            <CheckCircleIcon sx={{ color: '#2ecc71', mr: 1.5, mt: 0.2, fontSize: 16 }} />
+                            <Typography variant="body2" color="text.primary">
+                              {permission}
+                            </Typography>
+                          </Box>
+                        ))}
+                      </Box>
+                    </Box>
+
+                    
+
+                    {/* Ventaja resumida */}
+                    <Alert severity="success" sx={{ mt: 2 }}>
+                      <Typography variant="body2" fontWeight="bold">
+                        Ventaja clave: Reduce carga administrativa y centraliza evidencias comunes
+                      </Typography>
+                    </Alert>
+                  </Box>
+                </Paper>
+              </Grid>
+
+              {/* COLUMNA DERECHA - RECHAZAR */}
+              <Grid item xs={12} md={6} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <Paper 
+                  elevation={3}
+                  sx={{ 
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    border: '2px solid #e74c3c',
+                    borderRadius: 2,
+                    overflow: 'hidden'
+                  }}
+                >
+                  {/* Encabezado */}
+                  <Box sx={{ 
+                    bgcolor: '#e74c3c', 
+                    p: 2,
+                    textAlign: 'center',
+                    flexShrink: 0
+                  }}>
+                    <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
+                      <CloseIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
+                      SI RECHAZAS LA AUTORIZACIÓN
+                    </Typography>
+                  </Box>
+
+                  {/* Contenido con scroll */}
+                  <Box sx={{ 
+                    flex: 1, 
+                    overflow: 'auto',
+                    p: 2.5
+                  }}>
+                    {/* Restricciones */}
+                    <Box sx={{ mb: 3 }}>
+                      <Typography variant="subtitle1" fontWeight="bold" color="error.dark" sx={{ mb: 1.5, display: 'flex', alignItems: 'center' }}>
+                        <ArrowForwardIcon sx={{ mr: 1, fontSize: 18 }} />
+                        Tu asociación NO PODRÁ:
+                      </Typography>
+                      <Box sx={{ pl: 1 }}>
+                        {associationDetails.restrictions.map((restriction, index) => (
+                          <Box 
+                            key={index}
+                            sx={{ 
+                              display: 'flex', 
+                              alignItems: 'flex-start', 
+                              mb: 1.5
+                            }}
+                          >
+                            <CancelIcon sx={{ color: '#e74c3c', mr: 1.5, mt: 0.2, fontSize: 16 }} />
+                            <Typography variant="body2" color="text.primary">
+                              {restriction}
+                            </Typography>
+                          </Box>
+                        ))}
+                      </Box>
+                    </Box>
+
+                    
+
+                    {/* Consideración resumida */}
+                    <Alert severity="warning" sx={{ mt: 2 }}>
+                      <Typography variant="body2" fontWeight="bold">
+                        Consideración clave: Gestión completamente individual de toda la documentación
+                      </Typography>
+                    </Alert>
+                  </Box>
+                </Paper>
+              </Grid>
+            </Grid>
+
+            {/* Nota importante */}
+            <Paper 
+              elevation={0}
+              sx={{ 
+                p: 2, 
+                bgcolor: '#e8f4fd',
+                border: '1px solid #90caf9',
+                borderRadius: 1
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+                <InfoIcon color="primary" />
+                <Box>
+                  <Typography variant="subtitle2" color="primary" fontWeight="bold" sx={{ mb: 0.5 }}>
+                    Nota importante sobre responsabilidades
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Independientemente de tu decisión, <strong>eres el único responsable</strong> del cumplimiento de tus obligaciones como agente aduanal.
+                    La asociación funciona como entidad auxiliar y <strong>NO sustituye tu responsabilidad individual</strong>.
+                    Esta autorización puede ser modificada en cualquier momento desde la sección de configuración de tu cuenta.
+                  </Typography>
+                </Box>
+              </Box>
+            </Paper>
+          </DialogContent>
+
+          {/* Acciones */}
+          <DialogActions sx={{ 
+            justifyContent: 'space-between', 
+            p: 2.5,
+            bgcolor: '#f8f9fa',
+            borderTop: '1px solid #e0e0e0',
+            flexShrink: 0
+          }}>
+            <Button 
+              onClick={() => handleAssociationConsent(false)}
+              variant="contained"
+              color="error"
+              startIcon={<CloseIcon />}
+              sx={{ 
+                px: 3,
+                fontWeight: 'bold',
+                minWidth: 140
+              }}
+            >
+              No Autorizar
+            </Button>
+            
+            <Button 
+              onClick={() => {
+                setAssociationDialog(false);
+                alert('Puedes configurar esta autorización más tarde desde "Configuración → Asociación"');
+              }}
+              variant="outlined"
+              color="primary"
+              sx={{ 
+                px: 3,
+                fontWeight: 'bold'
+              }}
+            >
+              Decidir después
+            </Button>
+            
+            <Button 
+              onClick={() => handleAssociationConsent(true)}
+              variant="contained"
+              color="success"
+              startIcon={<CheckIcon />}
+              sx={{ 
+                px: 3,
+                fontWeight: 'bold',
+                minWidth: 140
+              }}
+            >
+              Autorizar
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Box>
@@ -196,6 +513,18 @@ const getStatusIcon = (status) => {
           <Typography variant="body1" sx={{ color: '#7f8c8d' }}>
             Gestiona todas tus certificaciones en el sistema SICAG
           </Typography>
+          
+          {associationConsent !== null && (
+            <Box sx={{ mt: 1 }}>
+              <Chip
+                icon={associationConsent ? <VerifiedUserIcon /> : <WarningAmberIcon />}
+                label={`Autorización asociación: ${associationConsent ? 'ACTIVA' : 'INACTIVA'}`}
+                color={associationConsent ? "success" : "warning"}
+                size="small"
+                variant="outlined"
+              />
+            </Box>
+          )}
         </Box>
         
         <Button
@@ -261,6 +590,7 @@ const getStatusIcon = (status) => {
         </Grid>
       </Grid>
 
+      {/* Resto del código permanece igual */}
       {/* Filtros y búsqueda */}
       <Paper elevation={1} sx={{ p: 3, mb: 3 }}>
         <Grid container spacing={2} alignItems="center">
@@ -295,11 +625,11 @@ const getStatusIcon = (status) => {
               }}
             >
               <MenuItem value="all">Todos los estados</MenuItem>
-              <MenuItem value="VIGENTE">Vigentes</MenuItem>
-              <MenuItem value="POR VENCER">Por Vencer</MenuItem>
-              <MenuItem value="EN REVISIÓN">En Revisión</MenuItem>
-              <MenuItem value="OBSERVACIONES">Observaciones</MenuItem>
-              <MenuItem value="VENCIDA">Vencidas</MenuItem>
+              <MenuItem value="Aceptados">Vigentes</MenuItem>
+              <MenuItem value="Por Vencer">Por Vencer</MenuItem>
+              <MenuItem value="En revisión">En Revisión</MenuItem>
+              <MenuItem value="Información adicional">Observaciones</MenuItem>
+              <MenuItem value="Rechazado">Vencidas</MenuItem>
             </TextField>
           </Grid>
           <Grid item xs={12} md={3}>
