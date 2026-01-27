@@ -13,6 +13,7 @@ import MainLayout from './layouts/MainLayout';
 import CommitteeLayout from './layouts/CommitteeLayout';
 import AdminLayout from './layouts/AdminLayout';
 import AuthLayout from './layouts/AuthLayout';
+import AssociationLayout from './layouts/AssociationLayout'; // NUEVO LAYOUT
 
 // Auth Pages
 import Login from './pages/auth/Login';
@@ -24,6 +25,7 @@ import PrivacyAgreement from './pages/auth/PrivacyAgreement';
 import UserDashboard from './pages/dashboard/UserDashboard';
 import CommitteeDashboard from './pages/committee/CommitteeDashboard';
 import AdminDashboard from './pages/dashboard/AdminDashboard';
+import AssociationDashboard from './pages/association/AssociationDashboard'; // NUEVO DASHBOARD
 
 // Certifications
 import Certifications from './pages/certifications/Certifications';
@@ -55,6 +57,11 @@ import CommitteeAlerts from './pages/committee/CommitteeAlerts';
 import CommitteeProfile from './pages/committee/CommitteeProfile';
 /*import CommitteeAssignments from './pages/committee/CommitteeAssignments';
 import CommitteeMetrics from './pages/committee/CommitteeMetrics';*/
+
+// Association Modules - NUEVOS
+import ControlAsociados from './pages/association/ControlAsociados';
+import AlertsAsociacion from './pages/association/AlertsAsociacion'; // NUEVO
+import AssociationProfile from './pages/association/AssociationProfile'; // NUEVO
 
 // Mapa del sitio
 import SiteMap from './pages/sitemap/SiteMap';
@@ -92,8 +99,7 @@ function App() {
               <Route path="/certifications/:id" element={<CertificationDetail />} />
               <Route path="/new-user-certification" element={<NewUserCertification />} />
               <Route path="/vista-certification" element={<VistaCertificacion />} />
-              <Route path="/declaraciones" element={<Declaraciones />}
-/>
+              <Route path="/declaraciones" element={<Declaraciones />} />
               <Route path="/expediente" element={<Expediente />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/sitemap" element={<SiteMap />} />
@@ -117,6 +123,22 @@ function App() {
               {/*<Route path="assignments" element={<CommitteeAssignments />} />
               <Route path="metrics" element={<CommitteeMetrics />} />*/}
               <Route path="profile" element={<CommitteeProfile />} />
+            </Route>
+
+            {/* Rutas para ASOCIACIÓN */}
+            <Route 
+              path="/association" 
+              element={
+                <ProtectedRoute allowedRoles={['asociacion']}>
+                  <AssociationLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Navigate to="dashboard" />} />
+              <Route path="dashboard" element={<AssociationDashboard />} />
+              <Route path="alerts" element={<AlertsAsociacion />} />
+              <Route path="control-asociados" element={<ControlAsociados />} />
+              <Route path="profile" element={<AssociationProfile />} />
             </Route>
 
             {/* Rutas para ADMIN */}

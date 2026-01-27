@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import {
   Container,
   Paper,
@@ -10,47 +10,49 @@ import {
   Alert,
   Stack,
   Card,
-  CardContent
-} from '@mui/material';
-import { Lock as LockIcon, Email as EmailIcon } from '@mui/icons-material';
-import { useAuth } from '../../context/AuthContext';
+  CardContent,
+} from "@mui/material";
+import { Lock as LockIcon, Email as EmailIcon } from "@mui/icons-material";
+import { useAuth } from "../../context/AuthContext";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
     try {
       if (!email || !password) {
-        throw new Error('Por favor complete todos los campos');
+        throw new Error("Por favor complete todos los campos");
       }
 
       // Simular login según tipo de usuario
       setTimeout(() => {
         const userData = login({ email, password });
-        
+
         // Redirigir según rol
-        switch(userData.role) {
-          case 'comite':
-            navigate('/committee/dashboard');
+        switch (userData.role) {
+          case "comite":
+            navigate("/committee/dashboard");
             break;
-          case 'admin':
-            navigate('/admin/dashboard');
+          case "admin":
+            navigate("/admin/dashboard");
+            break;
+          case "asociacion":
+            navigate("/association/dashboard");
             break;
           default:
-            navigate('/dashboard');
+            navigate("/dashboard");
         }
       }, 1000);
-
     } catch (err) {
       setError(err.message);
       setLoading(false);
@@ -58,57 +60,75 @@ const Login = () => {
   };
 
   const handleDemoLogin = (role) => {
-    let demoEmail = '';
-    switch(role) {
-      case 'agente':
-        demoEmail = 'agente@demo.com';
+    let demoEmail = "";
+    switch (role) {
+      case "agente":
+        demoEmail = "agente@demo.com";
         break;
-      case 'comite':
-        demoEmail = 'comite@demo.com';
+      case "comite":
+        demoEmail = "comite@demo.com";
         break;
-      case 'admin':
-        demoEmail = 'admin@demo.com';
+      case "admin":
+        demoEmail = "admin@demo.com";
+        break;
+      case "asociacion":
+        demoEmail = "asociacion@demo.com";
         break;
     }
-    
+
     setEmail(demoEmail);
-    setPassword('demo123');
-    
-    // Auto-submit after a short delay
+    setPassword("demo123");
+
     setTimeout(() => {
-      const userData = login({ email: demoEmail, password: 'demo123' });
-      switch(role) {
-        case 'comite':
-          navigate('/committee/dashboard');
+      const userData = login({ email: demoEmail, password: "demo123" });
+
+      switch (role) {
+        case "comite":
+          navigate("/committee/dashboard");
           break;
-        case 'admin':
-          navigate('/admin/dashboard');
+        case "admin":
+          navigate("/admin/dashboard");
+          break;
+        case "asociacion":
+          navigate("/association/dashboard");
           break;
         default:
-          navigate('/dashboard');
+          navigate("/dashboard");
       }
     }, 500);
   };
 
   return (
     <Container maxWidth="sm" sx={{ mt: 8 }}>
-      <Box sx={{ textAlign: 'center', mb: 4 }}>
-        <Typography variant="h2" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 1 }}>
+      <Box sx={{ textAlign: "center", mb: 4 }}>
+        <Typography
+          variant="h2"
+          sx={{ color: "#2c3e50", fontWeight: "bold", mb: 1 }}
+        >
           SICAG
         </Typography>
-        <Typography variant="h6" sx={{ color: '#7f8c8d' }}>
+        <Typography variant="h6" sx={{ color: "#7f8c8d" }}>
           LUIS RODRIGUEZ
         </Typography>
-        <Typography variant="body1" sx={{ color: '#7f8c8d', mt: 2 }}>
+        <Typography variant="body1" sx={{ color: "#7f8c8d", mt: 2 }}>
           Sistema Integral de Consultoría y Asesoría Gremial
         </Typography>
       </Box>
 
       <Paper elevation={3} sx={{ p: 4 }}>
-        <Typography variant="h5" align="center" gutterBottom sx={{ color: '#2c3e50', mb: 3 }}>
+        <Typography
+          variant="h5"
+          align="center"
+          gutterBottom
+          sx={{ color: "#2c3e50", mb: 3 }}
+        >
           Iniciar Sesión
         </Typography>
-        <Typography variant="body2" align="center" sx={{ color: '#7f8c8d', mb: 3 }}>
+        <Typography
+          variant="body2"
+          align="center"
+          sx={{ color: "#7f8c8d", mb: 3 }}
+        >
           Ingresa tus credenciales para acceder al sistema
         </Typography>
 
@@ -128,10 +148,10 @@ const Login = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
               InputProps={{
-                startAdornment: <EmailIcon sx={{ mr: 1, color: '#7f8c8d' }} />,
+                startAdornment: <EmailIcon sx={{ mr: 1, color: "#7f8c8d" }} />,
               }}
             />
-            
+
             <TextField
               fullWidth
               label="Contraseña"
@@ -140,7 +160,7 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
               InputProps={{
-                startAdornment: <LockIcon sx={{ mr: 1, color: '#7f8c8d' }} />,
+                startAdornment: <LockIcon sx={{ mr: 1, color: "#7f8c8d" }} />,
               }}
             />
 
@@ -152,27 +172,38 @@ const Login = () => {
               disabled={loading}
               sx={{ py: 1.5 }}
             >
-              {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
+              {loading ? "Iniciando sesión..." : "Iniciar sesión"}
             </Button>
           </Stack>
         </Box>
 
-        <Box sx={{ mt: 3, textAlign: 'center' }}>
-          <Link to="/forgot-password" style={{ textDecoration: 'none', color: '#3498db' }}>
+        <Box sx={{ mt: 3, textAlign: "center" }}>
+          <Link
+            to="/forgot-password"
+            style={{ textDecoration: "none", color: "#3498db" }}
+          >
             ¿Olvidaste tu contraseña?
           </Link>
         </Box>
 
         {/* Demo Login Buttons */}
         <Box sx={{ mt: 4 }}>
-          <Typography variant="subtitle2" align="center" sx={{ color: '#7f8c8d', mb: 2 }}>
+          <Typography
+            variant="subtitle2"
+            align="center"
+            sx={{ color: "#7f8c8d", mb: 2 }}
+          >
             Acceso rápido para demostración:
           </Typography>
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center">
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={2}
+            justifyContent="center"
+          >
             <Button
               variant="outlined"
               color="primary"
-              onClick={() => handleDemoLogin('agente')}
+              onClick={() => handleDemoLogin("agente")}
               size="small"
             >
               Acceso Agente
@@ -180,7 +211,7 @@ const Login = () => {
             <Button
               variant="outlined"
               color="secondary"
-              onClick={() => handleDemoLogin('comite')}
+              onClick={() => handleDemoLogin("comite")}
               size="small"
             >
               Acceso Comité
@@ -188,17 +219,26 @@ const Login = () => {
             <Button
               variant="outlined"
               color="success"
-              onClick={() => handleDemoLogin('admin')}
+              onClick={() => handleDemoLogin("admin")}
               size="small"
             >
               Acceso Admin
+            </Button>
+
+            <Button
+              variant="outlined"
+              color="info"
+              onClick={() => handleDemoLogin("asociacion")}
+              size="small"
+            >
+              Acceso Asociación Aduanal
             </Button>
           </Stack>
         </Box>
       </Paper>
 
-      <Box sx={{ mt: 3, textAlign: 'center' }}>
-        <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+      <Box sx={{ mt: 3, textAlign: "center" }}>
+        <Typography variant="caption" sx={{ color: "#7f8c8d" }}>
           © 2024 SICAG. Todos los derechos reservados.
         </Typography>
       </Box>

@@ -30,6 +30,8 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
         return <Navigate to="/committee/dashboard" />;
       case 'admin':
         return <Navigate to="/admin/dashboard" />;
+      case 'asociacion': // Rol de asociación agregado
+        return <Navigate to="/association/dashboard" />;
       default:
         return <Navigate to="/dashboard" />;
     }
