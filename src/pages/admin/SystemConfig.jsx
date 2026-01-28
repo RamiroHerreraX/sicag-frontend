@@ -28,7 +28,9 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow
+  TableRow,
+  Drawer,
+  Fab
 } from '@mui/material';
 import {
   Save as SaveIcon,
@@ -50,20 +52,15 @@ import {
   Edit as EditIcon,
   Block as BlockIcon,
   Add as AddIcon,
-  MoreVert as MoreVertIcon,
   Person as PersonIcon,
   Business as BusinessIcon,
   HowToReg as HowToRegIcon,
   School as SchoolIcon,
   AccessTime as AccessTimeIcon,
-  Category as CategoryIcon,
   Gavel as GavelIcon,
   Article as ArticleIcon,
   Folder as FolderIcon,
-  Groups as GroupsIcon,
   Public as PublicIcon,
-  Balance as BalanceIcon,
-  Traffic as TrafficIcon,
   FileCopy as FileCopyIcon,
   CloudUpload as CloudUploadIcon,
   CalendarToday as CalendarTodayIcon,
@@ -76,11 +73,15 @@ import {
   EmojiEvents as EmojiEventsIcon,
   MilitaryTech as MilitaryTechIcon,
   WorkspacePremium as WorkspacePremiumIcon,
-  Search as SearchIcon
+  Search as SearchIcon,
+  ChevronRight as ChevronRightIcon,
+  Info as InfoIcon
 } from '@mui/icons-material';
 
 const SystemConfig = () => {
   const [activeTab, setActiveTab] = useState(0);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   const [config, setConfig] = useState({
     // General
     systemName: 'SICAG',
@@ -674,6 +675,10 @@ const SystemConfig = () => {
     ));
   };
 
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
+  };
+
   const tabs = [
     { label: 'General', icon: <AssessmentIcon /> },
     { label: 'Catálogo Certificaciones', icon: <SchoolIcon /> },
@@ -862,15 +867,15 @@ const SystemConfig = () => {
     switch (nivelNum?.toLowerCase()) {
       case 'i':
       case '1':
-        return '#ff9800'; // Naranja
+        return '#ff9800';
       case 'ii':
       case '2':
-        return '#9c27b0'; // Morado
+        return '#9c27b0';
       case 'iii':
       case '3':
-        return '#2196f3'; // Azul
+        return '#2196f3';
       default:
-        return '#757575'; // Gris
+        return '#757575';
     }
   };
 
@@ -880,15 +885,15 @@ const SystemConfig = () => {
     switch (nivelNum?.toLowerCase()) {
       case 'i':
       case '1':
-        return '#fff3e0'; // Naranja claro
+        return '#fff3e0';
       case 'ii':
       case '2':
-        return '#f3e5f5'; // Morado claro
+        return '#f3e5f5';
       case 'iii':
       case '3':
-        return '#e3f2fd'; // Azul claro
+        return '#e3f2fd';
       default:
-        return '#f5f5f5'; // Gris claro
+        return '#f5f5f5';
     }
   };
 
@@ -930,7 +935,7 @@ const SystemConfig = () => {
 
   return (
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', p: 2, overflow: 'hidden' }}>
-      {/* Header - Manteniendo el diseño original */}
+      {/* Header */}
       <Box sx={{ mb: 2, flexShrink: 0 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
           <Box>
@@ -957,13 +962,22 @@ const SystemConfig = () => {
               onClick={handleSave}
               disabled={changes.length === 0}
               size="small"
+              sx={{ mr: 1 }}
             >
               Guardar Cambios ({changes.length})
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={drawerOpen ? <ChevronRightIcon /> : <VisibilityIcon />}
+              onClick={toggleDrawer}
+              size="small"
+              color="info"
+            >
+              {drawerOpen ? 'Ocultar Panel' : 'Ver Panel'}
             </Button>
           </Stack>
         </Box>
 
-        {/* Alertas - Manteniendo diseño original */}
         <Alert
           severity="info"
           icon={<WarningIcon />}
@@ -971,1630 +985,802 @@ const SystemConfig = () => {
         >
           Los cambios en la configuración afectarán a todos los usuarios del sistema. Cambios no guardados: {changes.length}
         </Alert>
+
+        {/* Tarjetas de estado del sistema - AHORA OCUPAN TODO EL ANCHO */}
+        <Box sx={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(5, 1fr)', // 5 columnas de igual ancho
+          gap: 2,
+          mb: 2,
+          width: '100%',
+          '@media (max-width: 1200px)': {
+            gridTemplateColumns: 'repeat(3, 1fr)', // 3 columnas en pantallas medianas
+          },
+          '@media (max-width: 900px)': {
+            gridTemplateColumns: 'repeat(2, 1fr)', // 2 columnas en pantallas pequeñas
+          },
+          '@media (max-width: 600px)': {
+            gridTemplateColumns: '1fr', // 1 columna en móviles
+          }
+        }}>
+          {/* Tarjeta 1: Salud del Sistema */}
+          <Card sx={{
+            borderLeft: '4px solid #3498db',
+            height: 120,
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            <CardContent sx={{
+              p: 2,
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center'
+            }}>
+              <Typography variant="h6" sx={{ color: '#3498db', fontWeight: 'bold', mb: 1 }}>
+                {systemHealth}%
+              </Typography>
+              <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                Salud del Sistema
+              </Typography>
+              <LinearProgress
+                variant="determinate"
+                value={systemHealth}
+                sx={{
+                  height: 6,
+                  borderRadius: 3,
+                  mt: 1,
+                  bgcolor: '#f0f0f0',
+                  '& .MuiLinearProgress-bar': {
+                    bgcolor: systemHealth >= 80 ? '#27ae60' :
+                      systemHealth >= 60 ? '#f39c12' : '#e74c3c'
+                  }
+                }}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Tarjeta 2: Mantenimiento */}
+          <Card sx={{
+            borderLeft: `4px solid ${config.maintenanceMode ? '#f39c12' : '#27ae60'}`,
+            height: 120,
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            <CardContent sx={{
+              p: 2,
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center'
+            }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Box>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    {config.maintenanceMode ? 'ACTIVO' : 'INACTIVO'}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                    Mantenimiento
+                  </Typography>
+                </Box>
+                {config.maintenanceMode ?
+                  <WarningIcon sx={{ color: '#f39c12' }} /> :
+                  <CheckCircleIcon sx={{ color: '#27ae60' }} />
+                }
+              </Box>
+            </CardContent>
+          </Card>
+
+          {/* Tarjeta 3: Vigencia Certificaciones */}
+          <Card sx={{
+            borderLeft: '4px solid #9b59b6',
+            height: 120,
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            <CardContent sx={{
+              p: 2,
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center'
+            }}>
+              <Typography variant="h6" sx={{ color: '#9b59b6', fontWeight: 'bold', mb: 1 }}>
+                {config.certificationValidity}d
+              </Typography>
+              <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                Vigencia Certificaciones
+              </Typography>
+            </CardContent>
+          </Card>
+
+          {/* Tarjeta 4: Registros */}
+          <Card sx={{
+            borderLeft: '4px solid #2ecc71',
+            height: 120,
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            <CardContent sx={{
+              p: 2,
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center'
+            }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Box>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    {config.allowRegistrations ? 'ACTIVO' : 'INACTIVO'}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                    Registros
+                  </Typography>
+                </Box>
+                {config.allowRegistrations ?
+                  <CheckCircleIcon sx={{ color: '#27ae60' }} /> :
+                  <LockIcon sx={{ color: '#e74c3c' }} />
+                }
+              </Box>
+            </CardContent>
+          </Card>
+
+          {/* Tarjeta 5: Backup Automático */}
+          <Card sx={{
+            borderLeft: `4px solid ${config.autoBackup ? '#27ae60' : '#e74c3c'}`,
+            height: 120,
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            <CardContent sx={{
+              p: 2,
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center'
+            }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Box>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    {config.autoBackup ? 'ACTIVO' : 'INACTIVO'}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                    Backup Automático
+                  </Typography>
+                </Box>
+                {config.autoBackup ?
+                  <CheckCircleIcon sx={{ color: '#27ae60' }} /> :
+                  <ErrorIcon sx={{ color: '#e74c3c' }} />
+                }
+              </Box>
+            </CardContent>
+          </Card>
+        </Box>
       </Box>
 
-      {/* Layout principal - Reorganizado */}
-      <Box sx={{ display: 'flex', gap: 2, flex: 1, overflow: 'hidden' }}>
-        {/* Columna izquierda - Tarjetas y configuración */}
-        <Box sx={{ flex: 3, display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0 }}>
-          {/* Estado del sistema - Tarjetas uniformes en una sola fila */}
-          <Box sx={{
-            display: 'flex',
-            gap: 2,
-            overflowX: 'auto',
-            pb: 1,
-            '&::-webkit-scrollbar': {
-              height: 6,
-            },
-            '&::-webkit-scrollbar-track': {
-              backgroundColor: '#f0f0f0',
-              borderRadius: 3,
-            },
-            '&::-webkit-scrollbar-thumb': {
-              backgroundColor: '#c0c0c0',
-              borderRadius: 3,
-            }
-          }}>
-            {/* Tarjeta 1: Salud del Sistema */}
-            <Card sx={{
-              borderLeft: '4px solid #3498db',
-              height: 120,
-              minWidth: 200,
-              flexShrink: 0,
-              display: 'flex',
-              flexDirection: 'column'
-            }}>
-              <CardContent sx={{
-                p: 2,
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center'
-              }}>
-                <Typography variant="h6" sx={{ color: '#3498db', fontWeight: 'bold', mb: 1 }}>
-                  {systemHealth}%
-                </Typography>
-                <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                  Salud del Sistema
-                </Typography>
-                <LinearProgress
-                  variant="determinate"
-                  value={systemHealth}
+      {/* Contenido principal */}
+      <Box sx={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+        <Paper elevation={1} sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          {/* Tabs */}
+          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <Tabs
+              value={activeTab}
+              onChange={(e, newValue) => setActiveTab(newValue)}
+              variant="scrollable"
+              scrollButtons="auto"
+            >
+              {tabs.map((tab, index) => (
+                <Tab
+                  key={index}
+                  icon={tab.icon}
+                  iconPosition="start"
+                  label={tab.label}
                   sx={{
-                    height: 6,
-                    borderRadius: 3,
-                    mt: 1,
-                    bgcolor: '#f0f0f0',
-                    '& .MuiLinearProgress-bar': {
-                      bgcolor: systemHealth >= 80 ? '#27ae60' :
-                        systemHealth >= 60 ? '#f39c12' : '#e74c3c'
-                    }
+                    minHeight: 48,
+                    textTransform: 'none',
+                    fontSize: '0.9rem'
                   }}
                 />
-              </CardContent>
-            </Card>
-
-            {/* Tarjeta 2: Mantenimiento */}
-            <Card sx={{
-              borderLeft: `4px solid ${config.maintenanceMode ? '#f39c12' : '#27ae60'}`,
-              height: 120,
-              minWidth: 200,
-              flexShrink: 0,
-              display: 'flex',
-              flexDirection: 'column'
-            }}>
-              <CardContent sx={{
-                p: 2,
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center'
-              }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Box>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                      {config.maintenanceMode ? 'ACTIVO' : 'INACTIVO'}
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                      Mantenimiento
-                    </Typography>
-                  </Box>
-                  {config.maintenanceMode ?
-                    <WarningIcon sx={{ color: '#f39c12' }} /> :
-                    <CheckCircleIcon sx={{ color: '#27ae60' }} />
-                  }
-                </Box>
-              </CardContent>
-            </Card>
-
-            {/* Tarjeta 3: Vigencia Certificaciones */}
-            <Card sx={{
-              borderLeft: '4px solid #9b59b6',
-              height: 120,
-              minWidth: 200,
-              flexShrink: 0,
-              display: 'flex',
-              flexDirection: 'column'
-            }}>
-              <CardContent sx={{
-                p: 2,
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center'
-              }}>
-                <Typography variant="h6" sx={{ color: '#9b59b6', fontWeight: 'bold', mb: 1 }}>
-                  {config.certificationValidity}d
-                </Typography>
-                <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                  Vigencia Certificaciones
-                </Typography>
-              </CardContent>
-            </Card>
-
-            {/* Tarjeta 4: Registros */}
-            <Card sx={{
-              borderLeft: '4px solid #2ecc71',
-              height: 120,
-              minWidth: 200,
-              flexShrink: 0,
-              display: 'flex',
-              flexDirection: 'column'
-            }}>
-              <CardContent sx={{
-                p: 2,
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center'
-              }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Box>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                      {config.allowRegistrations ? 'ACTIVO' : 'INACTIVO'}
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                      Registros
-                    </Typography>
-                  </Box>
-                  {config.allowRegistrations ?
-                    <CheckCircleIcon sx={{ color: '#27ae60' }} /> :
-                    <LockIcon sx={{ color: '#e74c3c' }} />
-                  }
-                </Box>
-              </CardContent>
-            </Card>
-
-            {/* Tarjeta 5: Backup Automático */}
-            <Card sx={{
-              borderLeft: `4px solid ${config.autoBackup ? '#27ae60' : '#e74c3c'}`,
-              height: 120,
-              minWidth: 200,
-              flexShrink: 0,
-              display: 'flex',
-              flexDirection: 'column'
-            }}>
-              <CardContent sx={{
-                p: 2,
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center'
-              }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Box>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                      {config.autoBackup ? 'ACTIVO' : 'INACTIVO'}
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                      Backup Automático
-                    </Typography>
-                  </Box>
-                  {config.autoBackup ?
-                    <CheckCircleIcon sx={{ color: '#27ae60' }} /> :
-                    <ErrorIcon sx={{ color: '#e74c3c' }} />
-                  }
-                </Box>
-              </CardContent>
-            </Card>
-
+              ))}
+            </Tabs>
           </Box>
 
-          {/* Tabs de configuración - Manteniendo diseño original */}
-          <Paper elevation={1} sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-            {/* Tabs */}
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-              <Tabs
-                value={activeTab}
-                onChange={(e, newValue) => setActiveTab(newValue)}
-                variant="scrollable"
-                scrollButtons="auto"
-              >
-                {tabs.map((tab, index) => (
-                  <Tab
-                    key={index}
-                    icon={tab.icon}
-                    iconPosition="start"
-                    label={tab.label}
-                    sx={{
-                      minHeight: 48,
-                      textTransform: 'none',
-                      fontSize: '0.9rem'
-                    }}
+          {/* Contenido de los tabs */}
+          <Box sx={{ p: 3, flex: 1, overflowY: 'auto' }}>
+            {activeTab === 0 && (
+              <Grid container spacing={3}>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Nombre del Sistema"
+                    value={config.systemName}
+                    onChange={handleChange('systemName')}
+                    helperText="Nombre que se muestra en la aplicación"
                   />
-                ))}
-              </Tabs>
-            </Box>
-
-            {/* Contenido de los tabs - Manteniendo diseño original */}
-            <Box sx={{ p: 3, flex: 1, overflowY: 'auto' }}>
-              {activeTab === 0 && (
-                <Grid container spacing={3}>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      label="Nombre del Sistema"
-                      value={config.systemName}
-                      onChange={handleChange('systemName')}
-                      helperText="Nombre que se muestra en la aplicación"
-                    />
-                  </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={config.maintenanceMode}
-                          onChange={handleChange('maintenanceMode')}
-                          color="warning"
-                        />
-                      }
-                      label="Modo Mantenimiento"
-                    />
-                    <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', ml: 4 }}>
-                      Bloquea el acceso a todos los usuarios excepto administradores
-                    </Typography>
-                  </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={config.allowRegistrations}
-                          onChange={handleChange('allowRegistrations')}
-                          color="primary"
-                        />
-                      }
-                      label="Permitir Nuevos Registros"
-                    />
-                  </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="Límite de Intentos de Login"
-                      type="number"
-                      value={config.maxLoginAttempts}
-                      onChange={handleChange('maxLoginAttempts')}
-                      InputProps={{ inputProps: { min: 1, max: 10 } }}
-                    />
-                  </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="Timeout de Sesión (min)"
-                      type="number"
-                      value={config.sessionTimeout}
-                      onChange={handleChange('sessionTimeout')}
-                      InputProps={{
-                        endAdornment: <InputAdornment position="end">min</InputAdornment>,
-                      }}
-                    />
-                  </Grid>
                 </Grid>
-              )}
 
-              {activeTab === 1 && (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                  {/* Configuración general */}
-                  <Paper sx={{ p: 2, bgcolor: '#f8f9fa', mb: 2 }}>
-                    <Typography variant="subtitle1" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 2 }}>
-                      Configuración General de Certificaciones
-                    </Typography>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          fullWidth
-                          label="Vigencia Predeterminada (días)"
-                          type="number"
-                          value={config.certificationValidity}
-                          onChange={handleChange('certificationValidity')}
-                          helperText="Vigencia por defecto para nuevas certificaciones"
-                          InputProps={{
-                            endAdornment: <InputAdornment position="end">días</InputAdornment>,
-                          }}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          fullWidth
-                          label="Días de Advertencia"
-                          type="number"
-                          value={config.renewalWarningDays}
-                          onChange={handleChange('renewalWarningDays')}
-                          helperText="Días previos al vencimiento para alertar"
-                          InputProps={{
-                            endAdornment: <InputAdornment position="end">días</InputAdornment>,
-                          }}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          fullWidth
-                          label="Máx. Certificaciones por Usuario"
-                          type="number"
-                          value={config.maxCertificationsPerUser}
-                          onChange={handleChange('maxCertificationsPerUser')}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <FormControlLabel
-                          control={
-                            <Switch
-                              checked={config.autoRenewal}
-                              onChange={handleChange('autoRenewal')}
-                              color="primary"
-                            />
-                          }
-                          label="Renovación Automática"
-                        />
-                      </Grid>
-                    </Grid>
-                  </Paper>
-
-                  {/* Filtros, búsqueda y estadísticas */}
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Box sx={{ display: 'flex', gap: 1 }}>
-                        <Chip
-                          label="Todos"
-                          variant="filled"
-                          color="primary"
-                          clickable
-                        />
-                        <Chip
-                          label="Activos"
-                          variant="outlined"
-                          clickable
-                        />
-                        <Chip
-                          label="Inactivos"
-                          variant="outlined"
-                          clickable
-                        />
-                        <Chip
-                          label="Profesional"
-                          variant="outlined"
-                          clickable
-                        />
-                      </Box>
-
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                          Total: {filteredCertificaciones.length} certificaciones
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                          Activas: {filteredCertificaciones.filter(c => c.estatus === 1).length}
-                        </Typography>
-                        <Button
-                          variant="contained"
-                          startIcon={<AddIcon />}
-                          sx={{ bgcolor: '#3498db', '&:hover': { bgcolor: '#2980b9' } }}
-                        >
-                          Nueva Certificación
-                        </Button>
-                      </Box>
+                {/* Controles en una sola fila con mejor espaciado */}
+                <Grid item xs={12}>
+                  <Box sx={{
+                    display: 'grid',
+                    gridTemplateColumns: { xs: '1fr', sm: 'repeat(4, 1fr)' },
+                    gap: 3,
+                    mb: 3,
+                    alignItems: 'start'
+                  }}>
+                    {/* Modo Mantenimiento */}
+                    <Box>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={config.maintenanceMode}
+                            onChange={handleChange('maintenanceMode')}
+                            color="warning"
+                          />
+                        }
+                        label={
+                          <Box>
+                            <Typography variant="body2" sx={{ fontWeight: 600, color: '#2c3e50', mb: 0.5 }}>
+                              Modo Mantenimiento
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: '#7f8c8d', lineHeight: 1.2 }}>
+                              Bloquea acceso excepto administradores
+                            </Typography>
+                          </Box>
+                        }
+                        sx={{ m: 0 }}
+                      />
                     </Box>
 
-                    {/* Campo de búsqueda */}
-                    <TextField
-                      fullWidth
-                      placeholder="Buscar certificación por nombre..."
-                      value={searchCertificaciones}
-                      onChange={(e) => setSearchCertificaciones(e.target.value)}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <SearchIcon />
-                          </InputAdornment>
-                        ),
-                      }}
-                      size="small"
-                      sx={{ maxWidth: 400 }}
-                    />
-                  </Box>
-
-                  {/* Tabla de Certificaciones */}
-                  <TableContainer sx={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: 1 }}>
-                    <Table stickyHeader size="small">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell sx={{ fontWeight: 'bold', width: '5%' }}>ID</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '25%' }}>Nombre</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '30%' }}>Descripción</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '12%' }}>Tipo</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '8%' }} align="center">Horas previstas</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '8%' }} align="center">Vigencia prevista</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '8%' }} align="center">Estatus</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '14%' }} align="center">Acciones</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {filteredCertificaciones.length === 0 ? (
-                          <TableRow>
-                            <TableCell colSpan={8} align="center" sx={{ py: 3 }}>
-                              <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                                No se encontraron certificaciones que coincidan con la búsqueda
-                              </Typography>
-                            </TableCell>
-                          </TableRow>
-                        ) : (
-                          filteredCertificaciones.map((cert) => (
-                            <TableRow
-                              key={cert.id_certificacion}
-                              hover
-                              sx={{
-                                '&:hover': { bgcolor: '#f8f9fa' },
-                                opacity: cert.estatus === 0 ? 0.7 : 1
-                              }}
-                            >
-                              <TableCell>
-                                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                                  #{cert.id_certificacion}
-                                </Typography>
-                              </TableCell>
-
-                              <TableCell>
-                                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                                  {cert.nombre_certificacion}
-                                </Typography>
-                                {cert.fecha_creacion && (
-                                  <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                                    Creado: {cert.fecha_creacion}
-                                  </Typography>
-                                )}
-                              </TableCell>
-
-                              <TableCell>
-                                <Typography variant="body2" sx={{ color: '#2c3e50' }}>
-                                  {cert.descripcion}
-                                </Typography>
-                              </TableCell>
-
-                              <TableCell>
-                                <Chip
-                                  label={cert.tipo}
-                                  size="small"
-                                  sx={{
-                                    bgcolor: getTipoBgColor(cert.tipo),
-                                    color: getTipoColor(cert.tipo),
-                                    fontWeight: 500,
-                                    maxWidth: '100%',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis'
-                                  }}
-                                />
-                              </TableCell>
-
-                              <TableCell align="center">
-                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
-                                  <AccessTimeIcon sx={{ color: '#3498db', fontSize: 16 }} />
-                                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                                    {cert.horas_acreditadas}
-                                  </Typography>
-                                </Box>
-                              </TableCell>
-
-                              <TableCell align="center">
-                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
-                                  <TimerIcon sx={{ color: '#9b59b6', fontSize: 16 }} />
-                                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                                    {cert.vigencia_meses} m
-                                  </Typography>
-                                </Box>
-                                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                                  ≈ {(cert.vigencia_meses * 30).toLocaleString()} días
-                                </Typography>
-                              </TableCell>
-
-                              <TableCell align="center">
-                                <Chip
-                                  label={cert.estatus === 1 ? "ACTIVA" : "INACTIVA"}
-                                  size="small"
-                                  color={cert.estatus === 1 ? "success" : "error"}
-                                  sx={{
-                                    fontWeight: 600,
-                                    minWidth: 80
-                                  }}
-                                />
-                              </TableCell>
-
-                              <TableCell align="center">
-                                <Stack direction="row" spacing={0.5} justifyContent="center">
-                                  <Tooltip title="Ver detalles">
-                                    <IconButton
-                                      size="small"
-                                      sx={{ color: '#3498db' }}
-                                    >
-                                      <VisibilityIcon fontSize="small" />
-                                    </IconButton>
-                                  </Tooltip>
-
-                                  <Tooltip title="Editar certificación">
-                                    <IconButton
-                                      size="small"
-                                      sx={{ color: '#f39c12' }}
-                                    >
-                                      <EditIcon fontSize="small" />
-                                    </IconButton>
-                                  </Tooltip>
-
-                                  <Tooltip title={cert.estatus === 1 ? 'Desactivar' : 'Activar'}>
-                                    <IconButton
-                                      size="small"
-                                      onClick={() => handleToggleCertificacionStatus(cert.id_certificacion)}
-                                      sx={{ color: cert.estatus === 1 ? '#e74c3c' : '#2ecc71' }}
-                                    >
-                                      {cert.estatus === 1 ? <BlockIcon fontSize="small" /> : <CheckCircleIcon fontSize="small" />}
-                                    </IconButton>
-                                  </Tooltip>
-                                </Stack>
-                              </TableCell>
-                            </TableRow>
-                          ))
-                        )}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-
-                  {/* Estadísticas de Certificaciones */}
-                  <Grid container spacing={2} sx={{ mt: 2 }}>
-                    <Grid item xs={3}>
-                      <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e3f2fd' }}>
-                        <Typography variant="h6" sx={{ color: '#1976d2', fontWeight: 'bold' }}>
-                          {filteredCertificaciones.filter(c => c.tipo === 'Profesional').length}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#1976d2' }}>
-                          Profesionales
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#f3e5f5' }}>
-                        <Typography variant="h6" sx={{ color: '#7b1fa2', fontWeight: 'bold' }}>
-                          {filteredCertificaciones.filter(c => c.tipo === 'Especialización').length}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#7b1fa2' }}>
-                          Especializaciones
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e8f5e9' }}>
-                        <Typography variant="h6" sx={{ color: '#2e7d32', fontWeight: 'bold' }}>
-                          {filteredCertificaciones.filter(c => c.estatus === 1).length}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#2e7d32' }}>
-                          Activas
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#fff3e0' }}>
-                        <Typography variant="h6" sx={{ color: '#f57c00', fontWeight: 'bold' }}>
-                          {Math.round(filteredCertificaciones.reduce((acc, curr) => acc + curr.horas_acreditadas, 0) / Math.max(filteredCertificaciones.length, 1))}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#f57c00' }}>
-                          Promedio Horas
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                  </Grid>
-                </Box>
-              )}
-
-              {activeTab === 2 && (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                  {/* Configuración general */}
-                  <Paper sx={{ p: 2, bgcolor: '#f8f9fa', mb: 2 }}>
-                    <Typography variant="subtitle1" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 2 }}>
-                      Configuración General de Declaraciones
-                    </Typography>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          fullWidth
-                          label="Vigencia Predeterminada (días)"
-                          type="number"
-                          value={config.declarationValidity}
-                          onChange={handleChange('declarationValidity')}
-                          helperText="Vigencia por defecto para nuevas declaraciones"
-                          InputProps={{
-                            endAdornment: <InputAdornment position="end">días</InputAdornment>,
-                          }}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          fullWidth
-                          label="Días de Advertencia"
-                          type="number"
-                          value={config.declarationWarningDays}
-                          onChange={handleChange('declarationWarningDays')}
-                          helperText="Días previos al vencimiento para alertar"
-                          InputProps={{
-                            endAdornment: <InputAdornment position="end">días</InputAdornment>,
-                          }}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          fullWidth
-                          label="Máx. Declaraciones por Usuario"
-                          type="number"
-                          value={config.maxDeclarationsPerUser}
-                          onChange={handleChange('maxDeclarationsPerUser')}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <FormControlLabel
-                          control={
-                            <Switch
-                              checked={config.declarationAutoRenewal}
-                              onChange={handleChange('declarationAutoRenewal')}
-                              color="primary"
-                            />
-                          }
-                          label="Renovación Automática"
-                        />
-                      </Grid>
-                    </Grid>
-                  </Paper>
-
-                  {/* Filtros, búsqueda y estadísticas */}
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Box sx={{ display: 'flex', gap: 1 }}>
-                        <Chip
-                          label="Todos"
-                          variant="filled"
-                          color="primary"
-                          clickable
-                        />
-                        <Chip
-                          label="Activos"
-                          variant="outlined"
-                          clickable
-                        />
-                        <Chip
-                          label="Inactivos"
-                          variant="outlined"
-                          clickable
-                        />
-                        <Chip
-                          label="Obligatorias"
-                          variant="outlined"
-                          clickable
-                        />
-                      </Box>
-
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                          Total: {filteredDeclaraciones.length} declaraciones
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                          Activas: {filteredDeclaraciones.filter(d => d.estatus === 1).length}
-                        </Typography>
-                        <Button
-                          variant="contained"
-                          startIcon={<AddIcon />}
-                          sx={{ bgcolor: '#3498db', '&:hover': { bgcolor: '#2980b9' } }}
-                        >
-                          Nueva Declaración
-                        </Button>
-                      </Box>
+                    {/* Nuevos Registros */}
+                    <Box>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={config.allowRegistrations}
+                            onChange={handleChange('allowRegistrations')}
+                            color="primary"
+                          />
+                        }
+                        label={
+                          <Box>
+                            <Typography variant="body2" sx={{ fontWeight: 600, color: '#2c3e50', mb: 0.5 }}>
+                              Nuevos Registros
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: '#7f8c8d', lineHeight: 1.2 }}>
+                              Permite registro de nuevos usuarios
+                            </Typography>
+                          </Box>
+                        }
+                        sx={{ m: 0 }}
+                      />
                     </Box>
 
-                    {/* Campo de búsqueda */}
-                    <TextField
-                      fullWidth
-                      placeholder="Buscar declaración por nombre..."
-                      value={searchDeclaraciones}
-                      onChange={(e) => setSearchDeclaraciones(e.target.value)}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <SearchIcon />
-                          </InputAdornment>
-                        ),
-                      }}
-                      size="small"
-                      sx={{ maxWidth: 400 }}
-                    />
-                  </Box>
-
-                  {/* Tabla de Declaraciones */}
-                  <TableContainer sx={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: 1 }}>
-                    <Table stickyHeader size="small">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell sx={{ fontWeight: 'bold', width: '5%' }}>ID</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '25%' }}>Nombre</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '15%' }} align="center">Artículo</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '35%' }}>Descripción</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '10%' }}>Tipo</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '8%' }} align="center">Estatus</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '12%' }} align="center">Acciones</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {filteredDeclaraciones.length === 0 ? (
-                          <TableRow>
-                            <TableCell colSpan={7} align="center" sx={{ py: 3 }}>
-                              <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                                No se encontraron declaraciones que coincidan con la búsqueda
-                              </Typography>
-                            </TableCell>
-                          </TableRow>
-                        ) : (
-                          filteredDeclaraciones.map((declaracion) => (
-                            <TableRow
-                              key={declaracion.id_declaracion}
-                              hover
-                              sx={{
-                                '&:hover': { bgcolor: '#f8f9fa' },
-                                opacity: declaracion.estatus === 0 ? 0.7 : 1
-                              }}
-                            >
-                              <TableCell>
-                                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                                  #{declaracion.id_declaracion}
-                                </Typography>
-                              </TableCell>
-
-                              <TableCell>
-                                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                                  {declaracion.nombre}
-                                </Typography>
-                                {declaracion.fecha_registro && (
-                                  <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                                    Registro: {declaracion.fecha_registro}
-                                  </Typography>
-                                )}
-                              </TableCell>
-
-                              <TableCell align="center">
-                                <Paper sx={{
-                                  p: 1,
-                                  bgcolor: '#e3f2fd',
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  minWidth: 60
-                                }}>
-                                  <ArticleIcon sx={{ color: '#1976d2', fontSize: 16, mr: 0.5 }} />
-                                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#1976d2' }}>
-                                    {declaracion.articulo}
-                                  </Typography>
-                                </Paper>
-                              </TableCell>
-
-                              <TableCell>
-                                <Typography variant="body2" sx={{ color: '#2c3e50' }}>
-                                  {declaracion.descripcion}
-                                </Typography>
-                              </TableCell>
-
-                              <TableCell>
-                                <Chip
-                                  label={declaracion.tipo}
-                                  size="small"
-                                  sx={{
-                                    bgcolor: getDeclaracionTipoBgColor(declaracion.tipo),
-                                    color: getDeclaracionTipoColor(declaracion.tipo),
-                                    fontWeight: 500,
-                                    maxWidth: '100%',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis'
-                                  }}
-                                />
-                              </TableCell>
-
-                              <TableCell align="center">
-                                <Chip
-                                  label={declaracion.estatus === 1 ? "ACTIVA" : "INACTIVA"}
-                                  size="small"
-                                  color={declaracion.estatus === 1 ? "success" : "error"}
-                                  sx={{
-                                    fontWeight: 600,
-                                    minWidth: 80
-                                  }}
-                                />
-                              </TableCell>
-
-                              <TableCell align="center">
-                                <Stack direction="row" spacing={0.5} justifyContent="center">
-                                  <Tooltip title="Ver detalles">
-                                    <IconButton
-                                      size="small"
-                                      sx={{ color: '#3498db' }}
-                                    >
-                                      <VisibilityIcon fontSize="small" />
-                                    </IconButton>
-                                  </Tooltip>
-
-                                  <Tooltip title="Editar declaración">
-                                    <IconButton
-                                      size="small"
-                                      sx={{ color: '#f39c12' }}
-                                    >
-                                      <EditIcon fontSize="small" />
-                                    </IconButton>
-                                  </Tooltip>
-
-                                  <Tooltip title={declaracion.estatus === 1 ? 'Desactivar' : 'Activar'}>
-                                    <IconButton
-                                      size="small"
-                                      onClick={() => handleToggleDeclaracionStatus(declaracion.id_declaracion)}
-                                      sx={{ color: declaracion.estatus === 1 ? '#e74c3c' : '#2ecc71' }}
-                                    >
-                                      {declaracion.estatus === 1 ? <BlockIcon fontSize="small" /> : <CheckCircleIcon fontSize="small" />}
-                                    </IconButton>
-                                  </Tooltip>
-                                </Stack>
-                              </TableCell>
-                            </TableRow>
-                          ))
-                        )}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-
-                  {/* Estadísticas de Declaraciones */}
-                  <Grid container spacing={2} sx={{ mt: 2 }}>
-                    <Grid item xs={3}>
-                      <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#ffebee' }}>
-                        <Typography variant="h6" sx={{ color: '#d32f2f', fontWeight: 'bold' }}>
-                          {filteredDeclaraciones.filter(d => d.tipo === 'Obligatoria').length}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#d32f2f' }}>
-                          Obligatorias
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e3f2fd' }}>
-                        <Typography variant="h6" sx={{ color: '#1976d2', fontWeight: 'bold' }}>
-                          {filteredDeclaraciones.filter(d => d.tipo === 'Anual').length}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#1976d2' }}>
-                          Anuales
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e8f5e9' }}>
-                        <Typography variant="h6" sx={{ color: '#388e3c', fontWeight: 'bold' }}>
-                          {filteredDeclaraciones.filter(d => d.tipo === 'Requisito').length}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#388e3c' }}>
-                          Requisitos
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#fff3e0' }}>
-                        <Typography variant="h6" sx={{ color: '#f57c00', fontWeight: 'bold' }}>
-                          {filteredDeclaraciones.filter(d => d.estatus === 1).length}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#f57c00' }}>
-                          Activas
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                  </Grid>
-                </Box>
-              )}
-
-              {activeTab === 3 && (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                  {/* Configuración general */}
-                  <Paper sx={{ p: 2, bgcolor: '#f8f9fa', mb: 2 }}>
-                    <Typography variant="subtitle1" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 2 }}>
-                      Configuración de Gestión de Expedientes
-                    </Typography>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          fullWidth
-                          label="Tamaño Máximo por Archivo (MB)"
-                          type="number"
-                          value="10"
-                          helperText="Tamaño máximo permitido para documentos"
-                          InputProps={{
-                            endAdornment: <InputAdornment position="end">MB</InputAdornment>,
-                          }}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          fullWidth
-                          label="Formatos Permitidos"
-                          value="PDF, DOC, DOCX, JPG, PNG"
-                          helperText="Formatos de archivo aceptados"
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          fullWidth
-                          label="Retención Documentos (días)"
-                          type="number"
-                          value="1825"
-                          helperText="Días de retención de documentos digitalizados"
-                          InputProps={{
-                            endAdornment: <InputAdornment position="end">días</InputAdornment>,
-                          }}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={6}>
-                        <FormControlLabel
-                          control={
-                            <Switch
-                              checked={true}
-                              color="primary"
-                            />
-                          }
-                          label="Digitalización Automática"
-                        />
-                      </Grid>
-                    </Grid>
-                  </Paper>
-
-                  {/* Filtros, búsqueda y estadísticas */}
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Box sx={{ display: 'flex', gap: 1 }}>
-                        <Chip
-                          label="Todos"
-                          variant="filled"
-                          color="primary"
-                          clickable
-                        />
-                        <Chip
-                          label="Vigentes"
-                          variant="outlined"
-                          clickable
-                        />
-                        <Chip
-                          label="Por Vencer"
-                          variant="outlined"
-                          clickable
-                        />
-                        <Chip
-                          label="Vencidos"
-                          variant="outlined"
-                          clickable
-                        />
-                      </Box>
-
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                          Total: {filteredDocumentosExpediente.length} documentos
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                          Vigentes: {filteredDocumentosExpediente.filter(d => d.estatus_documento === 'Vigente').length}
-                        </Typography>
-                        <Button
-                          variant="contained"
-                          startIcon={<CloudUploadIcon />}
-                          sx={{ bgcolor: '#3498db', '&:hover': { bgcolor: '#2980b9' } }}
-                        >
-                          Subir Documento
-                        </Button>
-                      </Box>
+                    {/* Intentos de Login */}
+                    <Box>
+                      <Typography variant="body2" sx={{ fontWeight: 600, color: '#2c3e50', mb: 1 }}>
+                        Intentos de Login
+                      </Typography>
+                      <TextField
+                        type="number"
+                        value={config.maxLoginAttempts}
+                        onChange={handleChange('maxLoginAttempts')}
+                        InputProps={{
+                          inputProps: { min: 1, max: 10 },
+                        }}
+                        size="small"
+                        fullWidth
+                      />
                     </Box>
 
-                    {/* Campo de búsqueda */}
-                    <TextField
-                      fullWidth
-                      placeholder="Buscar por nombre de archivo, tipo de documento o número de expediente..."
-                      value={searchDocumentosExpediente}
-                      onChange={(e) => setSearchDocumentosExpediente(e.target.value)}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <SearchIcon />
-                          </InputAdornment>
-                        ),
-                      }}
-                      size="small"
-                      sx={{ maxWidth: 500 }}
-                    />
+                    {/* Timeout de Sesión */}
+                    <Box>
+                      <Typography variant="body2" sx={{ fontWeight: 600, color: '#2c3e50', mb: 1 }}>
+                        Timeout Sesión
+                      </Typography>
+                      <TextField
+                        type="number"
+                        value={config.sessionTimeout}
+                        onChange={handleChange('sessionTimeout')}
+                        InputProps={{
+                          endAdornment: <InputAdornment position="end">min</InputAdornment>,
+                        }}
+                        size="small"
+                        fullWidth
+                      />
+                    </Box>
+                  </Box>
+                </Grid>
+
+                {/* Vista Previa del Sistema - DISEÑO PROFESIONAL */}
+                <Grid item xs={12}>
+                  <Divider sx={{ my: 3 }} />
+
+                  <Box sx={{ mb: 3 }}>
+                    <Typography variant="h6" sx={{
+                      fontWeight: 600,
+                      color: '#2c3e50',
+                      mb: 2
+                    }}>
+                      Vista Previa del Sistema
+                    </Typography>
                   </Box>
 
-                  {/* Tabla de Documentos de Expediente */}
-                  <TableContainer sx={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: 1 }}>
-                    <Table stickyHeader size="small">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell sx={{ fontWeight: 'bold', width: '5%' }}>ID</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '15%' }}>Expediente</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '12%' }}>Apartado</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '20%' }}>Documento</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '18%' }}>Archivo</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Vigencia</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Estatus</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Acciones</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {filteredDocumentosExpediente.length === 0 ? (
-                          <TableRow>
-                            <TableCell colSpan={8} align="center" sx={{ py: 3 }}>
-                              <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                                No se encontraron documentos que coincidan con la búsqueda
+                  {/* Contenedor principal */}
+                  <Box sx={{
+                    display: 'grid',
+                    gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' },
+                    gap: 3
+                  }}>
+                    {/* Panel izquierdo - Información del Sistema */}
+                    <Box>
+                      <Typography variant="subtitle1" sx={{
+                        fontWeight: 600,
+                        color: '#2c3e50',
+                        mb: 2,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1
+                      }}>
+                        <InfoIcon sx={{ color: '#3498db', fontSize: 20 }} />
+                        Información del Sistema
+                      </Typography>
+
+                      <Box sx={{
+                        p: 2.5,
+                        bgcolor: '#f8f9fa',
+                        borderRadius: 2,
+                        border: '1px solid #e9ecef'
+                      }}>
+                        {/* Nombre del Sistema */}
+                        <Box sx={{ mb: 2.5 }}>
+                          <Typography variant="body2" sx={{
+                            color: '#7f8c8d',
+                            mb: 0.5,
+                            fontWeight: 500
+                          }}>
+                            Nombre del Sistema:
+                          </Typography>
+                          <Typography variant="h6" sx={{
+                            fontWeight: 700,
+                            color: '#2c3e50'
+                          }}>
+                            {config.systemName}
+                          </Typography>
+                        </Box>
+
+                        {/* Estado Actual */}
+                        <Box>
+                          <Typography variant="body2" sx={{
+                            color: '#7f8c8d',
+                            mb: 1.5,
+                            fontWeight: 500
+                          }}>
+                            Estado Actual:
+                          </Typography>
+
+                          <Box sx={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(2, 1fr)',
+                            gap: 2
+                          }}>
+                            {/* Mantenimiento */}
+                            <Box>
+                              <Typography variant="caption" sx={{
+                                color: '#7f8c8d',
+                                display: 'block',
+                                mb: 0.5
+                              }}>
+                                Mantenimiento
                               </Typography>
-                            </TableCell>
-                          </TableRow>
-                        ) : (
-                          filteredDocumentosExpediente.map((documento) => (
-                            <TableRow
-                              key={documento.id_documento}
-                              hover
-                              sx={{
-                                '&:hover': { bgcolor: '#f8f9fa' },
-                                opacity: documento.estatus_documento === 'Vencido' ? 0.7 : 1
-                              }}
-                            >
-                              <TableCell>
-                                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                                  #{documento.id_documento}
-                                </Typography>
-                              </TableCell>
-
-                              <TableCell>
-                                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                                    {documento.numero_expediente}
-                                  </Typography>
-                                  <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                                    ID: {documento.id_expediente}
-                                  </Typography>
-                                </Box>
-                              </TableCell>
-
-                              <TableCell>
-                                <Chip
-                                  label={documento.nombre_apartado}
-                                  size="small"
-                                  sx={{
-                                    bgcolor: getApartadoBgColor(documento.nombre_apartado),
-                                    color: getApartadoColor(documento.nombre_apartado),
-                                    fontWeight: 500,
-                                    maxWidth: '100%',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis'
-                                  }}
-                                />
-                              </TableCell>
-
-                              <TableCell>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                  <FileCopyIcon sx={{ color: '#1976d2', fontSize: 16 }} />
-                                  <Box>
-                                    <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                                      {documento.tipo_documento}
-                                    </Typography>
-                                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                                      ID Tipo: {documento.id_tipo_documento}
-                                    </Typography>
-                                  </Box>
-                                </Box>
-                              </TableCell>
-
-                              <TableCell>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                  <InsertDriveFileIcon sx={{ color: '#f57c00', fontSize: 16 }} />
-                                  <Box sx={{ maxWidth: 180 }}>
-                                    <Typography variant="body2" sx={{
-                                      color: '#2c3e50',
-                                      whiteSpace: 'nowrap',
-                                      overflow: 'hidden',
-                                      textOverflow: 'ellipsis'
-                                    }}>
-                                      {documento.nombre_archivo}
-                                    </Typography>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                      <StorageIcon sx={{ color: '#7f8c8d', fontSize: 12 }} />
-                                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                                        {documento.tamaño_archivo}
-                                      </Typography>
-                                    </Box>
-                                  </Box>
-                                </Box>
-                              </TableCell>
-
-                              <TableCell align="center">
-                                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5 }}>
-                                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                    <CalendarTodayIcon sx={{ color: '#9b59b6', fontSize: 14 }} />
-                                    <Typography variant="caption" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                                      {documento.vigencia_fin}
-                                    </Typography>
-                                  </Box>
-                                  <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                                    Carga: {documento.fecha_carga.split(' ')[0]}
-                                  </Typography>
-                                </Box>
-                              </TableCell>
-
-                              <TableCell align="center">
-                                <Chip
-                                  label={documento.estatus_documento}
-                                  size="small"
-                                  sx={{
-                                    bgcolor: getDocumentoEstatusBgColor(documento.estatus_documento),
-                                    color: getDocumentoEstatusColor(documento.estatus_documento),
-                                    fontWeight: 600,
-                                    minWidth: 90
-                                  }}
-                                />
-                              </TableCell>
-
-                              <TableCell align="center">
-                                <Stack direction="row" spacing={0.5} justifyContent="center">
-                                  <Tooltip title="Ver documento">
-                                    <IconButton
-                                      size="small"
-                                      sx={{ color: '#3498db' }}
-                                    >
-                                      <VisibilityIcon fontSize="small" />
-                                    </IconButton>
-                                  </Tooltip>
-
-                                  <Tooltip title="Descargar">
-                                    <IconButton
-                                      size="small"
-                                      sx={{ color: '#2ecc71' }}
-                                    >
-                                      <CloudUploadIcon fontSize="small" />
-                                    </IconButton>
-                                  </Tooltip>
-
-                                  <Tooltip title="Eliminar">
-                                    <IconButton
-                                      size="small"
-                                      sx={{ color: '#e74c3c' }}
-                                    >
-                                      <BlockIcon fontSize="small" />
-                                    </IconButton>
-                                  </Tooltip>
-                                </Stack>
-                              </TableCell>
-                            </TableRow>
-                          ))
-                        )}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-
-                  {/* Estadísticas de Documentos */}
-                  <Grid container spacing={2} sx={{ mt: 2 }}>
-                    <Grid item xs={3}>
-                      <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e8f5e9' }}>
-                        <Typography variant="h6" sx={{ color: '#2e7d32', fontWeight: 'bold' }}>
-                          {filteredDocumentosExpediente.filter(d => d.estatus_documento === 'Vigente').length}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#2e7d32' }}>
-                          Vigentes
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#fff3e0' }}>
-                        <Typography variant="h6" sx={{ color: '#f57c00', fontWeight: 'bold' }}>
-                          {filteredDocumentosExpediente.filter(d => d.estatus_documento === 'Por Vencer').length}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#f57c00' }}>
-                          Por Vencer
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#ffebee' }}>
-                        <Typography variant="h6" sx={{ color: '#d32f2f', fontWeight: 'bold' }}>
-                          {filteredDocumentosExpediente.filter(d => d.estatus_documento === 'Vencido').length}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#d32f2f' }}>
-                          Vencidos
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e3f2fd' }}>
-                        <Typography variant="h6" sx={{ color: '#1976d2', fontWeight: 'bold' }}>
-                          {new Set(filteredDocumentosExpediente.map(d => d.id_expediente)).size}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#1976d2' }}>
-                          Expedientes
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                  </Grid>
-
-                  {/* Distribución por apartado */}
-                  <Paper sx={{ p: 2, mt: 2, bgcolor: '#fafafa' }}>
-                    <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
-                      Distribución por Apartado
-                    </Typography>
-                    <Grid container spacing={1}>
-                      {Array.from(new Set(filteredDocumentosExpediente.map(d => d.nombre_apartado))).map((apartado, index) => {
-                        const count = filteredDocumentosExpediente.filter(d => d.nombre_apartado === apartado).length;
-                        const percentage = Math.round((count / Math.max(filteredDocumentosExpediente.length, 1)) * 100);
-                        return (
-                          <Grid item xs={6} key={index}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <FolderIcon sx={{ color: getApartadoColor(apartado), fontSize: 16 }} />
-                                <Typography variant="body2" sx={{ color: '#2c3e50' }}>
-                                  {apartado}
-                                </Typography>
-                              </Box>
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <Typography variant="body2" sx={{ fontWeight: 'bold', color: getApartadoColor(apartado) }}>
-                                  {count}
-                                </Typography>
-                                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                                  ({percentage}%)
-                                </Typography>
-                              </Box>
+                              <Chip
+                                label={config.maintenanceMode ? "ACTIVO" : "INACTIVO"}
+                                size="small"
+                                color={config.maintenanceMode ? "warning" : "success"}
+                                sx={{
+                                  fontWeight: 600,
+                                  height: 24,
+                                  width: '100%',
+                                  justifyContent: 'center'
+                                }}
+                              />
                             </Box>
-                            <LinearProgress
-                              variant="determinate"
-                              value={percentage}
-                              sx={{
-                                height: 4,
-                                borderRadius: 2,
-                                mt: 0.5,
-                                bgcolor: '#e0e0e0',
-                                '& .MuiLinearProgress-bar': {
-                                  bgcolor: getApartadoColor(apartado)
-                                }
-                              }}
-                            />
-                          </Grid>
-                        );
-                      })}
-                    </Grid>
-                  </Paper>
 
-                  {/* Resumen de formatos */}
-                  <Paper sx={{ p: 2, mt: 2, bgcolor: '#f5f5f5' }}>
-                    <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
-                      Resumen de Documentos
-                    </Typography>
-                    <Grid container spacing={2}>
-                      <Grid item xs={6}>
-                        <Typography variant="body2" sx={{ color: '#7f8c8d', mb: 1 }}>
-                          Usuarios que cargaron documentos:
-                        </Typography>
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                          {Array.from(new Set(filteredDocumentosExpediente.map(d => d.usuario_carga))).map((usuario, idx) => (
-                            <Chip
-                              key={idx}
-                              label={usuario}
-                              size="small"
-                              variant="outlined"
-                            />
-                          ))}
-                        </Box>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Typography variant="body2" sx={{ color: '#7f8c8d', mb: 1 }}>
-                          Tipos de documento más frecuentes:
-                        </Typography>
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                          {Array.from(new Set(filteredDocumentosExpediente.map(d => d.tipo_documento))).slice(0, 3).map((tipo, idx) => (
-                            <Chip
-                              key={idx}
-                              label={tipo}
-                              size="small"
-                              sx={{
-                                bgcolor: getTipoBgColor(tipo),
-                                color: getTipoColor(tipo)
-                              }}
-                            />
-                          ))}
-                        </Box>
-                      </Grid>
-                    </Grid>
-                  </Paper>
-                </Box>
-              )}
-
-              {activeTab === 4 && (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                  {/* Filtros, búsqueda y estadísticas */}
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Box sx={{ display: 'flex', gap: 1 }}>
-                        <Chip
-                          label="Todos"
-                          variant="filled"
-                          color="primary"
-                          clickable
-                        />
-                        <Chip
-                          label="Activos"
-                          variant="outlined"
-                          clickable
-                        />
-                        <Chip
-                          label="Inactivos"
-                          variant="outlined"
-                          clickable
-                        />
-                      </Box>
-
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                          Total: {filteredRoles.length} roles
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                          Activos: {filteredRoles.filter(r => r.estatus).length}
-                        </Typography>
-                        <Button
-                          variant="contained"
-                          startIcon={<AddIcon />}
-                          sx={{ bgcolor: '#3498db', '&:hover': { bgcolor: '#2980b9' } }}
-                        >
-                          Nuevo Rol
-                        </Button>
-                      </Box>
-                    </Box>
-
-                    {/* Campo de búsqueda */}
-                    <TextField
-                      fullWidth
-                      placeholder="Buscar rol por nombre..."
-                      value={searchRoles}
-                      onChange={(e) => setSearchRoles(e.target.value)}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <SearchIcon />
-                          </InputAdornment>
-                        ),
-                      }}
-                      size="small"
-                      sx={{ maxWidth: 400 }}
-                    />
-                  </Box>
-
-                  {/* Tabla de Roles */}
-                  <TableContainer sx={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: 1 }}>
-                    <Table stickyHeader size="small">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell sx={{ fontWeight: 'bold', width: '10%' }}>ID</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '25%' }}>Nombre del Rol</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>Descripción</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Nivel</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Estatus</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '15%' }} align="center">Acciones</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {filteredRoles.length === 0 ? (
-                          <TableRow>
-                            <TableCell colSpan={6} align="center" sx={{ py: 3 }}>
-                              <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                                No se encontraron roles que coincidan con la búsqueda
+                            {/* Registros */}
+                            <Box>
+                              <Typography variant="caption" sx={{
+                                color: '#7f8c8d',
+                                display: 'block',
+                                mb: 0.5
+                              }}>
+                                Registros
                               </Typography>
-                            </TableCell>
-                          </TableRow>
-                        ) : (
-                          filteredRoles.map((rol) => (
-                            <TableRow
-                              key={rol.id}
-                              hover
-                              sx={{
-                                '&:hover': { bgcolor: '#f8f9fa' },
-                                opacity: rol.estatus === false ? 0.7 : 1
-                              }}
-                            >
-                              <TableCell>
-                                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                                  #{rol.id}
-                                </Typography>
-                              </TableCell>
-
-                              <TableCell>
-                                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                                  {rol.nombre}
-                                </Typography>
-                              </TableCell>
-
-                              <TableCell>
-                                <Typography variant="body2" sx={{ color: '#2c3e50' }}>
-                                  {rol.descripcion}
-                                </Typography>
-                              </TableCell>
-
-                              <TableCell align="center">
-                                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5 }}>
-                                  <Box sx={{
-                                    width: 30,
-                                    height: 30,
-                                    borderRadius: '50%',
-                                    bgcolor: rol.nivel === 1 ? '#e74c3c' :
-                                      rol.nivel === 2 ? '#f39c12' :
-                                        rol.nivel === 3 ? '#3498db' :
-                                          rol.nivel === 4 ? '#2ecc71' : '#9b59b6',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                  }}>
-                                    <Typography variant="caption" sx={{ color: 'white', fontWeight: 'bold' }}>
-                                      {rol.nivel}
-                                    </Typography>
-                                  </Box>
-                                  <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                                    {rol.nivel === 1 ? 'Alto' :
-                                      rol.nivel === 2 ? 'Medio' :
-                                        rol.nivel === 3 ? 'Básico' : 'Limitado'}
-                                  </Typography>
-                                </Box>
-                              </TableCell>
-
-                              <TableCell align="center">
-                                <Chip
-                                  label={rol.estatus ? "ACTIVO" : "INACTIVO"}
-                                  size="small"
-                                  color={rol.estatus ? "success" : "error"}
-                                  sx={{
-                                    fontWeight: 600,
-                                    minWidth: 80
-                                  }}
-                                />
-                              </TableCell>
-
-                              <TableCell align="center">
-                                <Stack direction="row" spacing={0.5} justifyContent="center">
-                                  <Tooltip title="Ver detalles">
-                                    <IconButton
-                                      size="small"
-                                      sx={{ color: '#3498db' }}
-                                    >
-                                      <VisibilityIcon fontSize="small" />
-                                    </IconButton>
-                                  </Tooltip>
-
-                                  <Tooltip title="Editar rol">
-                                    <IconButton
-                                      size="small"
-                                      sx={{ color: '#f39c12' }}
-                                    >
-                                      <EditIcon fontSize="small" />
-                                    </IconButton>
-                                  </Tooltip>
-
-                                  <Tooltip title={rol.estatus ? 'Desactivar' : 'Activar'}>
-                                    <IconButton
-                                      size="small"
-                                      onClick={() => handleToggleRoleStatus(rol.id)}
-                                      sx={{ color: rol.estatus ? '#e74c3c' : '#2ecc71' }}
-                                    >
-                                      {rol.estatus ? <BlockIcon fontSize="small" /> : <CheckCircleIcon fontSize="small" />}
-                                    </IconButton>
-                                  </Tooltip>
-                                </Stack>
-                              </TableCell>
-                            </TableRow>
-                          ))
-                        )}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </Box>
-              )}
-
-              {activeTab === 5 && (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                  {/* Filtros, búsqueda y estadísticas */}
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Box sx={{ display: 'flex', gap: 1 }}>
-                        <Chip
-                          label="Todos"
-                          variant="filled"
-                          color="primary"
-                          clickable
-                        />
-                        <Chip
-                          label="Activos"
-                          variant="outlined"
-                          clickable
-                        />
-                        <Chip
-                          label="Inactivos"
-                          variant="outlined"
-                          clickable
-                        />
-                        <Chip
-                          label="México"
-                          variant="outlined"
-                          clickable
-                        />
-                      </Box>
-
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                          Total: {filteredRegiones.length} regiones
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                          Activas: {filteredRegiones.filter(r => r.estatus === 1).length}
-                        </Typography>
-                        <Button
-                          variant="contained"
-                          startIcon={<AddIcon />}
-                          sx={{ bgcolor: '#3498db', '&:hover': { bgcolor: '#2980b9' } }}
-                        >
-                          Nueva Región
-                        </Button>
+                              <Chip
+                                label={config.allowRegistrations ? "PERMITIDOS" : "BLOQUEADOS"}
+                                size="small"
+                                color={config.allowRegistrations ? "success" : "error"}
+                                sx={{
+                                  fontWeight: 600,
+                                  height: 24,
+                                  width: '100%',
+                                  justifyContent: 'center'
+                                }}
+                              />
+                            </Box>
+                          </Box>
+                        </Box>
                       </Box>
                     </Box>
 
-                    {/* Campo de búsqueda */}
-                    <TextField
-                      fullWidth
-                      placeholder="Buscar región por nombre o estado..."
-                      value={searchRegiones}
-                      onChange={(e) => setSearchRegiones(e.target.value)}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <SearchIcon />
-                          </InputAdornment>
-                        ),
-                      }}
-                      size="small"
-                      sx={{ maxWidth: 400 }}
-                    />
+                    {/* Panel derecho - Resumen de Configuración */}
+                    <Box>
+                      <Typography variant="subtitle1" sx={{
+                        fontWeight: 600,
+                        color: '#2c3e50',
+                        mb: 2,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1
+                      }}>
+                        <AssessmentIcon sx={{ color: '#9b59b6', fontSize: 20 }} />
+                        Resumen de Configuración
+                      </Typography>
+
+                      <Box sx={{
+                        p: 2.5,
+                        bgcolor: '#f8f9fa',
+                        borderRadius: 2,
+                        border: '1px solid #e9ecef'
+                      }}>
+                        <Grid container spacing={2}>
+                          {/* Certificaciones Activas */}
+                          <Grid item xs={6}>
+                            <Box sx={{ textAlign: 'center' }}>
+                              <Typography variant="h5" sx={{
+                                fontWeight: 700,
+                                color: '#3498db',
+                                mb: 0.5
+                              }}>
+                                {certificaciones.filter(c => c.estatus === 1).length}
+                              </Typography>
+                              <Typography variant="caption" sx={{
+                                color: '#7f8c8d',
+                                fontWeight: 500
+                              }}>
+                                Certificaciones Activas
+                              </Typography>
+                            </Box>
+                          </Grid>
+
+                          {/* Declaraciones Activas */}
+                          <Grid item xs={6}>
+                            <Box sx={{ textAlign: 'center' }}>
+                              <Typography variant="h5" sx={{
+                                fontWeight: 700,
+                                color: '#9b59b6',
+                                mb: 0.5
+                              }}>
+                                {declaraciones.filter(d => d.estatus === 1).length}
+                              </Typography>
+                              <Typography variant="caption" sx={{
+                                color: '#7f8c8d',
+                                fontWeight: 500
+                              }}>
+                                Declaraciones Activas
+                              </Typography>
+                            </Box>
+                          </Grid>
+
+                          {/* Regiones Activas */}
+                          <Grid item xs={6}>
+                            <Box sx={{ textAlign: 'center' }}>
+                              <Typography variant="h5" sx={{
+                                fontWeight: 700,
+                                color: '#2ecc71',
+                                mb: 0.5
+                              }}>
+                                {regiones.filter(r => r.estatus === 1).length}
+                              </Typography>
+                              <Typography variant="caption" sx={{
+                                color: '#7f8c8d',
+                                fontWeight: 500
+                              }}>
+                                Regiones Activas
+                              </Typography>
+                            </Box>
+                          </Grid>
+
+                          {/* Niveles Reconocimiento Activos */}
+                          <Grid item xs={6}>
+                            <Box sx={{ textAlign: 'center' }}>
+                              <Typography variant="h5" sx={{
+                                fontWeight: 700,
+                                color: '#f39c12',
+                                mb: 0.5
+                              }}>
+                                {nivelesReconocimiento.filter(n => n.estatus === 1).length}
+                              </Typography>
+                              <Typography variant="caption" sx={{
+                                color: '#7f8c8d',
+                                fontWeight: 500
+                              }}>
+                                Niveles Reconocimiento Activos
+                              </Typography>
+                            </Box>
+                          </Grid>
+                        </Grid>
+
+                        <Divider sx={{ my: 2 }} />
+
+                        {/* Configuraciones adicionales */}
+                        <Box sx={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(2, 1fr)',
+                          gap: 2,
+                          mt: 1
+                        }}>
+                          {/* Umbral Semáforo Verde */}
+                          <Box>
+                            <Typography variant="caption" sx={{
+                              color: '#7f8c8d',
+                              display: 'block',
+                              mb: 0.5
+                            }}>
+                              Umbral Semáforo Verde:
+                            </Typography>
+                            <Typography variant="body2" sx={{
+                              fontWeight: 600,
+                              color: '#2ecc71'
+                            }}>
+                              {'>'} {config.yellowThreshold}%
+                            </Typography>
+                          </Box>
+
+                          {/* Backup Automático */}
+                          <Box>
+                            <Typography variant="caption" sx={{
+                              color: '#7f8c8d',
+                              display: 'block',
+                              mb: 0.5
+                            }}>
+                              Backup Automático:
+                            </Typography>
+                            <Chip
+                              label={config.autoBackup ? "ACTIVO" : "INACTIVO"}
+                              size="small"
+                              color={config.autoBackup ? "success" : "error"}
+                              sx={{
+                                fontWeight: 600,
+                                height: 22
+                              }}
+                            />
+                          </Box>
+                        </Box>
+                      </Box>
+                    </Box>
+                  </Box>
+                </Grid>
+              </Grid>
+            )}
+
+            {activeTab === 1 && (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                {/* Configuración general */}
+                <Paper sx={{ p: 2, bgcolor: '#f8f9fa', mb: 2 }}>
+                  <Typography variant="subtitle1" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 2 }}>
+                    Configuración General de Certificaciones
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Vigencia Predeterminada (días)"
+                        type="number"
+                        value={config.certificationValidity}
+                        onChange={handleChange('certificationValidity')}
+                        helperText="Vigencia por defecto para nuevas certificaciones"
+                        InputProps={{
+                          endAdornment: <InputAdornment position="end">días</InputAdornment>,
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Días de Advertencia"
+                        type="number"
+                        value={config.renewalWarningDays}
+                        onChange={handleChange('renewalWarningDays')}
+                        helperText="Días previos al vencimiento para alertar"
+                        InputProps={{
+                          endAdornment: <InputAdornment position="end">días</InputAdornment>,
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Máx. Certificaciones por Usuario"
+                        type="number"
+                        value={config.maxCertificationsPerUser}
+                        onChange={handleChange('maxCertificationsPerUser')}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={config.autoRenewal}
+                            onChange={handleChange('autoRenewal')}
+                            color="primary"
+                          />
+                        }
+                        label="Renovación Automática"
+                      />
+                    </Grid>
+                  </Grid>
+                </Paper>
+
+                {/* Filtros, búsqueda y estadísticas */}
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      <Chip
+                        label="Todos"
+                        variant="filled"
+                        color="primary"
+                        clickable
+                      />
+                      <Chip
+                        label="Activos"
+                        variant="outlined"
+                        clickable
+                      />
+                      <Chip
+                        label="Inactivos"
+                        variant="outlined"
+                        clickable
+                      />
+                      <Chip
+                        label="Profesional"
+                        variant="outlined"
+                        clickable
+                      />
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                        Total: {filteredCertificaciones.length} certificaciones
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                        Activas: {filteredCertificaciones.filter(c => c.estatus === 1).length}
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        sx={{ bgcolor: '#3498db', '&:hover': { bgcolor: '#2980b9' } }}
+                      >
+                        Nueva Certificación
+                      </Button>
+                    </Box>
                   </Box>
 
-                  {/* Tabla de Regiones */}
-                  <TableContainer sx={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: 1 }}>
-                    <Table stickyHeader size="small">
-                      <TableHead>
+                  {/* Campo de búsqueda */}
+                  <TextField
+                    fullWidth
+                    placeholder="Buscar certificación por nombre..."
+                    value={searchCertificaciones}
+                    onChange={(e) => setSearchCertificaciones(e.target.value)}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                    size="small"
+                    sx={{ maxWidth: 400 }}
+                  />
+                </Box>
+
+                {/* Tabla de Certificaciones */}
+                <TableContainer sx={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: 1 }}>
+                  <Table stickyHeader size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell sx={{ fontWeight: 'bold', width: '5%' }}>ID</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '25%' }}>Nombre</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '30%' }}>Descripción</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '12%' }}>Tipo</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '8%' }} align="center">Horas previstas</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '8%' }} align="center">Vigencia prevista</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '8%' }} align="center">Estatus</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '14%' }} align="center">Acciones</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {filteredCertificaciones.length === 0 ? (
                         <TableRow>
-                          <TableCell sx={{ fontWeight: 'bold', width: '8%' }}>ID</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '25%' }}>Nombre Región</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '25%' }}>Estado</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '20%' }}>País</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Estatus</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '12%' }} align="center">Acciones</TableCell>
+                          <TableCell colSpan={8} align="center" sx={{ py: 3 }}>
+                            <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                              No se encontraron certificaciones que coincidan con la búsqueda
+                            </Typography>
+                          </TableCell>
                         </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {filteredRegiones.map((region) => (
+                      ) : (
+                        filteredCertificaciones.map((cert) => (
                           <TableRow
-                            key={region.id_region}
+                            key={cert.id_certificacion}
                             hover
                             sx={{
                               '&:hover': { bgcolor: '#f8f9fa' },
-                              opacity: region.estatus === 0 ? 0.7 : 1
+                              opacity: cert.estatus === 0 ? 0.7 : 1
                             }}
                           >
                             <TableCell>
                               <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                                #{region.id_region}
+                                #{cert.id_certificacion}
                               </Typography>
                             </TableCell>
 
                             <TableCell>
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <PublicIcon sx={{ color: '#3498db', fontSize: 16 }} />
+                              <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                {cert.nombre_certificacion}
+                              </Typography>
+                              {cert.fecha_creacion && (
+                                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                  Creado: {cert.fecha_creacion}
+                                </Typography>
+                              )}
+                            </TableCell>
+
+                            <TableCell>
+                              <Typography variant="body2" sx={{ color: '#2c3e50' }}>
+                                {cert.descripcion}
+                              </Typography>
+                            </TableCell>
+
+                            <TableCell>
+                              <Chip
+                                label={cert.tipo}
+                                size="small"
+                                sx={{
+                                  bgcolor: getTipoBgColor(cert.tipo),
+                                  color: getTipoColor(cert.tipo),
+                                  fontWeight: 500,
+                                  maxWidth: '100%',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis'
+                                }}
+                              />
+                            </TableCell>
+
+                            <TableCell align="center">
+                              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
+                                <AccessTimeIcon sx={{ color: '#3498db', fontSize: 16 }} />
                                 <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                                  {region.nombre_region}
-                                </Typography>
-                              </Box>
-                            </TableCell>
-
-                            <TableCell>
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <LocationOnIcon sx={{ color: '#7f8c8d', fontSize: 16 }} />
-                                <Typography variant="body2" sx={{ color: '#2c3e50' }}>
-                                  {region.estado}
-                                </Typography>
-                              </Box>
-                            </TableCell>
-
-                            <TableCell>
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <FlagIcon sx={{ color: '#e74c3c', fontSize: 16 }} />
-                                <Typography variant="body2" sx={{ color: '#2c3e50' }}>
-                                  {region.pais}
+                                  {cert.horas_acreditadas}
                                 </Typography>
                               </Box>
                             </TableCell>
 
                             <TableCell align="center">
+                              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
+                                <TimerIcon sx={{ color: '#9b59b6', fontSize: 16 }} />
+                                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                  {cert.vigencia_meses} m
+                                </Typography>
+                              </Box>
+                              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                ≈ {(cert.vigencia_meses * 30).toLocaleString()} días
+                              </Typography>
+                            </TableCell>
+
+                            <TableCell align="center">
                               <Chip
-                                label={region.estatus === 1 ? "ACTIVA" : "INACTIVA"}
+                                label={cert.estatus === 1 ? "ACTIVA" : "INACTIVA"}
                                 size="small"
-                                color={region.estatus === 1 ? "success" : "error"}
+                                color={cert.estatus === 1 ? "success" : "error"}
                                 sx={{
                                   fontWeight: 600,
                                   minWidth: 80
@@ -2613,7 +1799,7 @@ const SystemConfig = () => {
                                   </IconButton>
                                 </Tooltip>
 
-                                <Tooltip title="Editar región">
+                                <Tooltip title="Editar certificación">
                                   <IconButton
                                     size="small"
                                     sx={{ color: '#f39c12' }}
@@ -2622,1295 +1808,2354 @@ const SystemConfig = () => {
                                   </IconButton>
                                 </Tooltip>
 
-                                <Tooltip title={region.estatus === 1 ? 'Desactivar' : 'Activar'}>
+                                <Tooltip title={cert.estatus === 1 ? 'Desactivar' : 'Activar'}>
                                   <IconButton
                                     size="small"
-                                    onClick={() => handleToggleRegionStatus(region.id_region)}
-                                    sx={{ color: region.estatus === 1 ? '#e74c3c' : '#2ecc71' }}
+                                    onClick={() => handleToggleCertificacionStatus(cert.id_certificacion)}
+                                    sx={{ color: cert.estatus === 1 ? '#e74c3c' : '#2ecc71' }}
                                   >
-                                    {region.estatus === 1 ? <BlockIcon fontSize="small" /> : <CheckCircleIcon fontSize="small" />}
+                                    {cert.estatus === 1 ? <BlockIcon fontSize="small" /> : <CheckCircleIcon fontSize="small" />}
                                   </IconButton>
                                 </Tooltip>
                               </Stack>
                             </TableCell>
                           </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
 
-                  {/* Estadísticas de Regiones */}
-                  <Grid container spacing={2} sx={{ mt: 2 }}>
-                    <Grid item xs={3}>
-                      <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e3f2fd' }}>
-                        <Typography variant="h6" sx={{ color: '#1976d2', fontWeight: 'bold' }}>
-                          {filteredRegiones.length}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#1976d2' }}>
-                          Total Regiones
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e8f5e9' }}>
-                        <Typography variant="h6" sx={{ color: '#2e7d32', fontWeight: 'bold' }}>
-                          {filteredRegiones.filter(r => r.estatus === 1).length}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#2e7d32' }}>
-                          Activas
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#ffebee' }}>
-                        <Typography variant="h6" sx={{ color: '#d32f2f', fontWeight: 'bold' }}>
-                          {filteredRegiones.filter(r => r.estatus === 0).length}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#d32f2f' }}>
-                          Inactivas
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#f3e5f5' }}>
-                        <Typography variant="h6" sx={{ color: '#7b1fa2', fontWeight: 'bold' }}>
-                          {new Set(filteredRegiones.map(r => r.pais)).size}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#7b1fa2' }}>
-                          Países
-                        </Typography>
-                      </Paper>
-                    </Grid>
+                {/* Estadísticas de Certificaciones */}
+                <Grid container spacing={2} sx={{ mt: 2 }}>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e3f2fd' }}>
+                      <Typography variant="h6" sx={{ color: '#1976d2', fontWeight: 'bold' }}>
+                        {filteredCertificaciones.filter(c => c.tipo === 'Profesional').length}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#1976d2' }}>
+                        Profesionales
+                      </Typography>
+                    </Paper>
                   </Grid>
-
-                  {/* Mapa de regiones */}
-                  <Paper sx={{ p: 2, mt: 2, bgcolor: '#f5f5f5' }}>
-                    <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
-                      Distribución por Estado
-                    </Typography>
-                    <Grid container spacing={1}>
-                      {Array.from(new Set(filteredRegiones.map(r => r.estado))).map((estado, index) => {
-                        const count = filteredRegiones.filter(r => r.estado === estado).length;
-                        return (
-                          <Grid item xs={6} key={index}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <MapIcon sx={{ color: '#3498db', fontSize: 16 }} />
-                                <Typography variant="body2" sx={{ color: '#2c3e50' }}>
-                                  {estado}
-                                </Typography>
-                              </Box>
-                              <Chip
-                                label={count}
-                                size="small"
-                                variant="outlined"
-                              />
-                            </Box>
-                          </Grid>
-                        );
-                      })}
-                    </Grid>
-                  </Paper>
-                </Box>
-              )}
-
-              {activeTab === 6 && (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                  {/* Filtros, búsqueda y estadísticas */}
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Box sx={{ display: 'flex', gap: 1 }}>
-                        <Chip
-                          label="Todos"
-                          variant="filled"
-                          color="primary"
-                          clickable
-                        />
-                        <Chip
-                          label="Activos"
-                          variant="outlined"
-                          clickable
-                        />
-                        <Chip
-                          label="Inactivos"
-                          variant="outlined"
-                          clickable
-                        />
-                      </Box>
-
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                          Total: {filteredTiposDocumento.length} tipos
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                          Activos: {filteredTiposDocumento.filter(d => d.estatus).length}
-                        </Typography>
-                        <Button
-                          variant="contained"
-                          startIcon={<AddIcon />}
-                          sx={{ bgcolor: '#3498db', '&:hover': { bgcolor: '#2980b9' } }}
-                        >
-                          Nuevo Tipo
-                        </Button>
-                      </Box>
-                    </Box>
-
-                    {/* Campo de búsqueda */}
-                    <TextField
-                      fullWidth
-                      placeholder="Buscar tipo de documento por nombre..."
-                      value={searchTiposDocumento}
-                      onChange={(e) => setSearchTiposDocumento(e.target.value)}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <SearchIcon />
-                          </InputAdornment>
-                        ),
-                      }}
-                      size="small"
-                      sx={{ maxWidth: 400 }}
-                    />
-                  </Box>
-
-                  {/* Tabla de Tipos de Documento */}
-                  <TableContainer sx={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: 1 }}>
-                    <Table stickyHeader size="small">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell sx={{ fontWeight: 'bold', width: '10%' }}>ID</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '30%' }}>Nombre del Documento</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '45%' }}>Descripción</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Estatus</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '15%' }} align="center">Acciones</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {filteredTiposDocumento.length === 0 ? (
-                          <TableRow>
-                            <TableCell colSpan={5} align="center" sx={{ py: 3 }}>
-                              <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                                No se encontraron tipos de documento que coincidan con la búsqueda
-                              </Typography>
-                            </TableCell>
-                          </TableRow>
-                        ) : (
-                          filteredTiposDocumento.map((documento) => (
-                            <TableRow
-                              key={documento.id}
-                              hover
-                              sx={{
-                                '&:hover': { bgcolor: '#f8f9fa' },
-                                opacity: documento.estatus === false ? 0.7 : 1
-                              }}
-                            >
-                              <TableCell>
-                                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                                  #{documento.id}
-                                </Typography>
-                              </TableCell>
-
-                              <TableCell>
-                                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                                  {documento.nombre}
-                                </Typography>
-                              </TableCell>
-
-                              <TableCell>
-                                <Typography variant="body2" sx={{ color: '#2c3e50' }}>
-                                  {documento.descripcion}
-                                </Typography>
-                              </TableCell>
-
-                              <TableCell align="center">
-                                <Chip
-                                  label={documento.estatus ? "ACTIVO" : "INACTIVO"}
-                                  size="small"
-                                  color={documento.estatus ? "success" : "error"}
-                                  sx={{
-                                    fontWeight: 600,
-                                    minWidth: 80
-                                  }}
-                                />
-                              </TableCell>
-
-                              <TableCell align="center">
-                                <Stack direction="row" spacing={0.5} justifyContent="center">
-                                  <Tooltip title="Ver detalles">
-                                    <IconButton
-                                      size="small"
-                                      sx={{ color: '#3498db' }}
-                                    >
-                                      <VisibilityIcon fontSize="small" />
-                                    </IconButton>
-                                  </Tooltip>
-
-                                  <Tooltip title="Editar documento">
-                                    <IconButton
-                                      size="small"
-                                      sx={{ color: '#f39c12' }}
-                                    >
-                                      <EditIcon fontSize="small" />
-                                    </IconButton>
-                                  </Tooltip>
-
-                                  <Tooltip title={documento.estatus ? 'Desactivar' : 'Activar'}>
-                                    <IconButton
-                                      size="small"
-                                      onClick={() => handleToggleDocumentoStatus(documento.id)}
-                                      sx={{ color: documento.estatus ? '#e74c3c' : '#2ecc71' }}
-                                    >
-                                      {documento.estatus ? <BlockIcon fontSize="small" /> : <CheckCircleIcon fontSize="small" />}
-                                    </IconButton>
-                                  </Tooltip>
-                                </Stack>
-                              </TableCell>
-                            </TableRow>
-                          ))
-                        )}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </Box>
-              )}
-
-              {activeTab === 7 && (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                  {/* Filtros, búsqueda y estadísticas */}
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Box sx={{ display: 'flex', gap: 1 }}>
-                        <Chip
-                          label="Todos"
-                          variant="filled"
-                          color="primary"
-                          clickable
-                        />
-                        <Chip
-                          label="Activos"
-                          variant="outlined"
-                          clickable
-                        />
-                        <Chip
-                          label="Con Permiso Aprobar"
-                          variant="outlined"
-                          clickable
-                        />
-                      </Box>
-
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                          Total: {filteredComite.length} miembros
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                          Activos: {filteredComite.filter(m => m.estatus === 1).length}
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                          Con permiso: {filteredComite.filter(m => m.permiso_aprobar === 1).length}
-                        </Typography>
-                        <Button
-                          variant="contained"
-                          startIcon={<AddIcon />}
-                          sx={{ bgcolor: '#3498db', '&:hover': { bgcolor: '#2980b9' } }}
-                        >
-                          Nuevo Miembro
-                        </Button>
-                      </Box>
-                    </Box>
-
-                    {/* Campo de búsqueda */}
-                    <TextField
-                      fullWidth
-                      placeholder="Buscar miembro por nombre..."
-                      value={searchComite}
-                      onChange={(e) => setSearchComite(e.target.value)}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <SearchIcon />
-                          </InputAdornment>
-                        ),
-                      }}
-                      size="small"
-                      sx={{ maxWidth: 400 }}
-                    />
-                  </Box>
-
-                  {/* Tabla de Comité */}
-                  <TableContainer sx={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: 1 }}>
-                    <Table stickyHeader size="small">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell sx={{ fontWeight: 'bold', width: '5%' }}>ID</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '20%' }}>Usuario</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '15%' }}>Cargo</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '20%' }}>Área</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Permiso Aprobar</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Estatus</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '20%' }} align="center">Acciones</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {filteredComite.length === 0 ? (
-                          <TableRow>
-                            <TableCell colSpan={7} align="center" sx={{ py: 3 }}>
-                              <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                                No se encontraron miembros que coincidan con la búsqueda
-                              </Typography>
-                            </TableCell>
-                          </TableRow>
-                        ) : (
-                          filteredComite.map((miembro) => (
-                            <TableRow
-                              key={miembro.id_comite}
-                              hover
-                              sx={{
-                                '&:hover': { bgcolor: '#f8f9fa' },
-                                opacity: miembro.estatus === 0 ? 0.7 : 1
-                              }}
-                            >
-                              <TableCell>
-                                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                                  #{miembro.id_comite}
-                                </Typography>
-                              </TableCell>
-
-                              <TableCell>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                  <PersonIcon sx={{ color: '#3498db', fontSize: 16 }} />
-                                  <Box>
-                                    <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                                      {miembro.nombre_usuario}
-                                    </Typography>
-                                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                                      ID: {miembro.id_usuario}
-                                    </Typography>
-                                  </Box>
-                                </Box>
-                              </TableCell>
-
-                              <TableCell>
-                                <Chip
-                                  label={miembro.cargo}
-                                  size="small"
-                                  sx={{
-                                    bgcolor: miembro.cargo === 'Presidente' ? '#e3f2fd' :
-                                      miembro.cargo === 'Secretario' ? '#f3e5f5' :
-                                        miembro.cargo === 'Vocal' ? '#e8f5e9' :
-                                          miembro.cargo === 'Coordinador' ? '#fff3e0' : '#f5f5f5',
-                                    color: miembro.cargo === 'Presidente' ? '#1976d2' :
-                                      miembro.cargo === 'Secretario' ? '#7b1fa2' :
-                                        miembro.cargo === 'Vocal' ? '#2e7d32' :
-                                          miembro.cargo === 'Coordinador' ? '#f57c00' : '#616161',
-                                    fontWeight: 500
-                                  }}
-                                />
-                              </TableCell>
-
-                              <TableCell>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                  <BusinessIcon sx={{ color: '#7f8c8d', fontSize: 16 }} />
-                                  <Typography variant="body2" sx={{ color: '#2c3e50' }}>
-                                    {miembro.area}
-                                  </Typography>
-                                </Box>
-                              </TableCell>
-
-                              <TableCell align="center">
-                                <Chip
-                                  label={miembro.permiso_aprobar === 1 ? "SI" : "NO"}
-                                  size="small"
-                                  color={miembro.permiso_aprobar === 1 ? "success" : "default"}
-                                  icon={miembro.permiso_aprobar === 1 ? <HowToRegIcon fontSize="small" /> : null}
-                                  sx={{
-                                    fontWeight: 600,
-                                    minWidth: 60
-                                  }}
-                                />
-                              </TableCell>
-
-                              <TableCell align="center">
-                                <Chip
-                                  label={miembro.estatus === 1 ? "ACTIVO" : "INACTIVO"}
-                                  size="small"
-                                  color={miembro.estatus === 1 ? "success" : "error"}
-                                  sx={{
-                                    fontWeight: 600,
-                                    minWidth: 80
-                                  }}
-                                />
-                              </TableCell>
-
-                              <TableCell align="center">
-                                <Stack direction="row" spacing={0.5} justifyContent="center">
-                                  <Tooltip title="Ver detalles">
-                                    <IconButton
-                                      size="small"
-                                      sx={{ color: '#3498db' }}
-                                    >
-                                      <VisibilityIcon fontSize="small" />
-                                    </IconButton>
-                                  </Tooltip>
-
-                                  <Tooltip title="Editar miembro">
-                                    <IconButton
-                                      size="small"
-                                      sx={{ color: '#f39c12' }}
-                                    >
-                                      <EditIcon fontSize="small" />
-                                    </IconButton>
-                                  </Tooltip>
-
-                                  <Tooltip title="Cambiar permiso de aprobación">
-                                    <IconButton
-                                      size="small"
-                                      onClick={() => handleTogglePermisoAprobar(miembro.id_comite)}
-                                      sx={{ color: miembro.permiso_aprobar === 1 ? '#e74c3c' : '#2ecc71' }}
-                                    >
-                                      {miembro.permiso_aprobar === 1 ? <BlockIcon fontSize="small" /> : <CheckCircleIcon fontSize="small" />}
-                                    </IconButton>
-                                  </Tooltip>
-                                </Stack>
-                              </TableCell>
-                            </TableRow>
-                          ))
-                        )}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-
-                  {/* Estadísticas del Comité */}
-                  <Grid container spacing={2} sx={{ mt: 2 }}>
-                    <Grid item xs={3}>
-                      <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e3f2fd' }}>
-                        <Typography variant="h6" sx={{ color: '#1976d2', fontWeight: 'bold' }}>
-                          {filteredComite.filter(m => m.cargo === 'Presidente').length}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#1976d2' }}>
-                          Presidentes
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#f3e5f5' }}>
-                        <Typography variant="h6" sx={{ color: '#7b1fa2', fontWeight: 'bold' }}>
-                          {filteredComite.filter(m => m.cargo === 'Secretario').length}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#7b1fa2' }}>
-                          Secretarios
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e8f5e9' }}>
-                        <Typography variant="h6" sx={{ color: '#2e7d32', fontWeight: 'bold' }}>
-                          {filteredComite.filter(m => m.cargo === 'Vocal').length}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#2e7d32' }}>
-                          Vocales
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#fff3e0' }}>
-                        <Typography variant="h6" sx={{ color: '#f57c00', fontWeight: 'bold' }}>
-                          {filteredComite.filter(m => m.permiso_aprobar === 1).length}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#f57c00' }}>
-                          Con Permiso
-                        </Typography>
-                      </Paper>
-                    </Grid>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#f3e5f5' }}>
+                      <Typography variant="h6" sx={{ color: '#7b1fa2', fontWeight: 'bold' }}>
+                        {filteredCertificaciones.filter(c => c.tipo === 'Especialización').length}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#7b1fa2' }}>
+                        Especializaciones
+                      </Typography>
+                    </Paper>
                   </Grid>
-                </Box>
-              )}
-
-              {activeTab === 8 && (
-                <Grid container spacing={3}>
-                  <Grid item xs={12}>
-                    <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 2 }}>
-                      Configuración de Notificaciones
-                    </Typography>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e8f5e9' }}>
+                      <Typography variant="h6" sx={{ color: '#2e7d32', fontWeight: 'bold' }}>
+                        {filteredCertificaciones.filter(c => c.estatus === 1).length}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#2e7d32' }}>
+                        Activas
+                      </Typography>
+                    </Paper>
                   </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={config.emailNotifications}
-                          onChange={handleChange('emailNotifications')}
-                          color="primary"
-                        />
-                      }
-                      label="Notificaciones por Email"
-                    />
-                  </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={config.smsNotifications}
-                          onChange={handleChange('smsNotifications')}
-                          color="primary"
-                        />
-                      }
-                      label="Notificaciones por SMS"
-                    />
-                  </Grid>
-
-                  <Grid item xs={12}>
-                    <Divider sx={{ my: 2 }} />
-                  </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={config.renewalAlerts}
-                          onChange={handleChange('renewalAlerts')}
-                          color="warning"
-                        />
-                      }
-                      label="Alertas de Renovación"
-                    />
-                  </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={config.committeeAlerts}
-                          onChange={handleChange('committeeAlerts')}
-                          color="secondary"
-                        />
-                      }
-                      label="Alertas del Comité"
-                    />
-                  </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={config.systemAlerts}
-                          onChange={handleChange('systemAlerts')}
-                          color="info"
-                        />
-                      }
-                      label="Alertas del Sistema"
-                    />
-                  </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      select
-                      label="Frecuencia de Alertas"
-                      value={config.alertFrequency}
-                      onChange={handleChange('alertFrequency')}
-                    >
-                      <MenuItem value="immediate">Inmediato</MenuItem>
-                      <MenuItem value="hourly">Cada hora</MenuItem>
-                      <MenuItem value="daily">Diario</MenuItem>
-                      <MenuItem value="weekly">Semanal</MenuItem>
-                    </TextField>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#fff3e0' }}>
+                      <Typography variant="h6" sx={{ color: '#f57c00', fontWeight: 'bold' }}>
+                        {Math.round(filteredCertificaciones.reduce((acc, curr) => acc + curr.horas_acreditadas, 0) / Math.max(filteredCertificaciones.length, 1))}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#f57c00' }}>
+                        Promedio Horas
+                      </Typography>
+                    </Paper>
                   </Grid>
                 </Grid>
-              )}
+              </Box>
+            )}
 
-              {activeTab === 9 && (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                  {/* Configuración de Umbrales del Semáforo */}
-                  <Paper sx={{ p: 2, bgcolor: '#f8f9fa', mb: 2 }}>
-                    <Typography variant="subtitle1" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 2 }}>
-                      Configuración de Umbrales del Semáforo
-                    </Typography>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12}>
-                        <Typography variant="body2" sx={{ color: '#7f8c8d', mb: 2 }}>
-                          Configure los porcentajes mínimos para cada nivel del semáforo de cumplimiento
-                        </Typography>
-                      </Grid>
-
-                      <Grid item xs={12}>
-                        <Box sx={{ px: 2 }}>
-                          <Slider
-                            value={[config.redThreshold, config.yellowThreshold, config.greenThreshold]}
-                            onChange={(event, newValue) => {
-                              handleSliderChange('redThreshold')(event, newValue[0]);
-                              handleSliderChange('yellowThreshold')(event, newValue[1]);
-                              handleSliderChange('greenThreshold')(event, newValue[2]);
-                            }}
-                            min={0}
-                            max={100}
-                            step={5}
-                            valueLabelDisplay="auto"
-                            disableSwap
+            {activeTab === 2 && (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                {/* Configuración general */}
+                <Paper sx={{ p: 2, bgcolor: '#f8f9fa', mb: 2 }}>
+                  <Typography variant="subtitle1" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 2 }}>
+                    Configuración General de Declaraciones
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Vigencia Predeterminada (días)"
+                        type="number"
+                        value={config.declarationValidity}
+                        onChange={handleChange('declarationValidity')}
+                        helperText="Vigencia por defecto para nuevas declaraciones"
+                        InputProps={{
+                          endAdornment: <InputAdornment position="end">días</InputAdornment>,
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Días de Advertencia"
+                        type="number"
+                        value={config.declarationWarningDays}
+                        onChange={handleChange('declarationWarningDays')}
+                        helperText="Días previos al vencimiento para alertar"
+                        InputProps={{
+                          endAdornment: <InputAdornment position="end">días</InputAdornment>,
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Máx. Declaraciones por Usuario"
+                        type="number"
+                        value={config.maxDeclarationsPerUser}
+                        onChange={handleChange('maxDeclarationsPerUser')}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={config.declarationAutoRenewal}
+                            onChange={handleChange('declarationAutoRenewal')}
+                            color="primary"
                           />
-                        </Box>
-                      </Grid>
-
-                      <Grid item xs={12}>
-                        <Grid container spacing={2} sx={{ mt: 2 }}>
-                          <Grid item xs={4}>
-                            <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#ffebee' }}>
-                              <ErrorIcon sx={{ color: '#e74c3c', fontSize: 32, mb: 1 }} />
-                              <Typography variant="subtitle2" sx={{ color: '#e74c3c', fontWeight: 'bold' }}>
-                                ROJO
-                              </Typography>
-                              <Typography variant="caption" sx={{ color: '#e74c3c' }}>
-                                {'<'} {config.redThreshold}%
-                              </Typography>
-                            </Paper>
-                          </Grid>
-                          <Grid item xs={4}>
-                            <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#fffde7' }}>
-                              <WarningIcon sx={{ color: '#f39c12', fontSize: 32, mb: 1 }} />
-                              <Typography variant="subtitle2" sx={{ color: '#f39c12', fontWeight: 'bold' }}>
-                                AMARILLO
-                              </Typography>
-                              <Typography variant="caption" sx={{ color: '#f39c12' }}>
-                                {config.redThreshold}% - {config.yellowThreshold}%
-                              </Typography>
-                            </Paper>
-                          </Grid>
-                          <Grid item xs={4}>
-                            <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e8f5e9' }}>
-                              <CheckCircleIcon sx={{ color: '#27ae60', fontSize: 32, mb: 1 }} />
-                              <Typography variant="subtitle2" sx={{ color: '#27ae60', fontWeight: 'bold' }}>
-                                VERDE
-                              </Typography>
-                              <Typography variant="caption" sx={{ color: '#27ae60' }}>
-                                {'>'} {config.yellowThreshold}%
-                              </Typography>
-                            </Paper>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-
-                      <Grid item xs={12} sx={{ mt: 3 }}>
-                        <FormControlLabel
-                          control={
-                            <Switch
-                              checked={config.autoRecalculation}
-                              onChange={handleChange('autoRecalculation')}
-                              color="primary"
-                            />
-                          }
-                          label="Cálculo Automático del Semáforo"
-                        />
-                        <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', ml: 4 }}>
-                          Recalcula automáticamente el semáforo cuando cambian las certificaciones o declaraciones
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </Paper>
-
-                  {/* Filtros, búsqueda y estadísticas */}
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Box sx={{ display: 'flex', gap: 1 }}>
-                        <Chip
-                          label="Todos"
-                          variant="filled"
-                          color="primary"
-                          clickable
-                        />
-                        <Chip
-                          label="Activos"
-                          variant="outlined"
-                          clickable
-                        />
-                        <Chip
-                          label="Inactivos"
-                          variant="outlined"
-                          clickable
-                        />
-                        <Chip
-                          label="Gremial"
-                          variant="outlined"
-                          clickable
-                        />
-                        <Chip
-                          label="Profesional"
-                          variant="outlined"
-                          clickable
-                        />
-                      </Box>
-
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                          Total: {filteredNivelesReconocimiento.length} niveles
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                          Activos: {filteredNivelesReconocimiento.filter(n => n.estatus === 1).length}
-                        </Typography>
-                        <Button
-                          variant="contained"
-                          startIcon={<AddIcon />}
-                          sx={{ bgcolor: '#3498db', '&:hover': { bgcolor: '#2980b9' } }}
-                        >
-                          Nuevo Nivel
-                        </Button>
-                      </Box>
-                    </Box>
-
-                    {/* Campo de búsqueda */}
-                    <TextField
-                      fullWidth
-                      placeholder="Buscar nivel de reconocimiento por nombre..."
-                      value={searchNivelesReconocimiento}
-                      onChange={(e) => setSearchNivelesReconocimiento(e.target.value)}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <SearchIcon />
-                          </InputAdornment>
-                        ),
-                      }}
-                      size="small"
-                      sx={{ maxWidth: 400 }}
-                    />
-                  </Box>
-
-                  {/* Tabla de Niveles de Reconocimiento */}
-                  <TableContainer sx={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: 1 }}>
-                    <Table stickyHeader size="small">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell sx={{ fontWeight: 'bold', width: '5%' }}>ID</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '30%' }}>Nombre del Nivel</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '45%' }}>Descripción</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Estatus</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Acciones</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {filteredNivelesReconocimiento.length === 0 ? (
-                          <TableRow>
-                            <TableCell colSpan={5} align="center" sx={{ py: 3 }}>
-                              <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                                No se encontraron niveles que coincidan con la búsqueda
-                              </Typography>
-                            </TableCell>
-                          </TableRow>
-                        ) : (
-                          filteredNivelesReconocimiento.map((nivel) => (
-                            <TableRow
-                              key={nivel.id_nivel}
-                              hover
-                              sx={{
-                                '&:hover': { bgcolor: '#f8f9fa' },
-                                opacity: nivel.estatus === 0 ? 0.7 : 1
-                              }}
-                            >
-                              <TableCell>
-                                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                                  #{nivel.id_nivel}
-                                </Typography>
-                              </TableCell>
-
-                              <TableCell>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                  {getNivelIcon(nivel.nombre_nivel)}
-                                  <Box>
-                                    <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                                      {nivel.nombre_nivel}
-                                    </Typography>
-                                    <Chip
-                                      label={getTipoReconocimiento(nivel.nombre_nivel)}
-                                      size="small"
-                                      sx={{
-                                        bgcolor: getTipoReconocimientoBgColor(getTipoReconocimiento(nivel.nombre_nivel)),
-                                        color: getTipoReconocimientoColor(getTipoReconocimiento(nivel.nombre_nivel)),
-                                        fontSize: '0.65rem',
-                                        height: 18,
-                                        mt: 0.5
-                                      }}
-                                    />
-                                  </Box>
-                                </Box>
-                              </TableCell>
-
-                              <TableCell>
-                                <Typography variant="body2" sx={{ color: '#2c3e50' }}>
-                                  {nivel.descripcion}
-                                </Typography>
-                              </TableCell>
-
-                              <TableCell align="center">
-                                <Chip
-                                  label={nivel.estatus === 1 ? "ACTIVO" : "INACTIVO"}
-                                  size="small"
-                                  color={nivel.estatus === 1 ? "success" : "error"}
-                                  sx={{
-                                    fontWeight: 600,
-                                    minWidth: 80
-                                  }}
-                                />
-                              </TableCell>
-
-                              <TableCell align="center">
-                                <Stack direction="row" spacing={0.5} justifyContent="center">
-                                  <Tooltip title="Ver detalles">
-                                    <IconButton
-                                      size="small"
-                                      sx={{ color: '#3498db' }}
-                                    >
-                                      <VisibilityIcon fontSize="small" />
-                                    </IconButton>
-                                  </Tooltip>
-
-                                  <Tooltip title="Editar nivel">
-                                    <IconButton
-                                      size="small"
-                                      sx={{ color: '#f39c12' }}
-                                    >
-                                      <EditIcon fontSize="small" />
-                                    </IconButton>
-                                  </Tooltip>
-
-                                  <Tooltip title={nivel.estatus === 1 ? 'Desactivar' : 'Activar'}>
-                                    <IconButton
-                                      size="small"
-                                      onClick={() => handleToggleNivelStatus(nivel.id_nivel)}
-                                      sx={{ color: nivel.estatus === 1 ? '#e74c3c' : '#2ecc71' }}
-                                    >
-                                      {nivel.estatus === 1 ? <BlockIcon fontSize="small" /> : <CheckCircleIcon fontSize="small" />}
-                                    </IconButton>
-                                  </Tooltip>
-                                </Stack>
-                              </TableCell>
-                            </TableRow>
-                          ))
-                        )}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-
-                  {/* Estadísticas de Niveles de Reconocimiento */}
-                  <Grid container spacing={2} sx={{ mt: 2 }}>
-                    <Grid item xs={3}>
-                      <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e8f5e9' }}>
-                        <Typography variant="h6" sx={{ color: '#2e7d32', fontWeight: 'bold' }}>
-                          {filteredNivelesReconocimiento.filter(n => getTipoReconocimiento(n.nombre_nivel) === 'Gremial').length}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#2e7d32' }}>
-                          Niveles Gremiales
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#ffebee' }}>
-                        <Typography variant="h6" sx={{ color: '#d32f2f', fontWeight: 'bold' }}>
-                          {filteredNivelesReconocimiento.filter(n => getTipoReconocimiento(n.nombre_nivel) === 'Académico').length}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#d32f2f' }}>
-                          Niveles Académicos
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#f3e5f5' }}>
-                        <Typography variant="h6" sx={{ color: '#7b1fa2', fontWeight: 'bold' }}>
-                          {filteredNivelesReconocimiento.filter(n => getTipoReconocimiento(n.nombre_nivel) === 'Profesional').length}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#7b1fa2' }}>
-                          Niveles Profesionales
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#fff3e0' }}>
-                        <Typography variant="h6" sx={{ color: '#f57c00', fontWeight: 'bold' }}>
-                          {filteredNivelesReconocimiento.filter(n => n.estatus === 1).length}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#f57c00' }}>
-                          Activos
-                        </Typography>
-                      </Paper>
+                        }
+                        label="Renovación Automática"
+                      />
                     </Grid>
                   </Grid>
+                </Paper>
 
-                  {/* Distribución por Nivel */}
-                  <Paper sx={{ p: 2, mt: 2, bgcolor: '#fafafa' }}>
-                    <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
-                      Distribución por Nivel
-                    </Typography>
-                    <Grid container spacing={1}>
-                      {Array.from(new Set(filteredNivelesReconocimiento.map(n => {
-                        const nivelNum = n.nombre_nivel?.match(/Nivel (\w+)/i)?.[1];
-                        return `Nivel ${nivelNum?.toUpperCase() || 'N/A'}`;
-                      }))).map((nivel, index) => {
-                        const count = filteredNivelesReconocimiento.filter(n => {
-                          const nivelNum = n.nombre_nivel?.match(/Nivel (\w+)/i)?.[1];
-                          return `Nivel ${nivelNum?.toUpperCase() || 'N/A'}` === nivel;
-                        }).length;
-                        const percentage = Math.round((count / Math.max(filteredNivelesReconocimiento.length, 1)) * 100);
-                        return (
-                          <Grid item xs={6} key={index}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                {getNivelIcon(nivel)}
-                                <Typography variant="body2" sx={{ color: '#2c3e50' }}>
-                                  {nivel}
-                                </Typography>
-                              </Box>
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <Typography variant="body2" sx={{ fontWeight: 'bold', color: getNivelColor(nivel) }}>
-                                  {count}
-                                </Typography>
+                {/* Filtros, búsqueda y estadísticas */}
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      <Chip
+                        label="Todos"
+                        variant="filled"
+                        color="primary"
+                        clickable
+                      />
+                      <Chip
+                        label="Activos"
+                        variant="outlined"
+                        clickable
+                      />
+                      <Chip
+                        label="Inactivos"
+                        variant="outlined"
+                        clickable
+                      />
+                      <Chip
+                        label="Obligatorias"
+                        variant="outlined"
+                        clickable
+                      />
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                        Total: {filteredDeclaraciones.length} declaraciones
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                        Activas: {filteredDeclaraciones.filter(d => d.estatus === 1).length}
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        sx={{ bgcolor: '#3498db', '&:hover': { bgcolor: '#2980b9' } }}
+                      >
+                        Nueva Declaración
+                      </Button>
+                    </Box>
+                  </Box>
+
+                  {/* Campo de búsqueda */}
+                  <TextField
+                    fullWidth
+                    placeholder="Buscar declaración por nombre..."
+                    value={searchDeclaraciones}
+                    onChange={(e) => setSearchDeclaraciones(e.target.value)}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                    size="small"
+                    sx={{ maxWidth: 400 }}
+                  />
+                </Box>
+
+                {/* Tabla de Declaraciones */}
+                <TableContainer sx={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: 1 }}>
+                  <Table stickyHeader size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell sx={{ fontWeight: 'bold', width: '5%' }}>ID</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '25%' }}>Nombre</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '15%' }} align="center">Artículo</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '35%' }}>Descripción</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '10%' }}>Tipo</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '8%' }} align="center">Estatus</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '12%' }} align="center">Acciones</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {filteredDeclaraciones.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={7} align="center" sx={{ py: 3 }}>
+                            <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                              No se encontraron declaraciones que coincidan con la búsqueda
+                            </Typography>
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        filteredDeclaraciones.map((declaracion) => (
+                          <TableRow
+                            key={declaracion.id_declaracion}
+                            hover
+                            sx={{
+                              '&:hover': { bgcolor: '#f8f9fa' },
+                              opacity: declaracion.estatus === 0 ? 0.7 : 1
+                            }}
+                          >
+                            <TableCell>
+                              <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                #{declaracion.id_declaracion}
+                              </Typography>
+                            </TableCell>
+
+                            <TableCell>
+                              <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                {declaracion.nombre}
+                              </Typography>
+                              {declaracion.fecha_registro && (
                                 <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                                  ({percentage}%)
+                                  Registro: {declaracion.fecha_registro}
                                 </Typography>
-                              </Box>
-                            </Box>
-                            <LinearProgress
-                              variant="determinate"
-                              value={percentage}
-                              sx={{
-                                height: 4,
-                                borderRadius: 2,
-                                mt: 0.5,
-                                bgcolor: '#e0e0e0',
-                                '& .MuiLinearProgress-bar': {
-                                  bgcolor: getNivelColor(nivel)
-                                }
-                              }}
-                            />
-                          </Grid>
-                        );
-                      })}
-                    </Grid>
-                  </Paper>
+                              )}
+                            </TableCell>
 
-                  {/* Resumen de Tipos */}
-                  <Paper sx={{ p: 2, mt: 2, bgcolor: '#f5f5f5' }}>
-                    <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
-                      Resumen por Tipo de Reconocimiento
-                    </Typography>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12}>
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                          {Array.from(new Set(filteredNivelesReconocimiento.map(n => getTipoReconocimiento(n.nombre_nivel)))).map((tipo, idx) => {
-                            const count = filteredNivelesReconocimiento.filter(n => getTipoReconocimiento(n.nombre_nivel) === tipo).length;
-                            return (
+                            <TableCell align="center">
+                              <Paper sx={{
+                                p: 1,
+                                bgcolor: '#e3f2fd',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                minWidth: 60
+                              }}>
+                                <ArticleIcon sx={{ color: '#1976d2', fontSize: 16, mr: 0.5 }} />
+                                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#1976d2' }}>
+                                  {declaracion.articulo}
+                                </Typography>
+                              </Paper>
+                            </TableCell>
+
+                            <TableCell>
+                              <Typography variant="body2" sx={{ color: '#2c3e50' }}>
+                                {declaracion.descripcion}
+                              </Typography>
+                            </TableCell>
+
+                            <TableCell>
                               <Chip
-                                key={idx}
-                                label={`${tipo}: ${count}`}
+                                label={declaracion.tipo}
                                 size="small"
                                 sx={{
-                                  bgcolor: getTipoReconocimientoBgColor(tipo),
-                                  color: getTipoReconocimientoColor(tipo),
+                                  bgcolor: getDeclaracionTipoBgColor(declaracion.tipo),
+                                  color: getDeclaracionTipoColor(declaracion.tipo),
+                                  fontWeight: 500,
+                                  maxWidth: '100%',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis'
+                                }}
+                              />
+                            </TableCell>
+
+                            <TableCell align="center">
+                              <Chip
+                                label={declaracion.estatus === 1 ? "ACTIVA" : "INACTIVA"}
+                                size="small"
+                                color={declaracion.estatus === 1 ? "success" : "error"}
+                                sx={{
+                                  fontWeight: 600,
+                                  minWidth: 80
+                                }}
+                              />
+                            </TableCell>
+
+                            <TableCell align="center">
+                              <Stack direction="row" spacing={0.5} justifyContent="center">
+                                <Tooltip title="Ver detalles">
+                                  <IconButton
+                                    size="small"
+                                    sx={{ color: '#3498db' }}
+                                  >
+                                    <VisibilityIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+
+                                <Tooltip title="Editar declaración">
+                                  <IconButton
+                                    size="small"
+                                    sx={{ color: '#f39c12' }}
+                                  >
+                                    <EditIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+
+                                <Tooltip title={declaracion.estatus === 1 ? 'Desactivar' : 'Activar'}>
+                                  <IconButton
+                                    size="small"
+                                    onClick={() => handleToggleDeclaracionStatus(declaracion.id_declaracion)}
+                                    sx={{ color: declaracion.estatus === 1 ? '#e74c3c' : '#2ecc71' }}
+                                  >
+                                    {declaracion.estatus === 1 ? <BlockIcon fontSize="small" /> : <CheckCircleIcon fontSize="small" />}
+                                  </IconButton>
+                                </Tooltip>
+                              </Stack>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+
+                {/* Estadísticas de Declaraciones */}
+                <Grid container spacing={2} sx={{ mt: 2 }}>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#ffebee' }}>
+                      <Typography variant="h6" sx={{ color: '#d32f2f', fontWeight: 'bold' }}>
+                        {filteredDeclaraciones.filter(d => d.tipo === 'Obligatoria').length}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#d32f2f' }}>
+                        Obligatorias
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e3f2fd' }}>
+                      <Typography variant="h6" sx={{ color: '#1976d2', fontWeight: 'bold' }}>
+                        {filteredDeclaraciones.filter(d => d.tipo === 'Anual').length}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#1976d2' }}>
+                        Anuales
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e8f5e9' }}>
+                      <Typography variant="h6" sx={{ color: '#388e3c', fontWeight: 'bold' }}>
+                        {filteredDeclaraciones.filter(d => d.tipo === 'Requisito').length}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#388e3c' }}>
+                        Requisitos
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#fff3e0' }}>
+                      <Typography variant="h6" sx={{ color: '#f57c00', fontWeight: 'bold' }}>
+                        {filteredDeclaraciones.filter(d => d.estatus === 1).length}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#f57c00' }}>
+                        Activas
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                </Grid>
+              </Box>
+            )}
+
+            {activeTab === 3 && (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                {/* Configuración general */}
+                <Paper sx={{ p: 2, bgcolor: '#f8f9fa', mb: 2 }}>
+                  <Typography variant="subtitle1" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 2 }}>
+                    Configuración de Gestión de Expedientes
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Tamaño Máximo por Archivo (MB)"
+                        type="number"
+                        value="10"
+                        helperText="Tamaño máximo permitido para documentos"
+                        InputProps={{
+                          endAdornment: <InputAdornment position="end">MB</InputAdornment>,
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Formatos Permitidos"
+                        value="PDF, DOC, DOCX, JPG, PNG"
+                        helperText="Formatos de archivo aceptados"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Retención Documentos (días)"
+                        type="number"
+                        value="1825"
+                        helperText="Días de retención de documentos digitalizados"
+                        InputProps={{
+                          endAdornment: <InputAdornment position="end">días</InputAdornment>,
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={true}
+                            color="primary"
+                          />
+                        }
+                        label="Digitalización Automática"
+                      />
+                    </Grid>
+                  </Grid>
+                </Paper>
+
+                {/* Filtros, búsqueda y estadísticas */}
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      <Chip
+                        label="Todos"
+                        variant="filled"
+                        color="primary"
+                        clickable
+                      />
+                      <Chip
+                        label="Vigentes"
+                        variant="outlined"
+                        clickable
+                      />
+                      <Chip
+                        label="Por Vencer"
+                        variant="outlined"
+                        clickable
+                      />
+                      <Chip
+                        label="Vencidos"
+                        variant="outlined"
+                        clickable
+                      />
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                        Total: {filteredDocumentosExpediente.length} documentos
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                        Vigentes: {filteredDocumentosExpediente.filter(d => d.estatus_documento === 'Vigente').length}
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        startIcon={<CloudUploadIcon />}
+                        sx={{ bgcolor: '#3498db', '&:hover': { bgcolor: '#2980b9' } }}
+                      >
+                        Subir Documento
+                      </Button>
+                    </Box>
+                  </Box>
+
+                  {/* Campo de búsqueda */}
+                  <TextField
+                    fullWidth
+                    placeholder="Buscar por nombre de archivo, tipo de documento o número de expediente..."
+                    value={searchDocumentosExpediente}
+                    onChange={(e) => setSearchDocumentosExpediente(e.target.value)}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                    size="small"
+                    sx={{ maxWidth: 500 }}
+                  />
+                </Box>
+
+                {/* Tabla de Documentos de Expediente */}
+                <TableContainer sx={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: 1 }}>
+                  <Table stickyHeader size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell sx={{ fontWeight: 'bold', width: '5%' }}>ID</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '15%' }}>Expediente</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '12%' }}>Apartado</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '20%' }}>Documento</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '18%' }}>Archivo</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Vigencia</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Estatus</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Acciones</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {filteredDocumentosExpediente.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={8} align="center" sx={{ py: 3 }}>
+                            <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                              No se encontraron documentos que coincidan con la búsqueda
+                            </Typography>
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        filteredDocumentosExpediente.map((documento) => (
+                          <TableRow
+                            key={documento.id_documento}
+                            hover
+                            sx={{
+                              '&:hover': { bgcolor: '#f8f9fa' },
+                              opacity: documento.estatus_documento === 'Vencido' ? 0.7 : 1
+                            }}
+                          >
+                            <TableCell>
+                              <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                #{documento.id_documento}
+                              </Typography>
+                            </TableCell>
+
+                            <TableCell>
+                              <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                  {documento.numero_expediente}
+                                </Typography>
+                                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                  ID: {documento.id_expediente}
+                                </Typography>
+                              </Box>
+                            </TableCell>
+
+                            <TableCell>
+                              <Chip
+                                label={documento.nombre_apartado}
+                                size="small"
+                                sx={{
+                                  bgcolor: getApartadoBgColor(documento.nombre_apartado),
+                                  color: getApartadoColor(documento.nombre_apartado),
+                                  fontWeight: 500,
+                                  maxWidth: '100%',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis'
+                                }}
+                              />
+                            </TableCell>
+
+                            <TableCell>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <FileCopyIcon sx={{ color: '#1976d2', fontSize: 16 }} />
+                                <Box>
+                                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                    {documento.tipo_documento}
+                                  </Typography>
+                                  <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                    ID Tipo: {documento.id_tipo_documento}
+                                  </Typography>
+                                </Box>
+                              </Box>
+                            </TableCell>
+
+                            <TableCell>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <InsertDriveFileIcon sx={{ color: '#f57c00', fontSize: 16 }} />
+                                <Box sx={{ maxWidth: 180 }}>
+                                  <Typography variant="body2" sx={{
+                                    color: '#2c3e50',
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis'
+                                  }}>
+                                    {documento.nombre_archivo}
+                                  </Typography>
+                                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <StorageIcon sx={{ color: '#7f8c8d', fontSize: 12 }} />
+                                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                      {documento.tamaño_archivo}
+                                    </Typography>
+                                  </Box>
+                                </Box>
+                              </Box>
+                            </TableCell>
+
+                            <TableCell align="center">
+                              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5 }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                  <CalendarTodayIcon sx={{ color: '#9b59b6', fontSize: 14 }} />
+                                  <Typography variant="caption" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                    {documento.vigencia_fin}
+                                  </Typography>
+                                </Box>
+                                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                  Carga: {documento.fecha_carga.split(' ')[0]}
+                                </Typography>
+                              </Box>
+                            </TableCell>
+
+                            <TableCell align="center">
+                              <Chip
+                                label={documento.estatus_documento}
+                                size="small"
+                                sx={{
+                                  bgcolor: getDocumentoEstatusBgColor(documento.estatus_documento),
+                                  color: getDocumentoEstatusColor(documento.estatus_documento),
+                                  fontWeight: 600,
+                                  minWidth: 90
+                                }}
+                              />
+                            </TableCell>
+
+                            <TableCell align="center">
+                              <Stack direction="row" spacing={0.5} justifyContent="center">
+                                <Tooltip title="Ver documento">
+                                  <IconButton
+                                    size="small"
+                                    sx={{ color: '#3498db' }}
+                                  >
+                                    <VisibilityIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+
+                                <Tooltip title="Descargar">
+                                  <IconButton
+                                    size="small"
+                                    sx={{ color: '#2ecc71' }}
+                                  >
+                                    <CloudUploadIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+
+                                <Tooltip title="Eliminar">
+                                  <IconButton
+                                    size="small"
+                                    sx={{ color: '#e74c3c' }}
+                                  >
+                                    <BlockIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+                              </Stack>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+
+                {/* Estadísticas de Documentos */}
+                <Grid container spacing={2} sx={{ mt: 2 }}>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e8f5e9' }}>
+                      <Typography variant="h6" sx={{ color: '#2e7d32', fontWeight: 'bold' }}>
+                        {filteredDocumentosExpediente.filter(d => d.estatus_documento === 'Vigente').length}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#2e7d32' }}>
+                        Vigentes
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#fff3e0' }}>
+                      <Typography variant="h6" sx={{ color: '#f57c00', fontWeight: 'bold' }}>
+                        {filteredDocumentosExpediente.filter(d => d.estatus_documento === 'Por Vencer').length}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#f57c00' }}>
+                        Por Vencer
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#ffebee' }}>
+                      <Typography variant="h6" sx={{ color: '#d32f2f', fontWeight: 'bold' }}>
+                        {filteredDocumentosExpediente.filter(d => d.estatus_documento === 'Vencido').length}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#d32f2f' }}>
+                        Vencidos
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e3f2fd' }}>
+                      <Typography variant="h6" sx={{ color: '#1976d2', fontWeight: 'bold' }}>
+                        {new Set(filteredDocumentosExpediente.map(d => d.id_expediente)).size}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#1976d2' }}>
+                        Expedientes
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                </Grid>
+
+                {/* Distribución por apartado */}
+                <Paper sx={{ p: 2, mt: 2, bgcolor: '#fafafa' }}>
+                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
+                    Distribución por Apartado
+                  </Typography>
+                  <Grid container spacing={1}>
+                    {Array.from(new Set(filteredDocumentosExpediente.map(d => d.nombre_apartado))).map((apartado, index) => {
+                      const count = filteredDocumentosExpediente.filter(d => d.nombre_apartado === apartado).length;
+                      const percentage = Math.round((count / Math.max(filteredDocumentosExpediente.length, 1)) * 100);
+                      return (
+                        <Grid item xs={6} key={index}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <FolderIcon sx={{ color: getApartadoColor(apartado), fontSize: 16 }} />
+                              <Typography variant="body2" sx={{ color: '#2c3e50' }}>
+                                {apartado}
+                              </Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <Typography variant="body2" sx={{ fontWeight: 'bold', color: getApartadoColor(apartado) }}>
+                                {count}
+                              </Typography>
+                              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                ({percentage}%)
+                              </Typography>
+                            </Box>
+                          </Box>
+                          <LinearProgress
+                            variant="determinate"
+                            value={percentage}
+                            sx={{
+                              height: 4,
+                              borderRadius: 2,
+                              mt: 0.5,
+                              bgcolor: '#e0e0e0',
+                              '& .MuiLinearProgress-bar': {
+                                bgcolor: getApartadoColor(apartado)
+                              }
+                            }}
+                          />
+                        </Grid>
+                      );
+                    })}
+                  </Grid>
+                </Paper>
+
+                {/* Resumen de formatos */}
+                <Paper sx={{ p: 2, mt: 2, bgcolor: '#f5f5f5' }}>
+                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
+                    Resumen de Documentos
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={6}>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d', mb: 1 }}>
+                        Usuarios que cargaron documentos:
+                      </Typography>
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                        {Array.from(new Set(filteredDocumentosExpediente.map(d => d.usuario_carga))).map((usuario, idx) => (
+                          <Chip
+                            key={idx}
+                            label={usuario}
+                            size="small"
+                            variant="outlined"
+                          />
+                        ))}
+                      </Box>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d', mb: 1 }}>
+                        Tipos de documento más frecuentes:
+                      </Typography>
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                        {Array.from(new Set(filteredDocumentosExpediente.map(d => d.tipo_documento))).slice(0, 3).map((tipo, idx) => (
+                          <Chip
+                            key={idx}
+                            label={tipo}
+                            size="small"
+                            sx={{
+                              bgcolor: getTipoBgColor(tipo),
+                              color: getTipoColor(tipo)
+                            }}
+                          />
+                        ))}
+                      </Box>
+                    </Grid>
+                  </Grid>
+                </Paper>
+              </Box>
+            )}
+
+            {activeTab === 4 && (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                {/* Filtros, búsqueda y estadísticas */}
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      <Chip
+                        label="Todos"
+                        variant="filled"
+                        color="primary"
+                        clickable
+                      />
+                      <Chip
+                        label="Activos"
+                        variant="outlined"
+                        clickable
+                      />
+                      <Chip
+                        label="Inactivos"
+                        variant="outlined"
+                        clickable
+                      />
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                        Total: {filteredRoles.length} roles
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                        Activos: {filteredRoles.filter(r => r.estatus).length}
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        sx={{ bgcolor: '#3498db', '&:hover': { bgcolor: '#2980b9' } }}
+                      >
+                        Nuevo Rol
+                      </Button>
+                    </Box>
+                  </Box>
+
+                  {/* Campo de búsqueda */}
+                  <TextField
+                    fullWidth
+                    placeholder="Buscar rol por nombre..."
+                    value={searchRoles}
+                    onChange={(e) => setSearchRoles(e.target.value)}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                    size="small"
+                    sx={{ maxWidth: 400 }}
+                  />
+                </Box>
+
+                {/* Tabla de Roles */}
+                <TableContainer sx={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: 1 }}>
+                  <Table stickyHeader size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell sx={{ fontWeight: 'bold', width: '10%' }}>ID</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '25%' }}>Nombre del Rol</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>Descripción</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Nivel</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Estatus</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '15%' }} align="center">Acciones</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {filteredRoles.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={6} align="center" sx={{ py: 3 }}>
+                            <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                              No se encontraron roles que coincidan con la búsqueda
+                            </Typography>
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        filteredRoles.map((rol) => (
+                          <TableRow
+                            key={rol.id}
+                            hover
+                            sx={{
+                              '&:hover': { bgcolor: '#f8f9fa' },
+                              opacity: rol.estatus === false ? 0.7 : 1
+                            }}
+                          >
+                            <TableCell>
+                              <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                #{rol.id}
+                              </Typography>
+                            </TableCell>
+
+                            <TableCell>
+                              <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                {rol.nombre}
+                              </Typography>
+                            </TableCell>
+
+                            <TableCell>
+                              <Typography variant="body2" sx={{ color: '#2c3e50' }}>
+                                {rol.descripcion}
+                              </Typography>
+                            </TableCell>
+
+                            <TableCell align="center">
+                              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5 }}>
+                                <Box sx={{
+                                  width: 30,
+                                  height: 30,
+                                  borderRadius: '50%',
+                                  bgcolor: rol.nivel === 1 ? '#e74c3c' :
+                                    rol.nivel === 2 ? '#f39c12' :
+                                      rol.nivel === 3 ? '#3498db' :
+                                        rol.nivel === 4 ? '#2ecc71' : '#9b59b6',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center'
+                                }}>
+                                  <Typography variant="caption" sx={{ color: 'white', fontWeight: 'bold' }}>
+                                    {rol.nivel}
+                                  </Typography>
+                                </Box>
+                                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                  {rol.nivel === 1 ? 'Alto' :
+                                    rol.nivel === 2 ? 'Medio' :
+                                      rol.nivel === 3 ? 'Básico' : 'Limitado'}
+                                </Typography>
+                              </Box>
+                            </TableCell>
+
+                            <TableCell align="center">
+                              <Chip
+                                label={rol.estatus ? "ACTIVO" : "INACTIVO"}
+                                size="small"
+                                color={rol.estatus ? "success" : "error"}
+                                sx={{
+                                  fontWeight: 600,
+                                  minWidth: 80
+                                }}
+                              />
+                            </TableCell>
+
+                            <TableCell align="center">
+                              <Stack direction="row" spacing={0.5} justifyContent="center">
+                                <Tooltip title="Ver detalles">
+                                  <IconButton
+                                    size="small"
+                                    sx={{ color: '#3498db' }}
+                                  >
+                                    <VisibilityIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+
+                                <Tooltip title="Editar rol">
+                                  <IconButton
+                                    size="small"
+                                    sx={{ color: '#f39c12' }}
+                                  >
+                                    <EditIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+
+                                <Tooltip title={rol.estatus ? 'Desactivar' : 'Activar'}>
+                                  <IconButton
+                                    size="small"
+                                    onClick={() => handleToggleRoleStatus(rol.id)}
+                                    sx={{ color: rol.estatus ? '#e74c3c' : '#2ecc71' }}
+                                  >
+                                    {rol.estatus ? <BlockIcon fontSize="small" /> : <CheckCircleIcon fontSize="small" />}
+                                  </IconButton>
+                                </Tooltip>
+                              </Stack>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Box>
+            )}
+
+            {activeTab === 5 && (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                {/* Filtros, búsqueda y estadísticas */}
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      <Chip
+                        label="Todos"
+                        variant="filled"
+                        color="primary"
+                        clickable
+                      />
+                      <Chip
+                        label="Activos"
+                        variant="outlined"
+                        clickable
+                      />
+                      <Chip
+                        label="Inactivos"
+                        variant="outlined"
+                        clickable
+                      />
+                      <Chip
+                        label="México"
+                        variant="outlined"
+                        clickable
+                      />
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                        Total: {filteredRegiones.length} regiones
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                        Activas: {filteredRegiones.filter(r => r.estatus === 1).length}
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        sx={{ bgcolor: '#3498db', '&:hover': { bgcolor: '#2980b9' } }}
+                      >
+                        Nueva Región
+                      </Button>
+                    </Box>
+                  </Box>
+
+                  {/* Campo de búsqueda */}
+                  <TextField
+                    fullWidth
+                    placeholder="Buscar región por nombre o estado..."
+                    value={searchRegiones}
+                    onChange={(e) => setSearchRegiones(e.target.value)}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                    size="small"
+                    sx={{ maxWidth: 400 }}
+                  />
+                </Box>
+
+                {/* Tabla de Regiones */}
+                <TableContainer sx={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: 1 }}>
+                  <Table stickyHeader size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell sx={{ fontWeight: 'bold', width: '8%' }}>ID</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '25%' }}>Nombre Región</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '25%' }}>Estado</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '20%' }}>País</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Estatus</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '12%' }} align="center">Acciones</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {filteredRegiones.map((region) => (
+                        <TableRow
+                          key={region.id_region}
+                          hover
+                          sx={{
+                            '&:hover': { bgcolor: '#f8f9fa' },
+                            opacity: region.estatus === 0 ? 0.7 : 1
+                          }}
+                        >
+                          <TableCell>
+                            <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                              #{region.id_region}
+                            </Typography>
+                          </TableCell>
+
+                          <TableCell>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <PublicIcon sx={{ color: '#3498db', fontSize: 16 }} />
+                              <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                {region.nombre_region}
+                              </Typography>
+                            </Box>
+                          </TableCell>
+
+                          <TableCell>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <LocationOnIcon sx={{ color: '#7f8c8d', fontSize: 16 }} />
+                              <Typography variant="body2" sx={{ color: '#2c3e50' }}>
+                                {region.estado}
+                              </Typography>
+                            </Box>
+                          </TableCell>
+
+                          <TableCell>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <FlagIcon sx={{ color: '#e74c3c', fontSize: 16 }} />
+                              <Typography variant="body2" sx={{ color: '#2c3e50' }}>
+                                {region.pais}
+                              </Typography>
+                            </Box>
+                          </TableCell>
+
+                          <TableCell align="center">
+                            <Chip
+                              label={region.estatus === 1 ? "ACTIVA" : "INACTIVA"}
+                              size="small"
+                              color={region.estatus === 1 ? "success" : "error"}
+                              sx={{
+                                fontWeight: 600,
+                                minWidth: 80
+                              }}
+                            />
+                          </TableCell>
+
+                          <TableCell align="center">
+                            <Stack direction="row" spacing={0.5} justifyContent="center">
+                              <Tooltip title="Ver detalles">
+                                <IconButton
+                                  size="small"
+                                  sx={{ color: '#3498db' }}
+                                >
+                                  <VisibilityIcon fontSize="small" />
+                                </IconButton>
+                              </Tooltip>
+
+                              <Tooltip title="Editar región">
+                                <IconButton
+                                  size="small"
+                                  sx={{ color: '#f39c12' }}
+                                >
+                                  <EditIcon fontSize="small" />
+                                </IconButton>
+                              </Tooltip>
+
+                              <Tooltip title={region.estatus === 1 ? 'Desactivar' : 'Activar'}>
+                                <IconButton
+                                  size="small"
+                                  onClick={() => handleToggleRegionStatus(region.id_region)}
+                                  sx={{ color: region.estatus === 1 ? '#e74c3c' : '#2ecc71' }}
+                                >
+                                  {region.estatus === 1 ? <BlockIcon fontSize="small" /> : <CheckCircleIcon fontSize="small" />}
+                                </IconButton>
+                              </Tooltip>
+                            </Stack>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+
+                {/* Estadísticas de Regiones */}
+                <Grid container spacing={2} sx={{ mt: 2 }}>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e3f2fd' }}>
+                      <Typography variant="h6" sx={{ color: '#1976d2', fontWeight: 'bold' }}>
+                        {filteredRegiones.length}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#1976d2' }}>
+                        Total Regiones
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e8f5e9' }}>
+                      <Typography variant="h6" sx={{ color: '#2e7d32', fontWeight: 'bold' }}>
+                        {filteredRegiones.filter(r => r.estatus === 1).length}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#2e7d32' }}>
+                        Activas
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#ffebee' }}>
+                      <Typography variant="h6" sx={{ color: '#d32f2f', fontWeight: 'bold' }}>
+                        {filteredRegiones.filter(r => r.estatus === 0).length}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#d32f2f' }}>
+                        Inactivas
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#f3e5f5' }}>
+                      <Typography variant="h6" sx={{ color: '#7b1fa2', fontWeight: 'bold' }}>
+                        {new Set(filteredRegiones.map(r => r.pais)).size}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#7b1fa2' }}>
+                        Países
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                </Grid>
+
+                {/* Mapa de regiones */}
+                <Paper sx={{ p: 2, mt: 2, bgcolor: '#f5f5f5' }}>
+                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
+                    Distribución por Estado
+                  </Typography>
+                  <Grid container spacing={1}>
+                    {Array.from(new Set(filteredRegiones.map(r => r.estado))).map((estado, index) => {
+                      const count = filteredRegiones.filter(r => r.estado === estado).length;
+                      return (
+                        <Grid item xs={6} key={index}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <MapIcon sx={{ color: '#3498db', fontSize: 16 }} />
+                              <Typography variant="body2" sx={{ color: '#2c3e50' }}>
+                                {estado}
+                              </Typography>
+                            </Box>
+                            <Chip
+                              label={count}
+                              size="small"
+                              variant="outlined"
+                            />
+                          </Box>
+                        </Grid>
+                      );
+                    })}
+                  </Grid>
+                </Paper>
+              </Box>
+            )}
+
+            {activeTab === 6 && (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                {/* Filtros, búsqueda y estadísticas */}
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      <Chip
+                        label="Todos"
+                        variant="filled"
+                        color="primary"
+                        clickable
+                      />
+                      <Chip
+                        label="Activos"
+                        variant="outlined"
+                        clickable
+                      />
+                      <Chip
+                        label="Inactivos"
+                        variant="outlined"
+                        clickable
+                      />
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                        Total: {filteredTiposDocumento.length} tipos
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                        Activos: {filteredTiposDocumento.filter(d => d.estatus).length}
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        sx={{ bgcolor: '#3498db', '&:hover': { bgcolor: '#2980b9' } }}
+                      >
+                        Nuevo Tipo
+                      </Button>
+                    </Box>
+                  </Box>
+
+                  {/* Campo de búsqueda */}
+                  <TextField
+                    fullWidth
+                    placeholder="Buscar tipo de documento por nombre..."
+                    value={searchTiposDocumento}
+                    onChange={(e) => setSearchTiposDocumento(e.target.value)}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                    size="small"
+                    sx={{ maxWidth: 400 }}
+                  />
+                </Box>
+
+                {/* Tabla de Tipos de Documento */}
+                <TableContainer sx={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: 1 }}>
+                  <Table stickyHeader size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell sx={{ fontWeight: 'bold', width: '10%' }}>ID</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '30%' }}>Nombre del Documento</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '45%' }}>Descripción</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Estatus</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '15%' }} align="center">Acciones</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {filteredTiposDocumento.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={5} align="center" sx={{ py: 3 }}>
+                            <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                              No se encontraron tipos de documento que coincidan con la búsqueda
+                            </Typography>
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        filteredTiposDocumento.map((documento) => (
+                          <TableRow
+                            key={documento.id}
+                            hover
+                            sx={{
+                              '&:hover': { bgcolor: '#f8f9fa' },
+                              opacity: documento.estatus === false ? 0.7 : 1
+                            }}
+                          >
+                            <TableCell>
+                              <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                #{documento.id}
+                              </Typography>
+                            </TableCell>
+
+                            <TableCell>
+                              <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                {documento.nombre}
+                              </Typography>
+                            </TableCell>
+
+                            <TableCell>
+                              <Typography variant="body2" sx={{ color: '#2c3e50' }}>
+                                {documento.descripcion}
+                              </Typography>
+                            </TableCell>
+
+                            <TableCell align="center">
+                              <Chip
+                                label={documento.estatus ? "ACTIVO" : "INACTIVO"}
+                                size="small"
+                                color={documento.estatus ? "success" : "error"}
+                                sx={{
+                                  fontWeight: 600,
+                                  minWidth: 80
+                                }}
+                              />
+                            </TableCell>
+
+                            <TableCell align="center">
+                              <Stack direction="row" spacing={0.5} justifyContent="center">
+                                <Tooltip title="Ver detalles">
+                                  <IconButton
+                                    size="small"
+                                    sx={{ color: '#3498db' }}
+                                  >
+                                    <VisibilityIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+
+                                <Tooltip title="Editar documento">
+                                  <IconButton
+                                    size="small"
+                                    sx={{ color: '#f39c12' }}
+                                  >
+                                    <EditIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+
+                                <Tooltip title={documento.estatus ? 'Desactivar' : 'Activar'}>
+                                  <IconButton
+                                    size="small"
+                                    onClick={() => handleToggleDocumentoStatus(documento.id)}
+                                    sx={{ color: documento.estatus ? '#e74c3c' : '#2ecc71' }}
+                                  >
+                                    {documento.estatus ? <BlockIcon fontSize="small" /> : <CheckCircleIcon fontSize="small" />}
+                                  </IconButton>
+                                </Tooltip>
+                              </Stack>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Box>
+            )}
+
+            {activeTab === 7 && (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                {/* Filtros, búsqueda y estadísticas */}
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      <Chip
+                        label="Todos"
+                        variant="filled"
+                        color="primary"
+                        clickable
+                      />
+                      <Chip
+                        label="Activos"
+                        variant="outlined"
+                        clickable
+                      />
+                      <Chip
+                        label="Con Permiso Aprobar"
+                        variant="outlined"
+                        clickable
+                      />
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                        Total: {filteredComite.length} miembros
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                        Activos: {filteredComite.filter(m => m.estatus === 1).length}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                        Con permiso: {filteredComite.filter(m => m.permiso_aprobar === 1).length}
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        sx={{ bgcolor: '#3498db', '&:hover': { bgcolor: '#2980b9' } }}
+                      >
+                        Nuevo Miembro
+                      </Button>
+                    </Box>
+                  </Box>
+
+                  {/* Campo de búsqueda */}
+                  <TextField
+                    fullWidth
+                    placeholder="Buscar miembro por nombre..."
+                    value={searchComite}
+                    onChange={(e) => setSearchComite(e.target.value)}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                    size="small"
+                    sx={{ maxWidth: 400 }}
+                  />
+                </Box>
+
+                {/* Tabla de Comité */}
+                <TableContainer sx={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: 1 }}>
+                  <Table stickyHeader size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell sx={{ fontWeight: 'bold', width: '5%' }}>ID</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '20%' }}>Usuario</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '15%' }}>Cargo</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '20%' }}>Área</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Permiso Aprobar</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Estatus</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '20%' }} align="center">Acciones</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {filteredComite.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={7} align="center" sx={{ py: 3 }}>
+                            <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                              No se encontraron miembros que coincidan con la búsqueda
+                            </Typography>
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        filteredComite.map((miembro) => (
+                          <TableRow
+                            key={miembro.id_comite}
+                            hover
+                            sx={{
+                              '&:hover': { bgcolor: '#f8f9fa' },
+                              opacity: miembro.estatus === 0 ? 0.7 : 1
+                            }}
+                          >
+                            <TableCell>
+                              <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                #{miembro.id_comite}
+                              </Typography>
+                            </TableCell>
+
+                            <TableCell>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <PersonIcon sx={{ color: '#3498db', fontSize: 16 }} />
+                                <Box>
+                                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                    {miembro.nombre_usuario}
+                                  </Typography>
+                                  <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                    ID: {miembro.id_usuario}
+                                  </Typography>
+                                </Box>
+                              </Box>
+                            </TableCell>
+
+                            <TableCell>
+                              <Chip
+                                label={miembro.cargo}
+                                size="small"
+                                sx={{
+                                  bgcolor: miembro.cargo === 'Presidente' ? '#e3f2fd' :
+                                    miembro.cargo === 'Secretario' ? '#f3e5f5' :
+                                      miembro.cargo === 'Vocal' ? '#e8f5e9' :
+                                        miembro.cargo === 'Coordinador' ? '#fff3e0' : '#f5f5f5',
+                                  color: miembro.cargo === 'Presidente' ? '#1976d2' :
+                                    miembro.cargo === 'Secretario' ? '#7b1fa2' :
+                                      miembro.cargo === 'Vocal' ? '#2e7d32' :
+                                        miembro.cargo === 'Coordinador' ? '#f57c00' : '#616161',
                                   fontWeight: 500
                                 }}
                               />
-                            );
-                          })}
-                        </Box>
+                            </TableCell>
+
+                            <TableCell>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <BusinessIcon sx={{ color: '#7f8c8d', fontSize: 16 }} />
+                                <Typography variant="body2" sx={{ color: '#2c3e50' }}>
+                                  {miembro.area}
+                                </Typography>
+                              </Box>
+                            </TableCell>
+
+                            <TableCell align="center">
+                              <Chip
+                                label={miembro.permiso_aprobar === 1 ? "SI" : "NO"}
+                                size="small"
+                                color={miembro.permiso_aprobar === 1 ? "success" : "default"}
+                                icon={miembro.permiso_aprobar === 1 ? <HowToRegIcon fontSize="small" /> : null}
+                                sx={{
+                                  fontWeight: 600,
+                                  minWidth: 60
+                                }}
+                              />
+                            </TableCell>
+
+                            <TableCell align="center">
+                              <Chip
+                                label={miembro.estatus === 1 ? "ACTIVO" : "INACTIVO"}
+                                size="small"
+                                color={miembro.estatus === 1 ? "success" : "error"}
+                                sx={{
+                                  fontWeight: 600,
+                                  minWidth: 80
+                                }}
+                              />
+                            </TableCell>
+
+                            <TableCell align="center">
+                              <Stack direction="row" spacing={0.5} justifyContent="center">
+                                <Tooltip title="Ver detalles">
+                                  <IconButton
+                                    size="small"
+                                    sx={{ color: '#3498db' }}
+                                  >
+                                    <VisibilityIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+
+                                <Tooltip title="Editar miembro">
+                                  <IconButton
+                                    size="small"
+                                    sx={{ color: '#f39c12' }}
+                                  >
+                                    <EditIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+
+                                <Tooltip title="Cambiar permiso de aprobación">
+                                  <IconButton
+                                    size="small"
+                                    onClick={() => handleTogglePermisoAprobar(miembro.id_comite)}
+                                    sx={{ color: miembro.permiso_aprobar === 1 ? '#e74c3c' : '#2ecc71' }}
+                                  >
+                                    {miembro.permiso_aprobar === 1 ? <BlockIcon fontSize="small" /> : <CheckCircleIcon fontSize="small" />}
+                                  </IconButton>
+                                </Tooltip>
+                              </Stack>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+
+                {/* Estadísticas del Comité */}
+                <Grid container spacing={2} sx={{ mt: 2 }}>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e3f2fd' }}>
+                      <Typography variant="h6" sx={{ color: '#1976d2', fontWeight: 'bold' }}>
+                        {filteredComite.filter(m => m.cargo === 'Presidente').length}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#1976d2' }}>
+                        Presidentes
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#f3e5f5' }}>
+                      <Typography variant="h6" sx={{ color: '#7b1fa2', fontWeight: 'bold' }}>
+                        {filteredComite.filter(m => m.cargo === 'Secretario').length}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#7b1fa2' }}>
+                        Secretarios
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e8f5e9' }}>
+                      <Typography variant="h6" sx={{ color: '#2e7d32', fontWeight: 'bold' }}>
+                        {filteredComite.filter(m => m.cargo === 'Vocal').length}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#2e7d32' }}>
+                        Vocales
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#fff3e0' }}>
+                      <Typography variant="h6" sx={{ color: '#f57c00', fontWeight: 'bold' }}>
+                        {filteredComite.filter(m => m.permiso_aprobar === 1).length}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#f57c00' }}>
+                        Con Permiso
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                </Grid>
+              </Box>
+            )}
+
+            {activeTab === 8 && (
+              <Grid container spacing={3}>
+                <Grid item xs={12}>
+                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 2 }}>
+                    Configuración de Notificaciones
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={config.emailNotifications}
+                        onChange={handleChange('emailNotifications')}
+                        color="primary"
+                      />
+                    }
+                    label="Notificaciones por Email"
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={config.smsNotifications}
+                        onChange={handleChange('smsNotifications')}
+                        color="primary"
+                      />
+                    }
+                    label="Notificaciones por SMS"
+                  />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <Divider sx={{ my: 2 }} />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={config.renewalAlerts}
+                        onChange={handleChange('renewalAlerts')}
+                        color="warning"
+                      />
+                    }
+                    label="Alertas de Renovación"
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={config.committeeAlerts}
+                        onChange={handleChange('committeeAlerts')}
+                        color="secondary"
+                      />
+                    }
+                    label="Alertas del Comité"
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={config.systemAlerts}
+                        onChange={handleChange('systemAlerts')}
+                        color="info"
+                      />
+                    }
+                    label="Alertas del Sistema"
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Frecuencia de Alertas"
+                    value={config.alertFrequency}
+                    onChange={handleChange('alertFrequency')}
+                  >
+                    <MenuItem value="immediate">Inmediato</MenuItem>
+                    <MenuItem value="hourly">Cada hora</MenuItem>
+                    <MenuItem value="daily">Diario</MenuItem>
+                    <MenuItem value="weekly">Semanal</MenuItem>
+                  </TextField>
+                </Grid>
+              </Grid>
+            )}
+
+            {activeTab === 9 && (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                {/* Configuración de Umbrales del Semáforo */}
+                <Paper sx={{ p: 2, bgcolor: '#f8f9fa', mb: 2 }}>
+                  <Typography variant="subtitle1" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 2 }}>
+                    Configuración de Umbrales del Semáforo
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d', mb: 2 }}>
+                        Configure los porcentajes mínimos para cada nivel del semáforo de cumplimiento
+                      </Typography>
+                    </Grid>
+
+                    <Grid item xs={12}>
+                      <Box sx={{ px: 2 }}>
+                        <Slider
+                          value={[config.redThreshold, config.yellowThreshold, config.greenThreshold]}
+                          onChange={(event, newValue) => {
+                            handleSliderChange('redThreshold')(event, newValue[0]);
+                            handleSliderChange('yellowThreshold')(event, newValue[1]);
+                            handleSliderChange('greenThreshold')(event, newValue[2]);
+                          }}
+                          min={0}
+                          max={100}
+                          step={5}
+                          valueLabelDisplay="auto"
+                          disableSwap
+                        />
+                      </Box>
+                    </Grid>
+
+                    <Grid item xs={12}>
+                      <Grid container spacing={2} sx={{ mt: 2 }}>
+                        <Grid item xs={4}>
+                          <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#ffebee' }}>
+                            <ErrorIcon sx={{ color: '#e74c3c', fontSize: 32, mb: 1 }} />
+                            <Typography variant="subtitle2" sx={{ color: '#e74c3c', fontWeight: 'bold' }}>
+                              ROJO
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: '#e74c3c' }}>
+                              {'<'} {config.redThreshold}%
+                            </Typography>
+                          </Paper>
+                        </Grid>
+                        <Grid item xs={4}>
+                          <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#fffde7' }}>
+                            <WarningIcon sx={{ color: '#f39c12', fontSize: 32, mb: 1 }} />
+                            <Typography variant="subtitle2" sx={{ color: '#f39c12', fontWeight: 'bold' }}>
+                              AMARILLO
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: '#f39c12' }}>
+                              {config.redThreshold}% - {config.yellowThreshold}%
+                            </Typography>
+                          </Paper>
+                        </Grid>
+                        <Grid item xs={4}>
+                          <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e8f5e9' }}>
+                            <CheckCircleIcon sx={{ color: '#27ae60', fontSize: 32, mb: 1 }} />
+                            <Typography variant="subtitle2" sx={{ color: '#27ae60', fontWeight: 'bold' }}>
+                              VERDE
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: '#27ae60' }}>
+                              {'>'} {config.yellowThreshold}%
+                            </Typography>
+                          </Paper>
+                        </Grid>
                       </Grid>
                     </Grid>
-                  </Paper>
-                </Box>
-              )}
 
-              {activeTab === 10 && (
-                <Grid container spacing={3}>
-                  <Grid item xs={12}>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={config.autoBackup}
-                          onChange={handleChange('autoBackup')}
-                          color="primary"
-                        />
-                      }
-                      label="Backup Automático"
-                    />
+                    <Grid item xs={12} sx={{ mt: 3 }}>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={config.autoRecalculation}
+                            onChange={handleChange('autoRecalculation')}
+                            color="primary"
+                          />
+                        }
+                        label="Cálculo Automático del Semáforo"
+                      />
+                      <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', ml: 4 }}>
+                        Recalcula automáticamente el semáforo cuando cambian las certificaciones o declaraciones
+                      </Typography>
+                    </Grid>
                   </Grid>
+                </Paper>
 
-                  {config.autoBackup && (
-                    <>
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          fullWidth
-                          select
-                          label="Frecuencia"
-                          value={config.backupFrequency}
-                          onChange={handleChange('backupFrequency')}
-                        >
-                          <MenuItem value="hourly">Cada hora</MenuItem>
-                          <MenuItem value="daily">Diario</MenuItem>
-                          <MenuItem value="weekly">Semanal</MenuItem>
-                          <MenuItem value="monthly">Mensual</MenuItem>
-                        </TextField>
-                      </Grid>
+                {/* Filtros, búsqueda y estadísticas */}
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      <Chip
+                        label="Todos"
+                        variant="filled"
+                        color="primary"
+                        clickable
+                      />
+                      <Chip
+                        label="Activos"
+                        variant="outlined"
+                        clickable
+                      />
+                      <Chip
+                        label="Inactivos"
+                        variant="outlined"
+                        clickable
+                      />
+                      <Chip
+                        label="Gremial"
+                        variant="outlined"
+                        clickable
+                      />
+                      <Chip
+                        label="Profesional"
+                        variant="outlined"
+                        clickable
+                      />
+                    </Box>
 
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          fullWidth
-                          label="Hora del Backup"
-                          type="time"
-                          value={config.backupTime}
-                          onChange={handleChange('backupTime')}
-                          InputLabelProps={{ shrink: true }}
-                          inputProps={{ step: 300 }} // 5 min
-                        />
-                      </Grid>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                        Total: {filteredNivelesReconocimiento.length} niveles
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                        Activos: {filteredNivelesReconocimiento.filter(n => n.estatus === 1).length}
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        sx={{ bgcolor: '#3498db', '&:hover': { bgcolor: '#2980b9' } }}
+                      >
+                        Nuevo Nivel
+                      </Button>
+                    </Box>
+                  </Box>
 
-                      <Grid item xs={12} sm={6}>
-                        <TextField
-                          fullWidth
-                          label="Retención"
-                          type="number"
-                          value={config.retentionDays}
-                          onChange={handleChange('retentionDays')}
-                          InputProps={{
-                            endAdornment: <InputAdornment position="end">días</InputAdornment>,
-                          }}
-                        />
-                      </Grid>
-
-                      <Grid item xs={12} sm={6}>
-                        <FormControlLabel
-                          control={
-                            <Switch
-                              checked={config.cloudBackup}
-                              onChange={handleChange('cloudBackup')}
-                              color="primary"
-                            />
-                          }
-                          label="Backup en la Nube"
-                        />
-                      </Grid>
-                    </>
-                  )}
-                </Grid>
-              )}
-
-              {activeTab === 11 && (
-                <Grid container spacing={3}>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="Expiración de Contraseña"
-                      type="number"
-                      value={config.passwordExpiry}
-                      onChange={handleChange('passwordExpiry')}
-                      helperText="Días para forzar cambio de contraseña"
-                      InputProps={{
-                        endAdornment: <InputAdornment position="end">días</InputAdornment>,
-                      }}
-                    />
-                  </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={config.twoFactorAuth}
-                          onChange={handleChange('twoFactorAuth')}
-                          color="primary"
-                        />
-                      }
-                      label="Autenticación de Dos Factores"
-                    />
-                  </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={config.ipWhitelist}
-                          onChange={handleChange('ipWhitelist')}
-                          color="primary"
-                        />
-                      }
-                      label="Lista Blanca de IPs"
-                    />
-                  </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="Retención Auditoría"
-                      type="number"
-                      value={config.auditLogRetention}
-                      onChange={handleChange('auditLogRetention')}
-                      helperText="Días de retención de logs"
-                      InputProps={{
-                        endAdornment: <InputAdornment position="end">días</InputAdornment>,
-                      }}
-                    />
-                  </Grid>
-                </Grid>
-              )}
-            </Box>
-          </Paper>
-        </Box>
-
-        {/* Columna derecha - Más angosta y mejorada */}
-        <Box sx={{ flex: 1, minWidth: 280, maxWidth: 320, display: 'flex', flexDirection: 'column', gap: 2, overflow: 'hidden' }}>
-          {/* Vista Previa del Sistema - Altura fija */}
-          <Paper elevation={1} sx={{ p: 2, height: '40%', minHeight: 200, maxHeight: 250 }}>
-            <Typography variant="h6" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
-              Vista Previa del Sistema
-            </Typography>
-
-            <Box sx={{ height: 'calc(100% - 40px)', overflowY: 'auto' }}>
-              <Stack spacing={2}>
-                <Box>
-                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
-                    Nombre del Sistema:
-                  </Typography>
-                  <Paper sx={{ p: 2, bgcolor: '#f8f9fa' }}>
-                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                      {config.systemName}
-                    </Typography>
-                  </Paper>
+                  {/* Campo de búsqueda */}
+                  <TextField
+                    fullWidth
+                    placeholder="Buscar nivel de reconocimiento por nombre..."
+                    value={searchNivelesReconocimiento}
+                    onChange={(e) => setSearchNivelesReconocimiento(e.target.value)}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                    size="small"
+                    sx={{ maxWidth: 400 }}
+                  />
                 </Box>
 
-                <Box>
-                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
-                    Estado Actual:
+                {/* Tabla de Niveles de Reconocimiento */}
+                <TableContainer sx={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: 1 }}>
+                  <Table stickyHeader size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell sx={{ fontWeight: 'bold', width: '5%' }}>ID</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '30%' }}>Nombre del Nivel</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '45%' }}>Descripción</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Estatus</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Acciones</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {filteredNivelesReconocimiento.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={5} align="center" sx={{ py: 3 }}>
+                            <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                              No se encontraron niveles que coincidan con la búsqueda
+                            </Typography>
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        filteredNivelesReconocimiento.map((nivel) => (
+                          <TableRow
+                            key={nivel.id_nivel}
+                            hover
+                            sx={{
+                              '&:hover': { bgcolor: '#f8f9fa' },
+                              opacity: nivel.estatus === 0 ? 0.7 : 1
+                            }}
+                          >
+                            <TableCell>
+                              <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                #{nivel.id_nivel}
+                              </Typography>
+                            </TableCell>
+
+                            <TableCell>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                {getNivelIcon(nivel.nombre_nivel)}
+                                <Box>
+                                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                    {nivel.nombre_nivel}
+                                  </Typography>
+                                  <Chip
+                                    label={getTipoReconocimiento(nivel.nombre_nivel)}
+                                    size="small"
+                                    sx={{
+                                      bgcolor: getTipoReconocimientoBgColor(getTipoReconocimiento(nivel.nombre_nivel)),
+                                      color: getTipoReconocimientoColor(getTipoReconocimiento(nivel.nombre_nivel)),
+                                      fontSize: '0.65rem',
+                                      height: 18,
+                                      mt: 0.5
+                                    }}
+                                  />
+                                </Box>
+                              </Box>
+                            </TableCell>
+
+                            <TableCell>
+                              <Typography variant="body2" sx={{ color: '#2c3e50' }}>
+                                {nivel.descripcion}
+                              </Typography>
+                            </TableCell>
+
+                            <TableCell align="center">
+                              <Chip
+                                label={nivel.estatus === 1 ? "ACTIVO" : "INACTIVO"}
+                                size="small"
+                                color={nivel.estatus === 1 ? "success" : "error"}
+                                sx={{
+                                  fontWeight: 600,
+                                  minWidth: 80
+                                }}
+                              />
+                            </TableCell>
+
+                            <TableCell align="center">
+                              <Stack direction="row" spacing={0.5} justifyContent="center">
+                                <Tooltip title="Ver detalles">
+                                  <IconButton
+                                    size="small"
+                                    sx={{ color: '#3498db' }}
+                                  >
+                                    <VisibilityIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+
+                                <Tooltip title="Editar nivel">
+                                  <IconButton
+                                    size="small"
+                                    sx={{ color: '#f39c12' }}
+                                  >
+                                    <EditIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+
+                                <Tooltip title={nivel.estatus === 1 ? 'Desactivar' : 'Activar'}>
+                                  <IconButton
+                                    size="small"
+                                    onClick={() => handleToggleNivelStatus(nivel.id_nivel)}
+                                    sx={{ color: nivel.estatus === 1 ? '#e74c3c' : '#2ecc71' }}
+                                  >
+                                    {nivel.estatus === 1 ? <BlockIcon fontSize="small" /> : <CheckCircleIcon fontSize="small" />}
+                                  </IconButton>
+                                </Tooltip>
+                              </Stack>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+
+                {/* Estadísticas de Niveles de Reconocimiento */}
+                <Grid container spacing={2} sx={{ mt: 2 }}>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e8f5e9' }}>
+                      <Typography variant="h6" sx={{ color: '#2e7d32', fontWeight: 'bold' }}>
+                        {filteredNivelesReconocimiento.filter(n => getTipoReconocimiento(n.nombre_nivel) === 'Gremial').length}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#2e7d32' }}>
+                        Niveles Gremiales
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#ffebee' }}>
+                      <Typography variant="h6" sx={{ color: '#d32f2f', fontWeight: 'bold' }}>
+                        {filteredNivelesReconocimiento.filter(n => getTipoReconocimiento(n.nombre_nivel) === 'Académico').length}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#d32f2f' }}>
+                        Niveles Académicos
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#f3e5f5' }}>
+                      <Typography variant="h6" sx={{ color: '#7b1fa2', fontWeight: 'bold' }}>
+                        {filteredNivelesReconocimiento.filter(n => getTipoReconocimiento(n.nombre_nivel) === 'Profesional').length}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#7b1fa2' }}>
+                        Niveles Profesionales
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#fff3e0' }}>
+                      <Typography variant="h6" sx={{ color: '#f57c00', fontWeight: 'bold' }}>
+                        {filteredNivelesReconocimiento.filter(n => n.estatus === 1).length}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#f57c00' }}>
+                        Activos
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                </Grid>
+
+                {/* Distribución por Nivel */}
+                <Paper sx={{ p: 2, mt: 2, bgcolor: '#fafafa' }}>
+                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
+                    Distribución por Nivel
                   </Typography>
                   <Grid container spacing={1}>
-                    <Grid item xs={6}>
-                      <Paper sx={{ p: 1.5, textAlign: 'center', bgcolor: config.maintenanceMode ? '#fffde7' : '#e8f5e9' }}>
-                        <Typography variant="caption" sx={{ display: 'block', mb: 0.5 }}>
-                          Mantenimiento
-                        </Typography>
-                        <Chip
-                          label={config.maintenanceMode ? 'ACTIVO' : 'INACTIVO'}
-                          size="small"
-                          color={config.maintenanceMode ? 'warning' : 'success'}
-                        />
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Paper sx={{ p: 1.5, textAlign: 'center', bgcolor: config.allowRegistrations ? '#e8f5e9' : '#ffebee' }}>
-                        <Typography variant="caption" sx={{ display: 'block', mb: 0.5 }}>
-                          Registros
-                        </Typography>
-                        <Chip
-                          label={config.allowRegistrations ? 'PERMITIDOS' : 'BLOQUEADOS'}
-                          size="small"
-                          color={config.allowRegistrations ? 'success' : 'error'}
-                        />
-                      </Paper>
+                    {Array.from(new Set(filteredNivelesReconocimiento.map(n => {
+                      const nivelNum = n.nombre_nivel?.match(/Nivel (\w+)/i)?.[1];
+                      return `Nivel ${nivelNum?.toUpperCase() || 'N/A'}`;
+                    }))).map((nivel, index) => {
+                      const count = filteredNivelesReconocimiento.filter(n => {
+                        const nivelNum = n.nombre_nivel?.match(/Nivel (\w+)/i)?.[1];
+                        return `Nivel ${nivelNum?.toUpperCase() || 'N/A'}` === nivel;
+                      }).length;
+                      const percentage = Math.round((count / Math.max(filteredNivelesReconocimiento.length, 1)) * 100);
+                      return (
+                        <Grid item xs={6} key={index}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              {getNivelIcon(nivel)}
+                              <Typography variant="body2" sx={{ color: '#2c3e50' }}>
+                                {nivel}
+                              </Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <Typography variant="body2" sx={{ fontWeight: 'bold', color: getNivelColor(nivel) }}>
+                                {count}
+                              </Typography>
+                              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                ({percentage}%)
+                              </Typography>
+                            </Box>
+                          </Box>
+                          <LinearProgress
+                            variant="determinate"
+                            value={percentage}
+                            sx={{
+                              height: 4,
+                              borderRadius: 2,
+                              mt: 0.5,
+                              bgcolor: '#e0e0e0',
+                              '& .MuiLinearProgress-bar': {
+                                bgcolor: getNivelColor(nivel)
+                              }
+                            }}
+                          />
+                        </Grid>
+                      );
+                    })}
+                  </Grid>
+                </Paper>
+
+                {/* Resumen de Tipos */}
+                <Paper sx={{ p: 2, mt: 2, bgcolor: '#f5f5f5' }}>
+                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
+                    Resumen por Tipo de Reconocimiento
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                        {Array.from(new Set(filteredNivelesReconocimiento.map(n => getTipoReconocimiento(n.nombre_nivel)))).map((tipo, idx) => {
+                          const count = filteredNivelesReconocimiento.filter(n => getTipoReconocimiento(n.nombre_nivel) === tipo).length;
+                          return (
+                            <Chip
+                              key={idx}
+                              label={`${tipo}: ${count}`}
+                              size="small"
+                              sx={{
+                                bgcolor: getTipoReconocimientoBgColor(tipo),
+                                color: getTipoReconocimientoColor(tipo),
+                                fontWeight: 500
+                              }}
+                            />
+                          );
+                        })}
+                      </Box>
                     </Grid>
                   </Grid>
-                </Box>
+                </Paper>
+              </Box>
+            )}
 
-                <Divider />
+            {activeTab === 10 && (
+              <Grid container spacing={3}>
+                <Grid item xs={12}>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={config.autoBackup}
+                        onChange={handleChange('autoBackup')}
+                        color="primary"
+                      />
+                    }
+                    label="Backup Automático"
+                  />
+                </Grid>
 
-                <Box>
-                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
-                    Resumen de Configuración:
+                {config.autoBackup && (
+                  <>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        select
+                        label="Frecuencia"
+                        value={config.backupFrequency}
+                        onChange={handleChange('backupFrequency')}
+                      >
+                        <MenuItem value="hourly">Cada hora</MenuItem>
+                        <MenuItem value="daily">Diario</MenuItem>
+                        <MenuItem value="weekly">Semanal</MenuItem>
+                        <MenuItem value="monthly">Mensual</MenuItem>
+                      </TextField>
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Hora del Backup"
+                        type="time"
+                        value={config.backupTime}
+                        onChange={handleChange('backupTime')}
+                        InputLabelProps={{ shrink: true }}
+                        inputProps={{ step: 300 }} // 5 min
+                      />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Retención"
+                        type="number"
+                        value={config.retentionDays}
+                        onChange={handleChange('retentionDays')}
+                        InputProps={{
+                          endAdornment: <InputAdornment position="end">días</InputAdornment>,
+                        }}
+                      />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={config.cloudBackup}
+                            onChange={handleChange('cloudBackup')}
+                            color="primary"
+                          />
+                        }
+                        label="Backup en la Nube"
+                      />
+                    </Grid>
+                  </>
+                )}
+              </Grid>
+            )}
+
+            {activeTab === 11 && (
+              <Grid container spacing={3}>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Expiración de Contraseña"
+                    type="number"
+                    value={config.passwordExpiry}
+                    onChange={handleChange('passwordExpiry')}
+                    helperText="Días para forzar cambio de contraseña"
+                    InputProps={{
+                      endAdornment: <InputAdornment position="end">días</InputAdornment>,
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={config.twoFactorAuth}
+                        onChange={handleChange('twoFactorAuth')}
+                        color="primary"
+                      />
+                    }
+                    label="Autenticación de Dos Factores"
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={config.ipWhitelist}
+                        onChange={handleChange('ipWhitelist')}
+                        color="primary"
+                      />
+                    }
+                    label="Lista Blanca de IPs"
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Retención Auditoría"
+                    type="number"
+                    value={config.auditLogRetention}
+                    onChange={handleChange('auditLogRetention')}
+                    helperText="Días de retención de logs"
+                    InputProps={{
+                      endAdornment: <InputAdornment position="end">días</InputAdornment>,
+                    }}
+                  />
+                </Grid>
+              </Grid>
+            )}
+          </Box>
+        </Paper>
+      </Box>
+
+      {/* Panel flotante (Drawer) */}
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={toggleDrawer}
+        variant="persistent"
+        PaperProps={{
+          sx: {
+            width: 350,
+            maxWidth: '90vw',
+            marginTop: '64px',
+            height: 'calc(100vh - 64px)',
+            borderLeft: '1px solid #e0e0e0',
+            boxShadow: '0px 0px 20px rgba(0,0,0,0.1)',
+            borderRadius: '8px 0 0 8px'
+          }
+        }}
+      >
+        <Box sx={{
+          p: 2,
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden'
+        }}>
+          {/* Header del panel */}
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mb: 2,
+            pb: 2,
+            borderBottom: '1px solid #e0e0e0'
+          }}>
+            <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
+              Cambios Recientes
+            </Typography>
+            <IconButton
+              size="small"
+              onClick={toggleDrawer}
+              sx={{
+                color: '#7f8c8d',
+                '&:hover': { bgcolor: '#f5f5f5' }
+              }}
+            >
+              <ChevronRightIcon />
+            </IconButton>
+          </Box>
+
+          {/* Contenido del panel - Solo Cambios Recientes */}
+          <Box sx={{
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 3,
+            overflowY: 'auto'
+          }}>
+            {/* Historial de cambios */}
+            <Paper elevation={0} sx={{ p: 2, bgcolor: '#f8f9fa', borderRadius: 2, flex: 1 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <TimerIcon sx={{ color: '#9b59b6' }} />
+                  <Typography variant="subtitle1" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
+                    Cambios Recientes
                   </Typography>
-                  <Stack spacing={1}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        Certificaciones Activas:
-                      </Typography>
-                      <Typography variant="caption" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                        {certificaciones.filter(c => c.estatus === 1).length}
-                      </Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        Declaraciones Activas:
-                      </Typography>
-                      <Typography variant="caption" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                        {declaraciones.filter(d => d.estatus === 1).length}
-                      </Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        Regiones Activas:
-                      </Typography>
-                      <Typography variant="caption" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                        {regiones.filter(r => r.estatus === 1).length}
-                      </Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        Niveles Reconocimiento Activos:
-                      </Typography>
-                      <Typography variant="caption" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                        {nivelesReconocimiento.filter(n => n.estatus === 1).length}
-                      </Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        Umbral Semáforo Verde:
-                      </Typography>
-                      <Typography variant="caption" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                        {'>'} {config.yellowThreshold}%
-                      </Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        Backup Automático:
-                      </Typography>
-                      <Typography variant="caption" sx={{ fontWeight: 'bold', color: config.autoBackup ? '#27ae60' : '#e74c3c' }}>
-                        {config.autoBackup ? 'ACTIVO' : 'INACTIVO'}
-                      </Typography>
-                    </Box>
-                  </Stack>
                 </Box>
-              </Stack>
-            </Box>
-          </Paper>
+                <Chip
+                  label={`${changes.length} cambios`}
+                  size="small"
+                  color="primary"
+                />
+              </Box>
 
-          {/* Historial de cambios - Altura fija con scroll */}
-          <Paper elevation={1} sx={{ p: 2, flex: 1, display: 'flex', flexDirection: 'column', minHeight: 300 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, flexShrink: 0 }}>
-              <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
-                Cambios Recientes
-              </Typography>
-              <Chip
-                label={`${changes.length} cambios`}
-                size="small"
-                color="primary"
-              />
-            </Box>
-
-            {changes.length > 0 ? (
-              <Box sx={{
-                flex: 1,
-                overflow: 'hidden',
-                display: 'flex',
-                flexDirection: 'column'
-              }}>
-                {/* Lista de cambios con altura fija y scroll */}
+              {changes.length > 0 ? (
                 <Box sx={{
                   flex: 1,
                   overflowY: 'auto',
                   pr: 1,
+                  maxHeight: '400px',
                   '&::-webkit-scrollbar': {
-                    width: 8,
+                    width: 6,
                   },
                   '&::-webkit-scrollbar-track': {
                     backgroundColor: '#f5f5f5',
-                    borderRadius: 4,
+                    borderRadius: 3,
                   },
                   '&::-webkit-scrollbar-thumb': {
                     backgroundColor: '#bdbdbd',
-                    borderRadius: 4,
-                    '&:hover': {
-                      backgroundColor: '#9e9e9e',
-                    }
+                    borderRadius: 3,
                   }
                 }}>
-                  {changes.map((change, index) => (
+                  {changes.slice(-10).reverse().map((change, index) => (
                     <Paper
                       key={index}
                       sx={{
                         p: 1.5,
-                        mb: 1,
-                        bgcolor: '#f8f9fa',
+                        mb: 1.5,
+                        bgcolor: 'white',
                         borderLeft: '3px solid #3498db',
                         '&:last-child': {
                           mb: 0
@@ -3966,24 +4211,81 @@ const SystemConfig = () => {
                     </Paper>
                   ))}
                 </Box>
-              </Box>
-            ) : (
-              <Box sx={{
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}>
-                <CheckCircleIcon sx={{ color: '#27ae60', fontSize: 48, mb: 2 }} />
-                <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                  No hay cambios pendientes
-                </Typography>
-              </Box>
-            )}
-          </Paper>
+              ) : (
+                <Box sx={{
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  py: 4
+                }}>
+                  <CheckCircleIcon sx={{ color: '#27ae60', fontSize: 48, mb: 2, opacity: 0.7 }} />
+                  <Typography variant="body2" sx={{ color: '#7f8c8d', textAlign: 'center' }}>
+                    No hay cambios pendientes
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#bdc3c7', mt: 1 }}>
+                    Realice cambios en la configuración
+                  </Typography>
+                </Box>
+              )}
+            </Paper>
+          </Box>
+
+          {/* Footer del panel */}
+          <Box sx={{
+            pt: 2,
+            mt: 2,
+            borderTop: '1px solid #e0e0e0',
+            display: 'flex',
+            justifyContent: 'center'
+          }}>
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={drawerOpen ? <ChevronRightIcon /> : <VisibilityIcon />}
+              onClick={toggleDrawer}
+              fullWidth
+              sx={{
+                color: '#3498db',
+                borderColor: '#3498db'
+              }}
+            >
+              {drawerOpen ? 'Cerrar Panel' : 'Abrir Panel'}
+            </Button>
+          </Box>
         </Box>
-      </Box>
+      </Drawer>
+
+      {/* Botón flotante para abrir panel - MÁS DISCRETO */}
+      {!drawerOpen && (
+        <Fab
+          color="default"
+          aria-label="ver panel"
+          onClick={toggleDrawer}
+          sx={{
+            position: 'fixed',
+            right: 16,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            zIndex: 1000,
+            boxShadow: '0px 2px 8px rgba(0,0,0,0.1)',
+            bgcolor: 'rgba(255, 255, 255, 0.9)',
+            color: '#7f8c8d',
+            border: '1px solid #e0e0e0',
+            opacity: 0.8,
+            '&:hover': {
+              bgcolor: 'rgba(248, 249, 250, 0.95)',
+              opacity: 1,
+              boxShadow: '0px 4px 12px rgba(0,0,0,0.15)'
+            },
+            transition: 'all 0.2s ease-in-out'
+          }}
+          size="small"
+        >
+          <VisibilityIcon sx={{ fontSize: 18 }} />
+        </Fab>
+      )}
     </Box>
   );
 };
