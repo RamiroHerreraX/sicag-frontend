@@ -32,7 +32,11 @@ import {
   AccordionDetails,
   InputAdornment,
   Avatar,
-  LinearProgress
+  LinearProgress,
+  Drawer,
+  Tabs,
+  Tab,
+  Fab
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -54,10 +58,12 @@ import {
   Visibility as VisibilityIcon,
   Lock as LockIcon,
   Public as PublicIcon,
-  GridView as GridViewIcon,
   List as ListIcon,
   Sort as SortIcon,
-  FilterList as FilterIcon
+  FilterList as FilterIcon,
+  People as PeopleIcon,
+  ChevronRight as ChevronRightIcon,
+  Timer as TimerIcon
 } from '@mui/icons-material';
 
 const ConfigExpediente = () => {
@@ -189,8 +195,10 @@ const ConfigExpediente = () => {
   const [currentCategory, setCurrentCategory] = useState(null);
   const [currentDocument, setCurrentDocument] = useState(null);
   const [editMode, setEditMode] = useState('category');
-  const [viewMode, setViewMode] = useState('list'); // 'list' o 'grid'
   const [expandedCategory, setExpandedCategory] = useState(1);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [panelTab, setPanelTab] = useState(0);
+  
   const [generalConfig, setGeneralConfig] = useState({
     maxExpedienteSize: '100',
     daysToComplete: '30',
@@ -202,6 +210,17 @@ const ConfigExpediente = () => {
     retentionYears: '5',
     maxDocumentsPerExpediente: '50'
   });
+
+  // Estadísticas - MOVIDAS AL PANEL
+  const stats = {
+    totalCategories: categories.length,
+    totalDocuments: categories.reduce((total, cat) => total + cat.documents.length, 0),
+    requiredDocuments: categories.reduce((total, cat) => 
+      total + cat.documents.filter(doc => doc.required).length, 0),
+    optionalDocuments: categories.reduce((total, cat) => 
+      total + cat.documents.filter(doc => !doc.required).length, 0),
+    requiredCategories: categories.filter(cat => cat.required).length
+  };
 
   const handleAddCategory = () => {
     setEditMode('category');
@@ -324,25 +343,23 @@ const ConfigExpediente = () => {
     });
   };
 
-  // Estadísticas
-  const stats = {
-    totalCategories: categories.length,
-    totalDocuments: categories.reduce((total, cat) => total + cat.documents.length, 0),
-    requiredDocuments: categories.reduce((total, cat) => 
-      total + cat.documents.filter(doc => doc.required).length, 0),
-    optionalDocuments: categories.reduce((total, cat) => 
-      total + cat.documents.filter(doc => !doc.required).length, 0),
-    requiredCategories: categories.filter(cat => cat.required).length
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
   };
 
   const formatOptions = ['PDF', 'JPG', 'PNG', 'DOC', 'DOCX', 'XLS', 'XLSX', 'TXT'];
   const sizeOptions = ['1MB', '5MB', '10MB', '25MB', '50MB', '100MB'];
   const tagOptions = ['obligatorio', 'identificación', 'fiscal', 'legal', 'profesional', 'domicilio', 'poder', 'opcional'];
 
+  const panelTabs = [
+    { label: 'Resumen', icon: <DescriptionIcon /> },
+    { label: 'Configuración', icon: <SettingsIcon /> },
+  ];
+
   return (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: '#f5f7fa' }}>
       {/* Header */}
-      <Box sx={{ mb: 3 }}>
+      <Box sx={{ mb: 3, p: 2.5 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
           <Box>
             <Typography variant="h5" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 0.5 }}>
@@ -369,6 +386,13 @@ const ConfigExpediente = () => {
               Importar Config
             </Button>
             <Button
+              variant="outlined"
+              startIcon={<VisibilityIcon />}
+              onClick={toggleDrawer}
+            >
+              Panel
+            </Button>
+            <Button
               variant="contained"
               startIcon={<AddIcon />}
               onClick={handleAddCategory}
@@ -379,119 +403,489 @@ const ConfigExpediente = () => {
           </Stack>
         </Box>
 
-        {/* Estadísticas */}
-        <Grid container spacing={2} sx={{ mb: 3 }}>
-          <Grid item xs={6} sm={4} md={2}>
-            <Card sx={{ borderLeft: '4px solid #3498db' }}>
-              <CardContent sx={{ p: 2, textAlign: 'center' }}>
-                <Typography variant="h4" sx={{ color: '#3498db', fontWeight: 'bold', mb: 0.5 }}>
+        {/* 6 CARDS CON MISMA ALTURA QUE LAS 4 DEL PRIMER CÓDIGO */}
+        <Box sx={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(6, 1fr)', // 6 columnas de igual ancho
+          gap: 2,
+          mb: 3,
+          width: '100%',
+          '@media (max-width: 1200px)': {
+            gridTemplateColumns: 'repeat(3, 1fr)', // 3 columnas en pantallas medianas
+          },
+          '@media (max-width: 768px)': {
+            gridTemplateColumns: 'repeat(2, 1fr)', // 2 columnas en tablets
+          },
+          '@media (max-width: 480px)': {
+            gridTemplateColumns: '1fr', // 1 columna en móviles
+          }
+        }}>
+          {/* Card 1: Categorías */}
+          <Card sx={{
+            borderLeft: '4px solid #3498db',
+            height: 120, // MISMA ALTURA EXACTA que las 4 cards del primer código
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden'
+          }}>
+            <CardContent sx={{
+              p: 1.5,
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              height: '100%'
+            }}>
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+                gap: 1,
+                mb: 1
+              }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Box sx={{ color: '#3498db' }}>
+                    <FolderIcon />
+                  </Box>
+                  <Typography variant="body2" sx={{
+                    color: '#7f8c8d',
+                    fontWeight: 500,
+                    fontSize: '0.75rem',
+                    lineHeight: 1.2
+                  }}>
+                    Categorías
+                  </Typography>
+                </Box>
+                <Typography variant="h5" sx={{
+                  color: '#2c3e50',
+                  fontWeight: 'bold',
+                  fontSize: '1.5rem',
+                  lineHeight: 1,
+                  textAlign: 'right'
+                }}>
                   {stats.totalCategories}
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                  Categorías
+              </Box>
+              <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-end',
+                gap: 0.5
+              }}>
+                <Typography variant="caption" sx={{
+                  color: '#95a5a6',
+                  fontSize: '0.7rem',
+                  lineHeight: 1.2,
+                  flex: 1,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical'
+                }}>
+                  {stats.requiredCategories} obligatorias
                 </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={6} sm={4} md={2}>
-            <Card sx={{ borderLeft: '4px solid #2ecc71' }}>
-              <CardContent sx={{ p: 2, textAlign: 'center' }}>
-                <Typography variant="h4" sx={{ color: '#2ecc71', fontWeight: 'bold', mb: 0.5 }}>
+              </Box>
+            </CardContent>
+          </Card>
+
+          {/* Card 2: Documentos */}
+          <Card sx={{
+            borderLeft: '4px solid #2ecc71',
+            height: 120,
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden'
+          }}>
+            <CardContent sx={{
+              p: 1.5,
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              height: '100%'
+            }}>
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+                gap: 1,
+                mb: 1
+              }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Box sx={{ color: '#2ecc71' }}>
+                    <DescriptionIcon />
+                  </Box>
+                  <Typography variant="body2" sx={{
+                    color: '#7f8c8d',
+                    fontWeight: 500,
+                    fontSize: '0.75rem',
+                    lineHeight: 1.2
+                  }}>
+                    Documentos
+                  </Typography>
+                </Box>
+                <Typography variant="h5" sx={{
+                  color: '#2c3e50',
+                  fontWeight: 'bold',
+                  fontSize: '1.5rem',
+                  lineHeight: 1,
+                  textAlign: 'right'
+                }}>
                   {stats.totalDocuments}
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                  Documentos
+              </Box>
+              <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-end',
+                gap: 0.5
+              }}>
+                <Typography variant="caption" sx={{
+                  color: '#95a5a6',
+                  fontSize: '0.7rem',
+                  lineHeight: 1.2,
+                  flex: 1,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical'
+                }}>
+                  {stats.requiredDocuments} obligatorios
                 </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={6} sm={4} md={2}>
-            <Card sx={{ borderLeft: '4px solid #f39c12' }}>
-              <CardContent sx={{ p: 2, textAlign: 'center' }}>
-                <Typography variant="h4" sx={{ color: '#f39c12', fontWeight: 'bold', mb: 0.5 }}>
+              </Box>
+            </CardContent>
+          </Card>
+
+          {/* Card 3: Obligatorios */}
+          <Card sx={{
+            borderLeft: '4px solid #f39c12',
+            height: 120,
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden'
+          }}>
+            <CardContent sx={{
+              p: 1.5,
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              height: '100%'
+            }}>
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+                gap: 1,
+                mb: 1
+              }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Box sx={{ color: '#f39c12' }}>
+                    <CheckCircleIcon />
+                  </Box>
+                  <Typography variant="body2" sx={{
+                    color: '#7f8c8d',
+                    fontWeight: 500,
+                    fontSize: '0.75rem',
+                    lineHeight: 1.2
+                  }}>
+                    Obligatorios
+                  </Typography>
+                </Box>
+                <Typography variant="h5" sx={{
+                  color: '#2c3e50',
+                  fontWeight: 'bold',
+                  fontSize: '1.5rem',
+                  lineHeight: 1,
+                  textAlign: 'right'
+                }}>
                   {stats.requiredDocuments}
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                  Obligatorios
+              </Box>
+              <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-end',
+                gap: 0.5
+              }}>
+                <Typography variant="caption" sx={{
+                  color: '#95a5a6',
+                  fontSize: '0.7rem',
+                  lineHeight: 1.2,
+                  flex: 1,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical'
+                }}>
+                  {Math.round((stats.requiredDocuments / stats.totalDocuments) * 100)}% del total
                 </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={6} sm={4} md={2}>
-            <Card sx={{ borderLeft: '4px solid #9b59b6' }}>
-              <CardContent sx={{ p: 2, textAlign: 'center' }}>
-                <Typography variant="h4" sx={{ color: '#9b59b6', fontWeight: 'bold', mb: 0.5 }}>
+              </Box>
+            </CardContent>
+          </Card>
+
+          {/* Card 4: Opcionales */}
+          <Card sx={{
+            borderLeft: '4px solid #9b59b6',
+            height: 120,
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden'
+          }}>
+            <CardContent sx={{
+              p: 1.5,
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              height: '100%'
+            }}>
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+                gap: 1,
+                mb: 1
+              }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Box sx={{ color: '#9b59b6' }}>
+                    <DescriptionIcon />
+                  </Box>
+                  <Typography variant="body2" sx={{
+                    color: '#7f8c8d',
+                    fontWeight: 500,
+                    fontSize: '0.75rem',
+                    lineHeight: 1.2
+                  }}>
+                    Opcionales
+                  </Typography>
+                </Box>
+                <Typography variant="h5" sx={{
+                  color: '#2c3e50',
+                  fontWeight: 'bold',
+                  fontSize: '1.5rem',
+                  lineHeight: 1,
+                  textAlign: 'right'
+                }}>
                   {stats.optionalDocuments}
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                  Opcionales
+              </Box>
+              <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-end',
+                gap: 0.5
+              }}>
+                <Typography variant="caption" sx={{
+                  color: '#95a5a6',
+                  fontSize: '0.7rem',
+                  lineHeight: 1.2,
+                  flex: 1,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical'
+                }}>
+                  {Math.round((stats.optionalDocuments / stats.totalDocuments) * 100)}% del total
                 </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={6} sm={4} md={2}>
-            <Card sx={{ borderLeft: '4px solid #e74c3c' }}>
-              <CardContent sx={{ p: 2, textAlign: 'center' }}>
-                <Typography variant="h4" sx={{ color: '#e74c3c', fontWeight: 'bold', mb: 0.5 }}>
+              </Box>
+            </CardContent>
+          </Card>
+
+          {/* Card 5: Cat. Obligatorias */}
+          <Card sx={{
+            borderLeft: '4px solid #e74c3c',
+            height: 120,
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden'
+          }}>
+            <CardContent sx={{
+              p: 1.5,
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              height: '100%'
+            }}>
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+                gap: 1,
+                mb: 1
+              }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Box sx={{ color: '#e74c3c' }}>
+                    <ErrorIcon />
+                  </Box>
+                  <Typography variant="body2" sx={{
+                    color: '#7f8c8d',
+                    fontWeight: 500,
+                    fontSize: '0.75rem',
+                    lineHeight: 1.2
+                  }}>
+                    Cat. Obligatorias
+                  </Typography>
+                </Box>
+                <Typography variant="h5" sx={{
+                  color: '#2c3e50',
+                  fontWeight: 'bold',
+                  fontSize: '1.5rem',
+                  lineHeight: 1,
+                  textAlign: 'right'
+                }}>
                   {stats.requiredCategories}
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                  Cat. Obligatorias
+              </Box>
+              <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-end',
+                gap: 0.5
+              }}>
+                <Typography variant="caption" sx={{
+                  color: '#95a5a6',
+                  fontSize: '0.7rem',
+                  lineHeight: 1.2,
+                  flex: 1,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical'
+                }}>
+                  {Math.round((stats.requiredCategories / stats.totalCategories) * 100)}% del total
                 </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={6} sm={4} md={2}>
-            <Card sx={{ borderLeft: '4px solid #1abc9c' }}>
-              <CardContent sx={{ p: 2, textAlign: 'center' }}>
-                <Typography variant="h4" sx={{ color: '#1abc9c', fontWeight: 'bold', mb: 0.5 }}>
+              </Box>
+            </CardContent>
+          </Card>
+
+          {/* Card 6: Capacidad */}
+          <Card sx={{
+            borderLeft: '4px solid #1abc9c',
+            height: 120,
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden'
+          }}>
+            <CardContent sx={{
+              p: 1.5,
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              height: '100%'
+            }}>
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+                gap: 1,
+                mb: 1
+              }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Box sx={{ color: '#1abc9c' }}>
+                    <CloudUploadIcon />
+                  </Box>
+                  <Typography variant="body2" sx={{
+                    color: '#7f8c8d',
+                    fontWeight: 500,
+                    fontSize: '0.75rem',
+                    lineHeight: 1.2
+                  }}>
+                    Capacidad
+                  </Typography>
+                </Box>
+                <Typography variant="h5" sx={{
+                  color: '#2c3e50',
+                  fontWeight: 'bold',
+                  fontSize: '1.5rem',
+                  lineHeight: 1,
+                  textAlign: 'right'
+                }}>
                   {parseInt(generalConfig.maxExpedienteSize) * stats.totalDocuments}MB
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                  Capacidad Total
+              </Box>
+              <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-end',
+                gap: 0.5
+              }}>
+                <Typography variant="caption" sx={{
+                  color: '#95a5a6',
+                  fontSize: '0.7rem',
+                  lineHeight: 1.2,
+                  flex: 1,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical'
+                }}>
+                  {generalConfig.maxExpedienteSize} MB máximo por documento
                 </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
+              </Box>
+            </CardContent>
+          </Card>
+        </Box>
       </Box>
 
-      {/* Contenido principal */}
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-        <Grid container spacing={2} sx={{ flex: 1 }}>
-          {/* Columna izquierda - Categorías y documentos */}
-          <Grid item xs={12} md={8} sx={{ display: 'flex', flexDirection: 'column' }}>
-            <Paper elevation={1} sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      {/* Contenido principal - 2 COLUMNAS CON ANCHO ESPECÍFICO */}
+      <Box sx={{ 
+        flex: 1, 
+        display: 'flex', 
+        flexDirection: 'column', 
+        minHeight: 0, 
+        p: 2.5, 
+        pt: 0,
+        gap: 2
+      }}>
+        <Box sx={{ 
+          display: 'flex', 
+          gap: 2, 
+          flex: 1,
+          minHeight: 0,
+          '@media (max-width: 1200px)': {
+            flexDirection: 'column',
+          }
+        }}>
+          {/* Columna izquierda - Estructura del Expediente (70%) */}
+          <Box sx={{ 
+            flex: 7, // 70% del espacio
+            minHeight: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            '@media (max-width: 1200px)': {
+              flex: '1 1 100%',
+            }
+          }}>
+            <Paper elevation={1} sx={{ 
+              flex: 1, 
+              display: 'flex', 
+              flexDirection: 'column', 
+              overflow: 'hidden', 
+              borderRadius: '8px',
+              height: '100%'
+            }}>
               <Box sx={{ 
                 p: 2, 
                 borderBottom: '1px solid #e0e0e0',
                 display: 'flex',
                 justifyContent: 'space-between',
-                alignItems: 'center'
+                alignItems: 'center',
+                bgcolor: '#fff'
               }}>
                 <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
                   Estructura del Expediente
                 </Typography>
                 
                 <Stack direction="row" spacing={1}>
-                  <Tooltip title="Vista de lista">
-                    <IconButton 
-                      size="small" 
-                      onClick={() => setViewMode('list')}
-                      color={viewMode === 'list' ? 'primary' : 'default'}
-                    >
-                      <ListIcon />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Vista de grid">
-                    <IconButton 
-                      size="small" 
-                      onClick={() => setViewMode('grid')}
-                      color={viewMode === 'grid' ? 'primary' : 'default'}
-                    >
-                      <GridViewIcon />
-                    </IconButton>
-                  </Tooltip>
                   <Tooltip title="Ordenar">
                     <IconButton size="small">
                       <SortIcon />
@@ -505,523 +899,802 @@ const ConfigExpediente = () => {
                 </Stack>
               </Box>
 
-              {/* Lista de categorías */}
-              <Box sx={{ flex: 1, overflowY: 'auto', p: 2 }}>
-                {viewMode === 'list' ? (
-                  // Vista de lista
-                  categories.sort((a, b) => a.order - b.order).map((category) => (
-                    <Accordion 
-                      key={category.id}
-                      expanded={expandedCategory === category.id}
-                      onChange={() => handleCategoryExpand(category.id)}
-                      sx={{ mb: 2, borderRadius: '8px !important' }}
-                    >
-                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                          <Box sx={{ 
-                            width: 40, 
-                            height: 40, 
-                            borderRadius: '8px',
-                            bgcolor: `${category.color}20`,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            mr: 2
-                          }}>
-                            <Typography variant="h5" sx={{ color: category.color }}>
-                              {category.icon}
+              {/* Lista de categorías - SOLO VISTA DE LISTA */}
+              <Box sx={{ flex: 1, overflowY: 'auto', p: 2, bgcolor: '#f8f9fa' }}>
+                {categories.sort((a, b) => a.order - b.order).map((category) => (
+                  <Accordion 
+                    key={category.id}
+                    expanded={expandedCategory === category.id}
+                    onChange={() => handleCategoryExpand(category.id)}
+                    sx={{ mb: 2, borderRadius: '8px !important', overflow: 'hidden' }}
+                  >
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ bgcolor: '#fff' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                        <Box sx={{ 
+                          width: 40, 
+                          height: 40, 
+                          borderRadius: '8px',
+                          bgcolor: `${category.color}20`,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          mr: 2
+                        }}>
+                          <Typography variant="h5" sx={{ color: category.color }}>
+                            {category.icon}
+                          </Typography>
+                        </Box>
+                        
+                        <Box sx={{ flex: 1 }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                              {category.name}
                             </Typography>
-                          </Box>
-                          
-                          <Box sx={{ flex: 1 }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                              <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                                {category.name}
-                              </Typography>
-                              {category.required && (
-                                <Chip 
-                                  label="OBLIGATORIO" 
-                                  size="small" 
-                                  color="error"
-                                  sx={{ height: 20, fontSize: '0.65rem' }}
-                                />
-                              )}
+                            {category.required && (
                               <Chip 
-                                label={`${category.documents.length} docs`}
-                                size="small"
-                                variant="outlined"
+                                label="OBLIGATORIO" 
+                                size="small" 
+                                color="error"
                                 sx={{ height: 20, fontSize: '0.65rem' }}
                               />
-                            </Box>
-                            <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                              {category.description}
-                            </Typography>
+                            )}
+                            <Chip 
+                              label={`${category.documents.length} docs`}
+                              size="small"
+                              variant="outlined"
+                              sx={{ height: 20, fontSize: '0.65rem' }}
+                            />
                           </Box>
-                          
-                          <Stack direction="row" spacing={0.5}>
-                            <Tooltip title="Editar categoría">
-                              <IconButton 
-                                size="small"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleEditCategory(category);
-                                }}
-                              >
-                                <EditIcon fontSize="small" />
-                              </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Eliminar categoría">
-                              <IconButton 
-                                size="small"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDeleteCategory(category.id);
-                                }}
-                              >
-                                <DeleteIcon fontSize="small" />
-                              </IconButton>
-                            </Tooltip>
-                          </Stack>
+                          <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                            {category.description}
+                          </Typography>
                         </Box>
-                      </AccordionSummary>
-                      
-                      <AccordionDetails>
-                        <Box sx={{ pl: 6 }}>
-                          {/* Lista de documentos */}
-                          <List sx={{ p: 0 }}>
-                            {category.documents.sort((a, b) => a.order - b.order).map((document) => (
-                              <ListItem 
-                                key={document.id}
-                                sx={{ 
-                                  p: 1.5,
-                                  mb: 1,
-                                  borderRadius: '6px',
-                                  bgcolor: '#f8f9fa',
-                                  borderLeft: `3px solid ${document.required ? '#e74c3c' : '#7f8c8d'}`
-                                }}
-                              >
-                                <ListItemIcon sx={{ minWidth: 36 }}>
-                                  <DragIndicatorIcon sx={{ color: '#7f8c8d' }} />
-                                </ListItemIcon>
-                                
-                                <ListItemIcon sx={{ minWidth: 36 }}>
-                                  <DescriptionIcon sx={{ color: document.required ? '#e74c3c' : '#7f8c8d' }} />
-                                </ListItemIcon>
-                                
-                                <Box sx={{ flex: 1 }}>
-                                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                                    <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                                      {document.name}
-                                    </Typography>
-                                    {document.required ? (
-                                      <Chip 
-                                        label="OBLIGATORIO" 
-                                        size="small" 
-                                        color="error"
-                                        sx={{ height: 18, fontSize: '0.6rem' }}
-                                      />
-                                    ) : (
-                                      <Chip 
-                                        label="OPCIONAL" 
-                                        size="small" 
-                                        color="default"
-                                        sx={{ height: 18, fontSize: '0.6rem' }}
-                                      />
-                                    )}
-                                    {document.tags.map((tag, idx) => (
-                                      <Chip 
-                                        key={idx}
-                                        label={tag}
-                                        size="small"
-                                        variant="outlined"
-                                        sx={{ height: 18, fontSize: '0.6rem' }}
-                                      />
-                                    ))}
-                                  </Box>
-                                  
-                                  <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', mb: 1 }}>
-                                    {document.description}
+                        
+                        <Stack direction="row" spacing={0.5}>
+                          <Tooltip title="Editar categoría">
+                            <IconButton 
+                              size="small"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditCategory(category);
+                              }}
+                            >
+                              <EditIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Eliminar categoría">
+                            <IconButton 
+                              size="small"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteCategory(category.id);
+                              }}
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        </Stack>
+                      </Box>
+                    </AccordionSummary>
+                    
+                    <AccordionDetails sx={{ bgcolor: '#fff' }}>
+                      <Box sx={{ pl: 6 }}>
+                        {/* Lista de documentos */}
+                        <List sx={{ p: 0 }}>
+                          {category.documents.sort((a, b) => a.order - b.order).map((document) => (
+                            <ListItem 
+                              key={document.id}
+                              sx={{ 
+                                p: 1.5,
+                                mb: 1,
+                                borderRadius: '6px',
+                                bgcolor: '#f8f9fa',
+                                borderLeft: `3px solid ${document.required ? '#e74c3c' : '#7f8c8d'}`
+                              }}
+                            >
+                              <ListItemIcon sx={{ minWidth: 36 }}>
+                                <DragIndicatorIcon sx={{ color: '#7f8c8d' }} />
+                              </ListItemIcon>
+                              
+                              <ListItemIcon sx={{ minWidth: 36 }}>
+                                <DescriptionIcon sx={{ color: document.required ? '#e74c3c' : '#7f8c8d' }} />
+                              </ListItemIcon>
+                              
+                              <Box sx={{ flex: 1 }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                    {document.name}
                                   </Typography>
-                                  
-                                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                                      <strong>Formato:</strong> {document.format}
-                                    </Typography>
-                                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                                      <strong>Máx:</strong> {document.maxSize}
-                                    </Typography>
-                                    {document.validation && (
-                                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                                        <strong>Validación:</strong> {document.validation}
-                                      </Typography>
-                                    )}
-                                  </Box>
+                                  {document.required ? (
+                                    <Chip 
+                                      label="OBLIGATORIO" 
+                                      size="small" 
+                                      color="error"
+                                      sx={{ height: 18, fontSize: '0.6rem' }}
+                                    />
+                                  ) : (
+                                    <Chip 
+                                      label="OPCIONAL" 
+                                      size="small" 
+                                      color="default"
+                                      sx={{ height: 18, fontSize: '0.6rem' }}
+                                    />
+                                  )}
+                                  {document.tags.map((tag, idx) => (
+                                    <Chip 
+                                      key={idx}
+                                      label={tag}
+                                      size="small"
+                                      variant="outlined"
+                                      sx={{ height: 18, fontSize: '0.6rem' }}
+                                    />
+                                  ))}
                                 </Box>
                                 
-                                <ListItemSecondaryAction>
-                                  <Stack direction="row" spacing={0.5}>
-                                    <Tooltip title={document.required ? "Marcar como opcional" : "Marcar como obligatorio"}>
-                                      <FormControlLabel
-                                        control={
-                                          <Switch
-                                            size="small"
-                                            checked={document.required}
-                                            onChange={() => handleToggleRequired(category.id, document.id)}
-                                            color="primary"
-                                          />
-                                        }
-                                        label=""
-                                      />
-                                    </Tooltip>
-                                    <Tooltip title="Editar documento">
-                                      <IconButton 
-                                        size="small"
-                                        onClick={() => handleEditDocument(category, document)}
-                                      >
-                                        <EditIcon fontSize="small" />
-                                      </IconButton>
-                                    </Tooltip>
-                                    <Tooltip title="Eliminar documento">
-                                      <IconButton 
-                                        size="small"
-                                        onClick={() => handleDeleteDocument(category.id, document.id)}
-                                      >
-                                        <DeleteIcon fontSize="small" />
-                                      </IconButton>
-                                    </Tooltip>
-                                  </Stack>
-                                </ListItemSecondaryAction>
-                              </ListItem>
-                            ))}
-                          </List>
-                          
-                          <Button
-                            startIcon={<AddIcon />}
-                            size="small"
-                            onClick={() => handleAddDocument(category.id)}
-                            sx={{ mt: 2 }}
-                          >
-                            Agregar Documento a esta Categoría
-                          </Button>
-                        </Box>
-                      </AccordionDetails>
-                    </Accordion>
-                  ))
-                ) : (
-                  // Vista de grid
-                  <Grid container spacing={2}>
-                    {categories.sort((a, b) => a.order - b.order).map((category) => (
-                      <Grid item xs={12} md={6} key={category.id}>
-                        <Card sx={{ height: '100%' }}>
-                          <CardContent>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                <Box sx={{ 
-                                  width: 48, 
-                                  height: 48, 
-                                  borderRadius: '8px',
-                                  bgcolor: `${category.color}20`,
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center'
-                                }}>
-                                  <Typography variant="h4" sx={{ color: category.color }}>
-                                    {category.icon}
+                                <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', mb: 1 }}>
+                                  {document.description}
+                                </Typography>
+                                
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                  <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                    <strong>Formato:</strong> {document.format}
                                   </Typography>
-                                </Box>
-                                <Box>
-                                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                                    {category.name}
+                                  <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                    <strong>Máx:</strong> {document.maxSize}
                                   </Typography>
-                                  <Chip 
-                                    label={category.required ? "OBLIGATORIO" : "OPCIONAL"}
-                                    size="small"
-                                    color={category.required ? "error" : "default"}
-                                    sx={{ height: 20, fontSize: '0.65rem' }}
-                                  />
+                                  {document.validation && (
+                                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                      <strong>Validación:</strong> {document.validation}
+                                    </Typography>
+                                  )}
                                 </Box>
                               </Box>
                               
-                              <Stack direction="row" spacing={0.5}>
-                                <IconButton size="small">
-                                  <EditIcon fontSize="small" />
-                                </IconButton>
-                              </Stack>
-                            </Box>
-                            
-                            <Typography variant="body2" sx={{ color: '#7f8c8d', mb: 2 }}>
-                              {category.description}
-                            </Typography>
-                            
-                            <Box sx={{ mb: 2 }}>
-                              <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', mb: 1 }}>
-                                Documentos ({category.documents.length}):
-                              </Typography>
-                              <Stack spacing={1}>
-                                {category.documents.slice(0, 3).map((doc) => (
-                                  <Box 
-                                    key={doc.id}
-                                    sx={{ 
-                                      p: 1,
-                                      borderRadius: '4px',
-                                      bgcolor: '#f8f9fa',
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      justifyContent: 'space-between'
-                                    }}
-                                  >
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                      <DescriptionIcon sx={{ fontSize: 16, color: doc.required ? '#e74c3c' : '#7f8c8d' }} />
-                                      <Typography variant="caption" sx={{ color: '#2c3e50' }}>
-                                        {doc.name}
-                                      </Typography>
-                                    </Box>
-                                    <Chip 
-                                      label={doc.required ? "Req" : "Opc"}
-                                      size="small"
-                                      sx={{ 
-                                        height: 16,
-                                        fontSize: '0.6rem',
-                                        bgcolor: doc.required ? '#ffebee' : '#f5f5f5'
-                                      }}
+                              <ListItemSecondaryAction>
+                                <Stack direction="row" spacing={0.5}>
+                                  <Tooltip title={document.required ? "Marcar como opcional" : "Marcar como obligatorio"}>
+                                    <FormControlLabel
+                                      control={
+                                        <Switch
+                                          size="small"
+                                          checked={document.required}
+                                          onChange={() => handleToggleRequired(category.id, document.id)}
+                                          color="primary"
+                                        />
+                                      }
+                                      label=""
                                     />
-                                  </Box>
-                                ))}
-                              </Stack>
-                            </Box>
-                            
-                            <Button
-                              fullWidth
-                              size="small"
-                              variant="outlined"
-                              onClick={() => handleCategoryExpand(category.id)}
-                            >
-                              Ver todos los documentos
-                            </Button>
-                          </CardContent>
-                        </Card>
-                      </Grid>
-                    ))}
-                  </Grid>
-                )}
+                                  </Tooltip>
+                                  <Tooltip title="Editar documento">
+                                    <IconButton 
+                                      size="small"
+                                      onClick={() => handleEditDocument(category, document)}
+                                    >
+                                      <EditIcon fontSize="small" />
+                                    </IconButton>
+                                  </Tooltip>
+                                  <Tooltip title="Eliminar documento">
+                                    <IconButton 
+                                      size="small"
+                                      onClick={() => handleDeleteDocument(category.id, document.id)}
+                                    >
+                                      <DeleteIcon fontSize="small" />
+                                    </IconButton>
+                                  </Tooltip>
+                                </Stack>
+                              </ListItemSecondaryAction>
+                            </ListItem>
+                          ))}
+                        </List>
+                        
+                        <Button
+                          startIcon={<AddIcon />}
+                          size="small"
+                          onClick={() => handleAddDocument(category.id)}
+                          sx={{ mt: 2 }}
+                        >
+                          Agregar Documento a esta Categoría
+                        </Button>
+                      </Box>
+                    </AccordionDetails>
+                  </Accordion>
+                ))}
               </Box>
             </Paper>
-          </Grid>
+          </Box>
 
-          {/* Columna derecha - Configuración general */}
-          <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column' }}>
-            <Paper elevation={1} sx={{ p: 2, mb: 2, flex: 1 }}>
-              <Typography variant="h6" sx={{ color: '#2c3e50', mb: 3, fontWeight: 'bold' }}>
-                Configuración General
-              </Typography>
-
-              <Stack spacing={3}>
-                <Box>
-                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
-                    Tamaño Máximo por Expediente
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    value={generalConfig.maxExpedienteSize}
-                    onChange={handleGeneralConfigChange('maxExpedienteSize')}
-                    InputProps={{
-                      endAdornment: <InputAdornment position="end">MB</InputAdornment>,
-                    }}
-                  />
-                </Box>
-                
-                <Box>
-                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
-                    Días para Completar Expediente
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    value={generalConfig.daysToComplete}
-                    onChange={handleGeneralConfigChange('daysToComplete')}
-                    InputProps={{
-                      endAdornment: <InputAdornment position="end">días</InputAdornment>,
-                    }}
-                  />
-                </Box>
-                
-                <Box>
-                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
-                    Revisión Periódica
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    value={generalConfig.periodicReview}
-                    onChange={handleGeneralConfigChange('periodicReview')}
-                    InputProps={{
-                      endAdornment: <InputAdornment position="end">días</InputAdornment>,
-                    }}
-                  />
-                </Box>
-                
-                <Box>
-                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
-                    Formato Principal
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    select
-                    value={generalConfig.mainFormat}
-                    onChange={handleGeneralConfigChange('mainFormat')}
-                  >
-                    <MenuItem value="PDF">PDF</MenuItem>
-                    <MenuItem value="JPG">JPG/PNG</MenuItem>
-                    <MenuItem value="AMBOS">Ambos</MenuItem>
-                    <MenuItem value="MULTI">Múltiples formatos</MenuItem>
-                  </TextField>
-                </Box>
-                
-                <Divider />
-                
-                <Box>
-                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 2 }}>
-                    Opciones Avanzadas
-                  </Typography>
-                  
-                  <Stack spacing={1.5}>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          size="small"
-                          checked={generalConfig.autoValidation}
-                          onChange={handleGeneralConfigChange('autoValidation')}
-                        />
-                      }
-                      label="Validación Automática"
-                    />
-                    
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          size="small"
-                          checked={generalConfig.versionControl}
-                          onChange={handleGeneralConfigChange('versionControl')}
-                        />
-                      }
-                      label="Control de Versiones"
-                    />
-                    
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          size="small"
-                          checked={generalConfig.requireDigitalSignature}
-                          onChange={handleGeneralConfigChange('requireDigitalSignature')}
-                        />
-                      }
-                      label="Firma Digital Requerida"
-                    />
-                  </Stack>
-                </Box>
-                
-                <Box>
-                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
-                    Retención de Documentos
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    value={generalConfig.retentionYears}
-                    onChange={handleGeneralConfigChange('retentionYears')}
-                    InputProps={{
-                      endAdornment: <InputAdornment position="end">años</InputAdornment>,
-                    }}
-                  />
-                </Box>
-                
-                <Box>
-                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
-                    Máx. Documentos por Expediente
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    value={generalConfig.maxDocumentsPerExpediente}
-                    onChange={handleGeneralConfigChange('maxDocumentsPerExpediente')}
-                  />
-                </Box>
-              </Stack>
-              
-              <Button
-                fullWidth
-                variant="contained"
-                startIcon={<SaveIcon />}
-                sx={{ mt: 3 }}
-              >
-                Guardar Configuración
-              </Button>
-            </Paper>
-
-            {/* Resumen */}
-            <Paper elevation={1} sx={{ p: 2 }}>
-              <Typography variant="h6" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
-                Resumen del Expediente
-              </Typography>
-              
-              <Stack spacing={1.5}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                    Categorías configuradas:
-                  </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                    {stats.totalCategories}
-                  </Typography>
-                </Box>
-                
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                    Documentos totales:
-                  </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                    {stats.totalDocuments}
-                  </Typography>
-                </Box>
-                
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                    Documentos obligatorios:
-                  </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                    {stats.requiredDocuments}
-                  </Typography>
-                </Box>
-                
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                    Tamaño máximo:
-                  </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                    {generalConfig.maxExpedienteSize} MB
-                  </Typography>
-                </Box>
-                
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                    Tiempo para completar:
-                  </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                    {generalConfig.daysToComplete} días
-                  </Typography>
-                </Box>
-              </Stack>
-              
-              <Box sx={{ mt: 2, p: 1.5, bgcolor: '#f8f9fa', borderRadius: '6px' }}>
-                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                  <strong>Nota:</strong> Los cambios se aplican a todos los nuevos expedientes. Los expedientes existentes mantienen su configuración original.
+          {/* Columna derecha - Configuración General (30%) - MISMA ALTURA QUE LA OTRA CARD */}
+          <Box sx={{ 
+            flex: 3, // 30% del espacio
+            minHeight: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            '@media (max-width: 1200px)': {
+              flex: '1 1 100%',
+            }
+          }}>
+            <Paper elevation={1} sx={{ 
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              borderRadius: '8px',
+              height: '100%',
+              overflow: 'hidden'
+            }}>
+              <CardContent sx={{ 
+                p: 2, 
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100%'
+              }}>
+                <Typography variant="h6" sx={{ color: '#2c3e50', mb: 3, fontWeight: 'bold' }}>
+                  Configuración General
                 </Typography>
-              </Box>
+
+                <Stack spacing={3} sx={{ flex: 1, overflow: 'hidden' }}>
+                  <Box>
+                    <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
+                      Tamaño Máximo por Expediente
+                    </Typography>
+                    <TextField
+                      fullWidth
+                      size="small"
+                      value={generalConfig.maxExpedienteSize}
+                      onChange={handleGeneralConfigChange('maxExpedienteSize')}
+                      InputProps={{
+                        endAdornment: <InputAdornment position="end">MB</InputAdornment>,
+                      }}
+                    />
+                  </Box>
+                  
+                  <Box>
+                    <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
+                      Días para Completar Expediente
+                    </Typography>
+                    <TextField
+                      fullWidth
+                      size="small"
+                      value={generalConfig.daysToComplete}
+                      onChange={handleGeneralConfigChange('daysToComplete')}
+                      InputProps={{
+                        endAdornment: <InputAdornment position="end">días</InputAdornment>,
+                      }}
+                    />
+                  </Box>
+                  
+                  <Box>
+                    <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
+                      Revisión Periódica
+                    </Typography>
+                    <TextField
+                      fullWidth
+                      size="small"
+                      value={generalConfig.periodicReview}
+                      onChange={handleGeneralConfigChange('periodicReview')}
+                      InputProps={{
+                        endAdornment: <InputAdornment position="end">días</InputAdornment>,
+                      }}
+                    />
+                  </Box>
+                  
+                  <Box>
+                    <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
+                      Formato Principal
+                    </Typography>
+                    <TextField
+                      fullWidth
+                      size="small"
+                      select
+                      value={generalConfig.mainFormat}
+                      onChange={handleGeneralConfigChange('mainFormat')}
+                    >
+                      <MenuItem value="PDF">PDF</MenuItem>
+                      <MenuItem value="JPG">JPG/PNG</MenuItem>
+                      <MenuItem value="AMBOS">Ambos</MenuItem>
+                      <MenuItem value="MULTI">Múltiples formatos</MenuItem>
+                    </TextField>
+                  </Box>
+                  
+                  <Divider />
+                  
+                  <Box sx={{ flex: 1, overflowY: 'auto', pr: 1 }}>
+                    <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 2 }}>
+                      Opciones Avanzadas
+                    </Typography>
+                    
+                    <Stack spacing={1.5}>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            size="small"
+                            checked={generalConfig.autoValidation}
+                            onChange={handleGeneralConfigChange('autoValidation')}
+                          />
+                        }
+                        label="Validación Automática"
+                      />
+                      
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            size="small"
+                            checked={generalConfig.versionControl}
+                            onChange={handleGeneralConfigChange('versionControl')}
+                          />
+                        }
+                        label="Control de Versiones"
+                      />
+                      
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            size="small"
+                            checked={generalConfig.requireDigitalSignature}
+                            onChange={handleGeneralConfigChange('requireDigitalSignature')}
+                          />
+                        }
+                        label="Firma Digital Requerida"
+                      />
+                    </Stack>
+                    
+                    <Box sx={{ mt: 3 }}>
+                      <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
+                        Retención de Documentos
+                      </Typography>
+                      <TextField
+                        fullWidth
+                        size="small"
+                        value={generalConfig.retentionYears}
+                        onChange={handleGeneralConfigChange('retentionYears')}
+                        InputProps={{
+                          endAdornment: <InputAdornment position="end">años</InputAdornment>,
+                        }}
+                      />
+                    </Box>
+                    
+                    <Box sx={{ mt: 2 }}>
+                      <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
+                        Máx. Documentos por Expediente
+                      </Typography>
+                      <TextField
+                        fullWidth
+                        size="small"
+                        value={generalConfig.maxDocumentsPerExpediente}
+                        onChange={handleGeneralConfigChange('maxDocumentsPerExpediente')}
+                      />
+                    </Box>
+                  </Box>
+                </Stack>
+                
+                <Button
+                  fullWidth
+                  variant="contained"
+                  startIcon={<SaveIcon />}
+                  sx={{ mt: 3 }}
+                >
+                  Guardar Configuración
+                </Button>
+              </CardContent>
             </Paper>
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
       </Box>
+
+      {/* Panel flotante (Drawer) CON RESUMEN DEL EXPEDIENTE */}
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={toggleDrawer}
+        variant="persistent"
+        PaperProps={{
+          sx: {
+            width: 380,
+            maxWidth: '90vw',
+            marginTop: '64px',
+            height: 'calc(100vh - 64px)',
+            borderLeft: '1px solid #e0e0e0',
+            boxShadow: '0px 0px 20px rgba(0,0,0,0.1)',
+            borderRadius: '8px 0 0 8px',
+            backgroundColor: '#fff'
+          }
+        }}
+      >
+        <Box sx={{
+          p: 2,
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden'
+        }}>
+          {/* Header del panel */}
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mb: 2,
+            pb: 2,
+            borderBottom: '1px solid #e0e0e0'
+          }}>
+            <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
+              Resumen del Expediente
+            </Typography>
+            <IconButton
+              size="small"
+              onClick={toggleDrawer}
+              sx={{
+                color: '#7f8c8d',
+                '&:hover': { bgcolor: '#f5f5f5' }
+              }}
+            >
+              <ChevronRightIcon />
+            </IconButton>
+          </Box>
+
+          {/* Tabs del panel */}
+          <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
+            <Tabs
+              value={panelTab}
+              onChange={(e, newValue) => setPanelTab(newValue)}
+              variant="fullWidth"
+              sx={{ minHeight: 40 }}
+            >
+              {panelTabs.map((tab, index) => (
+                <Tab
+                  key={index}
+                  icon={tab.icon}
+                  iconPosition="start"
+                  label={tab.label}
+                  sx={{
+                    minHeight: 40,
+                    fontSize: '0.75rem',
+                    textTransform: 'none'
+                  }}
+                />
+              ))}
+            </Tabs>
+          </Box>
+
+          {/* Contenido del panel */}
+          <Box sx={{
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+            overflowY: 'auto'
+          }}>
+            {panelTab === 0 && (
+              /* Resumen del Expediente */
+              <Box sx={{ flex: 1, overflowY: 'auto' }}>
+                <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
+                  Información General
+                </Typography>
+
+                <Stack spacing={2}>
+                  {/* Tarjeta de resumen principal */}
+                  <Paper sx={{ p: 2, bgcolor: '#f8f9fa', borderRadius: '8px' }}>
+                    <Typography variant="body2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
+                      Configuración Actual
+                    </Typography>
+                    
+                    <Stack spacing={1.5}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                          Categorías configuradas:
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                          {stats.totalCategories}
+                        </Typography>
+                      </Box>
+                      
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                          Documentos totales:
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                          {stats.totalDocuments}
+                        </Typography>
+                      </Box>
+                      
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                          Documentos obligatorios:
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                          {stats.requiredDocuments}
+                        </Typography>
+                      </Box>
+                      
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                          Tamaño máximo:
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                          {generalConfig.maxExpedienteSize} MB
+                        </Typography>
+                      </Box>
+                      
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                          Tiempo para completar:
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                          {generalConfig.daysToComplete} días
+                        </Typography>
+                      </Box>
+                    </Stack>
+                  </Paper>
+
+                  {/* Distribución de documentos */}
+                  <Paper sx={{ p: 2, bgcolor: '#f8f9fa', borderRadius: '8px' }}>
+                    <Typography variant="body2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
+                      Distribución de Documentos
+                    </Typography>
+                    
+                    <Stack spacing={1.5}>
+                      <Box>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                          <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                            Obligatorios
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
+                            {stats.requiredDocuments} ({Math.round((stats.requiredDocuments / stats.totalDocuments) * 100)}%)
+                          </Typography>
+                        </Box>
+                        <LinearProgress 
+                          variant="determinate" 
+                          value={(stats.requiredDocuments / stats.totalDocuments) * 100}
+                          sx={{ 
+                            height: 6,
+                            borderRadius: 3,
+                            backgroundColor: '#ecf0f1',
+                            '& .MuiLinearProgress-bar': {
+                              backgroundColor: '#e74c3c',
+                              borderRadius: 3
+                            }
+                          }}
+                        />
+                      </Box>
+                      
+                      <Box>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                          <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                            Opcionales
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
+                            {stats.optionalDocuments} ({Math.round((stats.optionalDocuments / stats.totalDocuments) * 100)}%)
+                          </Typography>
+                        </Box>
+                        <LinearProgress 
+                          variant="determinate" 
+                          value={(stats.optionalDocuments / stats.totalDocuments) * 100}
+                          sx={{ 
+                            height: 6,
+                            borderRadius: 3,
+                            backgroundColor: '#ecf0f1',
+                            '& .MuiLinearProgress-bar': {
+                              backgroundColor: '#9b59b6',
+                              borderRadius: 3
+                            }
+                          }}
+                        />
+                      </Box>
+                    </Stack>
+                  </Paper>
+
+                  {/* Tamaños y formatos */}
+                  <Paper sx={{ p: 2, bgcolor: '#f8f9fa', borderRadius: '8px' }}>
+                    <Typography variant="body2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
+                      Tamaños y Formatos
+                    </Typography>
+                    
+                    <Grid container spacing={1}>
+                      <Grid item xs={6}>
+                        <Box sx={{ textAlign: 'center', p: 1 }}>
+                          <Typography variant="h6" sx={{ color: '#3498db', fontWeight: 'bold' }}>
+                            {generalConfig.maxExpedienteSize} MB
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                            Máx por documento
+                          </Typography>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Box sx={{ textAlign: 'center', p: 1 }}>
+                          <Typography variant="h6" sx={{ color: '#2ecc71', fontWeight: 'bold' }}>
+                            {parseInt(generalConfig.maxExpedienteSize) * stats.totalDocuments} MB
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                            Capacidad total
+                          </Typography>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Box sx={{ mt: 1, p: 1.5, bgcolor: '#fff', borderRadius: '6px' }}>
+                          <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                            <strong>Formato principal:</strong> {generalConfig.mainFormat}
+                          </Typography>
+                        </Box>
+                      </Grid>
+                    </Grid>
+                  </Paper>
+
+                  {/* Nota informativa */}
+                  <Box sx={{ p: 1.5, bgcolor: '#fff3cd', borderRadius: '6px', border: '1px solid #ffeaa7' }}>
+                    <Typography variant="caption" sx={{ color: '#856404' }}>
+                      <strong>Nota:</strong> Los cambios se aplican a todos los nuevos expedientes. Los expedientes existentes mantienen su configuración original.
+                    </Typography>
+                  </Box>
+                </Stack>
+              </Box>
+            )}
+
+            {panelTab === 1 && (
+              /* Configuración Avanzada */
+              <Box sx={{ flex: 1, overflowY: 'auto' }}>
+                <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
+                  Configuración Avanzada
+                </Typography>
+
+                <Stack spacing={2}>
+                  <Paper sx={{ p: 2, bgcolor: '#f8f9fa', borderRadius: '8px' }}>
+                    <Typography variant="body2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
+                      Estado del Sistema
+                    </Typography>
+                    
+                    <Stack spacing={1.5}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          {generalConfig.autoValidation ? (
+                            <CheckCircleIcon sx={{ color: '#27ae60', fontSize: 16 }} />
+                          ) : (
+                            <ErrorIcon sx={{ color: '#e74c3c', fontSize: 16 }} />
+                          )}
+                          <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                            Validación Automática
+                          </Typography>
+                        </Box>
+                        <Chip 
+                          label={generalConfig.autoValidation ? "ACTIVADO" : "DESACTIVADO"}
+                          size="small"
+                          color={generalConfig.autoValidation ? "success" : "error"}
+                          sx={{ fontSize: '0.65rem', height: 22 }}
+                        />
+                      </Box>
+                      
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          {generalConfig.versionControl ? (
+                            <CheckCircleIcon sx={{ color: '#27ae60', fontSize: 16 }} />
+                          ) : (
+                            <ErrorIcon sx={{ color: '#e74c3c', fontSize: 16 }} />
+                          )}
+                          <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                            Control de Versiones
+                          </Typography>
+                        </Box>
+                        <Chip 
+                          label={generalConfig.versionControl ? "ACTIVADO" : "DESACTIVADO"}
+                          size="small"
+                          color={generalConfig.versionControl ? "success" : "error"}
+                          sx={{ fontSize: '0.65rem', height: 22 }}
+                        />
+                      </Box>
+                      
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          {generalConfig.requireDigitalSignature ? (
+                            <LockIcon sx={{ color: '#3498db', fontSize: 16 }} />
+                          ) : (
+                            <PublicIcon sx={{ color: '#7f8c8d', fontSize: 16 }} />
+                          )}
+                          <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                            Firma Digital
+                          </Typography>
+                        </Box>
+                        <Chip 
+                          label={generalConfig.requireDigitalSignature ? "REQUERIDA" : "NO REQUERIDA"}
+                          size="small"
+                          color={generalConfig.requireDigitalSignature ? "primary" : "default"}
+                          sx={{ fontSize: '0.65rem', height: 22 }}
+                        />
+                      </Box>
+                    </Stack>
+                  </Paper>
+
+                  <Paper sx={{ p: 2, bgcolor: '#f8f9fa', borderRadius: '8px' }}>
+                    <Typography variant="body2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
+                      Tiempos y Retención
+                    </Typography>
+                    
+                    <Stack spacing={1.5}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                          Revisión periódica:
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                          {generalConfig.periodicReview} días
+                        </Typography>
+                      </Box>
+                      
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                          Retención:
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                          {generalConfig.retentionYears} años
+                        </Typography>
+                      </Box>
+                      
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                          Máx. documentos:
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                          {generalConfig.maxDocumentsPerExpediente}
+                        </Typography>
+                      </Box>
+                    </Stack>
+                  </Paper>
+                </Stack>
+              </Box>
+            )}
+          </Box>
+
+          {/* Footer del panel */}
+          <Box sx={{
+            pt: 2,
+            mt: 2,
+            borderTop: '1px solid #e0e0e0',
+            display: 'flex',
+            justifyContent: 'center'
+          }}>
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<ChevronRightIcon />}
+              onClick={toggleDrawer}
+              fullWidth
+              sx={{
+                color: '#3498db',
+                borderColor: '#3498db'
+              }}
+            >
+              Cerrar Panel
+            </Button>
+          </Box>
+        </Box>
+      </Drawer>
+
+      {/* Botón flotante para abrir panel */}
+      {!drawerOpen && (
+        <Fab
+          color="default"
+          aria-label="ver panel"
+          onClick={toggleDrawer}
+          sx={{
+            position: 'fixed',
+            right: 16,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            zIndex: 1000,
+            boxShadow: '0px 2px 8px rgba(0,0,0,0.1)',
+            bgcolor: 'rgba(255, 255, 255, 0.9)',
+            color: '#7f8c8d',
+            border: '1px solid #e0e0e0',
+            opacity: 0.8,
+            '&:hover': {
+              bgcolor: 'rgba(248, 249, 250, 0.95)',
+              opacity: 1,
+              boxShadow: '0px 4px 12px rgba(0,0,0,0.15)'
+            },
+            transition: 'all 0.2s ease-in-out'
+          }}
+          size="small"
+        >
+          <VisibilityIcon sx={{ fontSize: 18 }} />
+        </Fab>
+      )}
 
       {/* Diálogo de edición */}
       <Dialog 
