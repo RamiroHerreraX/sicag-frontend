@@ -254,7 +254,7 @@ const AssociationDashboard = () => {
                     transition: 'transform 0.2s',
                     '&:hover': { transform: 'translateY(-2px)' }
                   }}>
-                    <CardContent sx={{ p: 6 }}>
+                    <CardContent sx={{ p: 3 }}>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <Box sx={{ flex: 1 }}>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>

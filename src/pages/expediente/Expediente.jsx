@@ -403,6 +403,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
           </Box>
         </AccordionSummary>
         <AccordionDetails sx={{ pt: 3, pb: 3 }}>
+          
           {/* Estado de validación si ya fue enviado */}
           {estadoValidacion.enviado && (
             <Alert 

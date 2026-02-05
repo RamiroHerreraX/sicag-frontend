@@ -25,7 +25,7 @@ import PrivacyAgreement from './pages/auth/PrivacyAgreement';
 import UserDashboard from './pages/dashboard/UserDashboard';
 import CommitteeDashboard from './pages/committee/CommitteeDashboard';
 import AdminDashboard from './pages/dashboard/AdminDashboard';
-import AssociationDashboard from './pages/association/AssociationDashboard'; // NUEVO DASHBOARD
+ // NUEVO DASHBOARD
 
 // Certifications
 import Certifications from './pages/certifications/Certifications';
@@ -59,9 +59,11 @@ import CommitteeProfile from './pages/committee/CommitteeProfile';
 import CommitteeMetrics from './pages/committee/CommitteeMetrics';*/
 
 // Association Modules - NUEVOS
+import AssociationDashboard from './pages/association/AssociationDashboard';
 import ControlAsociados from './pages/association/ControlAsociados';
 import AlertsAsociacion from './pages/association/AlertsAsociacion'; // NUEVO
 import AssociationProfile from './pages/association/AssociationProfile'; // NUEVO
+import ExpedienteAssociation from './pages/association/ExpedienteAsociados';
 
 // Mapa del sitio
 import SiteMap from './pages/sitemap/SiteMap';
@@ -138,6 +140,7 @@ function App() {
               <Route path="dashboard" element={<AssociationDashboard />} />
               <Route path="alerts" element={<AlertsAsociacion />} />
               <Route path="control-asociados" element={<ControlAsociados />} />
+              <Route path="expediente" element={<ExpedienteAssociation />} />
               <Route path="profile" element={<AssociationProfile />} />
             </Route>
 
