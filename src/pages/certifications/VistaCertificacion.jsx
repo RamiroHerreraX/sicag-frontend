@@ -23,7 +23,7 @@ const VistaCertificacion = () => {
         variant="h5"
         sx={{ fontWeight: 'bold', mb: 3, textAlign: 'center' }}
       >
-        CERTIFICACIÓN PATENTE ADUANAL
+        CERTIFICACIÓN 
       </Typography>
 
       <Grid container spacing={3}>

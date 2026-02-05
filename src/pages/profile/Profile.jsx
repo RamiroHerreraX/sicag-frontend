@@ -95,8 +95,8 @@ const Profile = () => {
     email: 'luis.rodriguez@ejemplo.com',
     telefono: '+52 55 1234 5678',
     rol: 'Agente Aduanal',
-    nivel:'Nivel III',
-    des_Nivel: 'Sistema Gremial Avanzado',
+    nivel:'Nivel II',
+    des_Nivel: 'Sistema Gremial Intermedio',
     region: 'Norte',
     fechaRegistro: '15/01/2024',
     ultimoAcceso: '15/01/2026 10:30 AM'

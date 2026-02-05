@@ -17,16 +17,18 @@ import {
   Warning as WarningIcon,
   Error as ErrorIcon,
   TrendingUp as TrendingUpIcon,
-  Notifications as NotificationsIcon
+  Notifications as NotificationsIcon,
+  Done as DoneIcon,
+  Close as CloseIcon,
 } from '@mui/icons-material';
 
 const UserDashboard = () => {
   // Datos mock para el dashboard
   const stats = [
-    { title: 'Certificaciones Vigentes', value: '8', color: '#27ae60', icon: <CheckCircleIcon /> },
-    { title: 'Certificaciones por Vencer', value: '3', color: '#f39c12', icon: <WarningIcon /> },
-    { title: 'Certificaciones Rechazadas', value: '0', color: '#e74c3c', icon: <ErrorIcon /> },
-    { title: 'Nivel de Cumplimiento', value: '100%', color: '#3498db', icon: <TrendingUpIcon /> },
+    { title: 'Certificaciones Vigentes', value: '2', color: '#27ae60', icon: <CheckCircleIcon /> },
+    { title: 'Certificaciones por Vencer', value: '0', color: '#f39c12', icon: <WarningIcon /> },
+    { title: 'Certificaciones Rechazadas', value: '1', color: '#e74c3c', icon: <ErrorIcon /> },
+    { title: 'Nivel de Cumplimiento', value: '76%', color: '#eaee12', icon: <TrendingUpIcon /> },
   ];
 
   const alerts = [
@@ -64,10 +66,10 @@ const UserDashboard = () => {
       {/* Estatus Global - AUMENTADO EL ESPACIO ABAJO */}
       <Card sx={{ 
         mb: 8,  // Cambiado de mb: 6 a mb: 8 para más espacio vertical
-        bgcolor: '#e8f5e9',
+        bgcolor: '#f9faab',
         borderRadius: 2,
         boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-        border: '1px solid rgba(46, 125, 50, 0.1)',
+        border: '1px solid rgba(177, 194, 27, 0.1)',
         maxWidth: '1050px',
         margin: '20px auto',
       }}>
@@ -79,7 +81,13 @@ const UserDashboard = () => {
             justifyContent: 'space-between',
             gap: 3
           }}>
-            <Box>
+            {/* Primer elemento: Estatus Global */}
+            <Box sx={{ 
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: { xs: 'flex-start', sm: 'flex-start' }
+            }}>
               <Typography variant="h6" sx={{ 
                 color: '#2c3e50', 
                 fontWeight: '700',
@@ -88,35 +96,107 @@ const UserDashboard = () => {
               }}>
                 ESTATUS GLOBAL
               </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                 <Chip 
-                  label="ALTO CUMPLIMIENTO" 
-                  color="success" 
+                  label="CUMPLIMIENTO MEDIO" 
+                  color="warning" 
                   size="medium"
                   sx={{ 
                     fontWeight: '600',
-                    fontSize: '0.75rem'
+                    fontSize: '0.75rem',
+                    alignSelf: 'flex-start'
                   }}
                 />
                 <Typography variant="body2" sx={{ 
-                  color: '#27ae60',
-                  fontWeight: '500'
+                  color: '#ae8327',
+                  fontWeight: '500',
+                  mt: 0.5
                 }}>
-                  Todas tus certificaciones están vigentes
+                  La mayoría de tus certificaciones están vigentes
                 </Typography>
               </Box>
             </Box>
+
+            {/* Segundo elemento: Tres aspectos con iconos de aprobación */}
             <Box sx={{ 
-              textAlign: { xs: 'left', sm: 'center' },
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 1.5,
               borderLeft: { sm: '1px solid rgba(0,0,0,0.1)' },
-              pl: { sm: 3 }
+              borderRight: { sm: '1px solid rgba(0,0,0,0.1)' },
+              pl: { sm: 3 },
+              pr: { sm: 3 }
+            }}>
+              {/* Aspecto 1 */}
+              <Box sx={{ 
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1.5
+              }}>
+                <DoneIcon sx={{ 
+                  color: '#4caf50',
+                  fontSize: '1.2rem'
+                }} />
+                <Typography variant="body2" sx={{ 
+                  color: '#5d4037',
+                  fontSize: '0.9rem',
+                  fontWeight: '500'
+                }}>
+                  Formación ética y cumplimiento: <span style={{ fontWeight: '600', color: '#2e7d32' }}>20 hrs</span>
+                </Typography>
+              </Box>
+              
+              {/* Aspecto 2 */}
+              <Box sx={{ 
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1.5
+              }}>
+                <DoneIcon sx={{ 
+                  color: '#4caf50',
+                  fontSize: '1.2rem'
+                }} />
+                <Typography variant="body2" sx={{ 
+                  color: '#5d4037',
+                  fontSize: '0.9rem',
+                  fontWeight: '500'
+                }}>
+                  Actualización técnica aduanera: <span style={{ fontWeight: '600', color: '#2e7d32' }}>80 hrs</span>
+                </Typography>
+              </Box>
+              
+              {/* Aspecto 3 */}
+              <Box sx={{ 
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1.5
+              }}>
+                <CloseIcon sx={{ 
+                  color: '#f44336',
+                  fontSize: '1.2rem'
+                }} />
+                <Typography variant="body2" sx={{ 
+                  color: '#5d4037',
+                  fontSize: '0.9rem',
+                  fontWeight: '500'
+                }}>
+                  Antisobornos y cadena de suministros
+                </Typography>
+              </Box>
+            </Box>
+
+            {/* Tercer elemento: Nivel III */}
+            <Box sx={{ 
+              flex: 1,
+              textAlign: { xs: 'left', sm: 'center' }
             }}>
               <Typography variant="h4" sx={{ 
                 color: '#2c3e50', 
                 fontWeight: '800',
                 fontSize: { xs: '2rem', sm: '2.5rem' }
               }}>
-                NIVEL III 
+                NIVEL II
               </Typography>
               <Typography variant="subtitle2" sx={{ 
                 color: '#1a5276',
@@ -124,7 +204,7 @@ const UserDashboard = () => {
                 fontSize: '0.95rem',
                 mb: 1
               }}>
-                Sistema Gremial Avanzado
+                Sistema Gremial Intermedio
               </Typography>
               <Typography variant="caption" sx={{ 
                 color: '#7f8c8d',

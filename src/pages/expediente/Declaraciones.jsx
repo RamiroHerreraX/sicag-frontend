@@ -465,7 +465,7 @@ const DeclaracionesCumplimientoAduanero = () => {
     });
   };
 
-  // Función para calcular puntuación y guardar apartado con protección
+  // Función para calcular puntuación y guardar apartado con protección - MODIFICADA
   const handleGuardarApartado = (apartadoId) => {
     const apartado = apartadosData[apartadoId];
     
@@ -488,11 +488,21 @@ const DeclaracionesCumplimientoAduanero = () => {
       return;
     }
 
-    // Calcular puntuación de manera segura
+    // Calcular puntuación de manera segura - MODIFICADO
     let puntuacionTotal = 0;
     apartado.preguntas.forEach(pregunta => {
-      if (pregunta && pregunta.respuesta === false) { // NEGATIVO: En conflictos de intereses, "false" es bueno (no tiene conflicto)
-        puntuacionTotal += pregunta.puntos || 0;
+      if (pregunta) {
+        if (apartadoId === 'conflictos_intereses') {
+          // Para conflictos de intereses: "No" (false) es bueno y suma puntos
+          if (pregunta.respuesta === false) {
+            puntuacionTotal += pregunta.puntos || 0;
+          }
+        } else {
+          // Para los artículos 95-98: "Sí" (true) es bueno y suma puntos
+          if (pregunta.respuesta === true) {
+            puntuacionTotal += pregunta.puntos || 0;
+          }
+        }
       }
     });
 
@@ -1212,7 +1222,7 @@ const DeclaracionesCumplimientoAduanero = () => {
             </Box>
           </Box>
           
-          {/* Tabla de indicadores por apartado */}
+          {/* Tabla de indicadores por apartado - CORREGIDA */}
           <Box sx={{ mt: 3 }}>
             <Typography variant="h6" sx={{ mb: 2, color: '#333', display: 'flex', alignItems: 'center', gap: 1 }}>
               <TrendingUpIcon /> Mi Cumplimiento por Apartado

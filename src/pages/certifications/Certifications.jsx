@@ -153,17 +153,7 @@ const Certifications = () => {
       documents: 1,
       lastUpdate: '01/01/2026'
     },
-    { 
-      id: 7, 
-      type: 'CERTIFICADO RECHAZADO', 
-      number: 'CR-2025-99999', 
-      issueDate: '01/12/2025', 
-      expirationDate: '01/12/2026', 
-      status: 'Rechazado',
-      progress: 0,
-      documents: 0,
-      lastUpdate: '20/12/2025'
-    },
+   
   ]);
 
   // Estadísticas
@@ -590,7 +580,6 @@ const Certifications = () => {
         </Grid>
       </Grid>
 
-      {/* Resto del código permanece igual */}
       {/* Filtros y búsqueda */}
       <Paper elevation={1} sx={{ p: 3, mb: 3 }}>
         <Grid container spacing={2} alignItems="center">
@@ -737,13 +726,15 @@ const Certifications = () => {
                       <IconButton 
                         size="small" 
                         component={Link}
-                        to={`/certifications/${cert.id}`}
+                        to="/vista-certification"
                         sx={{ color: '#3498db' }}
                       >
                         <VisibilityIcon />
                       </IconButton>
                       <IconButton 
                         size="small"
+                        component={Link}
+                        to="/new-user-certification"
                         sx={{ color: '#f39c12' }}
                       >
                         <EditIcon />
@@ -791,10 +782,11 @@ const Certifications = () => {
               📋 Guía Rápida
             </Typography>
             <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-              • <strong>Vigente:</strong> Certificación activa y válida<br />
-              • <strong>Por Vencer:</strong> Vence en menos de 90 días<br />
-              • <strong>En Revisión:</strong> En proceso de validación por el comité<br />
-              • <strong>Observaciones:</strong> Requiere atención o documentación adicional
+              • <strong style={{ color: '#2e7d32' }}>Aceptados:</strong> Certificación validada y activa<br />
+              • <strong style={{ color: '#ed6c02' }}>En revisión:</strong> En proceso de validación por el comité<br />
+              • <strong style={{ color: '#1976d2' }}>Información adicional:</strong> Requiere documentación complementaria<br />
+              • <strong style={{ color: '#0288d1' }}>Registro:</strong> Registro inicial pendiente de validación<br />
+              • <strong style={{ color: '#d32f2f' }}>Rechazado:</strong> Certificación no aprobada o vencida
             </Typography>
           </Grid>
           <Grid item xs={12} md={6}>

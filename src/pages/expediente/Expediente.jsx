@@ -125,11 +125,11 @@ a actos de soborno y corrupción en operaciones comerciales.`,
   };
 
   const handleUploadCertification = () => {
-    navigate('/new-user-certification');
+    
   };
   
   const handleSeeCertification = () => {
-    navigate('/vista-certification');
+    
   };
 
   // Funciones para Cumplimiento Organizacional

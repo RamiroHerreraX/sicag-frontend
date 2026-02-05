@@ -21,7 +21,7 @@ const NuevaCertificacion = () => {
         variant="h5"
         sx={{ fontWeight: 'bold', mb: 3, textAlign: 'center' }}
       >
-        NUEVA CERTIFICACIÓN
+        Modificar Certificación
       </Typography>
 
       <Grid container spacing={3}>
