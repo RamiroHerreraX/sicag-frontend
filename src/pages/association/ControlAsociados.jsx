@@ -685,7 +685,7 @@ const UserManagement = () => {
                   '&:hover': { bgcolor: 'primary.dark' }
                 }}
               >
-                Agregar Usuario Existente
+                Agregar Usuario 
               </Button>
             </Stack>
           </Grid>

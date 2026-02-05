@@ -72,16 +72,6 @@ const AssociationDashboard = () => {
       target: 35
     },
     { 
-      title: 'Operaciones Hoy', 
-      value: '156', 
-      change: '+12%', 
-      icon: ReceiptIcon,
-      color: '#2ecc71', 
-      trend: 'up', 
-      detail: 'Meta: 180 diarias',
-      target: 180
-    },
-    { 
       title: 'Pendientes Aprobación', 
       value: '14', 
       change: '-2', 
@@ -109,15 +99,12 @@ const AssociationDashboard = () => {
     { id: 2, name: 'Ana Martínez', role: 'Agente Senior', status: 'Activo', compliance: 95, pending: 2, lastActivity: '30 min', avatar: 'AM', agentId: 'AA-002' },
     { id: 3, name: 'Carlos López', role: 'Agente', status: 'Activo', compliance: 92, pending: 1, lastActivity: '1 h', avatar: 'CL', agentId: 'AA-003' },
     { id: 4, name: 'María Sánchez', role: 'Agente Junior', status: 'Inactivo', compliance: 85, pending: 3, lastActivity: '2 días', avatar: 'MS', agentId: 'AA-004' },
-    { id: 5, name: 'Pedro Ramírez', role: 'Agente Aduanal', status: 'Activo', compliance: 96, pending: 0, lastActivity: '45 min', avatar: 'PR', agentId: 'AA-005' },
-    { id: 6, name: 'Laura González', role: 'Supervisor', status: 'Activo', compliance: 99, pending: 0, lastActivity: '20 min', avatar: 'LG', agentId: 'AA-006' },
   ];
 
   const complianceMetrics = [
-    { metric: 'Tiempo Respuesta SAT', current: 92, target: 90, status: 'excelente' },
-    { metric: 'Exactitud Declaraciones', current: 96, target: 95, status: 'excelente' },
-    { metric: 'Cumplimiento Plazos', current: 88, target: 90, status: 'regular' },
-    { metric: 'Satisfacción Clientes', current: 91, target: 90, status: 'excelente' },
+    { metric: 'Cumplimiento de Declaraciones', current: 96, target: 95, status: 'excelente' },
+    { metric: 'Cumplimiento Certificaciones', current: 88, target: 90, status: 'regular' },
+    { metric: 'Cumplimiento de Expedientes', current: 91, target: 90, status: 'excelente' },
   ];
 
   const getStatusColor = (status) => {
@@ -215,12 +202,7 @@ const AssociationDashboard = () => {
                 onChange={(e, newValue) => newValue && setViewMode(newValue)}
                 size="small"
               >
-                <ToggleButton value="overview">
-                  Vista General
-                </ToggleButton>
-                <ToggleButton value="details">
-                  Detalles
-                </ToggleButton>
+        
               </ToggleButtonGroup>
             </Box>
           </Box>
@@ -255,26 +237,29 @@ const AssociationDashboard = () => {
 
       {/* Layout principal: 2 columnas */}
       <Grid container spacing={2}>
-        {/* Columna izquierda (más ancha) */}
-        <Grid item xs={12} lg={8}>
-          {/* KPI Cards - Reducidas */}
-          <Grid container spacing={2} sx={{ mb: 3 }}>
+
+        {/* Columna izquierda  */}
+        <Grid item xs={12} lg={12}>
+          
+          {/* KPI Cards */}
+          <Grid container spacing={3} sx={{ mb: 3 }}>
             {associationStats.map((stat, index) => {
               const IconComponent = stat.icon;
               return (
-                <Grid item xs={12} sm={6} md={3} key={index}>
+                <Grid item xs={12} sm={4}md={4} key={index}>
                   <Card sx={{ 
                     height: '100%', 
+                    width: '100%',
                     borderLeft: `4px solid ${stat.color}`,
                     transition: 'transform 0.2s',
                     '&:hover': { transform: 'translateY(-2px)' }
                   }}>
-                    <CardContent sx={{ p: 2 }}>
+                    <CardContent sx={{ p: 6 }}>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <Box sx={{ flex: 1 }}>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
                             <Box sx={{ color: stat.color }}>
-                              <IconComponent fontSize="small" />
+                              <IconComponent fontSize="medium" />
                             </Box>
                             <Typography variant="caption" sx={{ color: '#7f8c8d', fontWeight: 500 }}>
                               {stat.title}
@@ -328,9 +313,9 @@ const AssociationDashboard = () => {
             })}
           </Grid>
 
-          {/* Miembros de la asociación - Ahora ocupa toda la columna izquierda */}
-          <Card sx={{ mb: 2 }}>
-            <CardContent sx={{ p: 2 }}>
+          
+          <Card sx={{ mb: 4 }}>
+            <CardContent sx={{ p: 4 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                 <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold', fontSize: '1rem' }}>
                   Agentes de la Asociación
@@ -439,137 +424,14 @@ const AssociationDashboard = () => {
               </TableContainer>
             </CardContent>
           </Card>
-
-          {/* Estadísticas adicionales de la asociación */}
-          <Card>
-            <CardContent sx={{ p: 2 }}>
-              <Typography variant="h6" sx={{ color: '#2c3e50', mb: 3, fontWeight: 'bold', fontSize: '1rem' }}>
-                Desempeño de la Asociación
-              </Typography>
-              
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
-                  <Box sx={{ mb: 2 }}>
-                    <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1, fontWeight: 'bold' }}>
-                      Eficiencia Operativa
-                    </Typography>
-                    <LinearProgress 
-                      variant="determinate" 
-                      value={92}
-                      sx={{ 
-                        height: 8,
-                        borderRadius: 4,
-                        mb: 1,
-                        '& .MuiLinearProgress-bar': {
-                          backgroundColor: '#27ae60',
-                          borderRadius: 4
-                        }
-                      }}
-                    />
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        92%
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        Meta: 90%
-                      </Typography>
-                    </Box>
-                  </Box>
-                  
-                  <Box sx={{ mb: 2 }}>
-                    <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1, fontWeight: 'bold' }}>
-                      Capacidad de Agentes
-                    </Typography>
-                    <LinearProgress 
-                      variant="determinate" 
-                      value={87}
-                      sx={{ 
-                        height: 8,
-                        borderRadius: 4,
-                        mb: 1,
-                        '& .MuiLinearProgress-bar': {
-                          backgroundColor: '#f39c12',
-                          borderRadius: 4
-                        }
-                      }}
-                    />
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        87%
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        Meta: 95%
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Grid>
-                
-                <Grid item xs={12} md={6}>
-                  <Box sx={{ mb: 2 }}>
-                    <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1, fontWeight: 'bold' }}>
-                      Satisfacción de Clientes
-                    </Typography>
-                    <LinearProgress 
-                      variant="determinate" 
-                      value={94}
-                      sx={{ 
-                        height: 8,
-                        borderRadius: 4,
-                        mb: 1,
-                        '& .MuiLinearProgress-bar': {
-                          backgroundColor: '#27ae60',
-                          borderRadius: 4
-                        }
-                      }}
-                    />
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        94%
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        Meta: 90%
-                      </Typography>
-                    </Box>
-                  </Box>
-                  
-                  <Box>
-                    <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1, fontWeight: 'bold' }}>
-                      Tasa de Retención
-                    </Typography>
-                    <LinearProgress 
-                      variant="determinate" 
-                      value={96}
-                      sx={{ 
-                        height: 8,
-                        borderRadius: 4,
-                        mb: 1,
-                        '& .MuiLinearProgress-bar': {
-                          backgroundColor: '#27ae60',
-                          borderRadius: 4
-                        }
-                      }}
-                    />
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        96%
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        Meta: 92%
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
         </Grid>
 
         {/* Columna derecha (más estrecha) */}
         <Grid item xs={12} lg={4}>
-          <Stack spacing={2}>
+          <Stack spacing={3}>
             {/* Métricas de cumplimiento */}
             <Card>
-              <CardContent sx={{ p: 2 }}>
+              <CardContent sx={{ p: 4 }}>
                 <Typography variant="h6" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold', fontSize: '1rem' }}>
                   Métricas de Cumplimiento
                 </Typography>
@@ -624,131 +486,15 @@ const AssociationDashboard = () => {
                 </Stack>
 
                 <Divider sx={{ my: 2 }} />
-
-                {/* Acciones rápidas para la asociación */}
-                <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1.5, fontWeight: 'bold' }}>
-                  Acciones Rápidas
-                </Typography>
                 
-                <Grid container spacing={1}>
-                  <Grid item xs={6}>
-                    <Button
-                      fullWidth
-                      variant="outlined"
-                      size="small"
-                      startIcon={<AssignmentIcon />}
-                      sx={{ 
-                        justifyContent: 'flex-start',
-                        fontSize: '0.75rem',
-                        py: 0.75
-                      }}
-                    >
-                      Nuevo Reporte
-                    </Button>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Button
-                      fullWidth
-                      variant="outlined"
-                      size="small"
-                      startIcon={<PeopleIcon />}
-                      sx={{ 
-                        justifyContent: 'flex-start',
-                        fontSize: '0.75rem',
-                        py: 0.75
-                      }}
-                    >
-                      Agregar Agente
-                    </Button>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Button
-                      fullWidth
-                      variant="outlined"
-                      size="small"
-                      startIcon={<ReceiptIcon />}
-                      sx={{ 
-                        justifyContent: 'flex-start',
-                        fontSize: '0.75rem',
-                        py: 0.75
-                      }}
-                    >
-                      Registrar Operación
-                    </Button>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Button
-                      fullWidth
-                      variant="outlined"
-                      size="small"
-                      startIcon={<BalanceIcon />}
-                      sx={{ 
-                        justifyContent: 'flex-start',
-                        fontSize: '0.75rem',
-                        py: 0.75
-                      }}
-                    >
-                      Ver Balance
-                    </Button>
-                  </Grid>
-                </Grid>
+  
               </CardContent>
             </Card>
 
-            {/* Estado del sistema SAT */}
-            <Card>
-              <CardContent sx={{ p: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
-                  <BalanceIcon sx={{ color: '#2ecc71' }} />
-                  <Box>
-                    <Typography variant="subtitle2" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
-                      Estado SAT
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                      Conexión activa
-                    </Typography>
-                  </Box>
-                </Box>
-
-                <Box sx={{ 
-                  p: 1.5, 
-                  bgcolor: '#f8f9fa', 
-                  borderRadius: 1,
-                  border: '1px solid #ecf0f1'
-                }}>
-                  <Stack spacing={1}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        Última sincronización:
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: '#2c3e50', fontWeight: '500' }}>
-                        Hoy 10:30 AM
-                      </Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        Operaciones transmitidas:
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: '#2c3e50', fontWeight: '500' }}>
-                        156/156
-                      </Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        Validaciones SAT:
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: '#27ae60', fontWeight: '500' }}>
-                        100% exitosas
-                      </Typography>
-                    </Box>
-                  </Stack>
-                </Box>
-              </CardContent>
-            </Card>
 
             {/* Información adicional de la asociación */}
             <Card>
-              <CardContent sx={{ p: 2 }}>
+              <CardContent sx={{ p: 6 }}>
                 <Typography variant="h6" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold', fontSize: '1rem' }}>
                   Información de la Asociación
                 </Typography>
@@ -772,18 +518,7 @@ const AssociationDashboard = () => {
                   </Box>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                      Certificación SAT:
-                    </Typography>
-                    <Chip 
-                      label="Vigente"
-                      size="small"
-                      color="success"
-                      sx={{ height: 20, fontSize: '0.7rem' }}
-                    />
-                  </Box>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                      Puntuación SAT:
+                      Puntuación:
                     </Typography>
                     <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#27ae60' }}>
                       9.8/10
@@ -807,25 +542,7 @@ const AssociationDashboard = () => {
         </Grid>
       </Grid>
 
-      {/* Footer */}
-      <Box sx={{ 
-        mt: 3,
-        pt: 2,
-        borderTop: '1px solid #dfe6e9',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        flexWrap: 'wrap',
-        gap: 1
-      }}>
-        <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-          {currentAssociation.name} • Asociación Aduanal Certificada • Última actualización: Hoy 10:30 AM
-        </Typography>
-        <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <CheckCircleIcon sx={{ fontSize: 12, color: '#27ae60' }} />
-          Cumplimiento SAT: {currentAssociation.compliance}%
-        </Typography>
-      </Box>
+    
     </Box>
   );
 };

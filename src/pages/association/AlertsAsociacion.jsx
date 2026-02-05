@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Box,
@@ -22,17 +21,11 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  // NUEVOS COMPONENTES
   Badge,
   Tooltip,
   Avatar,
-  AvatarGroup,
   LinearProgress,
-  InputAdornment,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  CircularProgress
+  InputAdornment
 } from '@mui/material';
 import {
   Notifications as NotificationsIcon,
@@ -41,28 +34,18 @@ import {
   Info as InfoIcon,
   CheckCircle as CheckCircleIcon,
   Event as EventIcon,
-  FilterList as FilterIcon,
-  Delete as DeleteIcon,
-  Archive as ArchiveIcon,
-  MarkEmailRead as MarkReadIcon,
-  Settings as SettingsIcon,
   Download as DownloadIcon,
+  Settings as SettingsIcon,
   Refresh as RefreshIcon,
   Search as SearchIcon,
-  ArrowForward as ArrowForwardIcon,
   OpenInNew as OpenInNewIcon,
-  Sort as SortIcon,
   MoreVert as MoreVertIcon,
-  // NUEVOS ICONOS - AGREGAR PlaceIcon AQUÍ
+  MarkEmailRead as MarkReadIcon,
+  Sort as SortIcon,
   Timer as TimerIcon,
-  TrendingUp as TrendingUpIcon,
-  AutoDelete as AutoDeleteIcon,
   AssignmentTurnedIn as AssignmentTurnedInIcon,
   CircleNotifications as CircleNotificationsIcon,
-  ExpandMore as ExpandMoreIcon,
-  Speed as SpeedIcon,
-  Insights as InsightsIcon,
-  Place as PlaceIcon  // <-- AGREGAR ESTA LÍNEA
+  Place as PlaceIcon
 } from '@mui/icons-material';
 
 const CommitteeAlerts = () => {
@@ -83,7 +66,7 @@ const CommitteeAlerts = () => {
     push: false
   });
 
-  // Datos mock de alertas mejoradas
+  // Datos mock de alertas
   const alerts = [
     { 
       id: 1, 
@@ -284,19 +267,10 @@ const CommitteeAlerts = () => {
     errors: alerts.filter(a => a.type === 'error').length
   };
 
-  const categoryStats = {
-    vencimiento: alerts.filter(a => a.category === 'vencimiento').length,
-    rechazo: alerts.filter(a => a.category === 'rechazo').length,
-    asignacion: alerts.filter(a => a.category === 'asignacion').length,
-    observacion: alerts.filter(a => a.category === 'observacion').length,
-    aprobacion: alerts.filter(a => a.category === 'aprobacion').length
-  };
-
   const tabs = [
     { label: 'Todas', value: 0, badge: stats.total },
     { label: 'No Leídas', value: 1, badge: stats.unread, color: 'error' },
     { label: 'Urgentes', value: 2, badge: stats.urgent, color: 'warning' },
-    { label: 'Pendientes', value: 4, badge: stats.requiresAction, color: 'info' },
     { label: 'Resueltas', value: 3, badge: alerts.length - stats.requiresAction }
   ];
 
@@ -438,359 +412,221 @@ const CommitteeAlerts = () => {
 
       {/* Contenido Principal */}
       <Box sx={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        <Grid container spacing={2} sx={{ height: '100%' }}>
-          {/* Columna Izquierda - 70% */}
-          <Grid item xs={12} lg={8} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            {/* Tabs Compactas */}
-            <Paper elevation={1} sx={{ mb: 2 }}>
-              <Tabs 
-                value={tabValue} 
-                onChange={handleTabChange}
-                variant="scrollable"
-                scrollButtons="auto"
-                sx={{ minHeight: 48 }}
-              >
-                {tabs.map((tab) => (
-                  <Tab 
-                    key={tab.value}
-                    label={
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        {tab.label}
-                        {tab.badge > 0 && (
-                          <Chip 
-                            label={tab.badge}
-                            size="small"
-                            color={tab.color || 'default'}
-                            sx={{ height: 20, minWidth: 20 }}
-                          />
-                        )}
-                      </Box>
-                    }
-                  />
-                ))}
-              </Tabs>
-            </Paper>
-
-            {/* Lista de Alertas - Scroll Interno */}
-            <Paper elevation={1} sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-              <Box sx={{ 
-                p: 2, 
-                borderBottom: '1px solid #e0e0e0',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                  {filteredAlerts.length} alertas encontradas
-                </Typography>
-                <Stack direction="row" spacing={1}>
-                  <Tooltip title="Marcar todas como leídas">
-                    <IconButton size="small">
-                      <MarkReadIcon fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Configurar vista">
-                    <IconButton size="small">
-                      <SortIcon fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
-                </Stack>
-              </Box>
-
-              <Box sx={{ flex: 1, overflowY: 'auto', p: 1 }}>
-                {filteredAlerts.map((alert) => (
-                  <Card 
-                    key={alert.id}
-                    elevation={0}
-                    sx={{
-                      mb: 1,
-                      borderLeft: `4px solid ${getAlertColor(alert.type)}`,
-                      bgcolor: alert.read ? 'transparent' : '#f8f9fa',
-                      cursor: 'pointer',
-                      '&:hover': { bgcolor: '#f0f0f0' },
-                      transition: 'all 0.2s'
-                    }}
-                    onClick={() => handleAlertClick(alert.id)}
-                  >
-                    <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
-                      <Grid container spacing={1}>
-                        <Grid item xs={12}>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                              <Box sx={{ color: getAlertColor(alert.type) }}>
-                                {getAlertIcon(alert.type)}
-                              </Box>
-                              <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                                {alert.title}
-                              </Typography>
-                              {alert.priority === 'alta' && !alert.read && (
-                                <Chip 
-                                  icon={getPriorityIcon(alert.priority)}
-                                  label="URGENTE"
-                                  size="small"
-                                  color="error"
-                                  sx={{ height: 20, fontSize: '0.65rem' }}
-                                />
-                              )}
-                            </Box>
-                            
-                            <Stack direction="row" spacing={0.5}>
-                              {!alert.read && (
-                                <Tooltip title="Marcar como leída">
-                                  <IconButton 
-                                    size="small"
-                                    onClick={(e) => handleMarkAsRead(alert.id, e)}
-                                  >
-                                    <MarkReadIcon fontSize="small" />
-                                  </IconButton>
-                                </Tooltip>
-                              )}
-                              <IconButton size="small">
-                                <MoreVertIcon fontSize="small" />
-                              </IconButton>
-                            </Stack>
-                          </Box>
-                        </Grid>
-
-                        <Grid item xs={12}>
-                          <Typography variant="body2" sx={{ color: '#5a6c7d', mb: 1.5 }}>
-                            {alert.message}
-                          </Typography>
-                        </Grid>
-
-                        {/* Información Compacta */}
-                        <Grid item xs={12}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <Stack direction="row" spacing={2} alignItems="center">
-                              {alert.user && (
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                  <Avatar sx={{ width: 24, height: 24, fontSize: '0.75rem' }}>
-                                    {alert.user.avatar}
-                                  </Avatar>
-                                  <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                                    {alert.user.name}
-                                  </Typography>
-                                </Box>
-                              )}
-                              
-                              {alert.certificationNumber && (
-                                <Chip 
-                                  label={alert.certificationNumber}
-                                  size="small"
-                                  variant="outlined"
-                                  sx={{ height: 20 }}
-                                />
-                              )}
-                              
-                              {alert.region && (
-                                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                                  <PlaceIcon sx={{ fontSize: '0.8rem', verticalAlign: 'middle', mr: 0.5 }} />
-                                  {alert.region}
-                                </Typography>
-                              )}
-                            </Stack>
-                            
-                            <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                              <EventIcon sx={{ fontSize: '0.8rem', verticalAlign: 'middle', mr: 0.5 }} />
-                              {alert.time}
-                            </Typography>
-                          </Box>
-                        </Grid>
-
-                        {/* Panel Expandible */}
-                        {expandedAlert === alert.id && (
-                          <Grid item xs={12} sx={{ mt: 2, pt: 2, borderTop: '1px dashed #e0e0e0' }}>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <Typography variant="caption" sx={{ fontWeight: 'bold', color: '#7f8c8d' }}>
-                                ACCIONES DISPONIBLES:
-                              </Typography>
-                              <Stack direction="row" spacing={1}>
-                                {alert.actions.includes('review') && alert.certificationNumber && (
-                                  <Button
-                                    size="small"
-                                    variant="contained"
-                                    startIcon={<OpenInNewIcon />}
-                                    onClick={(e) => handleQuickAction(alert, 'review', e)}
-                                    sx={{ bgcolor: '#1a237e' }}
-                                  >
-                                    Revisar
-                                  </Button>
-                                )}
-                                {alert.actions.includes('extend') && (
-                                  <Button
-                                    size="small"
-                                    variant="outlined"
-                                    onClick={(e) => handleQuickAction(alert, 'extend', e)}
-                                  >
-                                    Extender
-                                  </Button>
-                                )}
-                                {alert.actions.includes('contact') && (
-                                  <Button
-                                    size="small"
-                                    variant="outlined"
-                                    onClick={(e) => handleQuickAction(alert, 'contact', e)}
-                                  >
-                                    Contactar
-                                  </Button>
-                                )}
-                              </Stack>
-                            </Box>
-                          </Grid>
-                        )}
-                      </Grid>
-                    </CardContent>
-                  </Card>
-                ))}
-
-                {filteredAlerts.length === 0 && (
-                  <Box sx={{ p: 8, textAlign: 'center' }}>
-                    <CircleNotificationsIcon sx={{ fontSize: 60, color: '#bdc3c7', mb: 2 }} />
-                    <Typography variant="h6" sx={{ color: '#7f8c8d', mb: 1 }}>
-                      No hay alertas que coincidan
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#95a5a6' }}>
-                      Intenta ajustar los filtros de búsqueda
-                    </Typography>
-                  </Box>
-                )}
-              </Box>
-            </Paper>
-          </Grid>
-
-          {/* Columna Derecha - 30% - Paneles Informativos */}
-          <Grid item xs={12} lg={4} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            {/* Estadísticas Rápidas */}
-            <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
-              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: '#2c3e50', display: 'flex', alignItems: 'center', gap: 1 }}>
-                <InsightsIcon /> Resumen de Estado
-              </Typography>
-              
-              <Grid container spacing={1.5}>
-                {[
-                  { label: 'Sin Leer', value: stats.unread, color: '#e74c3c', icon: <NotificationsIcon /> },
-                  { label: 'Urgentes', value: stats.urgent, color: '#f39c12', icon: <TimerIcon /> },
-                  { label: 'Pendientes', value: stats.requiresAction, color: '#3498db', icon: <AssignmentTurnedInIcon /> },
-                  { label: 'Hoy', value: stats.today, color: '#27ae60', icon: <SpeedIcon /> },
-                ].map((stat, index) => (
-                  <Grid item xs={6} key={index}>
-                    <Card variant="outlined" sx={{ p: 1.5, textAlign: 'center' }}>
-                      <Box sx={{ 
-                        display: 'flex', 
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        height: '100%'
-                      }}>
-                        <Box sx={{ color: stat.color, mb: 1 }}>
-                          {stat.icon}
-                        </Box>
-                        <Typography variant="h5" sx={{ color: stat.color, fontWeight: 'bold', lineHeight: 1 }}>
-                          {stat.value}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                          {stat.label}
-                        </Typography>
-                      </Box>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
-            </Paper>
-
-            {/* Distribución por Categoría */}
-            <Paper elevation={1} sx={{ p: 2, mb: 2, flex: 1 }}>
-              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: '#2c3e50', display: 'flex', alignItems: 'center', gap: 1 }}>
-                <TrendingUpIcon /> Distribución
-              </Typography>
-              
-              <Stack spacing={1.5}>
-                {Object.entries(categoryStats).map(([category, count]) => {
-                  const percentage = (count / stats.total) * 100;
-                  const colors = {
-                    vencimiento: '#f39c12',
-                    rechazo: '#e74c3c',
-                    asignacion: '#3498db',
-                    observacion: '#9b59b6',
-                    aprobacion: '#27ae60'
-                  };
-                  
-                  return (
-                    <Box key={category}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                        <Typography variant="caption" sx={{ textTransform: 'capitalize', color: '#5a6c7d' }}>
-                          {category}
-                        </Typography>
-                        <Typography variant="caption" sx={{ fontWeight: 'bold', color: colors[category] }}>
-                          {count} ({percentage.toFixed(0)}%)
-                        </Typography>
-                      </Box>
-                      <LinearProgress 
-                        variant="determinate" 
-                        value={percentage}
-                        sx={{ 
-                          height: 4,
-                          borderRadius: 2,
-                          bgcolor: '#f0f0f0',
-                          '& .MuiLinearProgress-bar': {
-                            bgcolor: colors[category]
-                          }
-                        }}
+        {/* Tabs Compactas */}
+        <Paper elevation={1} sx={{ mb: 2 }}>
+          <Tabs 
+            value={tabValue} 
+            onChange={handleTabChange}
+            variant="scrollable"
+            scrollButtons="auto"
+            sx={{ minHeight: 48 }}
+          >
+            {tabs.map((tab) => (
+              <Tab 
+                key={tab.value}
+                label={
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    {tab.label}
+                    {tab.badge > 0 && (
+                      <Chip 
+                        label={tab.badge}
+                        size="small"
+                        color={tab.color || 'default'}
+                        sx={{ height: 20, minWidth: 20 }}
                       />
-                    </Box>
-                  );
-                })}
-              </Stack>
-            </Paper>
+                    )}
+                  </Box>
+                }
+              />
+            ))}
+          </Tabs>
+        </Paper>
 
-            {/* Acciones Rápidas */}
-            <Paper elevation={1} sx={{ p: 2 }}>
-              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: '#2c3e50' }}>
-                Acciones Rápidas
-              </Typography>
-              
-              <Stack spacing={1}>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  startIcon={<MarkReadIcon />}
-                  disabled={stats.unread === 0}
-                  sx={{ justifyContent: 'flex-start', bgcolor: '#1a237e' }}
-                >
-                  Marcar todas como leídas
-                </Button>
-                
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  startIcon={<DownloadIcon />}
-                  sx={{ justifyContent: 'flex-start' }}
-                >
-                  Descargar reporte
-                </Button>
-                
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  startIcon={<AutoDeleteIcon />}
-                  sx={{ justifyContent: 'flex-start' }}
-                >
-                  Limpiar antiguas
-                </Button>
-                
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  startIcon={<SettingsIcon />}
-                  onClick={() => setShowSettings(true)}
-                  sx={{ justifyContent: 'flex-start' }}
-                >
-                  Configurar notificaciones
-                </Button>
-              </Stack>
-            </Paper>
-          </Grid>
-        </Grid>
+        {/* Lista de Alertas - Scroll Interno */}
+        <Paper elevation={1} sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          <Box sx={{ 
+            p: 2, 
+            borderBottom: '1px solid #e0e0e0',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+              {filteredAlerts.length} alertas encontradas
+            </Typography>
+            <Stack direction="row" spacing={1}>
+              <Tooltip title="Marcar todas como leídas">
+                <IconButton size="small">
+                  <MarkReadIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Configurar vista">
+                <IconButton size="small">
+                  <SortIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </Stack>
+          </Box>
+
+          <Box sx={{ flex: 1, overflowY: 'auto', p: 1 }}>
+            {filteredAlerts.map((alert) => (
+              <Card 
+                key={alert.id}
+                elevation={0}
+                sx={{
+                  mb: 1,
+                  borderLeft: `4px solid ${getAlertColor(alert.type)}`,
+                  bgcolor: alert.read ? 'transparent' : '#f8f9fa',
+                  cursor: 'pointer',
+                  '&:hover': { bgcolor: '#f0f0f0' },
+                  transition: 'all 0.2s'
+                }}
+                onClick={() => handleAlertClick(alert.id)}
+              >
+                <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
+                  <Grid container spacing={1}>
+                    <Grid item xs={12}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                          <Box sx={{ color: getAlertColor(alert.type) }}>
+                            {getAlertIcon(alert.type)}
+                          </Box>
+                          <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                            {alert.title}
+                          </Typography>
+                          {alert.priority === 'alta' && !alert.read && (
+                            <Chip 
+                              icon={getPriorityIcon(alert.priority)}
+                              label="URGENTE"
+                              size="small"
+                              color="error"
+                              sx={{ height: 20, fontSize: '0.65rem' }}
+                            />
+                          )}
+                        </Box>
+                        
+                        <Stack direction="row" spacing={0.5}>
+                          {!alert.read && (
+                            <Tooltip title="Marcar como leída">
+                              <IconButton 
+                                size="small"
+                                onClick={(e) => handleMarkAsRead(alert.id, e)}
+                              >
+                                <MarkReadIcon fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                          )}
+                          <IconButton size="small">
+                            <MoreVertIcon fontSize="small" />
+                          </IconButton>
+                        </Stack>
+                      </Box>
+                    </Grid>
+
+                    <Grid item xs={12}>
+                      <Typography variant="body2" sx={{ color: '#5a6c7d', mb: 1.5 }}>
+                        {alert.message}
+                      </Typography>
+                    </Grid>
+
+                    {/* Información Compacta */}
+                    <Grid item xs={12}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Stack direction="row" spacing={2} alignItems="center">
+                          {alert.user && (
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <Avatar sx={{ width: 24, height: 24, fontSize: '0.75rem' }}>
+                                {alert.user.avatar}
+                              </Avatar>
+                              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                {alert.user.name}
+                              </Typography>
+                            </Box>
+                          )}
+                          
+                          {alert.certificationNumber && (
+                            <Chip 
+                              label={alert.certificationNumber}
+                              size="small"
+                              variant="outlined"
+                              sx={{ height: 20 }}
+                            />
+                          )}
+                          
+                          {alert.region && (
+                            <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                              <PlaceIcon sx={{ fontSize: '0.8rem', verticalAlign: 'middle', mr: 0.5 }} />
+                              {alert.region}
+                            </Typography>
+                          )}
+                        </Stack>
+                        
+                        <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                          <EventIcon sx={{ fontSize: '0.8rem', verticalAlign: 'middle', mr: 0.5 }} />
+                          {alert.time}
+                        </Typography>
+                      </Box>
+                    </Grid>
+
+                    {/* Panel Expandible */}
+                    {expandedAlert === alert.id && (
+                      <Grid item xs={12} sx={{ mt: 2, pt: 2, borderTop: '1px dashed #e0e0e0' }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <Typography variant="caption" sx={{ fontWeight: 'bold', color: '#7f8c8d' }}>
+                            ACCIONES DISPONIBLES:
+                          </Typography>
+                          <Stack direction="row" spacing={1}>
+                            {alert.actions.includes('review') && alert.certificationNumber && (
+                              <Button
+                                size="small"
+                                variant="contained"
+                                startIcon={<OpenInNewIcon />}
+                                onClick={(e) => handleQuickAction(alert, 'review', e)}
+                                sx={{ bgcolor: '#1a237e' }}
+                              >
+                                Revisar
+                              </Button>
+                            )}
+                            {alert.actions.includes('extend') && (
+                              <Button
+                                size="small"
+                                variant="outlined"
+                                onClick={(e) => handleQuickAction(alert, 'extend', e)}
+                              >
+                                Extender
+                              </Button>
+                            )}
+                            {alert.actions.includes('contact') && (
+                              <Button
+                                size="small"
+                                variant="outlined"
+                                onClick={(e) => handleQuickAction(alert, 'contact', e)}
+                              >
+                                Contactar
+                              </Button>
+                            )}
+                          </Stack>
+                        </Box>
+                      </Grid>
+                    )}
+                  </Grid>
+                </CardContent>
+              </Card>
+            ))}
+
+            {filteredAlerts.length === 0 && (
+              <Box sx={{ p: 8, textAlign: 'center' }}>
+                <CircleNotificationsIcon sx={{ fontSize: 60, color: '#bdc3c7', mb: 2 }} />
+                <Typography variant="h6" sx={{ color: '#7f8c8d', mb: 1 }}>
+                  No hay alertas que coincidan
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#95a5a6' }}>
+                  Intenta ajustar los filtros de búsqueda
+                </Typography>
+              </Box>
+            )}
+          </Box>
+        </Paper>
       </Box>
 
       {/* Diálogo de Configuración */}
