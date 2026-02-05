@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import {
   Grid,
   Paper,
@@ -172,10 +173,16 @@ const UserDashboard = () => {
                 alignItems: 'center',
                 gap: 1.5
               }}>
-                <CloseIcon sx={{ 
-                  color: '#f44336',
-                  fontSize: '1.2rem'
-                }} />
+                <Typography 
+  sx={{ 
+    color: '#4caf50',
+    fontSize: '0.9rem',
+    fontWeight: 500,
+    fontFamily: 'monospace'
+  }}
+>
+  1/2
+</Typography>
                 <Typography variant="body2" sx={{ 
                   color: '#5d4037',
                   fontSize: '0.9rem',
@@ -424,6 +431,8 @@ const UserDashboard = () => {
                   <Button 
                     variant="outlined" 
                     color="primary"
+                    component={Link}
+                    to="/certifications"
                     sx={{ 
                       fontWeight: '600',
                       textTransform: 'none',

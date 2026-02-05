@@ -147,7 +147,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
   };
 
   const handleVerDocumento = (tipo) => {
-    alert(`Mostrando documento: ${cumplimientoData[tipo].documento}`);
+    
   };
 
   // Función para manejar cambios en descripción
@@ -217,7 +217,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
     }));
 
     // Mostrar mensaje de éxito
-    alert(`Documentos del apartado "${validacionDialog.titulo}" enviados exitosamente para revisión.`);
+    
     
     // Cerrar el diálogo
     handleCerrarValidacionDialog();

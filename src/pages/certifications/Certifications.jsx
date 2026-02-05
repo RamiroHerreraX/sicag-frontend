@@ -203,10 +203,7 @@ const Certifications = () => {
     setAssociationConsent(consent);
     setAssociationDialog(false);
     console.log(`Usuario ${consent ? 'aceptó' : 'rechazó'} la autorización`);
-    alert(consent 
-      ? 'Has autorizado a tu asociación para cargar documentos en tu nombre. Podrás revocar esta autorización en cualquier momento desde la configuración de tu cuenta.'
-      : 'Has rechazado la autorización. Tu asociación no podrá cargar documentos en tu nombre. Podrás cambiar esta configuración más tarde si lo deseas.'
-    );
+    
   };
 
   const filteredCerts = certifications.filter(cert => {
@@ -465,7 +462,7 @@ const Certifications = () => {
             <Button 
               onClick={() => {
                 setAssociationDialog(false);
-                alert('Puedes configurar esta autorización más tarde desde "Configuración → Asociación"');
+               
               }}
               variant="outlined"
               color="primary"
