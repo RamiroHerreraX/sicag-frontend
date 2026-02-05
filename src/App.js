@@ -22,25 +22,25 @@ import PasswordChange from './pages/auth/PasswordChange';
 import PrivacyAgreement from './pages/auth/PrivacyAgreement';
 
 // Dashboard Pages (diferentes por rol)
-import UserDashboard from './pages/dashboard/UserDashboard';
+import UserDashboard from './pages/agente/dashboard/UserDashboard';
 import CommitteeDashboard from './pages/committee/CommitteeDashboard';
 import AdminDashboard from './pages/dashboard/AdminDashboard';
  // NUEVO DASHBOARD
 
 // Certifications
-import Certifications from './pages/certifications/Certifications';
-import CertificationDetail from './pages/certifications/CertificationDetail';
-import NewCertification from './pages/certifications/NewCertification';
-import NewUserCertification from './pages/expediente/NewUserCertification';
-import Declaraciones from './pages/expediente/Declaraciones';
-import VistaCertificacion from './pages/certifications/VistaCertificacion';
+import Certifications from './pages/agente/certifications/Certifications';
+import CertificationDetail from './pages/agente/certifications/CertificationDetail';
+import NewCertification from './pages/agente/certifications/NewCertification';
+import NewUserCertification from './pages/agente/expediente/NewUserCertification';
+import Declaraciones from './pages/agente/expediente/Declaraciones';
+import VistaCertificacion from './pages/agente/certifications/VistaCertificacion';
 
 // Expediente
-import Expediente from './pages/expediente/Expediente';
+import Expediente from './pages/agente/expediente/Expediente';
 import ExpedienteConfig from './pages/expediente/ConfigExpediente';
 
 // Profile
-import Profile from './pages/profile/Profile';
+import Profile from './pages/agente/profile/Profile';
 
 // Admin Modules
 import UserManagement from './pages/admin/UserManagement';
