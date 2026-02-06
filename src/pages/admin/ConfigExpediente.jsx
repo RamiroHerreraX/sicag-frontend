@@ -36,7 +36,13 @@ import {
   Drawer,
   Tabs,
   Tab,
-  Fab
+  Fab,
+  Select,
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  Checkbox,
+  ListItemButton
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -63,7 +69,11 @@ import {
   FilterList as FilterIcon,
   People as PeopleIcon,
   ChevronRight as ChevronRightIcon,
-  Timer as TimerIcon
+  Timer as TimerIcon,
+  Business as BusinessIcon,
+  Person as PersonIcon,
+  Group as GroupIcon,
+  AdminPanelSettings as AdminPanelSettingsIcon
 } from '@mui/icons-material';
 
 const ConfigExpediente = () => {
@@ -71,21 +81,25 @@ const ConfigExpediente = () => {
     {
       id: 1,
       name: 'DOCUMENTACIÓN PERSONAL',
-      description: 'Documentos de identificación y datos personales',
+      description: 'Documentos de identificación y datos personales del solicitante',
       required: true,
       icon: '👤',
       color: '#3498db',
+      assignedRoles: ['AGENTE_ADUANAL'], // MODIFICADO: Solo para agentes
       documents: [
         { 
           id: 101, 
           name: 'Identificación Oficial', 
-          description: 'INE, Pasaporte o Cédula profesional', 
+          description: 'INE, Pasaporte o Cédula profesional vigente', 
           required: true, 
           format: 'PDF/JPG/PNG', 
           maxSize: '5MB',
           validation: 'OCR y validez',
           tags: ['obligatorio', 'identificación'],
-          order: 1
+          order: 1,
+          periodicReview: '365',
+          committeeReview: false,
+          reviewDescription: 'Revisión anual por renovación'
         },
         { 
           id: 102, 
@@ -96,7 +110,10 @@ const ConfigExpediente = () => {
           maxSize: '5MB',
           validation: 'Fecha y domicilio',
           tags: ['obligatorio', 'domicilio'],
-          order: 2
+          order: 2,
+          periodicReview: '90',
+          committeeReview: false,
+          reviewDescription: 'Revisión trimestral'
         },
         { 
           id: 103, 
@@ -107,7 +124,24 @@ const ConfigExpediente = () => {
           maxSize: '10MB',
           validation: 'Autenticidad',
           tags: ['obligatorio', 'identificación'],
-          order: 3
+          order: 3,
+          periodicReview: '0',
+          committeeReview: true,
+          reviewDescription: 'No requiere revisión periódica'
+        },
+        { 
+          id: 104, 
+          name: 'CURP', 
+          description: 'Clave Única de Registro de Población', 
+          required: true, 
+          format: 'PDF', 
+          maxSize: '5MB',
+          validation: 'Vigencia y datos',
+          tags: ['obligatorio', 'identificación'],
+          order: 4,
+          periodicReview: '0',
+          committeeReview: false,
+          reviewDescription: 'Documento permanente'
         },
       ],
       order: 1
@@ -115,21 +149,25 @@ const ConfigExpediente = () => {
     {
       id: 2,
       name: 'CERTIFICACIONES PROFESIONALES',
-      description: 'Certificaciones y credenciales profesionales',
+      description: 'Certificaciones y credenciales profesionales requeridas',
       required: true,
       icon: '🎓',
       color: '#2ecc71',
+      assignedRoles: ['AGENTE_ADUANAL'],
       documents: [
         { 
           id: 201, 
           name: 'Patente Aduanal', 
-          description: 'Vigente y legible', 
+          description: 'Patente vigente y legible', 
           required: true, 
           format: 'PDF', 
           maxSize: '10MB',
           validation: 'Vigencia y registro',
-          tags: ['obligatorio', 'profesional'],
-          order: 1
+          tags: ['obligatorio', 'profesional', 'agente'],
+          order: 1,
+          periodicReview: '365',
+          committeeReview: true,
+          reviewDescription: 'Renovación anual obligatoria'
         },
         { 
           id: 202, 
@@ -140,18 +178,10 @@ const ConfigExpediente = () => {
           maxSize: '10MB',
           validation: 'Registro y especialidad',
           tags: ['obligatorio', 'profesional'],
-          order: 2
-        },
-        { 
-          id: 203, 
-          name: 'Opinión SAT', 
-          description: 'Opinión positiva del SAT', 
-          required: false, 
-          format: 'PDF', 
-          maxSize: '5MB',
-          validation: 'Vigencia y folio',
-          tags: ['opcional', 'fiscal'],
-          order: 3
+          order: 2,
+          periodicReview: '730',
+          committeeReview: false,
+          reviewDescription: 'Revisión bianual'
         },
       ],
       order: 2
@@ -159,35 +189,82 @@ const ConfigExpediente = () => {
     {
       id: 3,
       name: 'DOCUMENTACIÓN LEGAL',
-      description: 'Documentos legales y poderes',
+      description: 'Documentos legales y poderes notariales',
       required: false,
       icon: '⚖️',
       color: '#9b59b6',
+      assignedRoles: ['ASOCIACION_ADUANAL'],
       documents: [
         { 
           id: 301, 
-          name: 'Poder Notarial', 
-          description: 'Poder vigente y autenticado', 
-          required: false, 
+          name: 'Acta Constitutiva', 
+          description: 'Documento legal de constitución (solo para asociaciones)', 
+          required: true, 
           format: 'PDF', 
           maxSize: '15MB',
-          validation: 'Firma y registro',
-          tags: ['legal', 'poder'],
-          order: 1
+          validation: 'Firma y registro notarial',
+          tags: ['legal', 'asociación'],
+          order: 1,
+          periodicReview: '0',
+          committeeReview: true,
+          reviewDescription: 'Documento permanente - revisión inicial'
         },
         { 
           id: 302, 
-          name: 'Constancia Fiscal', 
-          description: 'Constancia de situación fiscal', 
+          name: 'RFC de la Asociación', 
+          description: 'Registro Federal de Contribuyentes', 
           required: true, 
           format: 'PDF', 
           maxSize: '5MB',
-          validation: 'Vigencia y RFC',
-          tags: ['obligatorio', 'fiscal'],
-          order: 2
+          validation: 'Vigencia y datos',
+          tags: ['obligatorio', 'fiscal', 'asociación'],
+          order: 2,
+          periodicReview: '365',
+          committeeReview: false,
+          reviewDescription: 'Revisión anual por cambios fiscales'
         },
       ],
       order: 3
+    },
+    {
+      id: 4,
+      name: 'DOCUMENTACIÓN OPERATIVA',
+      description: 'Documentos relacionados con operaciones aduanales',
+      required: true,
+      icon: '📊',
+      color: '#f39c12',
+      assignedRoles: ['AGENTE_ADUANAL', 'ASOCIACION_ADUANAL'],
+      documents: [
+        { 
+          id: 401, 
+          name: 'Política de Cumplimiento', 
+          description: 'Política interna de cumplimiento normativo', 
+          required: true, 
+          format: 'PDF', 
+          maxSize: '10MB',
+          validation: 'Firmas y vigencia',
+          tags: ['obligatorio', 'operativo'],
+          order: 1,
+          periodicReview: '180',
+          committeeReview: true,
+          reviewDescription: 'Revisión semestral por cambios normativos'
+        },
+        { 
+          id: 402, 
+          name: 'Seguro de Responsabilidad Civil', 
+          description: 'Póliza vigente de responsabilidad civil', 
+          required: true, 
+          format: 'PDF', 
+          maxSize: '10MB',
+          validation: 'Vigencia y cobertura',
+          tags: ['obligatorio', 'seguro'],
+          order: 2,
+          periodicReview: '365',
+          committeeReview: false,
+          reviewDescription: 'Renovación anual'
+        },
+      ],
+      order: 4
     }
   ]);
 
@@ -202,7 +279,6 @@ const ConfigExpediente = () => {
   const [generalConfig, setGeneralConfig] = useState({
     maxExpedienteSize: '100',
     daysToComplete: '30',
-    periodicReview: '180',
     mainFormat: 'PDF',
     autoValidation: true,
     versionControl: true,
@@ -211,7 +287,11 @@ const ConfigExpediente = () => {
     maxDocumentsPerExpediente: '50'
   });
 
-  // Estadísticas - MOVIDAS AL PANEL
+  const availableRoles = [
+    { value: 'AGENTE_ADUANAL', label: 'Agente Aduanal', icon: <PersonIcon fontSize="small" /> },
+    { value: 'ASOCIACION_ADUANAL', label: 'Asociación Aduanal', icon: <BusinessIcon fontSize="small" /> }
+  ];
+
   const stats = {
     totalCategories: categories.length,
     totalDocuments: categories.reduce((total, cat) => total + cat.documents.length, 0),
@@ -219,7 +299,20 @@ const ConfigExpediente = () => {
       total + cat.documents.filter(doc => doc.required).length, 0),
     optionalDocuments: categories.reduce((total, cat) => 
       total + cat.documents.filter(doc => !doc.required).length, 0),
-    requiredCategories: categories.filter(cat => cat.required).length
+    requiredCategories: categories.filter(cat => cat.required).length,
+    committeeReviewDocuments: categories.reduce((total, cat) => 
+      total + cat.documents.filter(doc => doc.committeeReview).length, 0),
+    agentCategories: categories.filter(cat => cat.assignedRoles.includes('AGENTE_ADUANAL')).length,
+    associationCategories: categories.filter(cat => cat.assignedRoles.includes('ASOCIACION_ADUANAL')).length,
+    sharedCategories: categories.filter(cat => 
+      cat.assignedRoles.includes('AGENTE_ADUANAL') && cat.assignedRoles.includes('ASOCIACION_ADUANAL')
+    ).length,
+    exclusiveAgentCategories: categories.filter(cat => 
+      cat.assignedRoles.length === 1 && cat.assignedRoles.includes('AGENTE_ADUANAL')
+    ).length,
+    exclusiveAssociationCategories: categories.filter(cat => 
+      cat.assignedRoles.length === 1 && cat.assignedRoles.includes('ASOCIACION_ADUANAL')
+    ).length
   };
 
   const handleAddCategory = () => {
@@ -231,6 +324,7 @@ const ConfigExpediente = () => {
       required: false,
       icon: '📁',
       color: '#7f8c8d',
+      assignedRoles: ['AGENTE_ADUANAL'],
       documents: [],
       order: categories.length + 1
     });
@@ -255,7 +349,10 @@ const ConfigExpediente = () => {
       maxSize: '5MB',
       validation: '',
       tags: [],
-      order: category.documents.length + 1
+      order: category.documents.length + 1,
+      periodicReview: '0',
+      committeeReview: false,
+      reviewDescription: ''
     });
     setCurrentCategory(category);
     setEditDialog(true);
@@ -290,24 +387,22 @@ const ConfigExpediente = () => {
 
   const handleSave = () => {
     if (editMode === 'category') {
-      if (currentCategory.id > 100) { // Nuevo
+      if (currentCategory.id > 100) {
         setCategories([...categories, currentCategory]);
-      } else { // Editar
+      } else {
         setCategories(categories.map(c => 
           c.id === currentCategory.id ? currentCategory : c
         ));
       }
-    } else { // Documento
+    } else {
       setCategories(categories.map(category => {
         if (category.id === currentCategory.id) {
           const existingDocIndex = category.documents.findIndex(d => d.id === currentDocument.id);
           if (existingDocIndex >= 0) {
-            // Editar documento existente
             const updatedDocuments = [...category.documents];
             updatedDocuments[existingDocIndex] = currentDocument;
             return { ...category, documents: updatedDocuments };
           } else {
-            // Agregar nuevo documento
             return { ...category, documents: [...category.documents, currentDocument] };
           }
         }
@@ -349,12 +444,39 @@ const ConfigExpediente = () => {
 
   const formatOptions = ['PDF', 'JPG', 'PNG', 'DOC', 'DOCX', 'XLS', 'XLSX', 'TXT'];
   const sizeOptions = ['1MB', '5MB', '10MB', '25MB', '50MB', '100MB'];
-  const tagOptions = ['obligatorio', 'identificación', 'fiscal', 'legal', 'profesional', 'domicilio', 'poder', 'opcional'];
+  const tagOptions = ['obligatorio', 'identificación', 'fiscal', 'legal', 'profesional', 'domicilio', 'poder', 'opcional', 'agente', 'asociación', 'pago', 'seguro', 'operativo'];
 
   const panelTabs = [
     { label: 'Resumen', icon: <DescriptionIcon /> },
     { label: 'Configuración', icon: <SettingsIcon /> },
   ];
+
+  const getRoleIcon = (role) => {
+    switch(role) {
+      case 'AGENTE_ADUANAL': return <PersonIcon fontSize="small" />;
+      case 'ASOCIACION_ADUANAL': return <BusinessIcon fontSize="small" />;
+      default: return <GroupIcon fontSize="small" />;
+    }
+  };
+
+  const getAssignedRolesLabel = (roles) => {
+    if (roles.length === 2) return 'Ambos';
+    if (roles.includes('AGENTE_ADUANAL')) return 'Solo Agentes';
+    if (roles.includes('ASOCIACION_ADUANAL')) return 'Solo Asociaciones';
+    return 'No asignado';
+  };
+
+  const getReviewDescription = (document) => {
+    if (parseInt(document.periodicReview) === 0) return 'No requiere revisión periódica';
+    const days = parseInt(document.periodicReview);
+    if (days === 30) return 'Revisión mensual';
+    if (days === 60) return 'Revisión bimestral';
+    if (days === 90) return 'Revisión trimestral';
+    if (days === 180) return 'Revisión semestral';
+    if (days === 365) return 'Revisión anual';
+    if (days === 730) return 'Revisión bianual';
+    return `Revisión cada ${document.periodicReview} días`;
+  };
 
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: '#f5f7fa' }}>
@@ -366,8 +488,24 @@ const ConfigExpediente = () => {
               Configuración de Expedientes
             </Typography>
             <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-              Defina la estructura y requisitos de los expedientes digitales
+              Panel de administración - Asigne categorías y documentos a cada tipo de usuario
             </Typography>
+            
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
+              <Chip
+                icon={<AdminPanelSettingsIcon />}
+                label="Panel de Administración"
+                size="small"
+                sx={{ 
+                  bgcolor: '#2c3e50',
+                  color: 'white',
+                  fontWeight: 'bold'
+                }}
+              />
+              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                Puede asignar categorías a Agentes Aduanales o Asociaciones Aduanales
+              </Typography>
+            </Box>
           </Box>
           
           <Stack direction="row" spacing={1}>
@@ -390,7 +528,7 @@ const ConfigExpediente = () => {
               startIcon={<VisibilityIcon />}
               onClick={toggleDrawer}
             >
-              Panel
+              Panel de Resumen
             </Button>
             <Button
               variant="contained"
@@ -403,27 +541,27 @@ const ConfigExpediente = () => {
           </Stack>
         </Box>
 
-        {/* 6 CARDS CON MISMA ALTURA QUE LAS 4 DEL PRIMER CÓDIGO */}
+        {/* 6 CARDS CON ESTADÍSTICAS */}
         <Box sx={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(6, 1fr)', // 6 columnas de igual ancho
+          gridTemplateColumns: 'repeat(6, 1fr)',
           gap: 2,
           mb: 3,
           width: '100%',
           '@media (max-width: 1200px)': {
-            gridTemplateColumns: 'repeat(3, 1fr)', // 3 columnas en pantallas medianas
+            gridTemplateColumns: 'repeat(3, 1fr)',
           },
           '@media (max-width: 768px)': {
-            gridTemplateColumns: 'repeat(2, 1fr)', // 2 columnas en tablets
+            gridTemplateColumns: 'repeat(2, 1fr)',
           },
           '@media (max-width: 480px)': {
-            gridTemplateColumns: '1fr', // 1 columna en móviles
+            gridTemplateColumns: '1fr',
           }
         }}>
-          {/* Card 1: Categorías */}
+          {/* Card 1: Categorías Totales */}
           <Card sx={{
-            borderLeft: '4px solid #3498db',
-            height: 120, // MISMA ALTURA EXACTA que las 4 cards del primer código
+            borderLeft: '4px solid #2c3e50',
+            height: 120,
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden'
@@ -444,7 +582,7 @@ const ConfigExpediente = () => {
                 mb: 1
               }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Box sx={{ color: '#3498db' }}>
+                  <Box sx={{ color: '#2c3e50' }}>
                     <FolderIcon />
                   </Box>
                   <Typography variant="body2" sx={{
@@ -453,7 +591,7 @@ const ConfigExpediente = () => {
                     fontSize: '0.75rem',
                     lineHeight: 1.2
                   }}>
-                    Categorías
+                    Categorías Totales
                   </Typography>
                 </Box>
                 <Typography variant="h5" sx={{
@@ -489,7 +627,214 @@ const ConfigExpediente = () => {
             </CardContent>
           </Card>
 
-          {/* Card 2: Documentos */}
+          {/* Card 2: Para Agentes Exclusivos */}
+          <Card sx={{
+            borderLeft: '4px solid #3498db',
+            height: 120,
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden'
+          }}>
+            <CardContent sx={{
+              p: 1.5,
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              height: '100%'
+            }}>
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+                gap: 1,
+                mb: 1
+              }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Box sx={{ color: '#3498db' }}>
+                    <PersonIcon />
+                  </Box>
+                  <Typography variant="body2" sx={{
+                    color: '#7f8c8d',
+                    fontWeight: 500,
+                    fontSize: '0.75rem',
+                    lineHeight: 1.2
+                  }}>
+                    Exclusivo Agentes
+                  </Typography>
+                </Box>
+                <Typography variant="h5" sx={{
+                  color: '#2c3e50',
+                  fontWeight: 'bold',
+                  fontSize: '1.5rem',
+                  lineHeight: 1,
+                  textAlign: 'right'
+                }}>
+                  {stats.exclusiveAgentCategories}
+                </Typography>
+              </Box>
+              <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-end',
+                gap: 0.5
+              }}>
+                <Typography variant="caption" sx={{
+                  color: '#95a5a6',
+                  fontSize: '0.7rem',
+                  lineHeight: 1.2,
+                  flex: 1,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical'
+                }}>
+                  Solo para Agentes Aduanales
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+
+          {/* Card 3: Para Asociaciones Exclusivas */}
+          <Card sx={{
+            borderLeft: '4px solid #9b59b6',
+            height: 120,
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden'
+          }}>
+            <CardContent sx={{
+              p: 1.5,
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              height: '100%'
+            }}>
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+                gap: 1,
+                mb: 1
+              }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Box sx={{ color: '#9b59b6' }}>
+                    <BusinessIcon />
+                  </Box>
+                  <Typography variant="body2" sx={{
+                    color: '#7f8c8d',
+                    fontWeight: 500,
+                    fontSize: '0.75rem',
+                    lineHeight: 1.2
+                  }}>
+                    Exclusivo Asociaciones
+                  </Typography>
+                </Box>
+                <Typography variant="h5" sx={{
+                  color: '#2c3e50',
+                  fontWeight: 'bold',
+                  fontSize: '1.5rem',
+                  lineHeight: 1,
+                  textAlign: 'right'
+                }}>
+                  {stats.exclusiveAssociationCategories}
+                </Typography>
+              </Box>
+              <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-end',
+                gap: 0.5
+              }}>
+                <Typography variant="caption" sx={{
+                  color: '#95a5a6',
+                  fontSize: '0.7rem',
+                  lineHeight: 1.2,
+                  flex: 1,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical'
+                }}>
+                  Solo para Asociaciones
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+
+          {/* Card 4: Compartidas */}
+          <Card sx={{
+            borderLeft: '4px solid #f39c12',
+            height: 120,
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden'
+          }}>
+            <CardContent sx={{
+              p: 1.5,
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              height: '100%'
+            }}>
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+                gap: 1,
+                mb: 1
+              }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Box sx={{ color: '#f39c12' }}>
+                    <GroupIcon />
+                  </Box>
+                  <Typography variant="body2" sx={{
+                    color: '#7f8c8d',
+                    fontWeight: 500,
+                    fontSize: '0.75rem',
+                    lineHeight: 1.2
+                  }}>
+                    Compartidas
+                  </Typography>
+                </Box>
+                <Typography variant="h5" sx={{
+                  color: '#2c3e50',
+                  fontWeight: 'bold',
+                  fontSize: '1.5rem',
+                  lineHeight: 1,
+                  textAlign: 'right'
+                }}>
+                  {stats.sharedCategories}
+                </Typography>
+              </Box>
+              <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-end',
+                gap: 0.5
+              }}>
+                <Typography variant="caption" sx={{
+                  color: '#95a5a6',
+                  fontSize: '0.7rem',
+                  lineHeight: 1.2,
+                  flex: 1,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical'
+                }}>
+                  Para ambos tipos de usuarios
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+
+          {/* Card 5: Documentos Totales */}
           <Card sx={{
             borderLeft: '4px solid #2ecc71',
             height: 120,
@@ -522,7 +867,7 @@ const ConfigExpediente = () => {
                     fontSize: '0.75rem',
                     lineHeight: 1.2
                   }}>
-                    Documentos
+                    Documentos Totales
                   </Typography>
                 </Box>
                 <Typography variant="h5" sx={{
@@ -558,9 +903,9 @@ const ConfigExpediente = () => {
             </CardContent>
           </Card>
 
-          {/* Card 3: Obligatorios */}
+          {/* Card 6: Rev. Comité */}
           <Card sx={{
-            borderLeft: '4px solid #f39c12',
+            borderLeft: '4px solid #d35400',
             height: 120,
             display: 'flex',
             flexDirection: 'column',
@@ -582,8 +927,8 @@ const ConfigExpediente = () => {
                 mb: 1
               }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Box sx={{ color: '#f39c12' }}>
-                    <CheckCircleIcon />
+                  <Box sx={{ color: '#d35400' }}>
+                    <PeopleIcon />
                   </Box>
                   <Typography variant="body2" sx={{
                     color: '#7f8c8d',
@@ -591,7 +936,7 @@ const ConfigExpediente = () => {
                     fontSize: '0.75rem',
                     lineHeight: 1.2
                   }}>
-                    Obligatorios
+                    Rev. Comité
                   </Typography>
                 </Box>
                 <Typography variant="h5" sx={{
@@ -601,7 +946,7 @@ const ConfigExpediente = () => {
                   lineHeight: 1,
                   textAlign: 'right'
                 }}>
-                  {stats.requiredDocuments}
+                  {stats.committeeReviewDocuments}
                 </Typography>
               </Box>
               <Box sx={{
@@ -621,214 +966,7 @@ const ConfigExpediente = () => {
                   WebkitLineClamp: 2,
                   WebkitBoxOrient: 'vertical'
                 }}>
-                  {Math.round((stats.requiredDocuments / stats.totalDocuments) * 100)}% del total
-                </Typography>
-              </Box>
-            </CardContent>
-          </Card>
-
-          {/* Card 4: Opcionales */}
-          <Card sx={{
-            borderLeft: '4px solid #9b59b6',
-            height: 120,
-            display: 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden'
-          }}>
-            <CardContent sx={{
-              p: 1.5,
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              height: '100%'
-            }}>
-              <Box sx={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                justifyContent: 'space-between',
-                gap: 1,
-                mb: 1
-              }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Box sx={{ color: '#9b59b6' }}>
-                    <DescriptionIcon />
-                  </Box>
-                  <Typography variant="body2" sx={{
-                    color: '#7f8c8d',
-                    fontWeight: 500,
-                    fontSize: '0.75rem',
-                    lineHeight: 1.2
-                  }}>
-                    Opcionales
-                  </Typography>
-                </Box>
-                <Typography variant="h5" sx={{
-                  color: '#2c3e50',
-                  fontWeight: 'bold',
-                  fontSize: '1.5rem',
-                  lineHeight: 1,
-                  textAlign: 'right'
-                }}>
-                  {stats.optionalDocuments}
-                </Typography>
-              </Box>
-              <Box sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-end',
-                gap: 0.5
-              }}>
-                <Typography variant="caption" sx={{
-                  color: '#95a5a6',
-                  fontSize: '0.7rem',
-                  lineHeight: 1.2,
-                  flex: 1,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical'
-                }}>
-                  {Math.round((stats.optionalDocuments / stats.totalDocuments) * 100)}% del total
-                </Typography>
-              </Box>
-            </CardContent>
-          </Card>
-
-          {/* Card 5: Cat. Obligatorias */}
-          <Card sx={{
-            borderLeft: '4px solid #e74c3c',
-            height: 120,
-            display: 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden'
-          }}>
-            <CardContent sx={{
-              p: 1.5,
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              height: '100%'
-            }}>
-              <Box sx={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                justifyContent: 'space-between',
-                gap: 1,
-                mb: 1
-              }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Box sx={{ color: '#e74c3c' }}>
-                    <ErrorIcon />
-                  </Box>
-                  <Typography variant="body2" sx={{
-                    color: '#7f8c8d',
-                    fontWeight: 500,
-                    fontSize: '0.75rem',
-                    lineHeight: 1.2
-                  }}>
-                    Cat. Obligatorias
-                  </Typography>
-                </Box>
-                <Typography variant="h5" sx={{
-                  color: '#2c3e50',
-                  fontWeight: 'bold',
-                  fontSize: '1.5rem',
-                  lineHeight: 1,
-                  textAlign: 'right'
-                }}>
-                  {stats.requiredCategories}
-                </Typography>
-              </Box>
-              <Box sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-end',
-                gap: 0.5
-              }}>
-                <Typography variant="caption" sx={{
-                  color: '#95a5a6',
-                  fontSize: '0.7rem',
-                  lineHeight: 1.2,
-                  flex: 1,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical'
-                }}>
-                  {Math.round((stats.requiredCategories / stats.totalCategories) * 100)}% del total
-                </Typography>
-              </Box>
-            </CardContent>
-          </Card>
-
-          {/* Card 6: Capacidad */}
-          <Card sx={{
-            borderLeft: '4px solid #1abc9c',
-            height: 120,
-            display: 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden'
-          }}>
-            <CardContent sx={{
-              p: 1.5,
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              height: '100%'
-            }}>
-              <Box sx={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                justifyContent: 'space-between',
-                gap: 1,
-                mb: 1
-              }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Box sx={{ color: '#1abc9c' }}>
-                    <CloudUploadIcon />
-                  </Box>
-                  <Typography variant="body2" sx={{
-                    color: '#7f8c8d',
-                    fontWeight: 500,
-                    fontSize: '0.75rem',
-                    lineHeight: 1.2
-                  }}>
-                    Capacidad
-                  </Typography>
-                </Box>
-                <Typography variant="h5" sx={{
-                  color: '#2c3e50',
-                  fontWeight: 'bold',
-                  fontSize: '1.5rem',
-                  lineHeight: 1,
-                  textAlign: 'right'
-                }}>
-                  {parseInt(generalConfig.maxExpedienteSize) * stats.totalDocuments}MB
-                </Typography>
-              </Box>
-              <Box sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-end',
-                gap: 0.5
-              }}>
-                <Typography variant="caption" sx={{
-                  color: '#95a5a6',
-                  fontSize: '0.7rem',
-                  lineHeight: 1.2,
-                  flex: 1,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical'
-                }}>
-                  {generalConfig.maxExpedienteSize} MB máximo por documento
+                  {Math.round((stats.committeeReviewDocuments / stats.totalDocuments) * 100)}% del total
                 </Typography>
               </Box>
             </CardContent>
@@ -882,7 +1020,7 @@ const ConfigExpediente = () => {
                 bgcolor: '#fff'
               }}>
                 <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
-                  Estructura del Expediente
+                  Estructura del Expediente (Vista de Administrador)
                 </Typography>
                 
                 <Stack direction="row" spacing={1}>
@@ -944,6 +1082,20 @@ const ConfigExpediente = () => {
                               variant="outlined"
                               sx={{ height: 20, fontSize: '0.65rem' }}
                             />
+                            {/* Indicador de roles asignados */}
+                            <Chip
+                              icon={category.assignedRoles.length === 2 ? <GroupIcon /> : 
+                                    category.assignedRoles.includes('AGENTE_ADUANAL') ? <PersonIcon /> : <BusinessIcon />}
+                              label={getAssignedRolesLabel(category.assignedRoles)}
+                              size="small"
+                              sx={{ 
+                                height: 20,
+                                fontSize: '0.65rem',
+                                bgcolor: category.assignedRoles.length === 2 ? '#f39c12' :
+                                         category.assignedRoles.includes('AGENTE_ADUANAL') ? '#3498db' : '#9b59b6',
+                                color: 'white'
+                              }}
+                            />
                           </Box>
                           <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
                             {category.description}
@@ -979,7 +1131,7 @@ const ConfigExpediente = () => {
                     
                     <AccordionDetails sx={{ bgcolor: '#fff' }}>
                       <Box sx={{ pl: 6 }}>
-                        {/* Lista de documentos */}
+                        {/* Lista de documentos - VISTA SIMPLIFICADA */}
                         <List sx={{ p: 0 }}>
                           {category.documents.sort((a, b) => a.order - b.order).map((document) => (
                             <ListItem 
@@ -1020,31 +1172,35 @@ const ConfigExpediente = () => {
                                       sx={{ height: 18, fontSize: '0.6rem' }}
                                     />
                                   )}
-                                  {document.tags.map((tag, idx) => (
-                                    <Chip 
-                                      key={idx}
-                                      label={tag}
-                                      size="small"
-                                      variant="outlined"
-                                      sx={{ height: 18, fontSize: '0.6rem' }}
-                                    />
-                                  ))}
+                                  {/* Mostrar icono de revisión por comité */}
+                                  {document.committeeReview && (
+                                    <Tooltip title="Requiere revisión por comité">
+                                      <PeopleIcon sx={{ fontSize: 16, color: '#d35400' }} />
+                                    </Tooltip>
+                                  )}
+                                  {/* Mostrar icono de revisión periódica si es mayor a 0 */}
+                                  {parseInt(document.periodicReview) > 0 && (
+                                    <Tooltip title={getReviewDescription(document)}>
+                                      <TimerIcon sx={{ fontSize: 16, color: '#3498db' }} />
+                                    </Tooltip>
+                                  )}
                                 </Box>
                                 
                                 <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', mb: 1 }}>
                                   {document.description}
                                 </Typography>
                                 
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                {/* INFORMACIÓN SIMPLIFICADA - SOLO 2 LÍNEAS */}
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
                                   <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
                                     <strong>Formato:</strong> {document.format}
                                   </Typography>
                                   <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                                    <strong>Máx:</strong> {document.maxSize}
+                                    <strong>Tamaño:</strong> {document.maxSize}
                                   </Typography>
-                                  {document.validation && (
-                                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                                      <strong>Validación:</strong> {document.validation}
+                                  {parseInt(document.periodicReview) > 0 && (
+                                    <Typography variant="caption" sx={{ color: '#3498db' }}>
+                                      <strong>Revisión:</strong> {getReviewDescription(document)}
                                     </Typography>
                                   )}
                                 </Box>
@@ -1157,21 +1313,6 @@ const ConfigExpediente = () => {
                       size="small"
                       value={generalConfig.daysToComplete}
                       onChange={handleGeneralConfigChange('daysToComplete')}
-                      InputProps={{
-                        endAdornment: <InputAdornment position="end">días</InputAdornment>,
-                      }}
-                    />
-                  </Box>
-                  
-                  <Box>
-                    <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
-                      Revisión Periódica
-                    </Typography>
-                    <TextField
-                      fullWidth
-                      size="small"
-                      value={generalConfig.periodicReview}
-                      onChange={handleGeneralConfigChange('periodicReview')}
                       InputProps={{
                         endAdornment: <InputAdornment position="end">días</InputAdornment>,
                       }}
@@ -1317,7 +1458,7 @@ const ConfigExpediente = () => {
             borderBottom: '1px solid #e0e0e0'
           }}>
             <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
-              Resumen del Expediente
+              Resumen de Configuración
             </Typography>
             <IconButton
               size="small"
@@ -1367,14 +1508,14 @@ const ConfigExpediente = () => {
               /* Resumen del Expediente */
               <Box sx={{ flex: 1, overflowY: 'auto' }}>
                 <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
-                  Información General
+                  Distribución por Tipo de Usuario
                 </Typography>
 
                 <Stack spacing={2}>
                   {/* Tarjeta de resumen principal */}
                   <Paper sx={{ p: 2, bgcolor: '#f8f9fa', borderRadius: '8px' }}>
                     <Typography variant="body2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
-                      Configuración Actual
+                      Resumen General
                     </Typography>
                     
                     <Stack spacing={1.5}>
@@ -1407,6 +1548,15 @@ const ConfigExpediente = () => {
                       
                       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                          Rev. por comité:
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                          {stats.committeeReviewDocuments}
+                        </Typography>
+                      </Box>
+                      
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
                           Tamaño máximo:
                         </Typography>
                         <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
@@ -1425,31 +1575,107 @@ const ConfigExpediente = () => {
                     </Stack>
                   </Paper>
 
-                  {/* Distribución de documentos */}
+                  {/* Distribución por rol */}
                   <Paper sx={{ p: 2, bgcolor: '#f8f9fa', borderRadius: '8px' }}>
                     <Typography variant="body2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
-                      Distribución de Documentos
+                      Distribución por Rol Asignado
+                    </Typography>
+                    
+                    <Grid container spacing={2}>
+                      <Grid item xs={6}>
+                        <Box sx={{ textAlign: 'center' }}>
+                          <Box sx={{ 
+                            width: 40, 
+                            height: 40, 
+                            borderRadius: '50%',
+                            bgcolor: '#3498db20',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            margin: '0 auto 8px'
+                          }}>
+                            <PersonIcon sx={{ color: '#3498db' }} />
+                          </Box>
+                          <Typography variant="h6" sx={{ color: '#3498db', fontWeight: 'bold' }}>
+                            {stats.exclusiveAgentCategories}
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                            Solo Agentes
+                          </Typography>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Box sx={{ textAlign: 'center' }}>
+                          <Box sx={{ 
+                            width: 40, 
+                            height: 40, 
+                            borderRadius: '50%',
+                            bgcolor: '#9b59b620',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            margin: '0 auto 8px'
+                          }}>
+                            <BusinessIcon sx={{ color: '#9b59b6' }} />
+                          </Box>
+                          <Typography variant="h6" sx={{ color: '#9b59b6', fontWeight: 'bold' }}>
+                            {stats.exclusiveAssociationCategories}
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                            Solo Asociaciones
+                          </Typography>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Box sx={{ mt: 1, textAlign: 'center' }}>
+                          <Box sx={{ 
+                            width: 40, 
+                            height: 40, 
+                            borderRadius: '50%',
+                            bgcolor: '#f39c1220',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            margin: '0 auto 8px'
+                          }}>
+                            <GroupIcon sx={{ color: '#f39c12' }} />
+                          </Box>
+                          <Typography variant="h6" sx={{ color: '#f39c12', fontWeight: 'bold' }}>
+                            {stats.sharedCategories}
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                            Compartidas (ambos)
+                          </Typography>
+                        </Box>
+                      </Grid>
+                    </Grid>
+                  </Paper>
+
+                  {/* Frecuencias de revisión */}
+                  <Paper sx={{ p: 2, bgcolor: '#f8f9fa', borderRadius: '8px' }}>
+                    <Typography variant="body2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
+                      Frecuencias de Revisión
                     </Typography>
                     
                     <Stack spacing={1.5}>
                       <Box>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
                           <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                            Obligatorios
+                            Sin revisión periódica:
                           </Typography>
                           <Typography variant="caption" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
-                            {stats.requiredDocuments} ({Math.round((stats.requiredDocuments / stats.totalDocuments) * 100)}%)
+                            {categories.reduce((total, cat) => total + cat.documents.filter(doc => parseInt(doc.periodicReview) === 0).length, 0)} docs
                           </Typography>
                         </Box>
                         <LinearProgress 
                           variant="determinate" 
-                          value={(stats.requiredDocuments / stats.totalDocuments) * 100}
+                          value={(categories.reduce((total, cat) => total + cat.documents.filter(doc => parseInt(doc.periodicReview) === 0).length, 0) / stats.totalDocuments) * 100}
                           sx={{ 
                             height: 6,
                             borderRadius: 3,
                             backgroundColor: '#ecf0f1',
                             '& .MuiLinearProgress-bar': {
-                              backgroundColor: '#e74c3c',
+                              backgroundColor: '#95a5a6',
                               borderRadius: 3
                             }
                           }}
@@ -1459,21 +1685,69 @@ const ConfigExpediente = () => {
                       <Box>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
                           <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                            Opcionales
+                            Revisión anual (365 días):
                           </Typography>
                           <Typography variant="caption" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
-                            {stats.optionalDocuments} ({Math.round((stats.optionalDocuments / stats.totalDocuments) * 100)}%)
+                            {categories.reduce((total, cat) => total + cat.documents.filter(doc => parseInt(doc.periodicReview) === 365).length, 0)} docs
                           </Typography>
                         </Box>
                         <LinearProgress 
                           variant="determinate" 
-                          value={(stats.optionalDocuments / stats.totalDocuments) * 100}
+                          value={(categories.reduce((total, cat) => total + cat.documents.filter(doc => parseInt(doc.periodicReview) === 365).length, 0) / stats.totalDocuments) * 100}
                           sx={{ 
                             height: 6,
                             borderRadius: 3,
                             backgroundColor: '#ecf0f1',
                             '& .MuiLinearProgress-bar': {
-                              backgroundColor: '#9b59b6',
+                              backgroundColor: '#3498db',
+                              borderRadius: 3
+                            }
+                          }}
+                        />
+                      </Box>
+                      
+                      <Box>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                          <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                            Revisión semestral (180 días):
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
+                            {categories.reduce((total, cat) => total + cat.documents.filter(doc => parseInt(doc.periodicReview) === 180).length, 0)} docs
+                          </Typography>
+                        </Box>
+                        <LinearProgress 
+                          variant="determinate" 
+                          value={(categories.reduce((total, cat) => total + cat.documents.filter(doc => parseInt(doc.periodicReview) === 180).length, 0) / stats.totalDocuments) * 100}
+                          sx={{ 
+                            height: 6,
+                            borderRadius: 3,
+                            backgroundColor: '#ecf0f1',
+                            '& .MuiLinearProgress-bar': {
+                              backgroundColor: '#2ecc71',
+                              borderRadius: 3
+                            }
+                          }}
+                        />
+                      </Box>
+                      
+                      <Box>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                          <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                            Revisión trimestral (90 días):
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
+                            {categories.reduce((total, cat) => total + cat.documents.filter(doc => parseInt(doc.periodicReview) === 90).length, 0)} docs
+                          </Typography>
+                        </Box>
+                        <LinearProgress 
+                          variant="determinate" 
+                          value={(categories.reduce((total, cat) => total + cat.documents.filter(doc => parseInt(doc.periodicReview) === 90).length, 0) / stats.totalDocuments) * 100}
+                          sx={{ 
+                            height: 6,
+                            borderRadius: 3,
+                            backgroundColor: '#ecf0f1',
+                            '& .MuiLinearProgress-bar': {
+                              backgroundColor: '#f39c12',
                               borderRadius: 3
                             }
                           }}
@@ -1482,47 +1756,10 @@ const ConfigExpediente = () => {
                     </Stack>
                   </Paper>
 
-                  {/* Tamaños y formatos */}
-                  <Paper sx={{ p: 2, bgcolor: '#f8f9fa', borderRadius: '8px' }}>
-                    <Typography variant="body2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
-                      Tamaños y Formatos
-                    </Typography>
-                    
-                    <Grid container spacing={1}>
-                      <Grid item xs={6}>
-                        <Box sx={{ textAlign: 'center', p: 1 }}>
-                          <Typography variant="h6" sx={{ color: '#3498db', fontWeight: 'bold' }}>
-                            {generalConfig.maxExpedienteSize} MB
-                          </Typography>
-                          <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                            Máx por documento
-                          </Typography>
-                        </Box>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Box sx={{ textAlign: 'center', p: 1 }}>
-                          <Typography variant="h6" sx={{ color: '#2ecc71', fontWeight: 'bold' }}>
-                            {parseInt(generalConfig.maxExpedienteSize) * stats.totalDocuments} MB
-                          </Typography>
-                          <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                            Capacidad total
-                          </Typography>
-                        </Box>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Box sx={{ mt: 1, p: 1.5, bgcolor: '#fff', borderRadius: '6px' }}>
-                          <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                            <strong>Formato principal:</strong> {generalConfig.mainFormat}
-                          </Typography>
-                        </Box>
-                      </Grid>
-                    </Grid>
-                  </Paper>
-
                   {/* Nota informativa */}
-                  <Box sx={{ p: 1.5, bgcolor: '#fff3cd', borderRadius: '6px', border: '1px solid #ffeaa7' }}>
-                    <Typography variant="caption" sx={{ color: '#856404' }}>
-                      <strong>Nota:</strong> Los cambios se aplican a todos los nuevos expedientes. Los expedientes existentes mantienen su configuración original.
+                  <Box sx={{ p: 1.5, bgcolor: '#d4edda', borderRadius: '6px', border: '1px solid #c3e6cb' }}>
+                    <Typography variant="caption" sx={{ color: '#155724' }}>
+                      <strong>Nota:</strong> Esta configuración determina qué documentos verán los Agentes Aduanales y Asociaciones Aduanales cuando creen expedientes. Las revisiones periódicas se ajustan según el tipo de documento.
                     </Typography>
                   </Box>
                 </Stack>
@@ -1610,15 +1847,6 @@ const ConfigExpediente = () => {
                     <Stack spacing={1.5}>
                       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                          Revisión periódica:
-                        </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                          {generalConfig.periodicReview} días
-                        </Typography>
-                      </Box>
-                      
-                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
                           Retención:
                         </Typography>
                         <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
@@ -1696,7 +1924,7 @@ const ConfigExpediente = () => {
         </Fab>
       )}
 
-      {/* Diálogo de edición */}
+      {/* Diálogo de edición - CON ASIGNACIÓN DE ROLES Y REVISIÓN PERIÓDICA COMO INPUT */}
       <Dialog 
         open={editDialog} 
         onClose={() => setEditDialog(false)} 
@@ -1720,6 +1948,7 @@ const ConfigExpediente = () => {
                 label="Nombre de la Categoría"
                 value={currentCategory?.name || ''}
                 onChange={(e) => setCurrentCategory({...currentCategory, name: e.target.value})}
+                helperText="Ej: Documentación Personal"
               />
               
               <TextField
@@ -1729,6 +1958,7 @@ const ConfigExpediente = () => {
                 rows={2}
                 value={currentCategory?.description || ''}
                 onChange={(e) => setCurrentCategory({...currentCategory, description: e.target.value})}
+                helperText="Describe el propósito de esta categoría"
               />
               
               <Box sx={{ display: 'flex', gap: 2 }}>
@@ -1749,12 +1979,53 @@ const ConfigExpediente = () => {
                 />
               </Box>
               
+              {/* ASIGNACIÓN DE ROLES - OBLIGATORIO */}
+              <FormControl fullWidth>
+                <InputLabel>Asignar a tipo de usuario *</InputLabel>
+                <Select
+                  multiple
+                  value={currentCategory?.assignedRoles || ['AGENTE_ADUANAL']}
+                  onChange={(e) => setCurrentCategory({...currentCategory, assignedRoles: e.target.value})}
+                  input={<OutlinedInput label="Asignar a tipo de usuario *" />}
+                  renderValue={(selected) => (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {selected.map((value) => (
+                        <Chip
+                          key={value}
+                          label={value === 'AGENTE_ADUANAL' ? 'Agente Aduanal' : 'Asociación Aduanal'}
+                          size="small"
+                          icon={getRoleIcon(value)}
+                          sx={{ 
+                            bgcolor: value === 'AGENTE_ADUANAL' ? '#3498db' : '#9b59b6',
+                            color: 'white'
+                          }}
+                        />
+                      ))}
+                    </Box>
+                  )}
+                >
+                  {availableRoles.map((role) => (
+                    <MenuItem key={role.value} value={role.value}>
+                      <Checkbox checked={currentCategory?.assignedRoles?.indexOf(role.value) > -1} />
+                      <ListItemIcon>
+                        {role.icon}
+                      </ListItemIcon>
+                      <ListItemText primary={role.label} />
+                    </MenuItem>
+                  ))}
+                </Select>
+                <Typography variant="caption" sx={{ color: '#7f8c8d', mt: 0.5 }}>
+                  Seleccione a qué tipo de usuario(es) se mostrarán los documentos de esta categoría
+                </Typography>
+              </FormControl>
+              
               <TextField
                 fullWidth
                 label="Orden"
                 type="number"
                 value={currentCategory?.order || 1}
                 onChange={(e) => setCurrentCategory({...currentCategory, order: parseInt(e.target.value)})}
+                helperText="Número de orden en la lista"
               />
               
               <FormControlLabel
@@ -1811,6 +2082,18 @@ const ConfigExpediente = () => {
                 </TextField>
               </Box>
               
+              {/* REVISIÓN PERIÓDICA - INPUT NORMAL (NO COMBOBOX) */}
+              <TextField
+                fullWidth
+                label="Revisión Periódica"
+                value={currentDocument?.periodicReview || ''}
+                onChange={(e) => setCurrentDocument({...currentDocument, periodicReview: e.target.value})}
+                helperText="Ej: 30 días (mensual), 90 días (trimestral), 180 días (semestral), 365 días (anual), 730 días (bianual)"
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">días</InputAdornment>,
+                }}
+              />
+              
               <TextField
                 fullWidth
                 label="Validación Requerida"
@@ -1835,15 +2118,35 @@ const ConfigExpediente = () => {
                 onChange={(e) => setCurrentDocument({...currentDocument, order: parseInt(e.target.value)})}
               />
               
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={currentDocument?.required || false}
-                    onChange={(e) => setCurrentDocument({...currentDocument, required: e.target.checked})}
-                  />
-                }
-                label="Documento Obligatorio"
-              />
+              <Stack spacing={1}>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={currentDocument?.required || false}
+                      onChange={(e) => setCurrentDocument({...currentDocument, required: e.target.checked})}
+                    />
+                  }
+                  label="Documento Obligatorio"
+                />
+                
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={currentDocument?.committeeReview || false}
+                      onChange={(e) => setCurrentDocument({...currentDocument, committeeReview: e.target.checked})}
+                      color="warning"
+                    />
+                  }
+                  label={
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <PeopleIcon fontSize="small" sx={{ color: '#d35400' }} />
+                      <Typography variant="body2">
+                        Requiere revisión por comité
+                      </Typography>
+                    </Box>
+                  }
+                />
+              </Stack>
             </Stack>
           )}
         </DialogContent>
@@ -1853,7 +2156,9 @@ const ConfigExpediente = () => {
           <Button 
             onClick={handleSave} 
             variant="contained"
-            disabled={editMode === 'category' ? !currentCategory?.name : !currentDocument?.name}
+            disabled={editMode === 'category' ? 
+              !currentCategory?.name || !currentCategory?.assignedRoles || currentCategory?.assignedRoles.length === 0 : 
+              !currentDocument?.name}
           >
             Guardar
           </Button>

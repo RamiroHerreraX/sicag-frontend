@@ -30,7 +30,15 @@ import {
   TableHead,
   TableRow,
   Drawer,
-  Fab
+  Fab,
+  Avatar,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Select,
+  FormControl,
+  InputLabel
 } from '@mui/material';
 import {
   Save as SaveIcon,
@@ -75,12 +83,25 @@ import {
   WorkspacePremium as WorkspacePremiumIcon,
   Search as SearchIcon,
   ChevronRight as ChevronRightIcon,
-  Info as InfoIcon
+  Info as InfoIcon,
+  People as PeopleIcon,
+  AccountBalance as AccountBalanceIcon,
+  VerifiedUser as VerifiedIcon,
+  Receipt as ReceiptIcon,
+  Assignment as AssignmentIcon,
+  AssignmentInd as AssignmentIndIcon,
+  PendingActions as PendingActionsIcon,
+  PersonAdd as PersonAddIcon,
+  AssignmentTurnedIn as AssignmentTurnedInIcon,
+  Phone as PhoneIcon
 } from '@mui/icons-material';
 
 const SystemConfig = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [assignDialogOpen, setAssignDialogOpen] = useState(false);
+  const [selectedAgent, setSelectedAgent] = useState(null);
+  const [selectedEvaluator, setSelectedEvaluator] = useState('');
 
   const [config, setConfig] = useState({
     // General
@@ -447,6 +468,264 @@ const SystemConfig = () => {
     }
   ]);
 
+  // DATOS ESTÁTICOS PARA LA TABLA ASOCIACIONES
+  const [asociaciones, setAsociaciones] = useState([
+    {
+      id_asociacion: 1,
+      codigo: 'ASOC-001',
+      nombre: 'Asociación Aduanal del Norte, S.A. de C.V.',
+      rfc: 'AAN240101XYZ',
+      region: 'Norte',
+      miembros_activos: 28,
+      miembros_totales: 32,
+      cumplimiento: 96,
+      estatus: 'Activa',
+      fecha_registro: '2020-01-15',
+      director: 'Juan Carlos Méndez',
+      telefono: '81 1234 5678',
+      email: 'contacto@aduannorte.com.mx'
+    },
+    {
+      id_asociacion: 2,
+      codigo: 'ASOC-002',
+      nombre: 'Asociación de Agentes Aduanales del Centro',
+      rfc: 'AAC220315ABC',
+      region: 'Centro',
+      miembros_activos: 42,
+      miembros_totales: 45,
+      cumplimiento: 94,
+      estatus: 'Activa',
+      fecha_registro: '2019-03-15',
+      director: 'María Elena Ruiz',
+      telefono: '55 9876 5432',
+      email: 'info@aaduana-centro.mx'
+    },
+    {
+      id_asociacion: 3,
+      codigo: 'ASOC-003',
+      nombre: 'Asociación Fronteriza de Comercio Exterior',
+      rfc: 'AFE210512DEF',
+      region: 'Fronteriza',
+      miembros_activos: 18,
+      miembros_totales: 25,
+      cumplimiento: 88,
+      estatus: 'Activa',
+      fecha_registro: '2021-05-12',
+      director: 'Roberto Sánchez',
+      telefono: '656 4567 8901',
+      email: 'contacto@afronteriza.com'
+    },
+    {
+      id_asociacion: 4,
+      codigo: 'ASOC-004',
+      nombre: 'Asociación Pacífico de Agentes Aduanales',
+      rfc: 'APA200801GHI',
+      region: 'Pacífico Sur',
+      miembros_activos: 22,
+      miembros_totales: 22,
+      cumplimiento: 91,
+      estatus: 'Activa',
+      fecha_registro: '2020-08-01',
+      director: 'Ana Patricia López',
+      telefono: '33 3456 7890',
+      email: 'administracion@apacifico.mx'
+    },
+    {
+      id_asociacion: 5,
+      codigo: 'ASOC-005',
+      nombre: 'Asociación Sureste Aduanal, S.A. de C.V.',
+      rfc: 'ASA190911JKL',
+      region: 'Sureste',
+      miembros_activos: 15,
+      miembros_totales: 20,
+      cumplimiento: 85,
+      estatus: 'En Revisión',
+      fecha_registro: '2019-09-11',
+      director: 'Carlos Manuel Torres',
+      telefono: '999 1234 5678',
+      email: 'sureste@aduana-sureste.com'
+    },
+    {
+      id_asociacion: 6,
+      codigo: 'ASOC-006',
+      nombre: 'Asociación Noroeste de Agentes Aduanales',
+      rfc: 'ANA220214MNO',
+      region: 'Noroeste',
+      miembros_activos: 30,
+      miembros_totales: 35,
+      cumplimiento: 93,
+      estatus: 'Activa',
+      fecha_registro: '2022-02-14',
+      director: 'Laura Guadalupe Pérez',
+      telefono: '664 7890 1234',
+      email: 'nororiente@aaduana-noroeste.mx'
+    },
+    {
+      id_asociacion: 7,
+      codigo: 'ASOC-007',
+      nombre: 'Asociación Golfo de México Aduanal',
+      rfc: 'AGA230307PQR',
+      region: 'Golfo',
+      miembros_activos: 25,
+      miembros_totales: 28,
+      cumplimiento: 90,
+      estatus: 'Activa',
+      fecha_registro: '2023-03-07',
+      director: 'Fernando Martínez',
+      telefono: '229 8765 4321',
+      email: 'golfo@aduana-golfo.org'
+    },
+    {
+      id_asociacion: 8,
+      codigo: 'ASOC-008',
+      nombre: 'Asociación de Comercio Exterior del Bajío',
+      rfc: 'ACB180625STU',
+      region: 'Centro Occidente',
+      miembros_activos: 35,
+      miembros_totales: 40,
+      cumplimiento: 95,
+      estatus: 'Suspendida',
+      fecha_registro: '2018-06-25',
+      director: 'Ricardo González',
+      telefono: '477 2345 6789',
+      email: 'bajio@comercio-exterior.mx'
+    }
+  ]);
+
+  // NUEVA TABLA: Agentes con Documentos Pendientes
+  const [agentesPendientes, setAgentesPendientes] = useState([
+    {
+      id_agente: 1,
+      id_usuario: 201,
+      nombre: 'Luis Rodríguez',
+      email: 'luis@ejemplo.com',
+      region: 'Norte',
+      telefono: '+52 55 1234 5678',
+      documentos_pendientes: 3,
+      fecha_subida: '15/01/2026',
+      documentos: [
+        { tipo: 'Carta de Antecedentes', fecha: '10/01/2026', estado: 'Pendiente' },
+        { tipo: 'Declaración Patrimonial', fecha: '12/01/2026', estado: 'Pendiente' },
+        { tipo: 'Certificación de Estudios', fecha: '14/01/2026', estado: 'Pendiente' }
+      ],
+      evaluador_asignado: null,
+      estatus_evaluacion: 'pendiente'
+    },
+    {
+      id_agente: 2,
+      id_usuario: 202,
+      nombre: 'Carlos Martínez',
+      email: 'carlos@ejemplo.com',
+      region: 'Sur',
+      telefono: '+52 55 5555 5555',
+      documentos_pendientes: 2,
+      fecha_subida: '14/01/2026',
+      documentos: [
+        { tipo: 'Carta de Antecedentes', fecha: '09/01/2026', estado: 'Pendiente' },
+        { tipo: 'Constancia de No Delitos Fiscales', fecha: '13/01/2026', estado: 'Pendiente' }
+      ],
+      evaluador_asignado: null,
+      estatus_evaluacion: 'pendiente'
+    },
+    {
+      id_agente: 3,
+      id_usuario: 203,
+      nombre: 'Ana López',
+      email: 'ana@ejemplo.com',
+      region: 'Metropolitana',
+      telefono: '+52 55 9999 8888',
+      documentos_pendientes: 1,
+      fecha_subida: '13/01/2026',
+      documentos: [
+        { tipo: 'Declaración Patrimonial', fecha: '11/01/2026', estado: 'Pendiente' }
+      ],
+      evaluador_asignado: 'María González Sánchez',
+      estatus_evaluacion: 'asignado'
+    },
+    {
+      id_agente: 4,
+      id_usuario: 204,
+      nombre: 'Roberto Sánchez',
+      email: 'roberto@ejemplo.com',
+      region: 'Fronteriza',
+      telefono: '+52 656 4567 8901',
+      documentos_pendientes: 4,
+      fecha_subida: '12/01/2026',
+      documentos: [
+        { tipo: 'Carta de Antecedentes', fecha: '08/01/2026', estado: 'Pendiente' },
+        { tipo: 'Declaración Patrimonial', fecha: '09/01/2026', estado: 'Pendiente' },
+        { tipo: 'Certificación de Estudios', fecha: '10/01/2026', estado: 'Pendiente' },
+        { tipo: 'Aviso de Retiro de SAT', fecha: '11/01/2026', estado: 'Pendiente' }
+      ],
+      evaluador_asignado: null,
+      estatus_evaluacion: 'pendiente'
+    },
+    {
+      id_agente: 5,
+      id_usuario: 205,
+      nombre: 'Laura Díaz',
+      email: 'laura@ejemplo.com',
+      region: 'Occidente',
+      telefono: '+52 55 3333 2222',
+      documentos_pendientes: 2,
+      fecha_subida: '11/01/2026',
+      documentos: [
+        { tipo: 'Certificación de Estudios', fecha: '07/01/2026', estado: 'Pendiente' },
+        { tipo: 'Constancia de No Delitos Fiscales', fecha: '10/01/2026', estado: 'Pendiente' }
+      ],
+      evaluador_asignado: 'Juan Pérez López',
+      estatus_evaluacion: 'en_revision'
+    },
+    {
+      id_agente: 6,
+      id_usuario: 206,
+      nombre: 'Pedro Sánchez',
+      email: 'pedro@ejemplo.com',
+      region: 'Centro',
+      telefono: '+52 55 7777 6666',
+      documentos_pendientes: 1,
+      fecha_subida: '10/01/2026',
+      documentos: [
+        { tipo: 'Declaración Patrimonial', fecha: '06/01/2026', estado: 'Pendiente' }
+      ],
+      evaluador_asignado: 'Carlos Rodríguez Martínez',
+      estatus_evaluacion: 'asignado'
+    },
+    {
+      id_agente: 7,
+      id_usuario: 207,
+      nombre: 'Fernando Martínez',
+      email: 'fernando@ejemplo.com',
+      region: 'Golfo',
+      telefono: '+52 229 8765 4321',
+      documentos_pendientes: 3,
+      fecha_subida: '09/01/2026',
+      documentos: [
+        { tipo: 'Carta de Antecedentes', fecha: '05/01/2026', estado: 'Pendiente' },
+        { tipo: 'Declaración Patrimonial', fecha: '07/01/2026', estado: 'Pendiente' },
+        { tipo: 'Certificación de Estudios', fecha: '08/01/2026', estado: 'Pendiente' }
+      ],
+      evaluador_asignado: null,
+      estatus_evaluacion: 'pendiente'
+    },
+    {
+      id_agente: 8,
+      id_usuario: 208,
+      nombre: 'Ricardo González',
+      email: 'ricardo@ejemplo.com',
+      region: 'Centro Occidente',
+      telefono: '+52 477 2345 6789',
+      documentos_pendientes: 2,
+      fecha_subida: '08/01/2026',
+      documentos: [
+        { tipo: 'Carta de Antecedentes', fecha: '04/01/2026', estado: 'Pendiente' },
+        { tipo: 'Declaración Patrimonial', fecha: '06/01/2026', estado: 'Pendiente' }
+      ],
+      evaluador_asignado: null,
+      estatus_evaluacion: 'pendiente'
+    }
+  ]);
+
   // Estados para filtros de búsqueda
   const [searchCertificaciones, setSearchCertificaciones] = useState('');
   const [searchDeclaraciones, setSearchDeclaraciones] = useState('');
@@ -456,6 +735,8 @@ const SystemConfig = () => {
   const [searchTiposDocumento, setSearchTiposDocumento] = useState('');
   const [searchComite, setSearchComite] = useState('');
   const [searchNivelesReconocimiento, setSearchNivelesReconocimiento] = useState('');
+  const [searchAsociaciones, setSearchAsociaciones] = useState('');
+  const [searchAgentesPendientes, setSearchAgentesPendientes] = useState('');
 
   // Filtrar certificaciones por nombre
   const filteredCertificaciones = certificaciones.filter(cert =>
@@ -498,6 +779,20 @@ const SystemConfig = () => {
   // Filtrar niveles de reconocimiento por nombre
   const filteredNivelesReconocimiento = nivelesReconocimiento.filter(nivel =>
     nivel.nombre_nivel.toLowerCase().includes(searchNivelesReconocimiento.toLowerCase())
+  );
+
+  // Filtrar asociaciones por nombre, código o región
+  const filteredAsociaciones = asociaciones.filter(asociacion =>
+    asociacion.nombre.toLowerCase().includes(searchAsociaciones.toLowerCase()) ||
+    asociacion.codigo.toLowerCase().includes(searchAsociaciones.toLowerCase()) ||
+    asociacion.region.toLowerCase().includes(searchAsociaciones.toLowerCase())
+  );
+
+  // Filtrar agentes pendientes por nombre, email o región
+  const filteredAgentesPendientes = agentesPendientes.filter(agente =>
+    agente.nombre.toLowerCase().includes(searchAgentesPendientes.toLowerCase()) ||
+    agente.email.toLowerCase().includes(searchAgentesPendientes.toLowerCase()) ||
+    agente.region.toLowerCase().includes(searchAgentesPendientes.toLowerCase())
   );
 
   const handleChange = (field) => (event) => {
@@ -675,6 +970,48 @@ const SystemConfig = () => {
     ));
   };
 
+  // Función para manejar estado de asociaciones
+  const handleToggleAsociacionStatus = (id) => {
+    setAsociaciones(asociaciones.map(asoc =>
+      asoc.id_asociacion === id ? {
+        ...asoc,
+        estatus: asoc.estatus === 'Activa' ? 'Suspendida' :
+          asoc.estatus === 'Suspendida' ? 'En Revisión' : 'Activa'
+      } : asoc
+    ));
+  };
+
+  // Función para asignar evaluador a agente
+  const handleAssignEvaluator = (idAgente) => {
+    const agente = agentesPendientes.find(a => a.id_agente === idAgente);
+    setSelectedAgent(agente);
+    setSelectedEvaluator('');
+    setAssignDialogOpen(true);
+  };
+
+  // Función para confirmar asignación de evaluador
+  const handleConfirmAssignment = () => {
+    if (!selectedEvaluator) {
+      alert('Por favor seleccione un evaluador');
+      return;
+    }
+
+    setAgentesPendientes(agentesPendientes.map(agente =>
+      agente.id_agente === selectedAgent.id_agente
+        ? {
+            ...agente,
+            evaluador_asignado: selectedEvaluator,
+            estatus_evaluacion: 'asignado'
+          }
+        : agente
+    ));
+
+    setAssignDialogOpen(false);
+    setSelectedAgent(null);
+    setSelectedEvaluator('');
+    alert('Evaluador asignado exitosamente');
+  };
+
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
   };
@@ -688,6 +1025,8 @@ const SystemConfig = () => {
     { label: 'Regiones', icon: <PublicIcon /> },
     { label: 'Catálogo Documentos', icon: <DescriptionIcon /> },
     { label: 'Comité', icon: <SecurityIcon /> },
+    { label: 'Asociaciones', icon: <BusinessIcon /> },
+    { label: 'Agentes Pendientes', icon: <PendingActionsIcon /> }, // NUEVA PESTAÑA
     { label: 'Notificaciones', icon: <NotificationsIcon /> },
     { label: 'Niveles Reconocimiento', icon: <EmojiEventsIcon /> },
     { label: 'Backup', icon: <BackupIcon /> },
@@ -932,6 +1271,115 @@ const SystemConfig = () => {
         return '#eceff1';
     }
   };
+
+  // Función para obtener el color según el estatus de la asociación
+  const getAsociacionEstatusColor = (estatus) => {
+    switch (estatus?.toLowerCase()) {
+      case 'activa':
+        return '#27ae60';
+      case 'suspendida':
+        return '#e74c3c';
+      case 'en revisión':
+        return '#f39c12';
+      default:
+        return '#7f8c8d';
+    }
+  };
+
+  // Función para obtener el color de fondo según el estatus de la asociación
+  const getAsociacionEstatusBgColor = (estatus) => {
+    switch (estatus?.toLowerCase()) {
+      case 'activa':
+        return '#d4edda';
+      case 'suspendida':
+        return '#f8d7da';
+      case 'en revisión':
+        return '#fff3cd';
+      default:
+        return '#f8f9fa';
+    }
+  };
+
+  // Función para obtener el color según el nivel de cumplimiento
+  const getCumplimientoColor = (porcentaje) => {
+    if (porcentaje >= 95) return '#27ae60';
+    if (porcentaje >= 90) return '#f39c12';
+    return '#e74c3c';
+  };
+
+  // Función para obtener las iniciales del nombre de la asociación
+  const getAsociacionIniciales = (nombre) => {
+    return nombre
+      .split(' ')
+      .filter(word => word.length > 0 && word[0].toUpperCase() === word[0])
+      .map(word => word[0])
+      .join('')
+      .substring(0, 2);
+  };
+
+  // Función para obtener el color según el estatus de evaluación
+  const getEstatusEvaluacionColor = (estatus) => {
+    switch (estatus?.toLowerCase()) {
+      case 'pendiente':
+        return '#e74c3c';
+      case 'asignado':
+        return '#f39c12';
+      case 'en_revision':
+        return '#3498db';
+      case 'completado':
+        return '#27ae60';
+      default:
+        return '#7f8c8d';
+    }
+  };
+
+  // Función para obtener el color de fondo según el estatus de evaluación
+  const getEstatusEvaluacionBgColor = (estatus) => {
+    switch (estatus?.toLowerCase()) {
+      case 'pendiente':
+        return '#f8d7da';
+      case 'asignado':
+        return '#fff3cd';
+      case 'en_revision':
+        return '#e3f2fd';
+      case 'completado':
+        return '#d4edda';
+      default:
+        return '#f8f9fa';
+    }
+  };
+
+  // Función para obtener el texto del estatus de evaluación
+  const getEstatusEvaluacionText = (estatus) => {
+    switch (estatus?.toLowerCase()) {
+      case 'pendiente':
+        return 'PENDIENTE';
+      case 'asignado':
+        return 'ASIGNADO';
+      case 'en_revision':
+        return 'EN REVISIÓN';
+      case 'completado':
+        return 'COMPLETADO';
+      default:
+        return 'DESCONOCIDO';
+    }
+  };
+
+  // Función para obtener las iniciales del agente
+  const getAgenteIniciales = (nombre) => {
+    return nombre
+      .split(' ')
+      .filter(word => word.length > 0)
+      .map(word => word[0])
+      .join('')
+      .substring(0, 2)
+      .toUpperCase();
+  };
+
+  // Obtener miembros del comité para el diálogo de asignación
+  const evaluadoresDisponibles = filteredComite
+    .filter(miembro => miembro.estatus === 1 && miembro.permiso_aprobar === 1)
+    .map(miembro => miembro.nombre_usuario);
 
   return (
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', p: 2, overflow: 'hidden' }}>
@@ -3434,6 +3882,920 @@ const SystemConfig = () => {
             )}
 
             {activeTab === 8 && (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                {/* Configuración general de Asociaciones */}
+                <Paper sx={{ p: 2, bgcolor: '#f8f9fa', mb: 2 }}>
+                  <Typography variant="subtitle1" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 2 }}>
+                    Configuración General de Asociaciones
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Miembros Mínimos por Asociación"
+                        type="number"
+                        defaultValue="15"
+                        helperText="Número mínimo de agentes para formar una asociación"
+                        InputProps={{
+                          endAdornment: <InputAdornment position="end">agentes</InputAdornment>,
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Cumplimiento Mínimo Requerido"
+                        type="number"
+                        defaultValue="85"
+                        helperText="Porcentaje mínimo de cumplimiento para mantener estatus activo"
+                        InputProps={{
+                          endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Período de Revisión"
+                        type="number"
+                        defaultValue="90"
+                        helperText="Días entre revisiones de cumplimiento"
+                        InputProps={{
+                          endAdornment: <InputAdornment position="end">días</InputAdornment>,
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            defaultChecked={true}
+                            color="primary"
+                          />
+                        }
+                        label="Notificaciones Automáticas a Asociaciones"
+                      />
+                    </Grid>
+                  </Grid>
+                </Paper>
+
+                {/* Filtros, búsqueda y estadísticas para Asociaciones */}
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      <Chip
+                        label="Todos"
+                        variant="filled"
+                        color="primary"
+                        clickable
+                      />
+                      <Chip
+                        label="Activas"
+                        variant="outlined"
+                        clickable
+                      />
+                      <Chip
+                        label="Suspendidas"
+                        variant="outlined"
+                        clickable
+                      />
+                      <Chip
+                        label="En Revisión"
+                        variant="outlined"
+                        clickable
+                      />
+                      <Chip
+                        label="Alto Cumplimiento"
+                        variant="outlined"
+                        clickable
+                      />
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                        Total: {filteredAsociaciones.length} asociaciones
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                        Activas: {filteredAsociaciones.filter(a => a.estatus === 'Activa').length}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                        Agentes: {filteredAsociaciones.reduce((acc, curr) => acc + curr.miembros_totales, 0)}
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        sx={{ bgcolor: '#3498db', '&:hover': { bgcolor: '#2980b9' } }}
+                      >
+                        Nueva Asociación
+                      </Button>
+                    </Box>
+                  </Box>
+
+                  {/* Campo de búsqueda para Asociaciones */}
+                  <TextField
+                    fullWidth
+                    placeholder="Buscar asociación por nombre, código o región..."
+                    value={searchAsociaciones}
+                    onChange={(e) => setSearchAsociaciones(e.target.value)}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                    size="small"
+                    sx={{ maxWidth: 500 }}
+                  />
+                </Box>
+
+                {/* Tabla de Asociaciones */}
+                <TableContainer sx={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: 1 }}>
+                  <Table stickyHeader size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell sx={{ fontWeight: 'bold', width: '5%' }}>ID</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '20%' }}>Asociación</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Código</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '10%' }}>Región</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Miembros</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Cumplimiento</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Estatus</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '15%' }} align="center">Contacto</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Acciones</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {filteredAsociaciones.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={9} align="center" sx={{ py: 3 }}>
+                            <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                              No se encontraron asociaciones que coincidan con la búsqueda
+                            </Typography>
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        filteredAsociaciones.map((asociacion) => (
+                          <TableRow
+                            key={asociacion.id_asociacion}
+                            hover
+                            sx={{
+                              '&:hover': { bgcolor: '#f8f9fa' },
+                              opacity: asociacion.estatus === 'Suspendida' ? 0.7 : 1
+                            }}
+                          >
+                            <TableCell>
+                              <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                #{asociacion.id_asociacion}
+                              </Typography>
+                            </TableCell>
+
+                            <TableCell>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                <Avatar sx={{
+                                  width: 36,
+                                  height: 36,
+                                  fontSize: '0.9rem',
+                                  bgcolor: '#3498db'
+                                }}>
+                                  {getAsociacionIniciales(asociacion.nombre)}
+                                </Avatar>
+                                <Box>
+                                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                    {asociacion.nombre}
+                                  </Typography>
+                                  <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                    RFC: {asociacion.rfc}
+                                  </Typography>
+                                </Box>
+                              </Box>
+                            </TableCell>
+
+                            <TableCell align="center">
+                              <Chip
+                                label={asociacion.codigo}
+                                size="small"
+                                sx={{
+                                  bgcolor: '#e3f2fd',
+                                  color: '#1976d2',
+                                  fontWeight: 600,
+                                  fontSize: '0.75rem'
+                                }}
+                              />
+                            </TableCell>
+
+                            <TableCell>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <LocationOnIcon sx={{ color: '#7f8c8d', fontSize: 16 }} />
+                                <Typography variant="body2" sx={{ color: '#2c3e50' }}>
+                                  {asociacion.region}
+                                </Typography>
+                              </Box>
+                            </TableCell>
+
+                            <TableCell align="center">
+                              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5 }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                  <PeopleIcon sx={{ color: '#3498db', fontSize: 16 }} />
+                                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                    {asociacion.miembros_activos}/{asociacion.miembros_totales}
+                                  </Typography>
+                                </Box>
+                                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                  {Math.round((asociacion.miembros_activos / asociacion.miembros_totales) * 100)}% activos
+                                </Typography>
+                              </Box>
+                            </TableCell>
+
+                            <TableCell align="center">
+                              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5 }}>
+                                <Typography variant="body2" sx={{
+                                  fontWeight: 'bold',
+                                  color: getCumplimientoColor(asociacion.cumplimiento)
+                                }}>
+                                  {asociacion.cumplimiento}%
+                                </Typography>
+                                <LinearProgress
+                                  variant="determinate"
+                                  value={asociacion.cumplimiento}
+                                  sx={{
+                                    width: '80%',
+                                    height: 6,
+                                    borderRadius: 3,
+                                    backgroundColor: '#ecf0f1',
+                                    '& .MuiLinearProgress-bar': {
+                                      backgroundColor: getCumplimientoColor(asociacion.cumplimiento),
+                                      borderRadius: 3
+                                    }
+                                  }}
+                                />
+                              </Box>
+                            </TableCell>
+
+                            <TableCell align="center">
+                              <Chip
+                                label={asociacion.estatus}
+                                size="small"
+                                sx={{
+                                  bgcolor: getAsociacionEstatusBgColor(asociacion.estatus),
+                                  color: getAsociacionEstatusColor(asociacion.estatus),
+                                  fontWeight: 600,
+                                  minWidth: 100
+                                }}
+                              />
+                            </TableCell>
+
+                            <TableCell>
+                              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                                <Typography variant="caption" sx={{
+                                  fontWeight: 'medium',
+                                  color: '#2c3e50',
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis'
+                                }}>
+                                  {asociacion.director}
+                                </Typography>
+                                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                  {asociacion.telefono}
+                                </Typography>
+                              </Box>
+                            </TableCell>
+
+                            <TableCell align="center">
+                              <Stack direction="row" spacing={0.5} justifyContent="center">
+                                <Tooltip title="Ver detalles">
+                                  <IconButton
+                                    size="small"
+                                    sx={{ color: '#3498db' }}
+                                  >
+                                    <VisibilityIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+
+                                <Tooltip title="Editar asociación">
+                                  <IconButton
+                                    size="small"
+                                    sx={{ color: '#f39c12' }}
+                                  >
+                                    <EditIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+
+                                <Tooltip title="Cambiar estatus">
+                                  <IconButton
+                                    size="small"
+                                    onClick={() => handleToggleAsociacionStatus(asociacion.id_asociacion)}
+                                    sx={{
+                                      color: asociacion.estatus === 'Activa' ? '#e74c3c' :
+                                        asociacion.estatus === 'Suspendida' ? '#f39c12' : '#2ecc71'
+                                    }}
+                                  >
+                                    {asociacion.estatus === 'Activa' ? <BlockIcon fontSize="small" /> :
+                                      asociacion.estatus === 'Suspendida' ? <WarningIcon fontSize="small" /> :
+                                        <CheckCircleIcon fontSize="small" />}
+                                  </IconButton>
+                                </Tooltip>
+                              </Stack>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+
+                {/* Estadísticas de Asociaciones */}
+                <Grid container spacing={2} sx={{ mt: 2 }}>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e8f5e9' }}>
+                      <Typography variant="h6" sx={{ color: '#27ae60', fontWeight: 'bold' }}>
+                        {filteredAsociaciones.filter(a => a.estatus === 'Activa').length}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#27ae60' }}>
+                        Asociaciones Activas
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#fff3e0' }}>
+                      <Typography variant="h6" sx={{ color: '#f39c12', fontWeight: 'bold' }}>
+                        {filteredAsociaciones.reduce((acc, curr) => acc + curr.miembros_totales, 0)}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#f39c12' }}>
+                        Total Agentes
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e3f2fd' }}>
+                      <Typography variant="h6" sx={{ color: '#3498db', fontWeight: 'bold' }}>
+                        {Math.round(filteredAsociaciones.reduce((acc, curr) => acc + curr.cumplimiento, 0) / Math.max(filteredAsociaciones.length, 1))}%
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#3498db' }}>
+                        Cumplimiento Promedio
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#f3e5f5' }}>
+                      <Typography variant="h6" sx={{ color: '#9b59b6', fontWeight: 'bold' }}>
+                        {new Set(filteredAsociaciones.map(a => a.region)).size}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#9b59b6' }}>
+                        Regiones Cubiertas
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                </Grid>
+
+                {/* Distribución por Región */}
+                <Paper sx={{ p: 2, mt: 2, bgcolor: '#fafafa' }}>
+                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
+                    Distribución de Asociaciones por Región
+                  </Typography>
+                  <Grid container spacing={1}>
+                    {Array.from(new Set(filteredAsociaciones.map(a => a.region))).map((region, index) => {
+                      const count = filteredAsociaciones.filter(a => a.region === region).length;
+                      const totalAgentes = filteredAsociaciones
+                        .filter(a => a.region === region)
+                        .reduce((acc, curr) => acc + curr.miembros_totales, 0);
+                      const percentage = Math.round((count / Math.max(filteredAsociaciones.length, 1)) * 100);
+                      return (
+                        <Grid item xs={6} key={index}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <LocationOnIcon sx={{ color: '#3498db', fontSize: 16 }} />
+                              <Box>
+                                <Typography variant="body2" sx={{ color: '#2c3e50' }}>
+                                  {region}
+                                </Typography>
+                                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                  {totalAgentes} agentes
+                                </Typography>
+                              </Box>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#3498db' }}>
+                                {count}
+                              </Typography>
+                              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                ({percentage}%)
+                              </Typography>
+                            </Box>
+                          </Box>
+                          <LinearProgress
+                            variant="determinate"
+                            value={percentage}
+                            sx={{
+                              height: 4,
+                              borderRadius: 2,
+                              mt: 0.5,
+                              bgcolor: '#e0e0e0',
+                              '& .MuiLinearProgress-bar': {
+                                bgcolor: '#3498db'
+                              }
+                            }}
+                          />
+                        </Grid>
+                      );
+                    })}
+                  </Grid>
+                </Paper>
+
+                {/* Niveles de Cumplimiento */}
+                <Paper sx={{ p: 2, mt: 2, bgcolor: '#f5f5f5' }}>
+                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
+                    Niveles de Cumplimiento
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={4}>
+                      <Box sx={{ textAlign: 'center' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mb: 1 }}>
+                          <CheckCircleIcon sx={{ color: '#27ae60' }} />
+                          <Typography variant="h6" sx={{ color: '#27ae60', fontWeight: 'bold' }}>
+                            {filteredAsociaciones.filter(a => a.cumplimiento >= 95).length}
+                          </Typography>
+                        </Box>
+                        <Typography variant="caption" sx={{ color: '#27ae60' }}>
+                          Excelente (≥95%)
+                        </Typography>
+                      </Box>
+                    </Grid>
+                    <Grid item xs={4}>
+                      <Box sx={{ textAlign: 'center' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mb: 1 }}>
+                          <WarningIcon sx={{ color: '#f39c12' }} />
+                          <Typography variant="h6" sx={{ color: '#f39c12', fontWeight: 'bold' }}>
+                            {filteredAsociaciones.filter(a => a.cumplimiento >= 90 && a.cumplimiento < 95).length}
+                          </Typography>
+                        </Box>
+                        <Typography variant="caption" sx={{ color: '#f39c12' }}>
+                          Bueno (90-94%)
+                        </Typography>
+                      </Box>
+                    </Grid>
+                    <Grid item xs={4}>
+                      <Box sx={{ textAlign: 'center' }}>
+                        <Box sx={{ textAlign: 'center' }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mb: 1 }}>
+                            <ErrorIcon sx={{ color: '#e74c3c' }} />
+                            <Typography variant="h6" sx={{ color: '#e74c3c', fontWeight: 'bold' }}>
+                              {filteredAsociaciones.filter(a => a.cumplimiento < 90).length}
+                            </Typography>
+                          </Box>
+                          <Typography variant="caption" sx={{ color: '#e74c3c' }}>
+                            Requiere Mejora (&lt;90%)
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Grid>
+                  </Grid>
+                </Paper>
+              </Box>
+            )}
+
+            {activeTab === 9 && (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                {/* Configuración de Gestión de Pendientes */}
+                <Paper sx={{ p: 2, bgcolor: '#f8f9fa', mb: 2 }}>
+                  <Typography variant="subtitle1" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 2 }}>
+                    Configuración de Gestión de Documentos Pendientes
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Tiempo Máximo de Evaluación (días)"
+                        type="number"
+                        defaultValue="15"
+                        helperText="Días máximos para evaluar documentos después de ser asignados"
+                        InputProps={{
+                          endAdornment: <InputAdornment position="end">días</InputAdornment>,
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        fullWidth
+                        label="Documentos Máximos por Evaluador"
+                        type="number"
+                        defaultValue="10"
+                        helperText="Número máximo de documentos que un evaluador puede tener asignados simultáneamente"
+                        InputProps={{
+                          endAdornment: <InputAdornment position="end">documentos</InputAdornment>,
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            defaultChecked={true}
+                            color="primary"
+                          />
+                        }
+                        label="Notificaciones Automáticas a Agentes"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            defaultChecked={true}
+                            color="primary"
+                          />
+                        }
+                        label="Recordatorios Automáticos a Evaluadores"
+                      />
+                    </Grid>
+                  </Grid>
+                </Paper>
+
+                {/* Filtros, búsqueda y estadísticas */}
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      <Chip
+                        label="Todos"
+                        variant="filled"
+                        color="primary"
+                        clickable
+                      />
+                      <Chip
+                        label="Pendientes"
+                        variant="outlined"
+                        clickable
+                      />
+                      <Chip
+                        label="Asignados"
+                        variant="outlined"
+                        clickable
+                      />
+                      <Chip
+                        label="En Revisión"
+                        variant="outlined"
+                        clickable
+                      />
+                      <Chip
+                        label="Con Retraso"
+                        variant="outlined"
+                        clickable
+                      />
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                        Total: {filteredAgentesPendientes.length} agentes
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                        Pendientes: {filteredAgentesPendientes.filter(a => a.estatus_evaluacion === 'pendiente').length}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                        Documentos: {filteredAgentesPendientes.reduce((acc, curr) => acc + curr.documentos_pendientes, 0)}
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        startIcon={<AssignmentTurnedInIcon />}
+                        sx={{ bgcolor: '#3498db', '&:hover': { bgcolor: '#2980b9' } }}
+                      >
+                        Asignar Masivamente
+                      </Button>
+                    </Box>
+                  </Box>
+
+                  {/* Campo de búsqueda */}
+                  <TextField
+                    fullWidth
+                    placeholder="Buscar agente por nombre, email o región..."
+                    value={searchAgentesPendientes}
+                    onChange={(e) => setSearchAgentesPendientes(e.target.value)}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                    size="small"
+                    sx={{ maxWidth: 400 }}
+                  />
+                </Box>
+
+                {/* Tabla de Agentes con Documentos Pendientes */}
+                <TableContainer sx={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: 1 }}>
+                  <Table stickyHeader size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell sx={{ fontWeight: 'bold', width: '5%' }}>ID</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '20%' }}>Agente</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '12%' }}>Región</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '15%' }} align="center">Documentos Pendientes</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '15%' }} align="center">Fecha Subida</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '15%' }}>Evaluador Asignado</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Estatus</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '8%' }} align="center">Acciones</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {filteredAgentesPendientes.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={8} align="center" sx={{ py: 3 }}>
+                            <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                              No se encontraron agentes con documentos pendientes que coincidan con la búsqueda
+                            </Typography>
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        filteredAgentesPendientes.map((agente) => (
+                          <TableRow
+                            key={agente.id_agente}
+                            hover
+                            sx={{
+                              '&:hover': { bgcolor: '#f8f9fa' },
+                              opacity: agente.estatus_evaluacion === 'pendiente' ? 1 : 0.9
+                            }}
+                          >
+                            <TableCell>
+                              <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                #{agente.id_agente}
+                              </Typography>
+                              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                ID Usuario: {agente.id_usuario}
+                              </Typography>
+                            </TableCell>
+
+                            <TableCell>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                <Avatar sx={{
+                                  width: 36,
+                                  height: 36,
+                                  fontSize: '0.9rem',
+                                  bgcolor: '#526F78',
+                                  fontWeight: 'bold'
+                                }}>
+                                  {getAgenteIniciales(agente.nombre)}
+                                </Avatar>
+                                <Box>
+                                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                    {agente.nombre}
+                                  </Typography>
+                                  <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block' }}>
+                                    {agente.email}
+                                  </Typography>
+                                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
+                                    <PhoneIcon sx={{ fontSize: 12, color: '#7f8c8d' }} />
+                                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                      {agente.telefono}
+                                    </Typography>
+                                  </Box>
+                                </Box>
+                              </Box>
+                            </TableCell>
+
+                            <TableCell>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                <LocationOnIcon sx={{ fontSize: 14, color: '#7f8c8d' }} />
+                                <Typography variant="body2">{agente.region}</Typography>
+                              </Box>
+                            </TableCell>
+
+                            <TableCell align="center">
+                              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5 }}>
+                                <Typography variant="h6" sx={{ color: '#e74c3c', fontWeight: 'bold' }}>
+                                  {agente.documentos_pendientes}
+                                </Typography>
+                                <Tooltip title={
+                                  <Box>
+                                    <Typography variant="body2" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                                      Documentos Pendientes:
+                                    </Typography>
+                                    {agente.documentos.map((doc, idx) => (
+                                      <Typography key={idx} variant="caption" sx={{ display: 'block' }}>
+                                        • {doc.tipo} ({doc.fecha})
+                                      </Typography>
+                                    ))}
+                                  </Box>
+                                }>
+                                  <Chip
+                                    label="Ver detalles"
+                                    size="small"
+                                    variant="outlined"
+                                    sx={{ height: 20, fontSize: '0.65rem' }}
+                                  />
+                                </Tooltip>
+                              </Box>
+                            </TableCell>
+
+                            <TableCell align="center">
+                              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5 }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                  <CalendarTodayIcon sx={{ color: '#9b59b6', fontSize: 14 }} />
+                                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                                    {agente.fecha_subida}
+                                  </Typography>
+                                </Box>
+                                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                  Última actualización
+                                </Typography>
+                              </Box>
+                            </TableCell>
+
+                            <TableCell>
+                              {agente.evaluador_asignado ? (
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                  <PersonIcon sx={{ color: '#27ae60', fontSize: 16 }} />
+                                  <Typography variant="body2" sx={{ color: '#2c3e50', fontWeight: 'medium' }}>
+                                    {agente.evaluador_asignado}
+                                  </Typography>
+                                </Box>
+                              ) : (
+                                <Typography variant="body2" sx={{ color: '#7f8c8d', fontStyle: 'italic' }}>
+                                  No asignado
+                                </Typography>
+                              )}
+                            </TableCell>
+
+                            <TableCell align="center">
+                              <Chip
+                                label={getEstatusEvaluacionText(agente.estatus_evaluacion)}
+                                size="small"
+                                sx={{
+                                  bgcolor: getEstatusEvaluacionBgColor(agente.estatus_evaluacion),
+                                  color: getEstatusEvaluacionColor(agente.estatus_evaluacion),
+                                  fontWeight: 600,
+                                  minWidth: 100
+                                }}
+                              />
+                            </TableCell>
+
+                            <TableCell align="center">
+                              <Stack direction="row" spacing={0.5} justifyContent="center">
+                                <Tooltip title="Ver documentos del agente">
+                                  <IconButton
+                                    size="small"
+                                    sx={{ color: '#3498db' }}
+                                  >
+                                    <VisibilityIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+
+                                <Tooltip title="Asignar evaluador">
+                                  <IconButton
+                                    size="small"
+                                    onClick={() => handleAssignEvaluator(agente.id_agente)}
+                                    sx={{ 
+                                      color: agente.evaluador_asignado ? '#f39c12' : '#2ecc71',
+                                      bgcolor: agente.evaluador_asignado ? '#fff3e0' : '#e8f5e9',
+                                      '&:hover': {
+                                        bgcolor: agente.evaluador_asignado ? '#ffeaa7' : '#c8e6c9'
+                                      }
+                                    }}
+                                  >
+                                    <AssignmentIndIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+                              </Stack>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+
+                {/* Estadísticas de Agentes Pendientes */}
+                <Grid container spacing={2} sx={{ mt: 2 }}>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#ffebee' }}>
+                      <Typography variant="h6" sx={{ color: '#e74c3c', fontWeight: 'bold' }}>
+                        {filteredAgentesPendientes.filter(a => a.estatus_evaluacion === 'pendiente').length}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#e74c3c' }}>
+                        Sin Asignar
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#fff3e0' }}>
+                      <Typography variant="h6" sx={{ color: '#f39c12', fontWeight: 'bold' }}>
+                        {filteredAgentesPendientes.filter(a => a.estatus_evaluacion === 'asignado').length}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#f39c12' }}>
+                        Asignados
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e3f2fd' }}>
+                      <Typography variant="h6" sx={{ color: '#3498db', fontWeight: 'bold' }}>
+                        {filteredAgentesPendientes.filter(a => a.estatus_evaluacion === 'en_revision').length}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#3498db' }}>
+                        En Revisión
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#f3e5f5' }}>
+                      <Typography variant="h6" sx={{ color: '#9b59b6', fontWeight: 'bold' }}>
+                        {filteredAgentesPendientes.reduce((acc, curr) => acc + curr.documentos_pendientes, 0)}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#9b59b6' }}>
+                        Total Documentos
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                </Grid>
+
+                {/* Distribución por Región */}
+                <Paper sx={{ p: 2, mt: 2, bgcolor: '#fafafa' }}>
+                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
+                    Distribución de Agentes Pendientes por Región
+                  </Typography>
+                  <Grid container spacing={1}>
+                    {Array.from(new Set(filteredAgentesPendientes.map(a => a.region))).map((region, index) => {
+                      const count = filteredAgentesPendientes.filter(a => a.region === region).length;
+                      const totalDocumentos = filteredAgentesPendientes
+                        .filter(a => a.region === region)
+                        .reduce((acc, curr) => acc + curr.documentos_pendientes, 0);
+                      const percentage = Math.round((count / Math.max(filteredAgentesPendientes.length, 1)) * 100);
+                      return (
+                        <Grid item xs={6} key={index}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <LocationOnIcon sx={{ color: '#3498db', fontSize: 16 }} />
+                              <Box>
+                                <Typography variant="body2" sx={{ color: '#2c3e50' }}>
+                                  {region}
+                                </Typography>
+                                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                  {totalDocumentos} documentos
+                                </Typography>
+                              </Box>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#3498db' }}>
+                                {count}
+                              </Typography>
+                              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                ({percentage}%)
+                              </Typography>
+                            </Box>
+                          </Box>
+                          <LinearProgress
+                            variant="determinate"
+                            value={percentage}
+                            sx={{
+                              height: 4,
+                              borderRadius: 2,
+                              mt: 0.5,
+                              bgcolor: '#e0e0e0',
+                              '& .MuiLinearProgress-bar': {
+                                bgcolor: '#3498db'
+                              }
+                            }}
+                          />
+                        </Grid>
+                      );
+                    })}
+                  </Grid>
+                </Paper>
+
+                {/* Tipos de Documentos Más Comunes */}
+                <Paper sx={{ p: 2, mt: 2, bgcolor: '#f5f5f5' }}>
+                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
+                    Tipos de Documentos Más Comunes Pendientes
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                        {['Carta de Antecedentes', 'Declaración Patrimonial', 'Certificación de Estudios', 
+                          'Constancia de No Delitos Fiscales', 'Aviso de Retiro de SAT'].map((tipo, idx) => {
+                          const count = filteredAgentesPendientes.reduce((acc, agente) => {
+                            return acc + agente.documentos.filter(doc => doc.tipo === tipo).length;
+                          }, 0);
+                          return (
+                            <Chip
+                              key={idx}
+                              label={`${tipo}: ${count}`}
+                              size="small"
+                              sx={{
+                                bgcolor: getTipoBgColor(tipo),
+                                color: getTipoColor(tipo),
+                                fontWeight: 500
+                              }}
+                            />
+                          );
+                        })}
+                      </Box>
+                    </Grid>
+                  </Grid>
+                </Paper>
+              </Box>
+            )}
+
+            {activeTab === 10 && (
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 2 }}>
@@ -3527,7 +4889,7 @@ const SystemConfig = () => {
               </Grid>
             )}
 
-            {activeTab === 9 && (
+            {activeTab === 11 && (
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                 {/* Configuración de Umbrales del Semáforo */}
                 <Paper sx={{ p: 2, bgcolor: '#f8f9fa', mb: 2 }}>
@@ -3652,7 +5014,7 @@ const SystemConfig = () => {
                         Total: {filteredNivelesReconocimiento.length} niveles
                       </Typography>
                       <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                        Activos: {filteredNivelesReconocimiento.filter(n => n.estatus === 1).length}
+                        Activas: {filteredNivelesReconocimiento.filter(n => n.estatus === 1).length}
                       </Typography>
                       <Button
                         variant="contained"
@@ -3923,7 +5285,7 @@ const SystemConfig = () => {
               </Box>
             )}
 
-            {activeTab === 10 && (
+            {activeTab === 12 && (
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <FormControlLabel
@@ -3997,7 +5359,7 @@ const SystemConfig = () => {
               </Grid>
             )}
 
-            {activeTab === 11 && (
+            {activeTab === 13 && (
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={6}>
                   <TextField
@@ -4256,6 +5618,83 @@ const SystemConfig = () => {
           </Box>
         </Box>
       </Drawer>
+
+      {/* Diálogo para asignar evaluador */}
+      <Dialog open={assignDialogOpen} onClose={() => setAssignDialogOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <AssignmentIndIcon sx={{ color: '#3498db' }} />
+            <Typography variant="h6">Asignar Evaluador</Typography>
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          {selectedAgent && (
+            <Box sx={{ mt: 2 }}>
+              <Typography variant="body2" sx={{ color: '#2c3e50', mb: 2 }}>
+                Seleccione un evaluador para el agente:
+              </Typography>
+              
+              <Box sx={{ mb: 3, p: 2, bgcolor: '#f8f9fa', borderRadius: 1 }}>
+                <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
+                  Agente Seleccionado:
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                  <Avatar sx={{ width: 40, height: 40, bgcolor: '#526F78', fontSize: '0.9rem' }}>
+                    {getAgenteIniciales(selectedAgent.nombre)}
+                  </Avatar>
+                  <Box>
+                    <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                      {selectedAgent.nombre}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                      {selectedAgent.documentos_pendientes} documentos pendientes • {selectedAgent.region}
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
+
+              <FormControl fullWidth sx={{ mt: 2 }}>
+                <InputLabel id="evaluator-select-label">Seleccionar Evaluador</InputLabel>
+                <Select
+                  labelId="evaluator-select-label"
+                  value={selectedEvaluator}
+                  label="Seleccionar Evaluador"
+                  onChange={(e) => setSelectedEvaluator(e.target.value)}
+                  required
+                >
+                  <MenuItem value="">
+                    <em>Seleccionar evaluador...</em>
+                  </MenuItem>
+                  {evaluadoresDisponibles.map((evaluador, index) => (
+                    <MenuItem key={index} value={evaluador}>
+                      {evaluador}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <Box sx={{ mt: 3 }}>
+                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                  Evaluadores disponibles: Miembros del comité con permiso para aprobar
+                </Typography>
+              </Box>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setAssignDialogOpen(false)} color="inherit">
+            Cancelar
+          </Button>
+          <Button 
+            onClick={handleConfirmAssignment} 
+            variant="contained" 
+            color="primary"
+            disabled={!selectedEvaluator}
+          >
+            Asignar Evaluador
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Botón flotante para abrir panel - MÁS DISCRETO */}
       {!drawerOpen && (

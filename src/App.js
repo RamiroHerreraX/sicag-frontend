@@ -37,7 +37,6 @@ import VistaCertificacion from './pages/agente/certifications/VistaCertificacion
 
 // Expediente
 import Expediente from './pages/agente/expediente/Expediente';
-import ExpedienteConfig from './pages/expediente/ConfigExpediente';
 
 // Profile
 import Profile from './pages/agente/profile/Profile';
@@ -47,7 +46,8 @@ import UserManagement from './pages/admin/UserManagement';
 import UserReview from './pages/admin/UserReview';
 import SystemConfig from './pages/admin/SystemConfig';
 import Reports from './pages/admin/Reports';
-import AuditLog from './pages/audit/AuditLog';
+import AuditLog from './pages/admin/audit/AuditLog';
+import ExpedienteConfig from './pages/admin/ConfigExpediente';
 
 // Committee Modules
 import CommitteeReview from './pages/committee/CommitteeReview';
