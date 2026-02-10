@@ -28,7 +28,7 @@ import {
 import {
   Dashboard as DashboardIcon,
   Gavel as ReviewIcon,
-    Folder as ExpedienteIcon,
+  Folder as ExpedienteIcon,
   Description as CertificationsIcon,
   Notifications as NotificationsIcon,
   Logout as LogoutIcon,
@@ -43,6 +43,7 @@ import {
   AccountCircle as AccountCircleIcon,
   Email as EmailIcon,
   Phone as PhoneIcon,
+  History as HistoryIcon,
   LocationOn as LocationIcon,
 } from "@mui/icons-material";
 import { useAuth } from "../context/AuthContext";
@@ -77,9 +78,9 @@ const CommitteeLayout = () => {
       badge: 0,
     },
     {
-      text: 'EXPEDIENTE',
-       icon: <ExpedienteIcon />, 
-       path: '/association/expediente',
+      text: "EXPEDIENTE",
+      icon: <ExpedienteIcon />,
+      path: "/association/expediente",
       description: "Control de documentos",
       badge: 0,
     },
@@ -102,6 +103,13 @@ const CommitteeLayout = () => {
       icon: <PersonIcon />,
       path: "/association/profile",
       description: "Mi perfil y configuración",
+      badge: 0,
+    },
+    {
+      text: "AUDITORÍA",
+      icon: <HistoryIcon />,
+      path: "/association/audit",
+      description: "Registro de auditoría",
       badge: 0,
     },
   ];

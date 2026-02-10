@@ -64,6 +64,7 @@ import ControlAsociados from './pages/association/ControlAsociados';
 import AlertsAsociacion from './pages/association/AlertsAsociacion'; // NUEVO
 import AssociationProfile from './pages/association/AssociationProfile'; // NUEVO
 import ExpedienteAssociation from './pages/association/ExpedienteAsociados';
+import AssociationAuditLog from './pages/association/AssociationAuditLog';
 
 // Mapa del sitio
 import SiteMap from './pages/sitemap/SiteMap';
@@ -142,6 +143,7 @@ function App() {
               <Route path="control-asociados" element={<ControlAsociados />} />
               <Route path="expediente" element={<ExpedienteAssociation />} />
               <Route path="profile" element={<AssociationProfile />} />
+              <Route path="audit" element={<AssociationAuditLog/>} />
             </Route>
 
             {/* Rutas para ADMIN */}
