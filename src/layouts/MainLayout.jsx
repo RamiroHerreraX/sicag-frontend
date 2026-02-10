@@ -30,7 +30,9 @@ import {
   Logout as LogoutIcon,
   Menu as MenuIcon,
   Notifications as NotificationsIcon,
-  ArrowDropDown as ArrowDropDownIcon
+  ArrowDropDown as ArrowDropDownIcon,
+  AssignmentTurnedIn as AuditIcon,
+  Gavel as DeclaracionesIcon2
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 
@@ -74,7 +76,8 @@ const MainLayout = () => {
     { text: 'DASHBOARD', icon: <DashboardIcon />, path: '/dashboard' },
     { text: 'EXPEDIENTE', icon: <ExpedienteIcon />, path: '/expediente' },
     { text: 'CERTIFICACIONES', icon: <CertificationsIcon />, path: '/certifications' },
-    { text: 'DECLARACIONES', icon: <DeclaracionesIcon />, path: '/declaraciones' },
+    { text: 'DECLARACIONES', icon: <DeclaracionesIcon2 />, path: '/declaraciones' },
+    { text: 'AUDITORIA', icon: <AuditIcon />, path: '/audit-agent' },
     { text: 'PERFIL', icon: <ProfileIcon />, path: '/profile' },
     { text: 'MAPA DEL SITIO', icon: <SiteMapIcon />, path: '/sitemap' },
   ];

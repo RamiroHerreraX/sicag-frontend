@@ -47,6 +47,9 @@ import Expediente from "./pages/agente/expediente/Expediente";
 // Profile
 import Profile from "./pages/agente/profile/Profile";
 
+// Auditoria
+import AuditAgent from './pages/agente/auditoria/AuditAgent';
+
 // Admin Modules
 import UserManagement from "./pages/admin/UserManagement";
 import UserReview from "./pages/admin/UserReview";
@@ -134,6 +137,7 @@ function App() {
               <Route path="/expediente" element={<Expediente />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/sitemap" element={<SiteMap />} />
+              <Route path="/audit-agent" element={<AuditAgent />} />
             </Route>
 
             {/* Rutas para COMITÉ */}
