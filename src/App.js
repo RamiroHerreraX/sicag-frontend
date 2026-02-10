@@ -1,76 +1,90 @@
-import React from 'react';
-import { HashRouter  as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import './App.css';
+import React from "react";
+import {
+  HashRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import "./App.css";
 
 // Context
-import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // Layouts según tipo de usuario
-import MainLayout from './layouts/MainLayout';
-import CommitteeLayout from './layouts/CommitteeLayout';
-import AdminLayout from './layouts/AdminLayout';
-import AuthLayout from './layouts/AuthLayout';
-import AssociationLayout from './layouts/AssociationLayout'; // NUEVO LAYOUT
+import MainLayout from "./layouts/MainLayout";
+import CommitteeLayout from "./layouts/CommitteeLayout";
+import AdminLayout from "./layouts/AdminLayout";
+import AuthLayout from "./layouts/AuthLayout";
+import AssociationLayout from "./layouts/AssociationLayout"; 
+import SuperAdminLayout from "./layouts/SuperAdminLayout";
 
 // Auth Pages
-import Login from './pages/auth/Login';
-import ForgotPassword from './pages/auth/ForgotPassword';
-import PasswordChange from './pages/auth/PasswordChange';
-import PrivacyAgreement from './pages/auth/PrivacyAgreement';
+import Login from "./pages/auth/Login";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import PasswordChange from "./pages/auth/PasswordChange";
+import PrivacyAgreement from "./pages/auth/PrivacyAgreement";
 
 // Dashboard Pages (diferentes por rol)
-import UserDashboard from './pages/agente/dashboard/UserDashboard';
-import CommitteeDashboard from './pages/committee/CommitteeDashboard';
-import AdminDashboard from './pages/dashboard/AdminDashboard';
- // NUEVO DASHBOARD
+import UserDashboard from "./pages/agente/dashboard/UserDashboard";
+import CommitteeDashboard from "./pages/committee/CommitteeDashboard";
+import AdminDashboard from "./pages/dashboard/AdminDashboard";
+// NUEVO DASHBOARD
 
 // Certifications
-import Certifications from './pages/agente/certifications/Certifications';
-import CertificationDetail from './pages/agente/certifications/CertificationDetail';
-import NewCertification from './pages/agente/certifications/NewCertification';
-import NewUserCertification from './pages/agente/expediente/NewUserCertification';
-import Declaraciones from './pages/agente/expediente/Declaraciones';
-import VistaCertificacion from './pages/agente/certifications/VistaCertificacion';
+import Certifications from "./pages/agente/certifications/Certifications";
+import CertificationDetail from "./pages/agente/certifications/CertificationDetail";
+import NewCertification from "./pages/agente/certifications/NewCertification";
+import NewUserCertification from "./pages/agente/expediente/NewUserCertification";
+import Declaraciones from "./pages/agente/expediente/Declaraciones";
+import VistaCertificacion from "./pages/agente/certifications/VistaCertificacion";
 
 // Expediente
-import Expediente from './pages/agente/expediente/Expediente';
+import Expediente from "./pages/agente/expediente/Expediente";
 
 // Profile
-import Profile from './pages/agente/profile/Profile';
+import Profile from "./pages/agente/profile/Profile";
 
 // Admin Modules
-import UserManagement from './pages/admin/UserManagement';
-import UserReview from './pages/admin/UserReview';
-import SystemConfig from './pages/admin/SystemConfig';
-import Reports from './pages/admin/Reports';
-import AuditLog from './pages/admin/audit/AuditLog';
-import ExpedienteConfig from './pages/admin/ConfigExpediente';
+import UserManagement from "./pages/admin/UserManagement";
+import UserReview from "./pages/admin/UserReview";
+import SystemConfig from "./pages/admin/SystemConfig";
+import Reports from "./pages/admin/Reports";
+import AuditLog from "./pages/admin/audit/AuditLog";
+import ExpedienteConfig from "./pages/admin/ConfigExpediente";
 
 // Committee Modules
-import CommitteeReview from './pages/committee/CommitteeReview';
-import CertificationReview from './pages/committee/CertificationReview';
-import DocumentReview from './pages/committee/DocumentReview';
-import CommitteeAlerts from './pages/committee/CommitteeAlerts';
-import CommitteeProfile from './pages/committee/CommitteeProfile';
+import CommitteeReview from "./pages/committee/CommitteeReview";
+import CertificationReview from "./pages/committee/CertificationReview";
+import DocumentReview from "./pages/committee/DocumentReview";
+import CommitteeAlerts from "./pages/committee/CommitteeAlerts";
+import CommitteeProfile from "./pages/committee/CommitteeProfile";
 /*import CommitteeAssignments from './pages/committee/CommitteeAssignments';
 import CommitteeMetrics from './pages/committee/CommitteeMetrics';*/
 
-// Association Modules - NUEVOS
-import AssociationDashboard from './pages/association/AssociationDashboard';
-import ControlAsociados from './pages/association/ControlAsociados';
-import AlertsAsociacion from './pages/association/AlertsAsociacion'; // NUEVO
-import AssociationProfile from './pages/association/AssociationProfile'; // NUEVO
-import ExpedienteAssociation from './pages/association/ExpedienteAsociados';
-import AssociationAuditLog from './pages/association/AssociationAuditLog';
+// Association Modules 
+import AssociationDashboard from "./pages/association/AssociationDashboard";
+import ControlAsociados from "./pages/association/ControlAsociados";
+import AlertsAsociacion from "./pages/association/AlertsAsociacion"; // NUEVO
+import AssociationProfile from "./pages/association/AssociationProfile"; // NUEVO
+import ExpedienteAssociation from "./pages/association/ExpedienteAsociados";
+import AssociationAuditLog from "./pages/association/AssociationAuditLog";
 
+// Association SuperAdministrador 
+import SuperASystemInstances from './pages/superadmin/SuperASystemInstances';
+import SuperAAdminDashboard from "./pages/superadmin/SuperAAdminDashboard";
+import SuperAUserManagement from "./pages/superadmin/SuperAUserManagement";
+import SuperASystemConfig from "./pages/superadmin/SuperASystemConfig";
+import SuperAAuditLog from "./pages/superadmin/SuperAAuditLog";
+import SuperAExpedienteConfig from "./pages/superadmin/SuperAConfigExpediente";
+import SuperAReports from "./pages/superadmin/SuperAReports";
 // Mapa del sitio
-import SiteMap from './pages/sitemap/SiteMap';
+import SiteMap from "./pages/sitemap/SiteMap";
 
 // Importar tema personalizado
-import theme from './theme';
+import theme from "./theme";
 
 function App() {
   return (
@@ -88,9 +102,11 @@ function App() {
             </Route>
 
             {/* Rutas para USUARIO AGENTE */}
-            <Route 
+            <Route
               element={
-                <ProtectedRoute allowedRoles={['agente', 'profesionista', 'empresario']}>
+                <ProtectedRoute
+                  allowedRoles={["agente", "profesionista", "empresario"]}
+                >
                   <MainLayout />
                 </ProtectedRoute>
               }
@@ -98,10 +114,22 @@ function App() {
               <Route path="/" element={<Navigate to="/dashboard" />} />
               <Route path="/dashboard" element={<UserDashboard />} />
               <Route path="/certifications" element={<Certifications />} />
-              <Route path="/certifications/new" element={<NewCertification />} />
-              <Route path="/certifications/:id" element={<CertificationDetail />} />
-              <Route path="/new-user-certification" element={<NewUserCertification />} />
-              <Route path="/vista-certification" element={<VistaCertificacion />} />
+              <Route
+                path="/certifications/new"
+                element={<NewCertification />}
+              />
+              <Route
+                path="/certifications/:id"
+                element={<CertificationDetail />}
+              />
+              <Route
+                path="/new-user-certification"
+                element={<NewUserCertification />}
+              />
+              <Route
+                path="/vista-certification"
+                element={<VistaCertificacion />}
+              />
               <Route path="/declaraciones" element={<Declaraciones />} />
               <Route path="/expediente" element={<Expediente />} />
               <Route path="/profile" element={<Profile />} />
@@ -109,19 +137,25 @@ function App() {
             </Route>
 
             {/* Rutas para COMITÉ */}
-            <Route 
-              path="/committee" 
+            <Route
+              path="/committee"
               element={
-                <ProtectedRoute allowedRoles={['comite']}>
+                <ProtectedRoute allowedRoles={["comite"]}>
                   <CommitteeLayout />
                 </ProtectedRoute>
               }
             >
               <Route index element={<Navigate to="dashboard" />} />
               <Route path="dashboard" element={<CommitteeDashboard />} />
-              <Route path="review" element={<CommitteeReview />} /> {/* Lista de revisiones */}
-              <Route path="review/:id" element={<CertificationReview />} /> {/* Revisión específica */}
-              <Route path="document/:certId/:docId" element={<DocumentReview />} /> {/* Visor documento */}
+              <Route path="review" element={<CommitteeReview />} />{" "}
+              {/* Lista de revisiones */}
+              <Route path="review/:id" element={<CertificationReview />} />{" "}
+              {/* Revisión específica */}
+              <Route
+                path="document/:certId/:docId"
+                element={<DocumentReview />}
+              />{" "}
+              {/* Visor documento */}
               <Route path="alerts" element={<CommitteeAlerts />} />
               {/*<Route path="assignments" element={<CommitteeAssignments />} />
               <Route path="metrics" element={<CommitteeMetrics />} />*/}
@@ -129,10 +163,10 @@ function App() {
             </Route>
 
             {/* Rutas para ASOCIACIÓN */}
-            <Route 
-              path="/association" 
+            <Route
+              path="/association"
               element={
-                <ProtectedRoute allowedRoles={['asociacion']}>
+                <ProtectedRoute allowedRoles={["asociacion"]}>
                   <AssociationLayout />
                 </ProtectedRoute>
               }
@@ -143,13 +177,32 @@ function App() {
               <Route path="control-asociados" element={<ControlAsociados />} />
               <Route path="expediente" element={<ExpedienteAssociation />} />
               <Route path="profile" element={<AssociationProfile />} />
-              <Route path="audit" element={<AssociationAuditLog/>} />
+              <Route path="audit" element={<AssociationAuditLog />} />
             </Route>
 
-            {/* Rutas para ADMIN */}
-            <Route 
+            {/* Rutas para SUPER-ADMIN */}
+            <Route
+              path="/supera"
               element={
-                <ProtectedRoute allowedRoles={['admin']}>
+                <ProtectedRoute allowedRoles={["supera"]}>
+                  <SuperAdminLayout/>
+                </ProtectedRoute>
+              }
+            >
+              <Route path="dashboard" element={<SuperAAdminDashboard />} />
+              <Route path="instancias" element={<SuperASystemInstances />} />
+              <Route path="users" element={<SuperAUserManagement />} />
+              <Route path="system-config" element={<SuperASystemConfig />} />
+              <Route path="expediente-config"element={<SuperAExpedienteConfig />}/>
+              <Route path="reports" element={<SuperAReports />} />
+              <Route path="audit" element={<SuperAAuditLog />} />
+            </Route>
+
+
+            {/* Rutas para ADMIN */}
+            <Route
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
                   <AdminLayout />
                 </ProtectedRoute>
               }
@@ -158,7 +211,10 @@ function App() {
               <Route path="/admin/users" element={<UserManagement />} />
               <Route path="/admin/users/:id/review" element={<UserReview />} />
               <Route path="/admin/system-config" element={<SystemConfig />} />
-              <Route path="/admin/expediente-config" element={<ExpedienteConfig />} />
+              <Route
+                path="/admin/expediente-config"
+                element={<ExpedienteConfig />}
+              />
               <Route path="/admin/reports" element={<Reports />} />
               <Route path="/admin/audit" element={<AuditLog />} />
             </Route>
@@ -167,7 +223,14 @@ function App() {
             <Route path="/" element={<Navigate to="/dashboard" />} />
 
             {/* Ruta 404 */}
-            <Route path="*" element={<div style={{ padding: '50px', textAlign: 'center' }}>404 - Página no encontrada</div>} />
+            <Route
+              path="*"
+              element={
+                <div style={{ padding: "50px", textAlign: "center" }}>
+                  404 - Página no encontrada
+                </div>
+              }
+            />
           </Routes>
         </Router>
       </AuthProvider>

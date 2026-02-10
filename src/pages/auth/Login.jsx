@@ -38,8 +38,10 @@ const Login = () => {
       setTimeout(() => {
         const userData = login({ email, password });
 
-        // Redirigir según rol
         switch (userData.role) {
+          case "supera": // 🔥 NUEVO
+            navigate("/supera/dashboard");
+            break;
           case "comite":
             navigate("/committee/dashboard");
             break;
@@ -74,6 +76,9 @@ const Login = () => {
       case "asociacion":
         demoEmail = "asociacion@demo.com";
         break;
+      case "supera":
+        demoEmail = "supera@demo.com";
+        break;
     }
 
     setEmail(demoEmail);
@@ -83,6 +88,9 @@ const Login = () => {
       const userData = login({ email: demoEmail, password: "demo123" });
 
       switch (role) {
+        case "supera":
+          navigate("/supera/dashboard");
+          break;
         case "comite":
           navigate("/committee/dashboard");
           break;
@@ -232,6 +240,15 @@ const Login = () => {
               size="small"
             >
               Acceso Asociación Aduanal
+            </Button>
+            
+            <Button
+              variant="outlined"
+              color="warning"
+              onClick={() => handleDemoLogin("supera")}
+              size="small"
+            >
+              Acceso Supera
             </Button>
           </Stack>
         </Box>

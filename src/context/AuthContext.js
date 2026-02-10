@@ -34,13 +34,21 @@ export const AuthProvider = ({ children }) => {
       region: 'Todas',
       avatar: 'AS'
     },
-    asociacion: { // ✅ NUEVO ROL
+    asociacion: { 
       id: 4,
       name: 'Asociación Aduanal',
       email: 'asociacion@ejemplo.com',
       role: 'asociacion',
       region: 'Regional',
       avatar: 'AA'
+    },
+    supera: { // 🔥 NUEVO ROL
+      id: 5,
+      name: 'Supervisor General',
+      email: 'supera@ejemplo.com',
+      role: 'supera',
+      region: 'Nacional',
+      avatar: 'SG'
     }
   };
 
@@ -58,12 +66,14 @@ export const AuthProvider = ({ children }) => {
   const login = (credentials) => {
     let userData;
 
-    if (credentials.email.includes('comite')) {
+    if (credentials.email.includes('supera')) {
+      userData = mockUsers.supera; // ✅ SUPERA
+    } else if (credentials.email.includes('comite')) {
       userData = mockUsers.comite;
     } else if (credentials.email.includes('admin')) {
       userData = mockUsers.admin;
     } else if (credentials.email.includes('asociacion')) {
-      userData = mockUsers.asociacion; // ✅ ASOCIACIÓN
+      userData = mockUsers.asociacion;
     } else {
       userData = mockUsers.agente;
     }

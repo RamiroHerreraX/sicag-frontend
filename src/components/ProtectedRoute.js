@@ -25,13 +25,19 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   // Verificar si el rol del usuario está permitido
   if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
     // Redirigir al dashboard según su rol
-    switch(user.role) {
+    switch (user.role) {
+      case 'supera': // 
+        return <Navigate to="/supera/dashboard" />;
+
       case 'comite':
         return <Navigate to="/committee/dashboard" />;
+
       case 'admin':
         return <Navigate to="/admin/dashboard" />;
-      case 'asociacion': // Rol de asociación agregado
+
+      case 'asociacion':
         return <Navigate to="/association/dashboard" />;
+
       default:
         return <Navigate to="/dashboard" />;
     }
