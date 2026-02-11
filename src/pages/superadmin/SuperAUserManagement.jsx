@@ -535,13 +535,11 @@ const UserManagement = () => {
             <Table stickyHeader size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold', width: '25%' }}>Usuario</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: '15%' }}>Rol</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: '15%' }}>Instancia Asignada</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: '10%' }}>Certificaciones</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: '10%' }}>Cumplimiento</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: '15%' }}>Último Acceso (Instancia)</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Acciones</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: '30%' }}>Usuario</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: '20%' }}>Rol</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: '20%' }}>Instancia Asignada</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: '15%' }}>Certificaciones</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: '15%' }}>Cumplimiento</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -666,75 +664,6 @@ const UserManagement = () => {
                           />
                         </Box>
                       </Tooltip>
-                    </TableCell>
-                    
-                    <TableCell>
-                      <Box>
-                        <Typography variant="body2">
-                          {user.lastAccess.split(' ')[0]}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                          {user.lastAccess.split(' ')[1]}
-                        </Typography>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
-                          <BusinessIcon sx={{ fontSize: 12, color: getInstanceColor(user.lastAccessInstance) }} />
-                          <Typography variant="caption" sx={{ color: getInstanceColor(user.lastAccessInstance) }}>
-                            {getInstanceDisplayName(user.lastAccessInstance)}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    </TableCell>
-                    
-                    <TableCell align="center">
-                      <Stack direction="row" spacing={0.5} justifyContent="center">
-                        <Tooltip title="Revisar perfil">
-                          <IconButton 
-                            size="small"
-                            component={Link}
-                            to={`/admin/users/${user.id}/review`}
-                            sx={{ color: '#3498db' }}
-                          >
-                            <VisibilityIcon fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
-                        
-                        <Tooltip title="Editar usuario">
-                          <IconButton 
-                            size="small"
-                            onClick={() => setSelectedUser(user)}
-                            sx={{ color: '#f39c12' }}
-                          >
-                            <EditIcon fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
-                        
-                        <Tooltip title={user.status === 'active' ? 'Desactivar' : 'Activar'}>
-                          <FormControlLabel
-                            control={
-                              <Switch
-                                size="small"
-                                checked={user.status === 'active'}
-                                onChange={() => {
-                                  setUsers(users.map(u => 
-                                    u.id === user.id ? { 
-                                      ...u, 
-                                      status: u.status === 'active' ? 'inactive' : 'active' 
-                                    } : u
-                                  ));
-                                }}
-                                color={user.status === 'active' ? 'success' : 'default'}
-                              />
-                            }
-                            label=""
-                          />
-                        </Tooltip>
-                        
-                        <Tooltip title="Más opciones">
-                          <IconButton size="small">
-                            <MoreVertIcon fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
-                      </Stack>
                     </TableCell>
                   </TableRow>
                 ))}

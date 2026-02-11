@@ -20,10 +20,6 @@ import {
   LinearProgress,
   Badge,
   Avatar,
-  Drawer,
-  Fab,
-  Tabs,
-  Tab,
   Tooltip
 } from '@mui/material';
 import {
@@ -36,9 +32,7 @@ import {
   Visibility as VisibilityIcon,
   CheckCircle as CheckCircleIcon,
   Refresh as RefreshIcon,
-  ChevronRight as ChevronRightIcon,
   Timer as TimerIcon,
-  FilterList as FilterIcon,
   Storage as StorageIcon,
   Person as PersonIcon,
   Cloud as CloudIcon,
@@ -46,9 +40,6 @@ import {
 } from '@mui/icons-material';
 
 const SystemInstancesDashboard = () => {
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [panelTab, setPanelTab] = useState(0);
-
   // Estadísticas de las instancias
   const systemStats = [
     { 
@@ -259,12 +250,6 @@ const SystemInstancesDashboard = () => {
     },
   ];
 
-  const panelTabs = [
-    { label: 'Instancias', icon: <DomainIcon /> },
-    { label: 'Alertas', icon: <WarningIcon /> },
-    { label: 'Actividad', icon: <TimerIcon /> },
-  ];
-
   const getStatusColor = (status) => {
     switch (status) {
       case 'excelente': return '#27ae60';
@@ -292,10 +277,6 @@ const SystemInstancesDashboard = () => {
       case 'security': return <SecurityIcon sx={{ color: '#9b59b6', fontSize: 16 }} />;
       default: return <NotificationsIcon sx={{ fontSize: 16 }} />;
     }
-  };
-
-  const toggleDrawer = () => {
-    setDrawerOpen(!drawerOpen);
   };
 
   return (
@@ -331,33 +312,10 @@ const SystemInstancesDashboard = () => {
           >
             Todas las Instancias
           </Button>
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<CloudIcon />}
-            sx={{ fontSize: '0.75rem', py: 0.5 }}
-          >
-            Backups
-          </Button>
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<SettingsIcon />}
-            sx={{ fontSize: '0.75rem', py: 0.5 }}
-          >
-            Configuración
-          </Button>
-
+          
           <Divider orientation="vertical" flexItem sx={{ height: 24, mx: 1 }} />
 
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<VisibilityIcon />}
-            onClick={toggleDrawer}
-          >
-            Panel
-          </Button>
+          
           <Button
             variant="outlined"
             size="small"
@@ -787,360 +745,6 @@ const SystemInstancesDashboard = () => {
           </Typography>
         </Box>
       </Box>
-
-      {/* Panel flotante (Drawer) */}
-      <Drawer
-        anchor="right"
-        open={drawerOpen}
-        onClose={toggleDrawer}
-        variant="persistent"
-        PaperProps={{
-          sx: {
-            width: 380,
-            maxWidth: '90vw',
-            marginTop: '64px',
-            height: 'calc(100vh - 64px)',
-            borderLeft: '1px solid #e0e0e0',
-            boxShadow: '0px 0px 20px rgba(0,0,0,0.1)',
-            borderRadius: '8px 0 0 8px'
-          }
-        }}
-      >
-        <Box sx={{
-          p: 2,
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden'
-        }}>
-          <Box sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            mb: 2,
-            pb: 2,
-            borderBottom: '1px solid #e0e0e0'
-          }}>
-            <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
-              Panel de Instancias
-            </Typography>
-            <IconButton
-              size="small"
-              onClick={toggleDrawer}
-              sx={{
-                color: '#7f8c8d',
-                '&:hover': { bgcolor: '#f5f5f5' }
-              }}
-            >
-              <ChevronRightIcon />
-            </IconButton>
-          </Box>
-
-          <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
-            <Tabs
-              value={panelTab}
-              onChange={(e, newValue) => setPanelTab(newValue)}
-              variant="fullWidth"
-              sx={{ minHeight: 40 }}
-            >
-              {panelTabs.map((tab, index) => (
-                <Tab
-                  key={index}
-                  icon={tab.icon}
-                  iconPosition="start"
-                  label={tab.label}
-                  sx={{
-                    minHeight: 40,
-                    fontSize: '0.75rem',
-                    textTransform: 'none'
-                  }}
-                />
-              ))}
-            </Tabs>
-          </Box>
-
-          <Box sx={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-            overflowY: 'auto'
-          }}>
-            {panelTab === 0 && (
-              <Box sx={{ flex: 1, overflowY: 'auto' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
-                    Resumen de Instancias
-                  </Typography>
-                  <Tooltip title="Filtrar">
-                    <IconButton size="small">
-                      <FilterIcon fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
-                </Box>
-
-                <Stack spacing={1.5}>
-                  {systemInstances.slice(0, 4).map((instance) => (
-                    <Paper
-                      key={instance.code}
-                      sx={{
-                        p: 1.5,
-                        bgcolor: 'white',
-                        borderLeft: `3px solid ${getInstanceStatusColor(instance.status)}`
-                      }}
-                    >
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
-                        <Avatar sx={{
-                          width: 32,
-                          height: 32,
-                          fontSize: '0.75rem',
-                          bgcolor: getInstanceStatusColor(instance.status)
-                        }}>
-                          {instance.name.charAt(0)}
-                        </Avatar>
-                        <Box sx={{ flex: 1 }}>
-                          <Typography variant="body2" sx={{ fontWeight: '600', color: '#2c3e50' }}>
-                            {instance.name}
-                          </Typography>
-                          <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                            {instance.code} • {instance.admin.split(' ')[0]}
-                          </Typography>
-                        </Box>
-                      </Box>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Typography variant="caption" sx={{
-                          color: '#95a5a6',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 0.5
-                        }}>
-                          <PersonIcon sx={{ fontSize: 12 }} />
-                          {instance.users} usuarios
-                        </Typography>
-                        <Chip 
-                          label={instance.status === 'active' ? 'ACTIVA' : 
-                                 instance.status === 'maintenance' ? 'MANTENIMIENTO' : 'INACTIVA'}
-                          size="small"
-                          sx={{
-                            bgcolor: `${getInstanceStatusColor(instance.status)}15`,
-                            color: getInstanceStatusColor(instance.status),
-                            fontSize: '0.65rem',
-                            height: 20
-                          }}
-                        />
-                      </Box>
-                    </Paper>
-                  ))}
-                </Stack>
-              </Box>
-            )}
-
-            {panelTab === 1 && (
-              <Box sx={{ flex: 1, overflowY: 'auto' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
-                    Alertas del Sistema
-                  </Typography>
-                  <Box sx={{ display: 'flex', gap: 0.5 }}>
-                    <Tooltip title="Configurar alertas">
-                      <IconButton size="small">
-                        <SettingsIcon fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
-                  </Box>
-                </Box>
-
-                <Stack spacing={1.5}>
-                  {systemAlerts.map((alert) => {
-                    let borderColor, iconColor, badgeColor, hoverColor;
-
-                    if (alert.type === 'warning') {
-                      borderColor = '#f39c12';
-                      iconColor = '#f39c12';
-                      badgeColor = 'warning';
-                      hoverColor = '#e67e22';
-                    } else if (alert.type === 'error') {
-                      borderColor = '#e74c3c';
-                      iconColor = '#e74c3c';
-                      badgeColor = 'error';
-                      hoverColor = '#c0392b';
-                    } else if (alert.type === 'info') {
-                      borderColor = '#3498db';
-                      iconColor = '#3498db';
-                      badgeColor = 'info';
-                      hoverColor = '#2980b9';
-                    } else {
-                      borderColor = '#27ae60';
-                      iconColor = '#27ae60';
-                      badgeColor = 'success';
-                      hoverColor = '#229954';
-                    }
-
-                    return (
-                      <Paper
-                        key={alert.id}
-                        sx={{
-                          p: 1.5,
-                          borderLeft: `4px solid ${borderColor}`,
-                          bgcolor: 'white',
-                          transition: 'all 0.2s',
-                          '&:hover': {
-                            transform: 'translateX(-2px)',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                          }
-                        }}
-                      >
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                            <Box sx={{ color: iconColor }}>
-                              {alert.icon}
-                            </Box>
-                            <Box>
-                              <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                                {alert.title}
-                              </Typography>
-                              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                                {alert.instance} • {alert.time}
-                              </Typography>
-                            </Box>
-                          </Box>
-                          {alert.count > 0 ? (
-                            <Badge
-                              badgeContent={alert.count}
-                              color={badgeColor}
-                              sx={{
-                                '& .MuiBadge-badge': {
-                                  fontWeight: 'bold',
-                                  fontSize: '0.7rem',
-                                  minWidth: 20,
-                                  height: 20
-                                }
-                              }}
-                            />
-                          ) : (
-                            <CheckCircleIcon sx={{ color: '#27ae60', fontSize: 20 }} />
-                          )}
-                        </Box>
-                      </Paper>
-                    );
-                  })}
-                </Stack>
-              </Box>
-            )}
-
-            {panelTab === 2 && (
-              <Box sx={{ flex: 1, overflowY: 'auto' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
-                    Actividad Reciente
-                  </Typography>
-                  <Tooltip title="Filtrar actividad">
-                    <IconButton size="small">
-                      <FilterIcon fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
-                </Box>
-
-                <Stack spacing={1.5}>
-                  {recentActivities.map((activity) => (
-                    <Paper
-                      key={activity.id}
-                      sx={{
-                        p: 1.5,
-                        bgcolor: 'white',
-                        borderLeft: `3px solid #3498db`
-                      }}
-                    >
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
-                        <Avatar sx={{
-                          width: 32,
-                          height: 32,
-                          fontSize: '0.75rem',
-                          bgcolor: '#3498db'
-                        }}>
-                          {activity.avatar}
-                        </Avatar>
-                        <Box sx={{ flex: 1 }}>
-                          <Typography variant="body2" sx={{ fontWeight: '600', color: '#2c3e50' }}>
-                            {activity.user}
-                          </Typography>
-                          <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                            {activity.action} • {activity.instance}
-                          </Typography>
-                        </Box>
-                      </Box>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Typography variant="caption" sx={{
-                          color: '#95a5a6',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 0.5
-                        }}>
-                          <TimerIcon sx={{ fontSize: 12 }} />
-                          {activity.time}
-                        </Typography>
-                        {getActivityIcon(activity.type)}
-                      </Box>
-                    </Paper>
-                  ))}
-                </Stack>
-              </Box>
-            )}
-          </Box>
-
-          <Box sx={{
-            pt: 2,
-            mt: 2,
-            borderTop: '1px solid #e0e0e0',
-            display: 'flex',
-            justifyContent: 'center'
-          }}>
-            <Button
-              variant="outlined"
-              size="small"
-              startIcon={<ChevronRightIcon />}
-              onClick={toggleDrawer}
-              fullWidth
-              sx={{
-                color: '#3498db',
-                borderColor: '#3498db'
-              }}
-            >
-              Cerrar Panel
-            </Button>
-          </Box>
-        </Box>
-      </Drawer>
-
-      {/* Botón flotante para abrir panel */}
-      {!drawerOpen && (
-        <Fab
-          color="default"
-          aria-label="ver panel"
-          onClick={toggleDrawer}
-          sx={{
-            position: 'fixed',
-            right: 16,
-            top: '50%',
-            transform: 'translateY(-50%)',
-            zIndex: 1000,
-            boxShadow: '0px 2px 8px rgba(0,0,0,0.1)',
-            bgcolor: 'rgba(255, 255, 255, 0.9)',
-            color: '#7f8c8d',
-            border: '1px solid #e0e0e0',
-            opacity: 0.8,
-            '&:hover': {
-              bgcolor: 'rgba(248, 249, 250, 0.95)',
-              opacity: 1,
-              boxShadow: '0px 4px 12px rgba(0,0,0,0.15)'
-            },
-            transition: 'all 0.2s ease-in-out'
-          }}
-          size="small"
-        >
-          <VisibilityIcon sx={{ fontSize: 18 }} />
-        </Fab>
-      )}
     </Box>
   );
 };

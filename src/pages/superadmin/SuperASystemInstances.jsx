@@ -654,13 +654,7 @@ const SystemInstances = () => {
           </Box>
           
           <Stack direction="row" spacing={1}>
-            <Button
-              variant="outlined"
-              startIcon={<BackupIcon />}
-              size="small"
-            >
-              Backup Global
-            </Button>
+            
             <Button
               variant="contained"
               startIcon={<AddIcon />}
@@ -682,9 +676,7 @@ const SystemInstances = () => {
           >
             <Tab icon={<DomainIcon />} label="Todas las Instancias" />
             <Tab icon={<PeopleIcon />} label="Administradores" />
-            <Tab icon={<SettingsIcon />} label="Configuración Global" />
             <Tab icon={<SecurityIcon />} label="Seguridad" />
-            <Tab icon={<CloudUploadIcon />} label="Migraciones" />
           </Tabs>
         </Paper>
 
@@ -751,9 +743,6 @@ const SystemInstances = () => {
       {/* Contenido principal */}
       {selectedTab === 0 && (
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-          {/* Estadísticas */}
-
-
           {/* Tabla de instancias */}
           <Paper sx={{ width: '100%', overflow: 'hidden', flex: 1, display: 'flex', flexDirection: 'column' }}>
             <Toolbar
@@ -806,8 +795,6 @@ const SystemInstances = () => {
                     <TableCell align="center">Usuarios</TableCell>
                     <TableCell align="center">Certificaciones</TableCell>
                     <TableCell>Administrador</TableCell>
-                    <TableCell>Última Actividad</TableCell>
-                    <TableCell align="center">Almacenamiento</TableCell>
                     <TableCell align="center">Acciones</TableCell>
                   </TableRow>
                 </TableHead>
@@ -905,26 +892,6 @@ const SystemInstances = () => {
                             </Box>
                           </TableCell>
                           
-                          <TableCell>
-                            <Box>
-                              <Typography variant="body2">
-                                {instance.lastActivity}
-                              </Typography>
-                              <Typography variant="caption" color="text.secondary">
-                                Backup: {instance.lastBackup}
-                              </Typography>
-                            </Box>
-                          </TableCell>
-                          
-                          <TableCell align="center">
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
-                              <StorageIcon fontSize="small" color="action" />
-                              <Typography variant="body2" fontWeight="bold">
-                                {instance.storageUsed}
-                              </Typography>
-                            </Box>
-                          </TableCell>
-                          
                           <TableCell align="center">
                             <Stack direction="row" spacing={0.5} justifyContent="center">
                               <Tooltip title="Ver detalles">
@@ -961,7 +928,7 @@ const SystemInstances = () => {
                   
                   {filteredInstances.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={9} align="center" sx={{ py: 4 }}>
+                      <TableCell colSpan={7} align="center" sx={{ py: 4 }}>
                         <Box sx={{ textAlign: 'center' }}>
                           <DomainIcon sx={{ fontSize: 60, color: '#e0e0e0', mb: 2 }} />
                           <Typography variant="body1" color="text.secondary" gutterBottom>

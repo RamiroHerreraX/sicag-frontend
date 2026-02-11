@@ -64,7 +64,6 @@ const InstanceReports = () => {
     { value: 'performance', label: 'Rendimiento', icon: <AssessmentIcon /> },
     { value: 'usage', label: 'Uso de Instancias', icon: <DomainIcon /> },
     { value: 'users', label: 'Usuarios por Instancia', icon: <GroupIcon /> },
-    { value: 'storage', label: 'Almacenamiento', icon: <StorageIcon /> },
     { value: 'uptime', label: 'Disponibilidad', icon: <SpeedIcon /> },
     { value: 'alerts', label: 'Alertas del Sistema', icon: <WarningIcon /> },
   ];
@@ -301,8 +300,6 @@ const InstanceReports = () => {
                       <TableCell sx={{ fontWeight: 'bold' }} align="center">Uptime</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }} align="center">Usuarios</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }} align="center">Activos</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }} align="center">Almacenamiento</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }} align="center">Respuesta</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }} align="center">Estado</TableCell>
                     </TableRow>
                   </TableHead>
@@ -353,23 +350,6 @@ const InstanceReports = () => {
                         <TableCell align="center">
                           <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#27ae60' }}>
                             {row.activeUsers}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align="center">
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, justifyContent: 'center' }}>
-                            <StorageIcon sx={{ color: '#2c3e50', fontSize: 16 }} />
-                            <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                              {row.storageUsed}
-                            </Typography>
-                          </Box>
-                        </TableCell>
-                        <TableCell align="center">
-                          <Typography variant="body2" sx={{ 
-                            fontWeight: 'bold',
-                            color: row.responseTime <= '90 ms' ? '#27ae60' : 
-                                   row.responseTime <= '110 ms' ? '#f39c12' : '#e74c3c'
-                          }}>
-                            {row.responseTime}
                           </Typography>
                         </TableCell>
                         <TableCell align="center">
@@ -592,7 +572,6 @@ const InstanceReports = () => {
                     {[
                       { type: 'Uptime crítico', count: 1, color: '#e74c3c' },
                       { type: 'Alto uso CPU', count: 2, color: '#f39c12' },
-                      { type: 'Backups pendientes', count: 3, color: '#3498db' },
                       { type: 'Actualizaciones', count: 4, color: '#9b59b6' },
                     ].map((alert, idx) => (
                       <Box key={idx} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -639,14 +618,7 @@ const InstanceReports = () => {
                     >
                       Análisis comparativo
                     </Button>
-                    <Button
-                      fullWidth
-                      variant="outlined"
-                      startIcon={<CloudIcon />}
-                      size="small"
-                    >
-                      Reporte de backups
-                    </Button>
+                   
                   </Stack>
                 </Box>
               </Stack>
