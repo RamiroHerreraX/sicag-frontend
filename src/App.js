@@ -27,6 +27,10 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 import PasswordChange from "./pages/auth/PasswordChange";
 import PrivacyAgreement from "./pages/auth/PrivacyAgreement";
 
+//Pagina de redirección
+import PaginaRedireccion from './pages/Pagina_Principal/pagina_redireccion';
+import PaginaLegalCompleta from './pages/Pagina_Principal/pagina_legal';
+
 // Dashboard Pages (diferentes por rol)
 import UserDashboard from "./pages/agente/dashboard/UserDashboard";
 import CommitteeDashboard from "./pages/committee/CommitteeDashboard";
@@ -103,6 +107,9 @@ function App() {
               <Route path="/password-change" element={<PasswordChange />} />
               <Route path="/privacy-agreement" element={<PrivacyAgreement />} />
             </Route>
+
+            <Route path="/inicio" element={<PaginaRedireccion />} />
+            <Route path="/legal" element={<PaginaLegalCompleta />} />
 
             {/* Rutas para USUARIO AGENTE */}
             <Route
