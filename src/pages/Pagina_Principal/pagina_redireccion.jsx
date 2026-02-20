@@ -117,7 +117,7 @@ const colors = {
   black: '#000000',
 };
 
-// Tamaños estandarizados - MEJORADOS PARA RESPONSIVE
+// Tamaños estandarizados 
 const sizes = {
   headerHeight: { xs: 64, md: 72 },
   sectionSpacing: { xs: 4, md: 6 },
@@ -125,8 +125,8 @@ const sizes = {
   containerMaxWidth: '1400px',
   borderRadius: {
     small: 8,
-    medium: 12,
-    large: 16,
+    medium: 6,
+    large: 8,
     xl: 24,
   },
   fontSize: {
@@ -959,6 +959,7 @@ const handlePoliticaClick = (index) => {
           sx={{ 
             mb: sizes.sectionSpacing,
             pl: { xs: 1, sm: 2, md: 4 },
+           
           }}
         >
           {sistemas.map((sistema, index) => (
@@ -995,6 +996,7 @@ const handlePoliticaClick = (index) => {
                           width: { xs: 48, md: 56 },
                           height: { xs: 48, md: 56 },
                           mr: 2,
+                          borderRadius:2,
                         }}
                       >
                         {sistema.icon}
