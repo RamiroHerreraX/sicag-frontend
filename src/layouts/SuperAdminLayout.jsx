@@ -880,24 +880,7 @@ const SuperAdminLayout = () => {
             primaryTypographyProps={{ fontWeight: 600 }}
           />
         </MenuItem>
-
-        <MenuItem
-          component={Link}
-          to="/sitemap"
-          onClick={handleProfileMenuClose}
-          sx={{ py: 1.5, px: 2 }}
-        >
-          <ListItemIcon sx={{ color: primaryColor }}>
-            <HelpIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary="Documentación"
-            secondary="Guías y soporte técnico"
-          />
-        </MenuItem>
-
         <Divider sx={{ borderColor: "rgba(25, 118, 210, 0.1)" }} />
-
         <MenuItem
           onClick={handleLogout}
           sx={{

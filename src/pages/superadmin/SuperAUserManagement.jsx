@@ -397,13 +397,7 @@ const UserManagement = () => {
           </Box>
           
           <Stack direction="row" spacing={1}>
-            <Button
-              variant="outlined"
-              startIcon={<DownloadIcon />}
-              size="small"
-            >
-              Exportar
-            </Button>
+
             <Button
               variant="contained"
               startIcon={<PersonAddIcon />}

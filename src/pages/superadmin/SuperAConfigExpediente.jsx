@@ -4,7 +4,6 @@ import {
   Box,
   Paper,
   Typography,
-  Grid,
   Card,
   CardContent,
   TextField,
@@ -16,7 +15,6 @@ import {
   List,
   ListItem,
   ListItemIcon,
-  ListItemText,
   ListItemSecondaryAction,
   Dialog,
   DialogTitle,
@@ -29,7 +27,6 @@ import {
   AccordionSummary,
   AccordionDetails,
   InputAdornment,
-  Fab
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -409,20 +406,6 @@ const ConfigExpediente = () => {
           </Box>
           
           <Stack direction="row" spacing={1}>
-            <Button
-              variant="outlined"
-              startIcon={<DownloadIcon />}
-              size="small"
-            >
-              Exportar Config
-            </Button>
-            <Button
-              variant="outlined"
-              startIcon={<UploadIcon />}
-              size="small"
-            >
-              Importar Config
-            </Button>
             <Button
               variant="contained"
               startIcon={<AddIcon />}

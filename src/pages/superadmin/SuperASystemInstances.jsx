@@ -28,6 +28,13 @@ import {
   TablePagination,
   Toolbar,
   alpha,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Alert,
+  Snackbar,
 } from "@mui/material";
 import {
   Search as SearchIcon,
@@ -60,9 +67,18 @@ const SystemInstances = () => {
   const [openViewDialog, setOpenViewDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [selectedInstance, setSelectedInstance] = useState(null);
+  
+  // Estados para diálogos de confirmación
+  const [openStatusDialog, setOpenStatusDialog] = useState(false);
+  const [statusAction, setStatusAction] = useState(null); // 'activate' o 'deactivate'
+  const [actionInstance, setActionInstance] = useState(null);
+  const [bulkAction, setBulkAction] = useState(false);
+  
+  // Estado para notificaciones
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
-  // Datos de las instancias del sistema
-  const systemInstances = [
+  // Datos de las instancias del sistema (ahora como estado para poder modificarlas)
+  const [systemInstances, setSystemInstances] = useState([
     {
       id: 1,
       name: "Área de Ingeniería",
@@ -207,7 +223,7 @@ const SystemInstances = () => {
       admin: "Arq. Luis Fernando Morales",
       email: "luis.morales@institucion.edu",
     },
-  ];
+  ]);
 
   const statusOptions = [
     { value: "all", label: "Todos los estados" },
@@ -245,6 +261,76 @@ const SystemInstances = () => {
       default:
         return null;
     }
+  };
+
+  // Función para cambiar el estado de una instancia
+  const handleStatusChange = (instance, action) => {
+    setActionInstance(instance);
+    setStatusAction(action);
+    setBulkAction(false);
+    setOpenStatusDialog(true);
+  };
+
+  // Función para cambiar el estado de múltiples instancias
+  const handleBulkStatusChange = (action) => {
+    if (selectedRows.length === 0) {
+      setSnackbar({
+        open: true,
+        message: 'Selecciona al menos una instancia',
+        severity: 'warning'
+      });
+      return;
+    }
+    setStatusAction(action);
+    setBulkAction(true);
+    setOpenStatusDialog(true);
+  };
+
+  // Función para confirmar el cambio de estado
+  const confirmStatusChange = () => {
+    if (bulkAction) {
+      // Acción masiva
+      setSystemInstances(prevInstances => 
+        prevInstances.map(instance => {
+          if (selectedRows.includes(instance.id)) {
+            const newStatus = statusAction === 'activate' ? 'active' : 'inactive';
+            return { ...instance, status: newStatus };
+          }
+          return instance;
+        })
+      );
+
+      const actionText = statusAction === 'activate' ? 'activadas' : 'desactivadas';
+      setSnackbar({
+        open: true,
+        message: `${selectedRows.length} instancias ${actionText} correctamente`,
+        severity: 'success'
+      });
+      setSelectedRows([]);
+    } else if (actionInstance) {
+      // Acción individual
+      setSystemInstances(prevInstances => 
+        prevInstances.map(instance => {
+          if (instance.id === actionInstance.id) {
+            const newStatus = statusAction === 'activate' ? 'active' : 'inactive';
+            return { ...instance, status: newStatus };
+          }
+          return instance;
+        })
+      );
+
+      const actionText = statusAction === 'activate' ? 'activada' : 'desactivada';
+      setSnackbar({
+        open: true,
+        message: `Instancia ${actionText} correctamente`,
+        severity: 'success'
+      });
+    }
+
+    setOpenStatusDialog(false);
+    setActionInstance(null);
+    setStatusAction(null);
+    setBulkAction(false);
   };
 
   const filteredInstances = systemInstances.filter((instance) => {
@@ -303,6 +389,10 @@ const SystemInstances = () => {
   };
 
   const isSelected = (id) => selectedRows.indexOf(id) !== -1;
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   return (
     <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
@@ -459,15 +549,27 @@ const SystemInstances = () => {
                   >
                     {selectedRows.length} seleccionados
                   </Typography>
-                  <IconButton size="small">
-                    <EnableIcon />
-                  </IconButton>
-                  <IconButton size="small">
-                    <DisableIcon />
-                  </IconButton>
-                  <IconButton size="small">
-                    <DeleteIcon />
-                  </IconButton>
+                  <Tooltip title="Activar seleccionadas">
+                    <IconButton 
+                      size="small"
+                      onClick={() => handleBulkStatusChange('activate')}
+                    >
+                      <EnableIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Desactivar seleccionadas">
+                    <IconButton 
+                      size="small"
+                      onClick={() => handleBulkStatusChange('deactivate')}
+                    >
+                      <DisableIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Eliminar seleccionadas">
+                    <IconButton size="small">
+                      <DeleteIcon />
+                    </IconButton>
+                  </Tooltip>
                 </Stack>
               )}
             </Toolbar>
@@ -664,7 +766,9 @@ const SystemInstances = () => {
                                 >
                                   <VisibilityIcon fontSize="small" />
                                 </IconButton>
+                              </Tooltip>
 
+                              <Tooltip title="Editar">
                                 <IconButton
                                   size="small"
                                   onClick={(e) => {
@@ -676,6 +780,32 @@ const SystemInstances = () => {
                                   <EditIcon fontSize="small" />
                                 </IconButton>
                               </Tooltip>
+
+                              {instance.status === "inactive" ? (
+                                <Tooltip title="Activar">
+                                  <IconButton
+                                    size="small"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleStatusChange(instance, 'activate');
+                                    }}
+                                  >
+                                    <EnableIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+                              ) : instance.status === "active" ? (
+                                <Tooltip title="Desactivar">
+                                  <IconButton
+                                    size="small"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleStatusChange(instance, 'deactivate');
+                                    }}
+                                  >
+                                    <DisableIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+                              ) : null}
                             </Stack>
                           </TableCell>
                         </TableRow>
@@ -723,6 +853,47 @@ const SystemInstances = () => {
           </Paper>
         </Box>
       )}
+
+      {/* Diálogo de confirmación para cambiar estado */}
+      <Dialog
+        open={openStatusDialog}
+        onClose={() => setOpenStatusDialog(false)}
+      >
+        <DialogTitle>
+          {statusAction === 'activate' ? 'Activar' : 'Desactivar'} {bulkAction ? 'instancias' : 'instancia'}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {bulkAction ? (
+              `¿Estás seguro de que deseas ${statusAction === 'activate' ? 'activar' : 'desactivar'} las ${selectedRows.length} instancias seleccionadas?`
+            ) : (
+              `¿Estás seguro de que deseas ${statusAction === 'activate' ? 'activar' : 'desactivar'} la instancia "${actionInstance?.name}"?`
+            )}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenStatusDialog(false)}>Cancelar</Button>
+          <Button 
+            onClick={confirmStatusChange} 
+            variant="contained" 
+            color={statusAction === 'activate' ? 'success' : 'error'}
+          >
+            Confirmar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Snackbar para notificaciones */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
 
       {/* Diálogo de creación */}
       <CreateInstanceDialog

@@ -1,5 +1,5 @@
 // src/components/audit/ActivityDetailModal.jsx
-import React from 'react';
+import React from "react";
 import {
   Dialog,
   DialogTitle,
@@ -12,8 +12,10 @@ import {
   Grid,
   Divider,
   Avatar,
-  Button
-} from '@mui/material';
+  Button,
+  Stack
+} from "@mui/material";
+
 import {
   History as HistoryIcon,
   Info as InfoIcon,
@@ -22,333 +24,371 @@ import {
   Fingerprint as FingerprintIcon,
   Computer as ComputerIcon,
   Person as PersonIcon,
-  Download as DownloadIcon,
   CheckCircle as CheckCircleIcon,
   Warning as WarningIcon,
   Error as ErrorIcon
-} from '@mui/icons-material';
+} from "@mui/icons-material";
+
+/* =========================
+   HELPERS
+========================= */
 
 const getSeverityColor = (severity) => {
-  switch(severity) {
-    case 'success': return '#27ae60';
-    case 'info': return '#3498db';
-    case 'warning': return '#f39c12';
-    case 'error': return '#e74c3c';
-    default: return '#7f8c8d';
+  switch (severity) {
+    case "success":
+      return "#27ae60";
+    case "info":
+      return "#3498db";
+    case "warning":
+      return "#f39c12";
+    case "error":
+      return "#e74c3c";
+    default:
+      return "#7f8c8d";
   }
 };
 
 const getSeverityIcon = (severity) => {
-  switch(severity) {
-    case 'success': return <CheckCircleIcon sx={{ color: '#27ae60' }} />;
-    case 'info': return <InfoIcon sx={{ color: '#3498db' }} />;
-    case 'warning': return <WarningIcon sx={{ color: '#f39c12' }} />;
-    case 'error': return <ErrorIcon sx={{ color: '#e74c3c' }} />;
-    default: return <InfoIcon sx={{ color: '#7f8c8d' }} />;
+  const color = getSeverityColor(severity);
+
+  switch (severity) {
+    case "success":
+      return <CheckCircleIcon sx={{ color }} />;
+    case "warning":
+      return <WarningIcon sx={{ color }} />;
+    case "error":
+      return <ErrorIcon sx={{ color }} />;
+    default:
+      return <InfoIcon sx={{ color }} />;
   }
 };
 
 const getRoleColor = (role) => {
-  switch(role) {
-    case 'admin': return '#1b5e20';
-    case 'comite': return '#1a237e';
-    case 'agente': return '#526F78';
-    case 'profesionista': return '#2ecc71';
-    case 'empresario': return '#ed6c02';
-    default: return '#7f8c8d';
+  switch (role) {
+    case "admin":
+      return "#1b5e20";
+    case "comite":
+      return "#1a237e";
+    case "agente":
+      return "#526F78";
+    case "profesionista":
+      return "#2ecc71";
+    case "empresario":
+      return "#ed6c02";
+    default:
+      return "#7f8c8d";
   }
 };
+
+/* =========================
+   COMPONENT
+========================= */
 
 const ActivityDetailModal = ({ open, onClose, activity }) => {
   if (!activity) return null;
 
+  const severityColor = getSeverityColor(activity.severity);
+  const roleColor = getRoleColor(activity.user.role);
+
   return (
-    <Dialog 
-      open={open} 
+    <Dialog
+      open={open}
       onClose={onClose}
       maxWidth="md"
       fullWidth
       PaperProps={{
         sx: {
-          borderRadius: 2,
-          boxShadow: 24
+          borderRadius: 3,
+          overflow: "hidden"
         }
       }}
     >
-      <DialogTitle sx={{ 
-        borderBottom: '1px solid #e0e0e0',
-        pb: 2,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 1
-      }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1 }}>
-          {getSeverityIcon(activity.severity)}
-          <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-            Detalles de la Actividad
-          </Typography>
-        </Box>
-        <Chip 
-          label={activity.severity}
-          size="small"
-          sx={{ 
-            bgcolor: `${getSeverityColor(activity.severity)}15`,
-            color: getSeverityColor(activity.severity),
-            fontWeight: 'bold'
-          }}
-        />
+      {/* HEADER */}
+      <DialogTitle
+        sx={{
+          borderBottom: "1px solid #eee",
+          bgcolor: "#fafafa",
+          py: 2.5
+        }}
+      >
+        <Stack direction="row" alignItems="center" justifyContent="space-between">
+
+          <Stack direction="row" spacing={1.5} alignItems="center">
+
+            {getSeverityIcon(activity.severity)}
+
+            <Box>
+              <Typography fontWeight="bold" fontSize={18}>
+                Detalles de la Actividad
+              </Typography>
+
+              <Typography variant="caption" color="text.secondary">
+                Evento #{activity.id}
+              </Typography>
+
+            </Box>
+
+          </Stack>
+
+          <Chip
+            label={activity.severity}
+            size="small"
+            sx={{
+              bgcolor: `${severityColor}15`,
+              color: severityColor,
+              fontWeight: 600,
+              textTransform: "capitalize"
+            }}
+          />
+
+        </Stack>
       </DialogTitle>
-      
-      <DialogContent sx={{ pt: 3 }}>
+
+      {/* CONTENT */}
+      <DialogContent sx={{ py: 3 }}>
+
         <Grid container spacing={3}>
-          {/* Información de la acción */}
+
+          {/* ACCION */}
           <Grid item xs={12}>
-            <Typography variant="subtitle2" sx={{ color: '#7f8c8d', mb: 1 }}>
-              Información de la Acción
-            </Typography>
-            <Paper variant="outlined" sx={{ p: 2, bgcolor: '#f8f9fa' }}>
+
+            <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
+
+              <Typography fontWeight="bold" mb={2}>
+                Información de la Acción
+              </Typography>
+
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                    <HistoryIcon fontSize="small" sx={{ color: '#7f8c8d' }} />
-                    <Box>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        Fecha y Hora
-                      </Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-                        {activity.timestamp}
-                      </Typography>
-                    </Box>
-                  </Box>
-                  
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                    <InfoIcon fontSize="small" sx={{ color: '#7f8c8d' }} />
-                    <Box>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        Tipo de Acción
-                      </Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-                        {activity.actionName}
-                      </Typography>
-                    </Box>
-                  </Box>
-                  
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <BusinessIcon fontSize="small" sx={{ color: '#7f8c8d' }} />
-                    <Box>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        Instancia
-                      </Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-                        {activity.instanceName}
-                      </Typography>
-                    </Box>
-                  </Box>
+
+                <Grid item xs={12} md={6}>
+
+                  <Stack spacing={2}>
+
+                    <Stack direction="row" spacing={1.5}>
+                      <HistoryIcon fontSize="small" color="action" />
+                      <Box>
+                        <Typography variant="caption">Fecha y Hora</Typography>
+                        <Typography fontWeight={500}>
+                          {activity.timestamp}
+                        </Typography>
+                      </Box>
+                    </Stack>
+
+                    <Stack direction="row" spacing={1.5}>
+                      <InfoIcon fontSize="small" color="action" />
+                      <Box>
+                        <Typography variant="caption">Acción</Typography>
+                        <Typography fontWeight={500}>
+                          {activity.actionName}
+                        </Typography>
+                      </Box>
+                    </Stack>
+
+                    <Stack direction="row" spacing={1.5}>
+                      <BusinessIcon fontSize="small" color="action" />
+                      <Box>
+                        <Typography variant="caption">Instancia</Typography>
+                        <Typography fontWeight={500}>
+                          {activity.instanceName}
+                        </Typography>
+                      </Box>
+                    </Stack>
+
+                  </Stack>
+
                 </Grid>
-                
-                <Grid item xs={12} sm={6}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                    <DescriptionIcon fontSize="small" sx={{ color: '#7f8c8d' }} />
-                    <Box>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        Entidad
-                      </Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-                        {activity.entity}
-                      </Typography>
-                    </Box>
-                  </Box>
-                  
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                    <FingerprintIcon fontSize="small" sx={{ color: '#7f8c8d' }} />
-                    <Box>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        ID de Entidad
-                      </Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-                        {activity.entityId}
-                      </Typography>
-                    </Box>
-                  </Box>
-                  
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <ComputerIcon fontSize="small" sx={{ color: '#7f8c8d' }} />
-                    <Box>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                        IP
-                      </Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-                        {activity.ip}
-                      </Typography>
-                    </Box>
-                  </Box>
+
+                <Grid item xs={12} md={6}>
+
+                  <Stack spacing={2}>
+
+                    <Stack direction="row" spacing={1.5}>
+                      <DescriptionIcon fontSize="small" color="action" />
+                      <Box>
+                        <Typography variant="caption">Entidad</Typography>
+                        <Typography fontWeight={500}>
+                          {activity.entity}
+                        </Typography>
+                      </Box>
+                    </Stack>
+
+                    <Stack direction="row" spacing={1.5}>
+                      <FingerprintIcon fontSize="small" color="action" />
+                      <Box>
+                        <Typography variant="caption">ID Entidad</Typography>
+                        <Typography fontWeight={500}>
+                          {activity.entityId}
+                        </Typography>
+                      </Box>
+                    </Stack>
+
+                    <Stack direction="row" spacing={1.5}>
+                      <ComputerIcon fontSize="small" color="action" />
+                      <Box>
+                        <Typography variant="caption">IP</Typography>
+                        <Typography fontWeight={500}>
+                          {activity.ip}
+                        </Typography>
+                      </Box>
+                    </Stack>
+
+                  </Stack>
+
                 </Grid>
+
+                <Grid item xs={12}>
+                  <Divider sx={{ my: 1 }} />
+
+                  <Typography fontWeight="bold" mb={1}>
+                    Detalles
+                  </Typography>
+
+                  <Typography color="text.secondary">
+                    {activity.details}
+                  </Typography>
+
+                </Grid>
+
               </Grid>
-              
-              <Divider sx={{ my: 2 }} />
-              
-              <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
-                Detalles completos
-              </Typography>
-              <Typography variant="body2" sx={{ color: '#5a6c7d' }}>
-                {activity.details}
-              </Typography>
+
             </Paper>
+
           </Grid>
-          
-          {/* Información del usuario */}
+
+          {/* USUARIO */}
           <Grid item xs={12} md={6}>
-            <Typography variant="subtitle2" sx={{ color: '#7f8c8d', mb: 1 }}>
-              Información del Usuario
-            </Typography>
-            <Paper variant="outlined" sx={{ p: 2, bgcolor: '#f8f9fa' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                <Avatar 
-                  sx={{ 
-                    width: 48, 
-                    height: 48, 
-                    bgcolor: getRoleColor(activity.user.role),
-                    fontSize: '1.2rem',
-                    fontWeight: 'bold'
+
+            <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
+
+              <Typography fontWeight="bold" mb={2}>
+                Usuario
+              </Typography>
+
+              <Stack direction="row" spacing={2} alignItems="center">
+
+                <Avatar
+                  sx={{
+                    width: 50,
+                    height: 50,
+                    bgcolor: roleColor,
+                    fontWeight: "bold"
                   }}
                 >
                   {activity.user.avatar}
                 </Avatar>
+
                 <Box>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+
+                  <Typography fontWeight="bold">
                     {activity.user.name}
                   </Typography>
-                  <Chip 
+
+                  <Chip
                     label={activity.user.role}
                     size="small"
-                    sx={{ 
-                      bgcolor: `${getRoleColor(activity.user.role)}15`,
-                      color: getRoleColor(activity.user.role),
-                      fontWeight: 'medium',
+                    sx={{
+                      bgcolor: `${roleColor}15`,
+                      color: roleColor,
                       mt: 0.5
                     }}
                   />
+
                 </Box>
-              </Box>
-              
-              <Divider sx={{ my: 1.5 }} />
-              
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                <PersonIcon fontSize="small" sx={{ color: '#7f8c8d' }} />
-                <Typography variant="body2" sx={{ color: '#5a6c7d' }}>
-                  {activity.user.email || 'usuario@ejemplo.com'}
-                </Typography>
-              </Box>
-              
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <FingerprintIcon fontSize="small" sx={{ color: '#7f8c8d' }} />
-                <Typography variant="body2" sx={{ color: '#5a6c7d' }}>
-                  ID: USR-00{activity.id}
-                </Typography>
-              </Box>
+
+              </Stack>
+
+              <Divider sx={{ my: 2 }} />
+
+              <Stack spacing={1}>
+
+                <Stack direction="row" spacing={1}>
+                  <PersonIcon fontSize="small" color="action" />
+                  <Typography>
+                    {activity.user.email}
+                  </Typography>
+                </Stack>
+
+                <Stack direction="row" spacing={1}>
+                  <FingerprintIcon fontSize="small" color="action" />
+                  <Typography>
+                    ID: USR-{activity.id}
+                  </Typography>
+                </Stack>
+
+              </Stack>
+
             </Paper>
+
           </Grid>
-          
-          {/* Información técnica */}
+
+          {/* METADATA */}
           <Grid item xs={12} md={6}>
-            <Typography variant="subtitle2" sx={{ color: '#7f8c8d', mb: 1 }}>
-              Información Técnica
-            </Typography>
-            <Paper variant="outlined" sx={{ p: 2, bgcolor: '#f8f9fa' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                <ComputerIcon fontSize="small" sx={{ color: '#7f8c8d' }} />
-                <Box>
-                  <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                    Navegador / Dispositivo
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: '#5a6c7d' }}>
-                    {activity.userAgent || 'Chrome/Windows'}
-                  </Typography>
-                </Box>
-              </Box>
-              
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                <BusinessIcon fontSize="small" sx={{ color: '#7f8c8d' }} />
-                <Box>
-                  <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                    Ubicación aproximada
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: '#5a6c7d' }}>
-                    {activity.location || 'México'}
-                  </Typography>
-                </Box>
-              </Box>
-              
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <FingerprintIcon fontSize="small" sx={{ color: '#7f8c8d' }} />
-                <Box>
-                  <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                    ID de Sesión
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: '#5a6c7d' }}>
-                    {activity.sessionId || 'SESS-123456789'}
-                  </Typography>
-                </Box>
-              </Box>
-            </Paper>
-          </Grid>
-          
-          {/* Metadatos adicionales */}
-          <Grid item xs={12}>
-            <Typography variant="subtitle2" sx={{ color: '#7f8c8d', mb: 1 }}>
-              Metadatos
-            </Typography>
-            <Paper variant="outlined" sx={{ p: 2, bgcolor: '#f8f9fa' }}>
+
+            <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
+
+              <Typography fontWeight="bold" mb={2}>
+                Metadatos
+              </Typography>
+
               <Grid container spacing={2}>
-                <Grid item xs={6} sm={3}>
-                  <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                    ID del Evento
+
+                <Grid item xs={6}>
+                  <Typography variant="caption">
+                    Evento
                   </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-                    EVT-{activity.id.toString().padStart(6, '0')}
+                  <Typography fontWeight={500}>
+                    EVT-{activity.id.toString().padStart(6, "0")}
                   </Typography>
                 </Grid>
-                <Grid item xs={6} sm={3}>
-                  <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+
+                <Grid item xs={6}>
+                  <Typography variant="caption">
                     Versión
                   </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                  <Typography fontWeight={500}>
                     v2.1.0
                   </Typography>
                 </Grid>
-                <Grid item xs={6} sm={3}>
-                  <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+
+                <Grid item xs={6}>
+                  <Typography variant="caption">
                     Módulo
                   </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                  <Typography fontWeight={500}>
                     {activity.instanceName}
                   </Typography>
                 </Grid>
-                <Grid item xs={6} sm={3}>
-                  <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+
+                <Grid item xs={6}>
+                  <Typography variant="caption">
                     Traza
                   </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                  <Typography fontWeight={500}>
                     #{activity.id}
                   </Typography>
                 </Grid>
+
               </Grid>
+
             </Paper>
+
           </Grid>
+
         </Grid>
+
       </DialogContent>
-      
-      <DialogActions sx={{ borderTop: '1px solid #e0e0e0', p: 2 }}>
-        <Button onClick={onClose} variant="outlined">
+
+      {/* FOOTER */}
+      <DialogActions sx={{ borderTop: "1px solid #eee", p: 2 }}>
+        <Button
+          onClick={onClose}
+          variant="contained"
+          sx={{ borderRadius: 2 }}
+        >
           Cerrar
         </Button>
-        <Button 
-          variant="contained" 
-          startIcon={<DownloadIcon />}
-        >
-          Exportar Detalle
-        </Button>
       </DialogActions>
+
     </Dialog>
   );
 };
