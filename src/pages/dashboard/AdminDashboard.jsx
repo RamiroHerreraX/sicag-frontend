@@ -43,15 +43,44 @@ import {
   FilterList as FilterIcon
 } from '@mui/icons-material';
 
+// Paleta corporativa
+const colors = {
+  primary: {
+    dark: '#0D2A4D',
+    main: '#133B6B',
+    light: '#3A6EA5'
+  },
+  secondary: {
+    main: '#00A8A8',
+    light: '#00C2D1',
+    lighter: '#35D0FF'
+  },
+  accents: {
+    blue: '#0099FF',
+    purple: '#6C5CE7'
+  },
+  status: {
+    success: '#00A8A8',
+    warning: '#00C2D1',
+    error: '#0099FF',
+    info: '#3A6EA5'
+  },
+  text: {
+    primary: '#0D2A4D',
+    secondary: '#3A6EA5',
+    light: '#6C5CE7'
+  }
+};
+
 const AdminDashboard = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [panelTab, setPanelTab] = useState(0);
 
   const systemStats = [
-    { title: 'Usuarios Activos', value: '156', change: '+12%', icon: <PeopleIcon />, color: '#3498db', trend: 'up', detail: 'De 180 totales' },
-    { title: 'Certificaciones Hoy', value: '24', change: '+5%', icon: <DescriptionIcon />, color: '#2ecc71', trend: 'up', detail: 'Meta: 30 diarias' },
-    { title: 'Pendientes Revisión', value: '18', change: '-3%', icon: <WarningIcon />, color: '#f39c12', trend: 'down', detail: 'Reducción semanal' },
-    { title: 'Tasa Cumplimiento', value: '92%', change: '+2%', icon: <TrendingUpIcon />, color: '#9b59b6', trend: 'up', detail: 'Óptimo: >90%' },
+    { title: 'Usuarios Activos', value: '156', change: '+12%', icon: <PeopleIcon />, color: colors.primary.main, trend: 'up', detail: 'De 180 totales' },
+    { title: 'Certificaciones Hoy', value: '24', change: '+5%', icon: <DescriptionIcon />, color: colors.secondary.main, trend: 'up', detail: 'Meta: 30 diarias' },
+    { title: 'Pendientes Revisión', value: '18', change: '-3%', icon: <WarningIcon />, color: colors.accents.blue, trend: 'down', detail: 'Reducción semanal' },
+    { title: 'Tasa Cumplimiento', value: '92%', change: '+2%', icon: <TrendingUpIcon />, color: colors.accents.purple, trend: 'up', detail: 'Óptimo: >90%' },
   ];
 
   const alerts = [
@@ -92,31 +121,31 @@ const AdminDashboard = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'excelente': return '#27ae60';
-      case 'bueno': return '#2ecc71';
-      case 'regular': return '#f39c12';
-      case 'critico': return '#e74c3c';
-      default: return '#7f8c8d';
+      case 'excelente': return colors.secondary.main;
+      case 'bueno': return colors.accents.blue;
+      case 'regular': return colors.primary.main;
+      case 'critico': return colors.primary.dark;
+      default: return colors.text.secondary;
     }
   };
 
   const getActivityIcon = (type) => {
     switch (type) {
-      case 'add': return <DescriptionIcon sx={{ color: '#3498db', fontSize: 16 }} />;
-      case 'approve': return <CheckCircleIcon sx={{ color: '#27ae60', fontSize: 16 }} />;
-      case 'user': return <PeopleIcon sx={{ color: '#9b59b6', fontSize: 16 }} />;
-      case 'config': return <SettingsIcon sx={{ color: '#f39c12', fontSize: 16 }} />;
-      case 'report': return <DownloadIcon sx={{ color: '#34495e', fontSize: 16 }} />;
+      case 'add': return <DescriptionIcon sx={{ color: colors.primary.main, fontSize: 16 }} />;
+      case 'approve': return <CheckCircleIcon sx={{ color: colors.secondary.main, fontSize: 16 }} />;
+      case 'user': return <PeopleIcon sx={{ color: colors.accents.purple, fontSize: 16 }} />;
+      case 'config': return <SettingsIcon sx={{ color: colors.accents.blue, fontSize: 16 }} />;
+      case 'report': return <DownloadIcon sx={{ color: colors.primary.light, fontSize: 16 }} />;
       default: return <NotificationsIcon sx={{ fontSize: 16 }} />;
     }
   };
 
   const getPriorityBadge = (priority) => {
     switch (priority) {
-      case 'alta': return { color: '#e74c3c', label: 'ALTA' };
-      case 'media': return { color: '#f39c12', label: 'MEDIA' };
-      case 'baja': return { color: '#3498db', label: 'BAJA' };
-      default: return { color: '#7f8c8d', label: 'NORMAL' };
+      case 'alta': return { color: colors.primary.dark, label: 'ALTA' };
+      case 'media': return { color: colors.accents.blue, label: 'MEDIA' };
+      case 'baja': return { color: colors.primary.main, label: 'BAJA' };
+      default: return { color: colors.text.secondary, label: 'NORMAL' };
     }
   };
 
@@ -140,65 +169,12 @@ const AdminDashboard = () => {
         gap: 1.5
       }}>
         <Box>
-          <Typography variant="h5" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 0.5 }}>
+          <Typography variant="h5" sx={{ color: colors.primary.dark, fontWeight: 'bold', mb: 0.5 }}>
             Dashboard Administrativo
           </Typography>
-          <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+          <Typography variant="caption" sx={{ color: colors.text.secondary }}>
             Resumen del sistema SICAG - Estado actual y control
           </Typography>
-        </Box>
-
-        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<PeopleIcon />}
-            sx={{ fontSize: '0.75rem', py: 0.5 }}
-          >
-            Usuarios
-          </Button>
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<DescriptionIcon />}
-            sx={{ fontSize: '0.75rem', py: 0.5 }}
-          >
-            Reportes
-          </Button>
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<SettingsIcon />}
-            sx={{ fontSize: '0.75rem', py: 0.5 }}
-          >
-            Config
-          </Button>
-
-          <Divider orientation="vertical" flexItem sx={{ height: 24, mx: 1 }} />
-
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<VisibilityIcon />}
-            onClick={toggleDrawer}
-          >
-            Panel
-          </Button>
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<RefreshIcon />}
-          >
-            Actualizar
-          </Button>
-          <Button
-            variant="contained"
-            size="small"
-            startIcon={<DownloadIcon />}
-            sx={{ bgcolor: '#3498db' }}
-          >
-            Exportar
-          </Button>
         </Box>
       </Box>
 
@@ -246,7 +222,7 @@ const AdminDashboard = () => {
                     {stat.icon}
                   </Box>
                   <Typography variant="body2" sx={{
-                    color: '#7f8c8d',
+                    color: colors.text.secondary,
                     fontWeight: 500,
                     fontSize: '0.75rem',
                     lineHeight: 1.2
@@ -257,7 +233,7 @@ const AdminDashboard = () => {
 
                 {/* Valor principal */}
                 <Typography variant="h5" sx={{
-                  color: '#2c3e50',
+                  color: colors.primary.dark,
                   fontWeight: 'bold',
                   fontSize: '1.5rem',
                   lineHeight: 1,
@@ -301,15 +277,15 @@ const AdminDashboard = () => {
                     height: 0,
                     borderLeft: '3px solid transparent',
                     borderRight: '3px solid transparent',
-                    borderBottom: stat.trend === 'up' ? '4px solid #27ae60' : '4px solid #e74c3c',
+                    borderBottom: stat.trend === 'up' ? `4px solid ${colors.secondary.main}` : `4px solid ${colors.primary.dark}`,
                     transform: stat.trend === 'up' ? 'none' : 'rotate(180deg)'
                   }} />
                   <Chip
                     label={stat.change}
                     size="small"
                     sx={{
-                      bgcolor: stat.trend === 'up' ? '#2ecc7120' : '#e74c3c20',
-                      color: stat.trend === 'up' ? '#27ae60' : '#e74c3c',
+                      bgcolor: stat.trend === 'up' ? '#e0f7f7' : '#e8f0fe',
+                      color: stat.trend === 'up' ? colors.secondary.main : colors.primary.dark,
                       fontWeight: 'bold',
                       fontSize: '0.65rem',
                       height: 20,
@@ -357,21 +333,29 @@ const AdminDashboard = () => {
               height: '100%'
             }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold', fontSize: '1rem' }}>
+                <Typography variant="h6" sx={{ color: colors.primary.dark, fontWeight: 'bold', fontSize: '1rem' }}>
                   Dashboard del Comité
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 0.5 }}>
                   <Chip 
                     label="5 PENDIENTES" 
                     size="small"
-                    color="warning"
-                    sx={{ fontSize: '0.65rem', height: 22 }}
+                    sx={{ 
+                      fontSize: '0.65rem', 
+                      height: 22,
+                      bgcolor: '#e6f0ff',
+                      color: colors.accents.blue
+                    }}
                   />
                   <Chip 
                     label="3 VENCIMIENTOS" 
                     size="small"
-                    color="error"
-                    sx={{ fontSize: '0.65rem', height: 22 }}
+                    sx={{ 
+                      fontSize: '0.65rem', 
+                      height: 22,
+                      bgcolor: '#e8f0fe',
+                      color: colors.primary.dark
+                    }}
                   />
                 </Box>
               </Box>
@@ -387,11 +371,10 @@ const AdminDashboard = () => {
                   </colgroup>
                   <TableHead>
                     <TableRow sx={{ backgroundColor: '#f8f9fa' }}>
-                      <TableCell sx={{ fontWeight: 'bold', py: 1, fontSize: '0.75rem' }}>Tipo</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', py: 1, fontSize: '0.75rem' }}>Usuario</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', py: 1, fontSize: '0.75rem' }}>Fecha</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', py: 1, fontSize: '0.75rem' }}>Estado</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', py: 1, fontSize: '0.75rem' }}>Acción</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', py: 1, fontSize: '0.75rem', color: colors.primary.dark }}>Tipo</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', py: 1, fontSize: '0.75rem', color: colors.primary.dark }}>Usuario</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', py: 1, fontSize: '0.75rem', color: colors.primary.dark }}>Fecha</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', py: 1, fontSize: '0.75rem', color: colors.primary.dark }}>Estado</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -407,7 +390,7 @@ const AdminDashboard = () => {
                             <Box>
                               <Typography variant="body2" sx={{ 
                                 fontWeight: '500', 
-                                color: '#2c3e50',
+                                color: colors.primary.dark,
                                 whiteSpace: 'nowrap',
                                 overflow: 'hidden',
                                 textOverflow: 'ellipsis'
@@ -426,7 +409,7 @@ const AdminDashboard = () => {
                                     height: 18
                                   }}
                                 />
-                                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                                   {row.region}
                                 </Typography>
                               </Box>
@@ -437,14 +420,16 @@ const AdminDashboard = () => {
                             fontSize: '0.875rem',
                             whiteSpace: 'nowrap',
                             overflow: 'hidden',
-                            textOverflow: 'ellipsis'
+                            textOverflow: 'ellipsis',
+                            color: colors.primary.dark
                           }}>
                             {row.user}
                           </TableCell>
                           <TableCell sx={{ 
                             py: 1, 
                             fontSize: '0.875rem',
-                            whiteSpace: 'nowrap'
+                            whiteSpace: 'nowrap',
+                            color: colors.primary.dark
                           }}>
                             {row.date}
                           </TableCell>
@@ -454,37 +439,21 @@ const AdminDashboard = () => {
                                 label={row.status}
                                 size="small"
                                 sx={{
-                                  bgcolor: row.status === 'PENDIENTE' ? '#f39c1220' :
-                                           row.status === 'EN REVISIÓN' ? '#3498db20' :
-                                           '#e74c3c20',
-                                  color: row.status === 'PENDIENTE' ? '#d35400' :
-                                         row.status === 'EN REVISIÓN' ? '#2980b9' :
-                                         '#c0392b',
+                                  bgcolor: row.status === 'PENDIENTE' ? '#e6f0ff' :
+                                           row.status === 'EN REVISIÓN' ? '#e0f7f7' :
+                                           '#e8f0fe',
+                                  color: row.status === 'PENDIENTE' ? colors.accents.blue :
+                                         row.status === 'EN REVISIÓN' ? colors.secondary.main :
+                                         colors.primary.dark,
                                   fontWeight: 'bold',
                                   fontSize: '0.7rem',
                                   height: 20
                                 }}
                               />
-                              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                                 {row.days} días
                               </Typography>
                             </Box>
-                          </TableCell>
-                          <TableCell sx={{ py: 1 }}>
-                            <Button 
-                              size="small" 
-                              variant="outlined"
-                              sx={{ 
-                                fontSize: '0.75rem',
-                                py: 0.25,
-                                px: 1,
-                                minWidth: 'auto',
-                                whiteSpace: 'nowrap',
-                                width: '100%'
-                              }}
-                            >
-                              Evaluar
-                            </Button>
                           </TableCell>
                         </TableRow>
                       );
@@ -501,13 +470,19 @@ const AdminDashboard = () => {
                 pt: 1.5,
                 borderTop: '1px solid #ecf0f1'
               }}>
-                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                   Mostrando 4 de 18 certificaciones
                 </Typography>
                 <Button 
                   size="small"
                   startIcon={<DownloadIcon />}
-                  sx={{ fontSize: '0.75rem' }}
+                  sx={{ 
+                    fontSize: '0.75rem',
+                    color: colors.primary.main,
+                    '&:hover': {
+                      backgroundColor: '#e8f0fe'
+                    }
+                  }}
                 >
                   Reporte completo
                 </Button>
@@ -536,7 +511,7 @@ const AdminDashboard = () => {
               flexDirection: 'column',
               height: '100%'
             }}>
-              <Typography variant="h6" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold', fontSize: '1rem' }}>
+              <Typography variant="h6" sx={{ color: colors.primary.dark, mb: 2, fontWeight: 'bold', fontSize: '1rem' }}>
                 Cumplimiento por Región
               </Typography>
 
@@ -544,12 +519,12 @@ const AdminDashboard = () => {
                 {regionalStats.map((region, index) => (
                   <Box key={index}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                      <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
                         {region.region}
                       </Typography>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                         <Typography variant="caption" sx={{ 
-                          color: region.trend.startsWith('+') ? '#27ae60' : '#e74c3c',
+                          color: region.trend.startsWith('+') ? colors.secondary.main : colors.primary.dark,
                           fontWeight: 'bold'
                         }}>
                           {region.trend}
@@ -584,10 +559,10 @@ const AdminDashboard = () => {
                     />
 
                     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                         👥 {region.users} usuarios
                       </Typography>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                         📄 {region.certifications} certs.
                       </Typography>
                     </Box>
@@ -610,18 +585,18 @@ const AdminDashboard = () => {
         flexWrap: 'wrap',
         gap: 1
       }}>
-        <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+        <Typography variant="caption" sx={{ color: colors.text.secondary }}>
           SICAG v2.1 • Última actualización: Hoy 10:30 AM
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <CheckCircleIcon sx={{ fontSize: 12, color: '#27ae60' }} />
-            <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+            <CheckCircleIcon sx={{ fontSize: 12, color: colors.secondary.main }} />
+            <Typography variant="caption" sx={{ color: colors.text.secondary }}>
               Sistema operativo al 100%
             </Typography>
           </Box>
           <Divider orientation="vertical" flexItem sx={{ height: 16 }} />
-          <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+          <Typography variant="caption" sx={{ color: colors.text.secondary }}>
             156 usuarios activos
           </Typography>
         </Box>
@@ -639,7 +614,7 @@ const AdminDashboard = () => {
             maxWidth: '90vw',
             marginTop: '64px',
             height: 'calc(100vh - 64px)',
-            borderLeft: '1px solid #e0e0e0',
+            borderLeft: `1px solid ${colors.primary.light}`,
             boxShadow: '0px 0px 20px rgba(0,0,0,0.1)',
             borderRadius: '8px 0 0 8px'
           }
@@ -659,16 +634,16 @@ const AdminDashboard = () => {
             alignItems: 'center',
             mb: 2,
             pb: 2,
-            borderBottom: '1px solid #e0e0e0'
+            borderBottom: `1px solid ${colors.primary.light}`
           }}>
-            <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
+            <Typography variant="h6" sx={{ color: colors.primary.dark, fontWeight: 'bold' }}>
               Panel de Información
             </Typography>
             <IconButton
               size="small"
               onClick={toggleDrawer}
               sx={{
-                color: '#7f8c8d',
+                color: colors.text.secondary,
                 '&:hover': { bgcolor: '#f5f5f5' }
               }}
             >
@@ -682,7 +657,18 @@ const AdminDashboard = () => {
               value={panelTab}
               onChange={(e, newValue) => setPanelTab(newValue)}
               variant="fullWidth"
-              sx={{ minHeight: 40 }}
+              sx={{ 
+                minHeight: 40,
+                '& .MuiTab-root': {
+                  color: colors.text.secondary,
+                  '&.Mui-selected': {
+                    color: colors.primary.main
+                  }
+                },
+                '& .MuiTabs-indicator': {
+                  backgroundColor: colors.primary.main
+                }
+              }}
             >
               {panelTabs.map((tab, index) => (
                 <Tab
@@ -712,11 +698,11 @@ const AdminDashboard = () => {
               /* Actividad Reciente */
               <Box sx={{ flex: 1, overflowY: 'auto' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
+                  <Typography variant="subtitle2" sx={{ color: colors.primary.dark, fontWeight: 'bold' }}>
                     Actividad Reciente
                   </Typography>
                   <Tooltip title="Filtrar actividad">
-                    <IconButton size="small">
+                    <IconButton size="small" sx={{ color: colors.primary.main }}>
                       <FilterIcon fontSize="small" />
                     </IconButton>
                   </Tooltip>
@@ -725,11 +711,11 @@ const AdminDashboard = () => {
                 <Stack spacing={1.5}>
                   {recentActivities.map((activity) => {
                     let bgColor;
-                    if (activity.type === 'add') bgColor = '#3498db';
-                    else if (activity.type === 'approve') bgColor = '#27ae60';
-                    else if (activity.type === 'user') bgColor = '#9b59b6';
-                    else if (activity.type === 'config') bgColor = '#f39c12';
-                    else bgColor = '#34495e';
+                    if (activity.type === 'add') bgColor = colors.primary.main;
+                    else if (activity.type === 'approve') bgColor = colors.secondary.main;
+                    else if (activity.type === 'user') bgColor = colors.accents.purple;
+                    else if (activity.type === 'config') bgColor = colors.accents.blue;
+                    else bgColor = colors.primary.light;
 
                     return (
                       <Paper
@@ -750,10 +736,10 @@ const AdminDashboard = () => {
                             {activity.avatar}
                           </Avatar>
                           <Box sx={{ flex: 1 }}>
-                            <Typography variant="body2" sx={{ fontWeight: '600', color: '#2c3e50' }}>
+                            <Typography variant="body2" sx={{ fontWeight: '600', color: colors.primary.dark }}>
                               {activity.user}
                             </Typography>
-                            <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                            <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                               {activity.action}
                             </Typography>
                           </Box>
@@ -781,11 +767,11 @@ const AdminDashboard = () => {
               /* Usuarios Activos */
               <Box sx={{ flex: 1, overflowY: 'auto' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
+                  <Typography variant="subtitle2" sx={{ color: colors.primary.dark, fontWeight: 'bold' }}>
                     Usuarios Activos
                   </Typography>
                   <Tooltip title="Gestionar usuarios">
-                    <IconButton size="small">
+                    <IconButton size="small" sx={{ color: colors.primary.main }}>
                       <SettingsIcon fontSize="small" />
                     </IconButton>
                   </Tooltip>
@@ -794,12 +780,12 @@ const AdminDashboard = () => {
                 <Box sx={{ p: 2, bgcolor: '#f8f9fa', borderRadius: 1, mb: 2 }}>
                   <AvatarGroup max={8} sx={{ justifyContent: 'center', mb: 2, '& .MuiAvatar-root': { width: 36, height: 36, fontSize: '0.875rem' } }}>
                     {activeUsers.map((initials, idx) => (
-                      <Avatar key={idx} sx={{ bgcolor: ['#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#e74c3c', '#34495e'][idx % 6] }}>
+                      <Avatar key={idx} sx={{ bgcolor: [colors.primary.main, colors.secondary.main, colors.accents.blue, colors.accents.purple, colors.primary.dark, colors.primary.light][idx % 6] }}>
                         {initials}
                       </Avatar>
                     ))}
                   </AvatarGroup>
-                  <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', textAlign: 'center' }}>
+                  <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', textAlign: 'center' }}>
                     8 usuarios activos en este momento
                   </Typography>
                 </Box>
@@ -810,17 +796,17 @@ const AdminDashboard = () => {
               /* Alertas del Sistema - MOVIDAS AL PANEL */
               <Box sx={{ flex: 1, overflowY: 'auto' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                  <Typography variant="subtitle2" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
+                  <Typography variant="subtitle2" sx={{ color: colors.primary.dark, fontWeight: 'bold' }}>
                     Alertas del Sistema
                   </Typography>
                   <Box sx={{ display: 'flex', gap: 0.5 }}>
                     <Tooltip title="Configurar alertas">
-                      <IconButton size="small">
+                      <IconButton size="small" sx={{ color: colors.primary.main }}>
                         <SettingsIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Marcar todas como leídas">
-                      <IconButton size="small">
+                      <IconButton size="small" sx={{ color: colors.secondary.main }}>
                         <CheckCircleIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
@@ -835,25 +821,25 @@ const AdminDashboard = () => {
                     let hoverColor;
 
                     if (alert.type === 'warning') {
-                      borderColor = '#f39c12';
-                      iconColor = '#f39c12';
+                      borderColor = colors.accents.blue;
+                      iconColor = colors.accents.blue;
                       badgeColor = 'warning';
-                      hoverColor = '#e67e22';
+                      hoverColor = colors.accents.blue;
                     } else if (alert.type === 'error') {
-                      borderColor = '#e74c3c';
-                      iconColor = '#e74c3c';
+                      borderColor = colors.primary.dark;
+                      iconColor = colors.primary.dark;
                       badgeColor = 'error';
-                      hoverColor = '#c0392b';
+                      hoverColor = colors.primary.dark;
                     } else if (alert.type === 'info') {
-                      borderColor = '#3498db';
-                      iconColor = '#3498db';
+                      borderColor = colors.primary.main;
+                      iconColor = colors.primary.main;
                       badgeColor = 'info';
-                      hoverColor = '#2980b9';
+                      hoverColor = colors.primary.light;
                     } else {
-                      borderColor = '#27ae60';
-                      iconColor = '#27ae60';
+                      borderColor = colors.secondary.main;
+                      iconColor = colors.secondary.main;
                       badgeColor = 'success';
-                      hoverColor = '#229954';
+                      hoverColor = colors.secondary.light;
                     }
 
                     return (
@@ -876,10 +862,10 @@ const AdminDashboard = () => {
                               {alert.icon}
                             </Box>
                             <Box>
-                              <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                              <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
                                 {alert.title}
                               </Typography>
-                              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                                 {alert.time}
                               </Typography>
                             </Box>
@@ -887,18 +873,19 @@ const AdminDashboard = () => {
                           {alert.count > 0 ? (
                             <Badge
                               badgeContent={alert.count}
-                              color={badgeColor}
                               sx={{
                                 '& .MuiBadge-badge': {
                                   fontWeight: 'bold',
                                   fontSize: '0.7rem',
                                   minWidth: 20,
-                                  height: 20
+                                  height: 20,
+                                  bgcolor: borderColor,
+                                  color: 'white'
                                 }
                               }}
                             />
                           ) : (
-                            <CheckCircleIcon sx={{ color: '#27ae60', fontSize: 20 }} />
+                            <CheckCircleIcon sx={{ color: colors.secondary.main, fontSize: 20 }} />
                           )}
                         </Box>
 
@@ -911,7 +898,7 @@ const AdminDashboard = () => {
                           pt: 1,
                           borderTop: '1px solid #f0f0f0'
                         }}>
-                          <Button size="small" sx={{ fontSize: '0.65rem', px: 1 }}>
+                          <Button size="small" sx={{ fontSize: '0.65rem', px: 1, color: colors.text.secondary }}>
                             Ver detalles
                           </Button>
                           <Button
@@ -938,7 +925,7 @@ const AdminDashboard = () => {
 
                 {/* Resumen de alertas */}
                 <Box sx={{ p: 1.5, bgcolor: '#f8f9fa', borderRadius: 1 }}>
-                  <Typography variant="body2" sx={{ color: '#2c3e50', mb: 1, fontWeight: 'bold' }}>
+                  <Typography variant="body2" sx={{ color: colors.primary.dark, mb: 1, fontWeight: 'bold' }}>
                     Resumen de Alertas
                   </Typography>
                   <Grid container spacing={1}>
@@ -946,12 +933,17 @@ const AdminDashboard = () => {
                       <Box sx={{ textAlign: 'center' }}>
                         <Badge
                           badgeContent={alerts.filter(a => a.type === 'warning').reduce((sum, a) => sum + a.count, 0)}
-                          color="warning"
-                          sx={{ mb: 0.5 }}
+                          sx={{
+                            mb: 0.5,
+                            '& .MuiBadge-badge': {
+                              bgcolor: colors.accents.blue,
+                              color: 'white'
+                            }
+                          }}
                         >
-                          <WarningIcon sx={{ color: '#f39c12' }} />
+                          <WarningIcon sx={{ color: colors.accents.blue }} />
                         </Badge>
-                        <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block' }}>
+                        <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
                           Advertencias
                         </Typography>
                       </Box>
@@ -960,20 +952,25 @@ const AdminDashboard = () => {
                       <Box sx={{ textAlign: 'center' }}>
                         <Badge
                           badgeContent={alerts.filter(a => a.type === 'error').reduce((sum, a) => sum + a.count, 0)}
-                          color="error"
-                          sx={{ mb: 0.5 }}
+                          sx={{
+                            mb: 0.5,
+                            '& .MuiBadge-badge': {
+                              bgcolor: colors.primary.dark,
+                              color: 'white'
+                            }
+                          }}
                         >
-                          <WarningIcon sx={{ color: '#e74c3c' }} />
+                          <WarningIcon sx={{ color: colors.primary.dark }} />
                         </Badge>
-                        <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block' }}>
+                        <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
                           Errores
                         </Typography>
                       </Box>
                     </Grid>
                     <Grid item xs={4}>
                       <Box sx={{ textAlign: 'center' }}>
-                        <CheckCircleIcon sx={{ color: '#27ae60', mb: 0.5 }} />
-                        <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block' }}>
+                        <CheckCircleIcon sx={{ color: colors.secondary.main, mb: 0.5 }} />
+                        <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
                           OK
                         </Typography>
                       </Box>
@@ -988,7 +985,7 @@ const AdminDashboard = () => {
           <Box sx={{
             pt: 2,
             mt: 2,
-            borderTop: '1px solid #e0e0e0',
+            borderTop: `1px solid ${colors.primary.light}`,
             display: 'flex',
             justifyContent: 'center'
           }}>
@@ -999,8 +996,12 @@ const AdminDashboard = () => {
               onClick={toggleDrawer}
               fullWidth
               sx={{
-                color: '#3498db',
-                borderColor: '#3498db'
+                color: colors.primary.main,
+                borderColor: colors.primary.main,
+                '&:hover': {
+                  borderColor: colors.primary.dark,
+                  backgroundColor: '#e8f0fe'
+                }
               }}
             >
               Cerrar Panel
@@ -1023,11 +1024,11 @@ const AdminDashboard = () => {
             zIndex: 1000,
             boxShadow: '0px 2px 8px rgba(0,0,0,0.1)',
             bgcolor: 'rgba(255, 255, 255, 0.9)',
-            color: '#7f8c8d',
-            border: '1px solid #e0e0e0',
+            color: colors.primary.main,
+            border: `1px solid ${colors.primary.light}`,
             opacity: 0.8,
             '&:hover': {
-              bgcolor: 'rgba(248, 249, 250, 0.95)',
+              bgcolor: '#e8f0fe',
               opacity: 1,
               boxShadow: '0px 4px 12px rgba(0,0,0,0.15)'
             },

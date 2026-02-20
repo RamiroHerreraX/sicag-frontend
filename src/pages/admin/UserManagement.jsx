@@ -55,6 +55,35 @@ import {
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
+// Paleta corporativa
+const colors = {
+  primary: {
+    dark: '#0D2A4D',
+    main: '#133B6B',
+    light: '#3A6EA5'
+  },
+  secondary: {
+    main: '#00A8A8',
+    light: '#00C2D1',
+    lighter: '#35D0FF'
+  },
+  accents: {
+    blue: '#0099FF',
+    purple: '#6C5CE7'
+  },
+  status: {
+    success: '#00A8A8',
+    warning: '#00C2D1',
+    error: '#0099FF',
+    info: '#3A6EA5'
+  },
+  text: {
+    primary: '#0D2A4D',
+    secondary: '#3A6EA5',
+    light: '#6C5CE7'
+  }
+};
+
 const UserManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTab, setSelectedTab] = useState('all');
@@ -79,7 +108,7 @@ const UserManagement = () => {
       compliance: 85,
       certifications: 8,
       pending: 2,
-      color: '#526F78',
+      color: colors.primary.main,
       avatar: 'LR'
     },
     { 
@@ -96,7 +125,7 @@ const UserManagement = () => {
       compliance: 92,
       certifications: 12,
       pending: 0,
-      color: '#1a237e',
+      color: colors.accents.purple,
       avatar: 'MG'
     },
     { 
@@ -113,7 +142,7 @@ const UserManagement = () => {
       compliance: 78,
       certifications: 5,
       pending: 1,
-      color: '#2e7d32',
+      color: colors.accents.blue,
       avatar: 'CM'
     },
     { 
@@ -130,7 +159,7 @@ const UserManagement = () => {
       compliance: 88,
       certifications: 6,
       pending: 0,
-      color: '#ed6c02',
+      color: colors.secondary.main,
       avatar: 'AL'
     },
     { 
@@ -147,7 +176,7 @@ const UserManagement = () => {
       compliance: 95,
       certifications: 15,
       pending: 0,
-      color: '#1b5e20',
+      color: colors.primary.dark,
       avatar: 'PS'
     },
     { 
@@ -164,7 +193,7 @@ const UserManagement = () => {
       compliance: 90,
       certifications: 10,
       pending: 1,
-      color: '#1a237e',
+      color: colors.accents.purple,
       avatar: 'LD'
     },
   ]);
@@ -238,12 +267,12 @@ const UserManagement = () => {
 
   const getRoleColor = (role) => {
     switch(role) {
-      case 'admin': return '#1b5e20';
-      case 'comite': return '#1a237e';
-      case 'agente': return '#526F78';
-      case 'profesionista': return '#2e7d32';
-      case 'empresario': return '#ed6c02';
-      default: return '#7f8c8d';
+      case 'admin': return colors.primary.dark;
+      case 'comite': return colors.accents.purple;
+      case 'agente': return colors.primary.main;
+      case 'profesionista': return colors.accents.blue;
+      case 'empresario': return colors.secondary.main;
+      default: return colors.text.secondary;
     }
   };
 
@@ -264,10 +293,10 @@ const UserManagement = () => {
       <Box sx={{ mb: 3 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
           <Box>
-            <Typography variant="h5" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 0.5 }}>
+            <Typography variant="h5" sx={{ color: colors.primary.dark, fontWeight: 'bold', mb: 0.5 }}>
               Gestión de Usuarios
             </Typography>
-            <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+            <Typography variant="body2" sx={{ color: colors.text.secondary }}>
               Administre los usuarios del sistema SICAG - {filteredUsers.length} usuarios encontrados
             </Typography>
           </Box>
@@ -277,6 +306,14 @@ const UserManagement = () => {
               variant="outlined"
               startIcon={<DownloadIcon />}
               size="small"
+              sx={{
+                color: colors.primary.main,
+                borderColor: colors.primary.main,
+                '&:hover': {
+                  borderColor: colors.primary.dark,
+                  backgroundColor: '#e8f0fe'
+                }
+              }}
             >
               Exportar
             </Button>
@@ -284,7 +321,10 @@ const UserManagement = () => {
               variant="contained"
               startIcon={<PersonAddIcon />}
               onClick={handleAddUser}
-              sx={{ bgcolor: '#1b5e20', '&:hover': { bgcolor: '#2e7d32' } }}
+              sx={{ 
+                bgcolor: colors.primary.main, 
+                '&:hover': { bgcolor: colors.primary.dark } 
+              }}
             >
               Nuevo Usuario
             </Button>
@@ -304,13 +344,13 @@ const UserManagement = () => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon fontSize="small" />
+                      <SearchIcon fontSize="small" sx={{ color: colors.primary.main }} />
                     </InputAdornment>
                   ),
                   endAdornment: searchTerm && (
                     <InputAdornment position="end">
                       <IconButton size="small" onClick={() => setSearchTerm('')}>
-                        <CancelIcon fontSize="small" />
+                        <CancelIcon fontSize="small" sx={{ color: colors.text.secondary }} />
                       </IconButton>
                     </InputAdornment>
                   )
@@ -322,19 +362,28 @@ const UserManagement = () => {
                 <Chip 
                   label={`Total: ${stats.total}`} 
                   size="small" 
-                  color="primary" 
+                  sx={{
+                    borderColor: colors.primary.main,
+                    color: colors.primary.main
+                  }}
                   variant="outlined" 
                 />
                 <Chip 
                   label={`Activos: ${stats.active}`} 
                   size="small" 
-                  color="success" 
+                  sx={{
+                    borderColor: colors.secondary.main,
+                    color: colors.secondary.main
+                  }}
                   variant="outlined" 
                 />
                 <Chip 
                   label={`Inactivos: ${stats.inactive}`} 
                   size="small" 
-                  color="error" 
+                  sx={{
+                    borderColor: colors.primary.dark,
+                    color: colors.primary.dark
+                  }}
                   variant="outlined" 
                 />
               </Stack>
@@ -353,7 +402,18 @@ const UserManagement = () => {
           }}
           variant="scrollable"
           scrollButtons="auto"
-          sx={{ minHeight: 48 }}
+          sx={{ 
+            minHeight: 48,
+            '& .MuiTab-root': {
+              color: colors.text.secondary,
+              '&.Mui-selected': {
+                color: colors.primary.main
+              }
+            },
+            '& .MuiTabs-indicator': {
+              backgroundColor: colors.primary.main
+            }
+          }}
         >
           {tabs.map((tab) => (
             <Tab 
@@ -381,13 +441,13 @@ const UserManagement = () => {
             <Table stickyHeader size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold', width: '25%' }}>Usuario</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: '15%' }}>Rol</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: '15%' }}>Región</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: '10%' }}>Certificaciones</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: '10%' }}>Cumplimiento</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: '15%' }}>Último Acceso</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: '10%' }} align="center">Acciones</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '25%' }}>Usuario</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '15%' }}>Rol</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '15%' }}>Región</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '10%' }}>Certificaciones</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '10%' }}>Cumplimiento</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '15%' }}>Último Acceso</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '10%' }} align="center">Acciones</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -414,23 +474,28 @@ const UserManagement = () => {
                           {user.avatar}
                         </Avatar>
                         <Box>
-                          <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                          <Typography variant="body2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
                             {user.name}
                             {user.status === 'inactive' && (
                               <Chip 
                                 label="INACTIVO" 
                                 size="small" 
-                                color="error"
-                                sx={{ ml: 1, height: 18, fontSize: '0.65rem' }}
+                                sx={{ 
+                                  ml: 1, 
+                                  height: 18, 
+                                  fontSize: '0.65rem',
+                                  bgcolor: colors.primary.dark,
+                                  color: 'white'
+                                }}
                               />
                             )}
                           </Typography>
-                          <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block' }}>
+                          <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
                             {user.email}
                           </Typography>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
-                            <PhoneIcon sx={{ fontSize: 12, color: '#7f8c8d' }} />
-                            <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                            <PhoneIcon sx={{ fontSize: 12, color: colors.text.secondary }} />
+                            <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                               {user.phone}
                             </Typography>
                           </Box>
@@ -453,25 +518,30 @@ const UserManagement = () => {
                     
                     <TableCell>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                        <LocationIcon sx={{ fontSize: 14, color: '#7f8c8d' }} />
-                        <Typography variant="body2">{user.region}</Typography>
+                        <LocationIcon sx={{ fontSize: 14, color: colors.text.secondary }} />
+                        <Typography variant="body2" sx={{ color: colors.primary.dark }}>{user.region}</Typography>
                       </Box>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                         Registro: {user.registrationDate}
                       </Typography>
                     </TableCell>
                     
                     <TableCell>
                       <Box>
-                        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
                           {user.certifications}
                         </Typography>
                         {user.pending > 0 && (
                           <Chip 
                             label={`${user.pending} pendientes`}
                             size="small"
-                            color="warning"
-                            sx={{ height: 18, fontSize: '0.65rem', mt: 0.5 }}
+                            sx={{ 
+                              height: 18, 
+                              fontSize: '0.65rem', 
+                              mt: 0.5,
+                              bgcolor: colors.accents.blue,
+                              color: 'white'
+                            }}
                           />
                         )}
                       </Box>
@@ -481,7 +551,7 @@ const UserManagement = () => {
                       <Tooltip title={`${user.compliance}% de cumplimiento`}>
                         <Box>
                           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                            <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                            <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                               {user.compliance}%
                             </Typography>
                           </Box>
@@ -493,8 +563,8 @@ const UserManagement = () => {
                               borderRadius: 3,
                               bgcolor: '#f0f0f0',
                               '& .MuiLinearProgress-bar': {
-                                bgcolor: user.compliance >= 90 ? '#27ae60' : 
-                                        user.compliance >= 70 ? '#f39c12' : '#e74c3c'
+                                bgcolor: user.compliance >= 90 ? colors.secondary.main : 
+                                        user.compliance >= 70 ? colors.accents.blue : colors.primary.dark
                               }
                             }}
                           />
@@ -503,10 +573,10 @@ const UserManagement = () => {
                     </TableCell>
                     
                     <TableCell>
-                      <Typography variant="body2">
+                      <Typography variant="body2" sx={{ color: colors.primary.dark }}>
                         {user.lastAccess.split(' ')[0]}
                       </Typography>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                         {user.lastAccess.split(' ')[1]}
                       </Typography>
                     </TableCell>
@@ -518,7 +588,7 @@ const UserManagement = () => {
                             size="small"
                             component={Link}
                             to={`/admin/users/${user.id}/review`}
-                            sx={{ color: '#3498db' }}
+                            sx={{ color: colors.primary.main }}
                           >
                             <VisibilityIcon fontSize="small" />
                           </IconButton>
@@ -528,7 +598,7 @@ const UserManagement = () => {
                           <IconButton 
                             size="small"
                             onClick={() => handleEditUser(user)}
-                            sx={{ color: '#f39c12' }}
+                            sx={{ color: colors.accents.blue }}
                           >
                             <EditIcon fontSize="small" />
                           </IconButton>
@@ -541,7 +611,17 @@ const UserManagement = () => {
                                 size="small"
                                 checked={user.status === 'active'}
                                 onChange={() => handleToggleStatus(user.id)}
-                                color={user.status === 'active' ? 'success' : 'default'}
+                                sx={{
+                                  '& .MuiSwitch-switchBase.Mui-checked': {
+                                    color: colors.secondary.main,
+                                    '&:hover': {
+                                      backgroundColor: '#e0f7f7',
+                                    },
+                                  },
+                                  '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                                    backgroundColor: colors.secondary.main,
+                                  },
+                                }}
                               />
                             }
                             label=""
@@ -549,7 +629,7 @@ const UserManagement = () => {
                         </Tooltip>
                         
                         <Tooltip title="Más opciones">
-                          <IconButton size="small">
+                          <IconButton size="small" sx={{ color: colors.text.secondary }}>
                             <MoreVertIcon fontSize="small" />
                           </IconButton>
                         </Tooltip>
@@ -563,7 +643,7 @@ const UserManagement = () => {
 
           {/* Paginación */}
           <Box sx={{ p: 2, borderTop: '1px solid #e0e0e0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+            <Typography variant="caption" sx={{ color: colors.text.secondary }}>
               Mostrando {((page - 1) * rowsPerPage) + 1} - {Math.min(page * rowsPerPage, filteredUsers.length)} de {filteredUsers.length} usuarios
             </Typography>
             <Pagination
@@ -571,7 +651,18 @@ const UserManagement = () => {
               page={page}
               onChange={(e, value) => setPage(value)}
               size="small"
-              color="primary"
+              sx={{
+                '& .MuiPaginationItem-root': {
+                  color: colors.primary.main,
+                  '&.Mui-selected': {
+                    backgroundColor: colors.primary.main,
+                    color: 'white',
+                    '&:hover': {
+                      backgroundColor: colors.primary.dark,
+                    }
+                  }
+                }
+              }}
             />
           </Box>
         </Paper>
@@ -582,20 +673,20 @@ const UserManagement = () => {
         <Grid container spacing={2}>
           <Grid item xs={6} sm={4} md={2}>
             <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="h6" sx={{ color: '#3498db', fontWeight: 'bold' }}>
+              <Typography variant="h6" sx={{ color: colors.primary.main, fontWeight: 'bold' }}>
                 {stats.total}
               </Typography>
-              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                 Total Usuarios
               </Typography>
             </Box>
           </Grid>
           <Grid item xs={6} sm={4} md={2}>
             <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="h6" sx={{ color: '#27ae60', fontWeight: 'bold' }}>
+              <Typography variant="h6" sx={{ color: colors.secondary.main, fontWeight: 'bold' }}>
                 {stats.active}
               </Typography>
-              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                 Activos
               </Typography>
             </Box>
@@ -606,7 +697,7 @@ const UserManagement = () => {
                 <Typography variant="h6" sx={{ color: getRoleColor(role), fontWeight: 'bold' }}>
                   {count}
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                   {role === 'agente' ? 'Agentes' : 
                    role === 'comite' ? 'Comité' : 
                    role === 'profesionista' ? 'Profesionistas' : 
