@@ -389,80 +389,7 @@ const CommitteeLayout = () => {
         {/* Espacio adicional para separación */}
         <Box sx={{ flex: 1 }} />
 
-        {/* Enlaces de ayuda y configuración */}
-        {open && (
-          <Box sx={{ mt: 3, px: 2 }}>
-            <Divider sx={{ mb: 2 }} />
-            <Typography
-              variant="caption"
-              sx={{
-                color: "#64748b",
-                fontWeight: 700,
-                fontSize: "0.7rem",
-                letterSpacing: "0.5px",
-                textTransform: "uppercase",
-                display: "block",
-                mb: 1,
-              }}
-            >
-              Soporte
-            </Typography>
-
-            <List sx={{ p: 0 }}>
-              <ListItem disablePadding sx={{ mb: 0.5 }}>
-                <ListItemButton
-                  sx={{
-                    minHeight: 40,
-                    borderRadius: "8px",
-                    px: 2,
-                    py: 1,
-                  }}
-                  onClick={() => navigate("/sitemap")}
-                >
-                  <ListItemIcon sx={{ minWidth: 40, color: "#64748b" }}>
-                    <HelpIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Mapa del Sitio"
-                    primaryTypographyProps={{
-                      sx: {
-                        fontSize: "0.85rem",
-                        fontWeight: 500,
-                        color: "#374151",
-                      },
-                    }}
-                  />
-                </ListItemButton>
-              </ListItem>
-
-              <ListItem disablePadding>
-                <ListItemButton
-                  sx={{
-                    minHeight: 40,
-                    borderRadius: "8px",
-                    px: 2,
-                    py: 1,
-                  }}
-                  onClick={handleMenuOpen}
-                >
-                  <ListItemIcon sx={{ minWidth: 40, color: "#64748b" }}>
-                    <SettingsIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Configuración"
-                    primaryTypographyProps={{
-                      sx: {
-                        fontSize: "0.85rem",
-                        fontWeight: 500,
-                        color: "#374151",
-                      },
-                    }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            </List>
-          </Box>
-        )}
+       
       </Box>
 
       {/* Footer del Drawer */}
@@ -879,7 +806,7 @@ const CommitteeLayout = () => {
 
         <MenuItem
           component={Link}
-          to="/committee/profile"
+          to="/association/profile"
           onClick={handleProfileMenuClose}
           sx={{ py: 1.5, px: 2 }}
         >
@@ -889,21 +816,6 @@ const CommitteeLayout = () => {
           <ListItemText
             primary="Mi Perfil"
             secondary="Información personal y preferencias"
-          />
-        </MenuItem>
-
-        <MenuItem
-          component={Link}
-          to="/sitemap"
-          onClick={handleProfileMenuClose}
-          sx={{ py: 1.5, px: 2 }}
-        >
-          <ListItemIcon>
-            <HelpIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary="Ayuda y Soporte"
-            secondary="Documentación y contacto"
           />
         </MenuItem>
 

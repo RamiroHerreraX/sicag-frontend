@@ -28,14 +28,13 @@ import {
   Avatar,
   LinearProgress,
   Pagination,
-  Autocomplete
+  Alert,
+  Snackbar
 } from '@mui/material';
 import {
   Search as SearchIcon,
-  FilterList as FilterIcon,
   Download as DownloadIcon,
   Visibility as VisibilityIcon,
-  Restore as RestoreIcon,
   History as HistoryIcon,
   Security as SecurityIcon,
   Person as PersonIcon,
@@ -50,8 +49,17 @@ import {
   CalendarToday as CalendarIcon,
   Refresh as RefreshIcon,
   ArrowBack as ArrowBackIcon,
-  Business as BusinessIcon
+  Business as BusinessIcon,
+  CheckCircle as CheckCircleIcon,
+  Warning as WarningIcon,
+  Error as ErrorIcon,
+  Computer as ComputerIcon,
+  Fingerprint as FingerprintIcon,
+  Info as InfoIcon
 } from '@mui/icons-material';
+
+// Importar el componente del modal
+import ActivityDetailModal from '../../components/audit/ActivityDetailModal';
 
 const AuditLog = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -59,6 +67,10 @@ const AuditLog = () => {
   const [filterUser, setFilterUser] = useState('all');
   const [filterInstance, setFilterInstance] = useState('all');
   const [page, setPage] = useState(1);
+  const [selectedLog, setSelectedLog] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const rowsPerPage = 10;
 
   // Lista de instancias disponibles
@@ -75,12 +87,12 @@ const AuditLog = () => {
     { id: 'instancia-soporte', name: 'Instancia de Soporte', description: 'Soporte técnico y TI' },
   ];
 
-  // Datos de auditoría de ejemplo con campo de instancia
-  const auditLogs = [
+  // Datos de auditoría de ejemplo con campo de instancia (MEJORADO con más campos)
+  const [auditLogs, setAuditLogs] = useState([
     {
       id: 1,
       timestamp: '15/01/2026 10:30:15',
-      user: { name: 'Admin Sistema', role: 'admin', avatar: 'AS' },
+      user: { name: 'Admin Sistema', role: 'admin', avatar: 'AS', email: 'admin@sistema.com' },
       action: 'LOGIN_SUCCESS',
       actionName: 'Inicio de sesión exitoso',
       entity: 'Sistema',
@@ -90,12 +102,15 @@ const AuditLog = () => {
       severity: 'info',
       instance: 'instancia-administrativa',
       instanceName: 'Instancia Administrativa',
-      icon: <LoginIcon />
+      icon: <LoginIcon />,
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      location: 'Ciudad de México, México',
+      sessionId: 'SESS-123456789'
     },
     {
       id: 2,
       timestamp: '15/01/2026 09:45:22',
-      user: { name: 'Luis Rodríguez', role: 'agente', avatar: 'LR' },
+      user: { name: 'Luis Rodríguez', role: 'agente', avatar: 'LR', email: 'luis.rodriguez@empresa.com' },
       action: 'CERTIFICATION_CREATE',
       actionName: 'Certificación creada',
       entity: 'Certificación',
@@ -105,12 +120,15 @@ const AuditLog = () => {
       severity: 'success',
       instance: 'instancia-ingenieria',
       instanceName: 'Instancia de Ingeniería',
-      icon: <AddIcon />
+      icon: <AddIcon />,
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      location: 'Monterrey, México',
+      sessionId: 'SESS-987654321'
     },
     {
       id: 3,
       timestamp: '15/01/2026 08:20:18',
-      user: { name: 'María González', role: 'comite', avatar: 'MG' },
+      user: { name: 'María González', role: 'comite', avatar: 'MG', email: 'maria.gonzalez@empresa.com' },
       action: 'CERTIFICATION_APPROVE',
       actionName: 'Certificación aprobada',
       entity: 'Certificación',
@@ -120,12 +138,15 @@ const AuditLog = () => {
       severity: 'success',
       instance: 'instancia-calidad',
       instanceName: 'Instancia de Calidad',
-      icon: <GavelIcon />
+      icon: <GavelIcon />,
+      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+      location: 'Guadalajara, México',
+      sessionId: 'SESS-456789123'
     },
     {
       id: 4,
       timestamp: '14/01/2026 16:45:33',
-      user: { name: 'Admin Sistema', role: 'admin', avatar: 'AS' },
+      user: { name: 'Admin Sistema', role: 'admin', avatar: 'AS', email: 'admin@sistema.com' },
       action: 'USER_UPDATE',
       actionName: 'Usuario actualizado',
       entity: 'Usuario',
@@ -135,12 +156,15 @@ const AuditLog = () => {
       severity: 'warning',
       instance: 'instancia-recursos-humanos',
       instanceName: 'Instancia de Recursos Humanos',
-      icon: <EditIcon />
+      icon: <EditIcon />,
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      location: 'Ciudad de México, México',
+      sessionId: 'SESS-123456789'
     },
     {
       id: 5,
       timestamp: '14/01/2026 14:10:55',
-      user: { name: 'Carlos Martínez', role: 'profesionista', avatar: 'CM' },
+      user: { name: 'Carlos Martínez', role: 'profesionista', avatar: 'CM', email: 'carlos.martinez@empresa.com' },
       action: 'DOCUMENT_UPLOAD',
       actionName: 'Documento cargado',
       entity: 'Documento',
@@ -150,12 +174,15 @@ const AuditLog = () => {
       severity: 'info',
       instance: 'instancia-finanzas',
       instanceName: 'Instancia de Finanzas',
-      icon: <DescriptionIcon />
+      icon: <DescriptionIcon />,
+      userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15',
+      location: 'Puebla, México',
+      sessionId: 'SESS-321654987'
     },
     {
       id: 6,
       timestamp: '14/01/2026 11:30:42',
-      user: { name: 'María González', role: 'comite', avatar: 'MG' },
+      user: { name: 'María González', role: 'comite', avatar: 'MG', email: 'maria.gonzalez@empresa.com' },
       action: 'CERTIFICATION_REJECT',
       actionName: 'Certificación rechazada',
       entity: 'Certificación',
@@ -165,12 +192,15 @@ const AuditLog = () => {
       severity: 'error',
       instance: 'instancia-legal',
       instanceName: 'Instancia Legal',
-      icon: <DeleteIcon />
+      icon: <DeleteIcon />,
+      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+      location: 'Guadalajara, México',
+      sessionId: 'SESS-456789123'
     },
     {
       id: 7,
       timestamp: '13/01/2026 18:15:28',
-      user: { name: 'Admin Sistema', role: 'admin', avatar: 'AS' },
+      user: { name: 'Admin Sistema', role: 'admin', avatar: 'AS', email: 'admin@sistema.com' },
       action: 'SYSTEM_CONFIG_UPDATE',
       actionName: 'Configuración actualizada',
       entity: 'Sistema',
@@ -180,12 +210,15 @@ const AuditLog = () => {
       severity: 'warning',
       instance: 'instancia-soporte',
       instanceName: 'Instancia de Soporte',
-      icon: <SettingsIcon />
+      icon: <SettingsIcon />,
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      location: 'Ciudad de México, México',
+      sessionId: 'SESS-123456789'
     },
     {
       id: 8,
       timestamp: '13/01/2026 15:40:19',
-      user: { name: 'Ana López', role: 'empresario', avatar: 'AL' },
+      user: { name: 'Ana López', role: 'empresario', avatar: 'AL', email: 'ana.lopez@empresa.com' },
       action: 'PASSWORD_CHANGE',
       actionName: 'Contraseña cambiada',
       entity: 'Usuario',
@@ -195,12 +228,15 @@ const AuditLog = () => {
       severity: 'info',
       instance: 'instancia-operaciones',
       instanceName: 'Instancia de Operaciones',
-      icon: <SecurityIcon />
+      icon: <SecurityIcon />,
+      userAgent: 'Mozilla/5.0 (iPad; CPU OS 14_0 like Mac OS X) AppleWebKit/605.1.15',
+      location: 'Querétaro, México',
+      sessionId: 'SESS-789123456'
     },
     {
       id: 9,
       timestamp: '13/01/2026 12:05:37',
-      user: { name: 'Luis Rodríguez', role: 'agente', avatar: 'LR' },
+      user: { name: 'Luis Rodríguez', role: 'agente', avatar: 'LR', email: 'luis.rodriguez@empresa.com' },
       action: 'CERTIFICATION_UPDATE',
       actionName: 'Certificación actualizada',
       entity: 'Certificación',
@@ -210,12 +246,15 @@ const AuditLog = () => {
       severity: 'info',
       instance: 'instancia-comercial',
       instanceName: 'Instancia Comercial',
-      icon: <EditIcon />
+      icon: <EditIcon />,
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      location: 'Monterrey, México',
+      sessionId: 'SESS-987654321'
     },
     {
       id: 10,
       timestamp: '12/01/2026 17:25:44',
-      user: { name: 'Admin Sistema', role: 'admin', avatar: 'AS' },
+      user: { name: 'Admin Sistema', role: 'admin', avatar: 'AS', email: 'admin@sistema.com' },
       action: 'USER_CREATE',
       actionName: 'Usuario creado',
       entity: 'Usuario',
@@ -225,9 +264,12 @@ const AuditLog = () => {
       severity: 'success',
       instance: 'instancia-administrativa',
       instanceName: 'Instancia Administrativa',
-      icon: <AddIcon />
+      icon: <AddIcon />,
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      location: 'Ciudad de México, México',
+      sessionId: 'SESS-123456789'
     },
-  ];
+  ]);
 
   const actionTypes = [
     { value: 'all', label: 'Todas las acciones' },
@@ -282,6 +324,34 @@ const AuditLog = () => {
       'instancia-soporte': '#37474f'
     };
     return colors[instanceId] || '#7f8c8d';
+  };
+
+  // Función para actualizar los datos
+  const handleRefresh = () => {
+    setLoading(true);
+    
+    // Simular una carga de datos
+    setTimeout(() => {
+      setLoading(false);
+      setSnackbarOpen(true);
+    }, 1000);
+  };
+
+  // Función para abrir el modal con los detalles
+  const handleOpenModal = (log) => {
+    setSelectedLog(log);
+    setModalOpen(true);
+  };
+
+  // Función para cerrar el modal
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedLog(null);
+  };
+
+  // Función para cerrar el snackbar
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
   };
 
   const filteredLogs = auditLogs.filter(log => {
@@ -369,8 +439,10 @@ const AuditLog = () => {
               variant="contained"
               startIcon={<RefreshIcon />}
               size="small"
+              onClick={handleRefresh}
+              disabled={loading}
             >
-              Actualizar
+              {loading ? 'Actualizando...' : 'Actualizar'}
             </Button>
           </Stack>
         </Box>
@@ -721,7 +793,7 @@ const AuditLog = () => {
                     
                     <TableCell>
                       <Tooltip title="Ver detalles">
-                        <IconButton size="small">
+                        <IconButton size="small" onClick={() => handleOpenModal(log)}>
                           <VisibilityIcon fontSize="small" />
                         </IconButton>
                       </Tooltip>
@@ -863,6 +935,25 @@ const AuditLog = () => {
           </Grid>
         </Paper>
       </Box>
+
+      {/* Modal de detalles de la actividad (componente separado) */}
+      <ActivityDetailModal 
+        open={modalOpen}
+        onClose={handleCloseModal}
+        activity={selectedLog}
+      />
+
+      {/* Snackbar de notificación */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+          Datos actualizados correctamente
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import {
   Box,
-  Grid,
-  Paper,
   Typography,
   Card,
   CardContent,
@@ -18,8 +16,6 @@ import {
   TableRow,
   IconButton,
   LinearProgress,
-  Badge,
-  Avatar,
   Tooltip
 } from '@mui/material';
 import {
@@ -32,7 +28,6 @@ import {
   Visibility as VisibilityIcon,
   CheckCircle as CheckCircleIcon,
   Refresh as RefreshIcon,
-  Timer as TimerIcon,
   Storage as StorageIcon,
   Person as PersonIcon,
   Cloud as CloudIcon,
@@ -61,15 +56,6 @@ const SystemInstancesDashboard = () => {
       detail: 'En todas las instancias' 
     },
     { 
-      title: 'Almacenamiento', 
-      value: '12.4 GB', 
-      change: '+2.1 GB', 
-      icon: <StorageIcon />, 
-      color: '#2ecc71', 
-      trend: 'up', 
-      detail: 'Uso total del sistema' 
-    },
-    { 
       title: 'Uptime Sistema', 
       value: '99.8%', 
       change: '+0.2%', 
@@ -77,86 +63,6 @@ const SystemInstancesDashboard = () => {
       color: '#9b59b6', 
       trend: 'up', 
       detail: 'Disponibilidad mensual' 
-    },
-  ];
-
-  // Alertas del sistema
-  const systemAlerts = [
-    { 
-      id: 1, 
-      type: 'warning', 
-      title: 'Instancia en Mantenimiento', 
-      count: 1, 
-      icon: <WarningIcon />, 
-      time: 'Desde ayer', 
-      instance: 'Posgrado' 
-    },
-    { 
-      id: 2, 
-      type: 'error', 
-      title: 'Backups Pendientes', 
-      count: 2, 
-      icon: <CloudIcon />, 
-      time: 'Últimas 24h', 
-      instance: 'Múltiples' 
-    },
-    { 
-      id: 3, 
-      type: 'info', 
-      title: 'Actualizaciones Disponibles', 
-      count: 3, 
-      icon: <NotificationsIcon />, 
-      time: 'Próximos días', 
-      instance: 'Sistema' 
-    },
-    { 
-      id: 4, 
-      type: 'success', 
-      title: 'Todas las instancias OK', 
-      count: 0, 
-      icon: <CheckCircleIcon />, 
-      time: 'Estado actual', 
-      instance: 'General' 
-    },
-  ];
-
-  // Actividad reciente
-  const recentActivities = [
-    { 
-      id: 1, 
-      user: 'Dr. Carlos Méndez', 
-      action: 'Instancia creada', 
-      time: '15 min', 
-      type: 'add', 
-      avatar: 'CM',
-      instance: 'Ingeniería' 
-    },
-    { 
-      id: 2, 
-      user: 'Dra. Ana López', 
-      action: 'Configuración actualizada', 
-      time: '30 min', 
-      type: 'config', 
-      avatar: 'AL',
-      instance: 'Medicina' 
-    },
-    { 
-      id: 3, 
-      user: 'Mtro. Roberto Díaz', 
-      action: 'Backup realizado', 
-      time: '1 h', 
-      type: 'backup', 
-      avatar: 'RD',
-      instance: 'Posgrado' 
-    },
-    { 
-      id: 4, 
-      user: 'Super Administrador', 
-      action: 'Seguridad reforzada', 
-      time: '2 h', 
-      type: 'security', 
-      avatar: 'SA',
-      instance: 'Global' 
     },
   ];
 
@@ -168,7 +74,6 @@ const SystemInstancesDashboard = () => {
       admin: 'Dr. Carlos Méndez', 
       users: 245, 
       status: 'active', 
-      storage: '2.5 GB', 
       uptime: '99.9%' 
     },
     { 
@@ -177,7 +82,6 @@ const SystemInstancesDashboard = () => {
       admin: 'Dra. Ana López', 
       users: 189, 
       status: 'active', 
-      storage: '1.8 GB', 
       uptime: '99.8%' 
     },
     { 
@@ -186,7 +90,6 @@ const SystemInstancesDashboard = () => {
       admin: 'Mtro. Roberto Díaz', 
       users: 78, 
       status: 'maintenance', 
-      storage: '850 MB', 
       uptime: '95.2%' 
     },
     { 
@@ -195,7 +98,6 @@ const SystemInstancesDashboard = () => {
       admin: 'Lic. Fernando Gómez', 
       users: 156, 
       status: 'inactive', 
-      storage: '1.2 GB', 
       uptime: '0%' 
     },
     { 
@@ -204,7 +106,6 @@ const SystemInstancesDashboard = () => {
       admin: 'Ing. Sofía Ramírez', 
       users: 342, 
       status: 'active', 
-      storage: '3.2 GB', 
       uptime: '99.7%' 
     },
     { 
@@ -213,7 +114,6 @@ const SystemInstancesDashboard = () => {
       admin: 'Dr. Miguel Ángel Ruiz', 
       users: 198, 
       status: 'active', 
-      storage: '1.5 GB', 
       uptime: '99.5%' 
     },
   ];

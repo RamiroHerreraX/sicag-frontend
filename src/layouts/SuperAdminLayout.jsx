@@ -407,80 +407,6 @@ const SuperAdminLayout = () => {
         {/* Espacio adicional para separación */}
         <Box sx={{ flex: 1 }} />
 
-        {/* Información del sistema */}
-        {open && (
-          <Box sx={{ mt: 3, px: 2 }}>
-            <Divider sx={{ mb: 2, borderColor: "rgba(25, 118, 210, 0.1)" }} />
-            <Typography
-              variant="caption"
-              sx={{
-                color: primaryColor,
-                fontWeight: 700,
-                fontSize: "0.7rem",
-                letterSpacing: "0.5px",
-                textTransform: "uppercase",
-                display: "block",
-                mb: 1,
-              }}
-            >
-              Sistema
-            </Typography>
-
-            <List sx={{ p: 0 }}>
-              <ListItem disablePadding sx={{ mb: 0.5 }}>
-                <ListItemButton
-                  sx={{
-                    minHeight: 40,
-                    borderRadius: "8px",
-                    px: 2,
-                    py: 1,
-                  }}
-                  onClick={() => navigate("/sitemap")}
-                >
-                  <ListItemIcon sx={{ minWidth: 40, color: "#1565c0" }}>
-                    <HelpIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Documentación"
-                    primaryTypographyProps={{
-                      sx: {
-                        fontSize: "0.85rem",
-                        fontWeight: 500,
-                        color: "#0d47a1",
-                      },
-                    }}
-                  />
-                </ListItemButton>
-              </ListItem>
-
-              <ListItem disablePadding>
-                <ListItemButton
-                  sx={{
-                    minHeight: 40,
-                    borderRadius: "8px",
-                    px: 2,
-                    py: 1,
-                  }}
-                  onClick={handleMenuOpen}
-                >
-                  <ListItemIcon sx={{ minWidth: 40, color: "#1565c0" }}>
-                    <ConfigIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Configuración"
-                    primaryTypographyProps={{
-                      sx: {
-                        fontSize: "0.85rem",
-                        fontWeight: 500,
-                        color: "#0d47a1",
-                      },
-                    }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            </List>
-          </Box>
-        )}
       </Box>
 
       {/* Footer del Drawer */}
@@ -990,41 +916,6 @@ const SuperAdminLayout = () => {
             primary="Cerrar Sesión"
             primaryTypographyProps={{ fontWeight: 700 }}
           />
-        </MenuItem>
-      </Menu>
-
-      {/* Menú de configuración */}
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
-        PaperProps={{
-          elevation: 3,
-          sx: {
-            mt: 1.5,
-            minWidth: 220,
-            borderRadius: "12px",
-            border: "1px solid rgba(25, 118, 210, 0.1)",
-          },
-        }}
-      >
-        <MenuItem onClick={handleMenuClose}>
-          <ListItemIcon sx={{ color: primaryColor }}>
-            <ConfigIcon />
-          </ListItemIcon>
-          <ListItemText primary="Preferencias" />
-        </MenuItem>
-        <MenuItem onClick={handleMenuClose}>
-          <ListItemIcon sx={{ color: primaryColor }}>
-            <NotificationsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Notificaciones" />
-        </MenuItem>
-        <MenuItem onClick={handleMenuClose}>
-          <ListItemIcon sx={{ color: primaryColor }}>
-            <EmailIcon />
-          </ListItemIcon>
-          <ListItemText primary="Configuración de correo" />
         </MenuItem>
       </Menu>
 
