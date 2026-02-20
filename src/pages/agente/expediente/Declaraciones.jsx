@@ -87,6 +87,35 @@ import {
   Policy as PolicyIcon
 } from '@mui/icons-material';
 
+// Paleta corporativa del UserManagement
+const colors = {
+  primary: {
+    dark: '#0D2A4D',
+    main: '#133B6B',
+    light: '#3A6EA5'
+  },
+  secondary: {
+    main: '#00A8A8',
+    light: '#00C2D1',
+    lighter: '#35D0FF'
+  },
+  accents: {
+    blue: '#0099FF',
+    purple: '#6C5CE7'
+  },
+  status: {
+    success: '#00A8A8',
+    warning: '#00C2D1',
+    error: '#0099FF',
+    info: '#3A6EA5'
+  },
+  text: {
+    primary: '#0D2A4D',
+    secondary: '#3A6EA5',
+    light: '#6C5CE7'
+  }
+};
+
 const DeclaracionesCumplimientoAduanero = () => {
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState('panel1');
@@ -147,7 +176,7 @@ const DeclaracionesCumplimientoAduanero = () => {
       guardado: false,
       puntuacionTotal: 0,
       maxPuntos: 100,
-      color: '#1976d2'
+      color: colors.primary.main
     },
 
     conocimiento_mandato: {
@@ -193,7 +222,7 @@ const DeclaracionesCumplimientoAduanero = () => {
       guardado: false,
       puntuacionTotal: 0,
       maxPuntos: 100,
-      color: '#2e7d32'
+      color: colors.status.success
     },
 
     materialidad: {
@@ -247,7 +276,7 @@ const DeclaracionesCumplimientoAduanero = () => {
       guardado: false,
       puntuacionTotal: 0,
       maxPuntos: 100,
-      color: '#ed6c02'
+      color: colors.status.warning
     },
 
     reglas_minimas_seguridad: {
@@ -301,7 +330,7 @@ const DeclaracionesCumplimientoAduanero = () => {
       guardado: false,
       puntuacionTotal: 0,
       maxPuntos: 100,
-      color: '#9c27b0'
+      color: colors.accents.purple
     },
 
     // NUEVO: Añadir apartado de conflictos de intereses aquí
@@ -356,7 +385,7 @@ const DeclaracionesCumplimientoAduanero = () => {
       guardado: false,
       puntuacionTotal: 0,
       maxPuntos: 100,
-      color: '#d32f2f'
+      color: colors.status.error
     }
   };
 
@@ -683,9 +712,9 @@ const DeclaracionesCumplimientoAduanero = () => {
         sx={{ 
           mb: 3,
           border: '2px solid',
-          borderColor: apartado.color || '#1976d2',
+          borderColor: apartado.color || colors.primary.main,
           borderRadius: '8px !important',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+          boxShadow: `0 2px 12px ${apartado.color || colors.primary.main}20`,
           '&:before': { display: 'none' }
         }}
       >
@@ -708,8 +737,8 @@ const DeclaracionesCumplimientoAduanero = () => {
               width: 40,
               height: 40,
               borderRadius: '50%',
-              backgroundColor: `${apartado.color || '#1976d2'}15`,
-              color: apartado.color || '#1976d2'
+              backgroundColor: `${apartado.color || colors.primary.main}15`,
+              color: apartado.color || colors.primary.main
             }}>
               {obtenerIcono(apartado.id)}
             </Box>
@@ -717,13 +746,13 @@ const DeclaracionesCumplimientoAduanero = () => {
             <Box sx={{ flexGrow: 1 }}>
               <Typography sx={{ 
                 fontWeight: '700', 
-                color: '#333',
+                color: colors.text.primary,
                 fontSize: '1rem',
                 mb: 0.5
               }}>
                 {apartado.titulo || 'Artículo'}
               </Typography>
-              <Typography variant="body2" sx={{ color: '#666' }}>
+              <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                 {apartado.descripcion || 'Descripción no disponible'}
               </Typography>
             </Box>
@@ -732,13 +761,13 @@ const DeclaracionesCumplimientoAduanero = () => {
               {apartado.guardado && (
                 <Box sx={{ textAlign: 'center' }}>
                   <Typography variant="h6" sx={{ 
-                    color: cumplimiento >= 80 ? '#4caf50' : 
-                           cumplimiento >= 60 ? '#ff9800' : '#f44336',
+                    color: cumplimiento >= 80 ? colors.status.success : 
+                           cumplimiento >= 60 ? colors.status.warning : colors.status.error,
                     fontWeight: 'bold'
                   }}>
                     {cumplimiento}%
                   </Typography>
-                  <Typography variant="caption" sx={{ color: '#666' }}>
+                  <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                     Cumplimiento
                   </Typography>
                 </Box>
@@ -757,20 +786,20 @@ const DeclaracionesCumplimientoAduanero = () => {
         <AccordionDetails sx={{ pt: 3, pb: 3 }}>
           <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
-              <Typography variant="h6" sx={{ color: '#333', display: 'flex', alignItems: 'center', gap: 1 }}>
-                {apartado.id === 'conflictos_intereses' ? <PolicyIcon sx={{ color: apartado.color || '#d32f2f' }} /> : <LawIcon sx={{ color: apartado.color || '#1976d2' }} />}
+              <Typography variant="h6" sx={{ color: colors.text.primary, display: 'flex', alignItems: 'center', gap: 1 }}>
+                {apartado.id === 'conflictos_intereses' ? <PolicyIcon sx={{ color: apartado.color || colors.status.error }} /> : <LawIcon sx={{ color: apartado.color || colors.primary.main }} />}
                 {apartado.id === 'conflictos_intereses' ? 'Declaración de Conflicto de Intereses' : `Evaluación del Artículo ${apartado.articulo || ''} - Responsabilidades del Agente Aduanal`}
               </Typography>
               
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <VerifiedUserIcon fontSize="small" sx={{ color: '#666' }} />
-                <Typography variant="body2" sx={{ color: '#666' }}>
+                <VerifiedUserIcon fontSize="small" sx={{ color: colors.text.secondary }} />
+                <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                   {preguntasContestadas}/{preguntasTotales} {apartado.id === 'conflictos_intereses' ? 'situaciones evaluadas' : 'responsabilidades evaluadas'}
                 </Typography>
               </Box>
             </Box>
             
-            <Alert severity="info" sx={{ mb: 3, backgroundColor: `${apartado.color || '#1976d2'}10` }}>
+            <Alert severity="info" sx={{ mb: 3, backgroundColor: `${apartado.color || colors.primary.main}10` }}>
               <Typography variant="body2">
                 {obtenerInstrucciones(apartado)}
               </Typography>
@@ -780,7 +809,7 @@ const DeclaracionesCumplimientoAduanero = () => {
               if (!pregunta) return null;
               
               return (
-                <Box key={pregunta.id || index} sx={{ mb: 3, p: 2.5, border: '1px solid #e0e0e0', borderRadius: 2 }}>
+                <Box key={pregunta.id || index} sx={{ mb: 3, p: 2.5, border: `1px solid ${colors.primary.main}20`, borderRadius: 2 }}>
                   <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 2 }}>
                     <Box sx={{ 
                       display: 'flex',
@@ -789,7 +818,7 @@ const DeclaracionesCumplimientoAduanero = () => {
                       width: 32,
                       height: 32,
                       borderRadius: '50%',
-                      backgroundColor: apartado.color || '#1976d2',
+                      backgroundColor: apartado.color || colors.primary.main,
                       color: 'white',
                       fontWeight: 'bold',
                       flexShrink: 0
@@ -798,7 +827,7 @@ const DeclaracionesCumplimientoAduanero = () => {
                     </Box>
                     
                     <Box sx={{ flex: 1 }}>
-                      <Typography variant="subtitle1" sx={{ fontWeight: '500', mb: 0.5 }}>
+                      <Typography variant="subtitle1" sx={{ fontWeight: '500', color: colors.text.primary, mb: 0.5 }}>
                         {pregunta.texto || 'Pregunta no disponible'}
                       </Typography>
                       
@@ -807,12 +836,12 @@ const DeclaracionesCumplimientoAduanero = () => {
                           label={pregunta.responsabilidad || 'Responsabilidad'}
                           size="small"
                           sx={{ 
-                            backgroundColor: `${apartado.color || '#1976d2'}20`,
-                            color: apartado.color || '#1976d2',
+                            backgroundColor: `${apartado.color || colors.primary.main}20`,
+                            color: apartado.color || colors.primary.main,
                             fontWeight: '500'
                           }}
                         />
-                        <Typography variant="body2" sx={{ color: '#666', fontWeight: '600' }}>
+                        <Typography variant="body2" sx={{ color: colors.text.secondary, fontWeight: '600' }}>
                           {pregunta.puntos || 0} puntos
                         </Typography>
                       </Box>
@@ -829,22 +858,22 @@ const DeclaracionesCumplimientoAduanero = () => {
                             ? (pregunta.respuesta === false ? '#e8f5e9' : '#ffebee') 
                             : (pregunta.respuesta === true ? '#e8f5e9' : '#ffebee'),
                           border: apartado.id === 'conflictos_intereses'
-                            ? `1px solid ${pregunta.respuesta === false ? '#4caf50' : '#f44336'}`
-                            : `1px solid ${pregunta.respuesta === true ? '#4caf50' : '#f44336'}`,
+                            ? `1px solid ${pregunta.respuesta === false ? colors.status.success : colors.status.error}`
+                            : `1px solid ${pregunta.respuesta === true ? colors.status.success : colors.status.error}`,
                           mb: 1
                         }}>
                           {apartado.id === 'conflictos_intereses' ? (
                             pregunta.respuesta === false ? (
                               <>
-                                <CheckCircleIcon sx={{ color: '#4caf50', fontSize: 20 }} />
-                                <Typography variant="body2" sx={{ color: '#2e7d32', fontWeight: '500' }}>
+                                <CheckCircleIcon sx={{ color: colors.status.success, fontSize: 20 }} />
+                                <Typography variant="body2" sx={{ color: colors.status.success, fontWeight: '500' }}>
                                   No se aplica a mi situación
                                 </Typography>
                               </>
                             ) : (
                               <>
-                                <CloseIcon sx={{ color: '#f44336', fontSize: 20 }} />
-                                <Typography variant="body2" sx={{ color: '#c62828', fontWeight: '500' }}>
+                                <CloseIcon sx={{ color: colors.status.error, fontSize: 20 }} />
+                                <Typography variant="body2" sx={{ color: colors.status.error, fontWeight: '500' }}>
                                   Se aplica a mi situación
                                 </Typography>
                               </>
@@ -852,15 +881,15 @@ const DeclaracionesCumplimientoAduanero = () => {
                           ) : (
                             pregunta.respuesta === true ? (
                               <>
-                                <CheckCircleIcon sx={{ color: '#4caf50', fontSize: 20 }} />
-                                <Typography variant="body2" sx={{ color: '#2e7d32', fontWeight: '500' }}>
+                                <CheckCircleIcon sx={{ color: colors.status.success, fontSize: 20 }} />
+                                <Typography variant="body2" sx={{ color: colors.status.success, fontWeight: '500' }}>
                                   Cumple con esta responsabilidad
                                 </Typography>
                               </>
                             ) : (
                               <>
-                                <CloseIcon sx={{ color: '#f44336', fontSize: 20 }} />
-                                <Typography variant="body2" sx={{ color: '#c62828', fontWeight: '500' }}>
+                                <CloseIcon sx={{ color: colors.status.error, fontSize: 20 }} />
+                                <Typography variant="body2" sx={{ color: colors.status.error, fontWeight: '500' }}>
                                   No cumple completamente
                                 </Typography>
                               </>
@@ -872,7 +901,7 @@ const DeclaracionesCumplimientoAduanero = () => {
                   </Box>
                   
                   <FormControl component="fieldset" sx={{ mb: 2, width: '100%' }}>
-                    <FormLabel component="legend" sx={{ fontWeight: '500', mb: 1 }}>
+                    <FormLabel component="legend" sx={{ fontWeight: '500', color: colors.text.primary, mb: 1 }}>
                       {apartado.id === 'conflictos_intereses' ? '¿Esta situación se aplica a usted?' : 'Mi nivel de cumplimiento:'}
                     </FormLabel>
                     <RadioGroup
@@ -898,15 +927,20 @@ const DeclaracionesCumplimientoAduanero = () => {
                               (apartado.id === 'conflictos_intereses' ? '#ffebee' : '#e8f5e9') 
                               : 'transparent',
                             border: pregunta.respuesta === true ? 
-                              (apartado.id === 'conflictos_intereses' ? '2px solid #f44336' : '2px solid #4caf50') 
-                              : '1px solid #e0e0e0'
+                              (apartado.id === 'conflictos_intereses' ? `2px solid ${colors.status.error}` : `2px solid ${colors.status.success}`) 
+                              : `1px solid ${colors.primary.main}20`
                           }}>
                             {apartado.id === 'conflictos_intereses' ? (
-                              <CloseIcon sx={{ color: pregunta.respuesta === true ? '#f44336' : '#9e9e9e' }} />
+                              <CloseIcon sx={{ color: pregunta.respuesta === true ? colors.status.error : colors.text.secondary }} />
                             ) : (
-                              <CheckCircleIcon sx={{ color: pregunta.respuesta === true ? '#4caf50' : '#9e9e9e' }} />
+                              <CheckCircleIcon sx={{ color: pregunta.respuesta === true ? colors.status.success : colors.text.secondary }} />
                             )}
-                            <Typography sx={{ fontWeight: pregunta.respuesta === true ? '600' : '400' }}>
+                            <Typography sx={{ 
+                              color: pregunta.respuesta === true ? 
+                                (apartado.id === 'conflictos_intereses' ? colors.status.error : colors.status.success) 
+                                : colors.text.secondary,
+                              fontWeight: pregunta.respuesta === true ? '600' : '400'
+                            }}>
                               {apartado.id === 'conflictos_intereses' ? 'Sí, se aplica' : 'Sí, cumplo con esta responsabilidad'}
                             </Typography>
                           </Box>
@@ -927,15 +961,20 @@ const DeclaracionesCumplimientoAduanero = () => {
                               (apartado.id === 'conflictos_intereses' ? '#e8f5e9' : '#ffebee') 
                               : 'transparent',
                             border: pregunta.respuesta === false ? 
-                              (apartado.id === 'conflictos_intereses' ? '2px solid #4caf50' : '2px solid #f44336') 
-                              : '1px solid #e0e0e0'
+                              (apartado.id === 'conflictos_intereses' ? `2px solid ${colors.status.success}` : `2px solid ${colors.status.error}`) 
+                              : `1px solid ${colors.primary.main}20`
                           }}>
                             {apartado.id === 'conflictos_intereses' ? (
-                              <CheckCircleIcon sx={{ color: pregunta.respuesta === false ? '#4caf50' : '#9e9e9e' }} />
+                              <CheckCircleIcon sx={{ color: pregunta.respuesta === false ? colors.status.success : colors.text.secondary }} />
                             ) : (
-                              <CloseIcon sx={{ color: pregunta.respuesta === false ? '#f44336' : '#9e9e9e' }} />
+                              <CloseIcon sx={{ color: pregunta.respuesta === false ? colors.status.error : colors.text.secondary }} />
                             )}
-                            <Typography sx={{ fontWeight: pregunta.respuesta === false ? '600' : '400' }}>
+                            <Typography sx={{ 
+                              color: pregunta.respuesta === false ? 
+                                (apartado.id === 'conflictos_intereses' ? colors.status.success : colors.status.error) 
+                                : colors.text.secondary,
+                              fontWeight: pregunta.respuesta === false ? '600' : '400'
+                            }}>
                               {apartado.id === 'conflictos_intereses' ? 'No, no se aplica' : 'No, necesito mejorar en esta área'}
                             </Typography>
                           </Box>
@@ -946,8 +985,8 @@ const DeclaracionesCumplimientoAduanero = () => {
                   </FormControl>
                   
                   <Collapse in={pregunta.respuesta === (apartado.id === 'conflictos_intereses' ? true : false)}>
-                    <Box sx={{ mt: 2, p: 2, backgroundColor: '#fff8e1', borderRadius: 1, border: '1px solid #ffd54f' }}>
-                      <Typography variant="body2" sx={{ mb: 1, color: '#f57c00', fontWeight: '500', display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box sx={{ mt: 2, p: 2, backgroundColor: '#fff8e1', borderRadius: 1, border: `1px solid ${colors.status.warning}` }}>
+                      <Typography variant="body2" sx={{ mb: 1, color: colors.status.warning, fontWeight: '500', display: 'flex', alignItems: 'center', gap: 1 }}>
                         <ArrowForwardIcon sx={{ fontSize: 16 }} />
                         {apartado.id === 'conflictos_intereses' 
                           ? 'Situación identificada - Información adicional:' 
@@ -979,21 +1018,21 @@ const DeclaracionesCumplimientoAduanero = () => {
             
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Box>
-                <Typography variant="body1" sx={{ fontWeight: '600', color: '#333', mb: 1 }}>
+                <Typography variant="body1" sx={{ fontWeight: '600', color: colors.text.primary, mb: 1 }}>
                   {apartado.id === 'conflictos_intereses' 
                     ? 'Resumen de su declaración:' 
                     : `Resumen del Artículo ${apartado.articulo || ''}:`}
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                   <Box>
-                    <Typography variant="body2" sx={{ color: '#666' }}>
+                    <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                       {apartado.id === 'conflictos_intereses' ? 'Situaciones evaluadas:' : 'Responsabilidades evaluadas:'} {preguntasContestadas}/{preguntasTotales}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: '#666' }}>
+                    <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                       Puntuación obtenida: {apartado.puntuacionTotal || 0}/{apartado.maxPuntos || 100} puntos
                     </Typography>
                     {apartado.guardado && (
-                      <Typography variant="body2" sx={{ color: apartado.color || '#1976d2', fontWeight: '600', mt: 0.5 }}>
+                      <Typography variant="body2" sx={{ color: apartado.color || colors.primary.main, fontWeight: '600', mt: 0.5 }}>
                         Nivel de cumplimiento: {cumplimiento}%
                       </Typography>
                     )}
@@ -1005,13 +1044,13 @@ const DeclaracionesCumplimientoAduanero = () => {
                       borderRadius: 2,
                       backgroundColor: cumplimiento >= 80 ? '#e8f5e9' : 
                                      cumplimiento >= 60 ? '#fff3e0' : '#ffebee',
-                      border: `2px solid ${cumplimiento >= 80 ? '#4caf50' : 
-                                               cumplimiento >= 60 ? '#ff9800' : '#f44336'}`
+                      border: `2px solid ${cumplimiento >= 80 ? colors.status.success : 
+                                               cumplimiento >= 60 ? colors.status.warning : colors.status.error}`
                     }}>
                       <Typography variant="body2" sx={{ 
                         fontWeight: '600',
-                        color: cumplimiento >= 80 ? '#2e7d32' : 
-                               cumplimiento >= 60 ? '#f57c00' : '#c62828'
+                        color: cumplimiento >= 80 ? colors.status.success : 
+                               cumplimiento >= 60 ? colors.status.warning : colors.status.error
                       }}>
                         {cumplimiento >= 80 ? '✅ Excelente cumplimiento' :
                          cumplimiento >= 60 ? '⚠️ Cumplimiento aceptable' :
@@ -1027,9 +1066,9 @@ const DeclaracionesCumplimientoAduanero = () => {
                 sx={{ 
                   textTransform: 'none', 
                   px: 4,
-                  backgroundColor: apartado.color || '#1976d2',
+                  backgroundColor: apartado.color || colors.primary.main,
                   '&:hover': {
-                    backgroundColor: apartado.color || '#1976d2',
+                    backgroundColor: colors.primary.dark,
                     opacity: 0.9
                   }
                 }}
@@ -1118,10 +1157,10 @@ const DeclaracionesCumplimientoAduanero = () => {
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Box>
-          <Typography variant="h4" sx={{ color: '#1976d2', fontWeight: 'bold', mb: 1 }}>
+          <Typography variant="h4" sx={{ color: colors.primary.dark, fontWeight: 'bold', mb: 1 }}>
             Declaración de Cumplimiento Aduanero
           </Typography>
-          <Typography variant="body1" sx={{ color: '#666' }}>
+          <Typography variant="body1" sx={{ color: colors.text.secondary }}>
             Evaluación de responsabilidades según Artículos 95, 96, 97 y 98 + Declaración de Conflictos de Intereses
           </Typography>
         </Box>
@@ -1130,14 +1169,22 @@ const DeclaracionesCumplimientoAduanero = () => {
           <Button
             variant="outlined"
             startIcon={<DownloadIcon />}
-            sx={{ textTransform: 'none' }}
+            sx={{ 
+              textTransform: 'none',
+              color: colors.primary.main,
+              borderColor: colors.primary.main
+            }}
           >
             Exportar Mi Declaración
           </Button>
           <Button
             variant="contained"
             startIcon={<VerifiedUserIcon />}
-            sx={{ textTransform: 'none' }}
+            sx={{ 
+              textTransform: 'none',
+              bgcolor: colors.primary.main,
+              '&:hover': { bgcolor: colors.primary.dark }
+            }}
             onClick={() => alert('Declaración enviada para validación')}
           >
             Enviar Declaración
@@ -1148,19 +1195,39 @@ const DeclaracionesCumplimientoAduanero = () => {
       {/* Stepper de progreso actualizado */}
       <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
         <Step>
-          <StepLabel>Artículo 95 - Principios Rectores</StepLabel>
+          <StepLabel sx={{
+            '& .MuiStepLabel-label': {
+              color: activeStep === 0 ? colors.primary.main : colors.text.secondary
+            }
+          }}>Artículo 95 - Principios Rectores</StepLabel>
         </Step>
         <Step>
-          <StepLabel>Artículo 96 - Conocimiento del Mandato</StepLabel>
+          <StepLabel sx={{
+            '& .MuiStepLabel-label': {
+              color: activeStep === 1 ? colors.primary.main : colors.text.secondary
+            }
+          }}>Artículo 96 - Conocimiento del Mandato</StepLabel>
         </Step>
         <Step>
-          <StepLabel>Artículo 97 - Materialidad</StepLabel>
+          <StepLabel sx={{
+            '& .MuiStepLabel-label': {
+              color: activeStep === 2 ? colors.primary.main : colors.text.secondary
+            }
+          }}>Artículo 97 - Materialidad</StepLabel>
         </Step>
         <Step>
-          <StepLabel>Artículo 98 - Reglas de Seguridad</StepLabel>
+          <StepLabel sx={{
+            '& .MuiStepLabel-label': {
+              color: activeStep === 3 ? colors.primary.main : colors.text.secondary
+            }
+          }}>Artículo 98 - Reglas de Seguridad</StepLabel>
         </Step>
         <Step>
-          <StepLabel>Conflictos de Intereses</StepLabel>
+          <StepLabel sx={{
+            '& .MuiStepLabel-label': {
+              color: activeStep === 4 ? colors.primary.main : colors.text.secondary
+            }
+          }}>Conflictos de Intereses</StepLabel>
         </Step>
       </Stepper>
 
@@ -1168,18 +1235,18 @@ const DeclaracionesCumplimientoAduanero = () => {
       <Card sx={{ mb: 4, bgcolor: '#f5f5f5' }}>
         <CardContent>
           <Box sx={{ mb: 3 }}>
-            <Typography variant="h5" sx={{ mb: 2, color: '#333' }}>
+            <Typography variant="h5" sx={{ mb: 2, color: colors.text.primary }}>
               Mi Nivel de Cumplimiento General
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
               <Box sx={{ textAlign: 'center' }}>
                 <Typography variant="h2" sx={{ 
-                  color: cumplimientoGeneral >= 70 ? '#4caf50' : '#ff9800',
+                  color: cumplimientoGeneral >= 70 ? colors.status.success : colors.status.warning,
                   fontWeight: 'bold'
                 }}>
                   {cumplimientoGeneral}%
                 </Typography>
-                <Typography variant="body2" sx={{ color: '#666' }}>
+                <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                   Progreso Total
                 </Typography>
               </Box>
@@ -1193,7 +1260,7 @@ const DeclaracionesCumplimientoAduanero = () => {
                   borderRadius: 10,
                   backgroundColor: '#e0e0e0',
                   '& .MuiLinearProgress-bar': {
-                    backgroundColor: cumplimientoGeneral >= 70 ? '#4caf50' : '#ff9800',
+                    backgroundColor: cumplimientoGeneral >= 70 ? colors.status.success : colors.status.warning,
                     borderRadius: 10
                   }
                 }}
@@ -1201,20 +1268,20 @@ const DeclaracionesCumplimientoAduanero = () => {
               
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <LawIcon sx={{ color: '#1976d2', fontSize: 20 }} />
-                  <Typography variant="body2">
+                  <LawIcon sx={{ color: colors.primary.main, fontSize: 20 }} />
+                  <Typography variant="body2" sx={{ color: colors.text.primary }}>
                     {indicadoresCalculados.guardados} de {indicadoresCalculados.totalApartados} apartados evaluados
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <CheckCircleIcon sx={{ color: '#4caf50', fontSize: 20 }} />
-                  <Typography variant="body2">
+                  <CheckCircleIcon sx={{ color: colors.status.success, fontSize: 20 }} />
+                  <Typography variant="body2" sx={{ color: colors.text.primary }}>
                     {indicadoresCalculados.altoCumplimiento} apartados con excelente cumplimiento
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <WarningIcon sx={{ color: '#f57c00', fontSize: 20 }} />
-                  <Typography variant="body2">
+                  <WarningIcon sx={{ color: colors.status.warning, fontSize: 20 }} />
+                  <Typography variant="body2" sx={{ color: colors.text.primary }}>
                     {indicadoresCalculados.areasMejora} áreas identificadas para mejora
                   </Typography>
                 </Box>
@@ -1224,18 +1291,18 @@ const DeclaracionesCumplimientoAduanero = () => {
           
           {/* Tabla de indicadores por apartado - CORREGIDA */}
           <Box sx={{ mt: 3 }}>
-            <Typography variant="h6" sx={{ mb: 2, color: '#333', display: 'flex', alignItems: 'center', gap: 1 }}>
-              <TrendingUpIcon /> Mi Cumplimiento por Apartado
+            <Typography variant="h6" sx={{ mb: 2, color: colors.text.primary, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <TrendingUpIcon sx={{ color: colors.primary.main }} /> Mi Cumplimiento por Apartado
             </Typography>
             <TableContainer component={Paper} variant="outlined">
               <Table size="small">
                 <TableHead>
                   <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-                    <TableCell sx={{ fontWeight: '600' }}>Apartado</TableCell>
-                    <TableCell sx={{ fontWeight: '600' }}>Descripción</TableCell>
-                    <TableCell sx={{ fontWeight: '600' }} align="center">Mi Cumplimiento</TableCell>
-                    <TableCell sx={{ fontWeight: '600' }} align="center">Estado</TableCell>
-                    <TableCell sx={{ fontWeight: '600' }} align="center">Evaluaciones</TableCell>
+                    <TableCell sx={{ fontWeight: '600', color: colors.text.primary }}>Apartado</TableCell>
+                    <TableCell sx={{ fontWeight: '600', color: colors.text.primary }}>Descripción</TableCell>
+                    <TableCell sx={{ fontWeight: '600', color: colors.text.primary }} align="center">Mi Cumplimiento</TableCell>
+                    <TableCell sx={{ fontWeight: '600', color: colors.text.primary }} align="center">Estado</TableCell>
+                    <TableCell sx={{ fontWeight: '600', color: colors.text.primary }} align="center">Evaluaciones</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -1251,29 +1318,29 @@ const DeclaracionesCumplimientoAduanero = () => {
                       <TableRow key={apartado.id || 'unknown'} sx={{ '&:hover': { backgroundColor: '#fafafa' } }}>
                         <TableCell>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Box sx={{ color: apartado.color || '#1976d2' }}>
+                            <Box sx={{ color: apartado.color || colors.primary.main }}>
                               {obtenerIcono(apartado.id)}
                             </Box>
                             <Box>
-                              <Typography variant="body2" sx={{ fontWeight: '600' }}>
+                              <Typography variant="body2" sx={{ fontWeight: '600', color: colors.text.primary }}>
                                 {apartado.id === 'conflictos_intereses' ? 'Conflictos de Intereses' : `Art. ${apartado.articulo || ''}`}
                               </Typography>
-                              <Typography variant="caption" sx={{ color: '#666' }}>
+                              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                                 {apartado.titulo ? apartado.titulo.split(' - ')[1] || apartado.titulo : 'Apartado'}
                               </Typography>
                             </Box>
                           </Box>
                         </TableCell>
                         <TableCell>
-                          <Typography variant="body2">
+                          <Typography variant="body2" sx={{ color: colors.text.primary }}>
                             {apartado.descripcion || 'Sin descripción'}
                           </Typography>
                         </TableCell>
                         <TableCell align="center">
                           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
                             <Typography variant="body2" sx={{ 
-                              color: cumplimiento >= 80 ? '#4caf50' : 
-                                     cumplimiento >= 60 ? '#ff9800' : '#f44336',
+                              color: cumplimiento >= 80 ? colors.status.success : 
+                                     cumplimiento >= 60 ? colors.status.warning : colors.status.error,
                               fontWeight: '600'
                             }}>
                               {cumplimiento}%
@@ -1287,8 +1354,8 @@ const DeclaracionesCumplimientoAduanero = () => {
                                 borderRadius: 3,
                                 backgroundColor: '#e0e0e0',
                                 '& .MuiLinearProgress-bar': {
-                                  backgroundColor: cumplimiento >= 80 ? '#4caf50' : 
-                                                 cumplimiento >= 60 ? '#ff9800' : '#f44336'
+                                  backgroundColor: cumplimiento >= 80 ? colors.status.success : 
+                                                 cumplimiento >= 60 ? colors.status.warning : colors.status.error
                                 }
                               }}
                             />
@@ -1303,10 +1370,10 @@ const DeclaracionesCumplimientoAduanero = () => {
                           />
                         </TableCell>
                         <TableCell align="center">
-                          <Typography variant="body2">
+                          <Typography variant="body2" sx={{ color: colors.text.primary }}>
                             {preguntasContestadas}/{preguntas.length}
                           </Typography>
-                          <Typography variant="caption" sx={{ color: '#666', display: 'block' }}>
+                          <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
                             {apartado.puntuacionTotal || 0}/{apartado.maxPuntos || 100} pts
                           </Typography>
                         </TableCell>
