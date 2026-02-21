@@ -294,24 +294,6 @@ const CommitteeAlerts = () => {
               Monitoreo y gestión de notificaciones del sistema
             </Typography>
           </Box>
-          
-          <Stack direction="row" spacing={1}>
-            <Button
-              variant="outlined"
-              size="small"
-              startIcon={<DownloadIcon />}
-            >
-              Exportar
-            </Button>
-            <Button
-              variant="outlined"
-              size="small"
-              startIcon={<SettingsIcon />}
-              onClick={() => setShowSettings(true)}
-            >
-              Configurar
-            </Button>
-          </Stack>
         </Box>
 
         {/* Filtros Rápidos en Línea */}
@@ -629,109 +611,7 @@ const CommitteeAlerts = () => {
         </Paper>
       </Box>
 
-      {/* Diálogo de Configuración */}
-      <Dialog open={showSettings} onClose={() => setShowSettings(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <SettingsIcon />
-            Configuración de Alertas
-          </Box>
-        </DialogTitle>
-        <DialogContent>
-          <Typography variant="subtitle1" sx={{ mb: 3, fontWeight: 'bold', color: '#2c3e50' }}>
-            Tipos de alertas a recibir:
-          </Typography>
-          
-          <Grid container spacing={2}>
-            {[
-              { key: 'vencimientos', label: 'Vencimientos próximos', icon: <TimerIcon /> },
-              { key: 'rechazos', label: 'Certificaciones rechazadas', icon: <ErrorIcon /> },
-              { key: 'observaciones', label: 'Observaciones pendientes', icon: <WarningIcon /> },
-              { key: 'asignaciones', label: 'Nuevas asignaciones', icon: <AssignmentTurnedInIcon /> },
-              { key: 'aprobaciones', label: 'Aprobaciones completadas', icon: <CheckCircleIcon /> },
-            ].map((item) => (
-              <Grid item xs={12} key={item.key}>
-                <Paper variant="outlined" sx={{ p: 2 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                      <Box sx={{ color: '#1a237e' }}>
-                        {item.icon}
-                      </Box>
-                      <Typography>{item.label}</Typography>
-                    </Box>
-                    <Switch
-                      checked={notificationSettings[item.key]}
-                      onChange={(e) => setNotificationSettings({
-                        ...notificationSettings,
-                        [item.key]: e.target.checked
-                      })}
-                      color="primary"
-                    />
-                  </Box>
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
-          
-          <Divider sx={{ my: 3 }} />
-          
-          <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: '#2c3e50' }}>
-            Métodos de entrega:
-          </Typography>
-          
-          <Stack spacing={2}>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={notificationSettings.email}
-                  onChange={(e) => setNotificationSettings({
-                    ...notificationSettings,
-                    email: e.target.checked
-                  })}
-                />
-              }
-              label={
-                <Box>
-                  <Typography>Notificaciones por correo</Typography>
-                  <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                    Recibe alertas importantes en tu correo electrónico
-                  </Typography>
-                </Box>
-              }
-            />
-            
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={notificationSettings.push}
-                  onChange={(e) => setNotificationSettings({
-                    ...notificationSettings,
-                    push: e.target.checked
-                  })}
-                />
-              }
-              label={
-                <Box>
-                  <Typography>Notificaciones en sistema</Typography>
-                  <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                    Alertas push mientras usas la plataforma
-                  </Typography>
-                </Box>
-              }
-            />
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setShowSettings(false)}>Cancelar</Button>
-          <Button 
-            variant="contained" 
-            onClick={() => setShowSettings(false)}
-            sx={{ bgcolor: '#1a237e' }}
-          >
-            Guardar Configuración
-          </Button>
-        </DialogActions>
-      </Dialog>
+
     </Box>
   );
 };

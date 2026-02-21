@@ -65,12 +65,6 @@ const AssociationProfile = () => {
     telefonoTecnico: "+52 55 5555 5555",
     emailTecnico: "soporte@asociacionnorte.com",
 
-    // Configuración del sistema
-    idioma: "Español (MX)",
-    zonaHoraria: "UTC-06:00 (Centro de México)",
-    formatoFecha: "DD/MM/YYYY",
-    formatoMoneda: "MXN ($)",
-
     // Estadísticas de la asociación
     estadisticas: {
       totalAgentes: 45,
@@ -192,7 +186,6 @@ const AssociationProfile = () => {
         </Box>
       </Paper>
 
-      {/* Contenido principal - 2 columnas */}
       <Box
         sx={{
           flex: 1,
@@ -202,274 +195,8 @@ const AssociationProfile = () => {
           gap: 1.5,
         }}
       >
-        {/* Columna izquierda - Estadísticas y Configuración */}
-        <Box
-          sx={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            gap: 1.5,
-            minWidth: 0,
-          }}
-        >
-          {/* Card de Perfil */}
-          <Card
-            sx={{
-              flex: "0 0 auto",
-              borderRadius: 1.5,
-              boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-              border: "1px solid rgba(52, 152, 219, 0.1)",
-            }}
-          >
-            <CardContent sx={{ p: 2 }}>
-              <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
-                <Avatar
-                  sx={{
-                    width: 70,
-                    height: 70,
-                    bgcolor: "#3498db",
-                    border: "3px solid #e8f4fd",
-                    flexShrink: 0,
-                  }}
-                >
-                  <BusinessIcon sx={{ fontSize: 32 }} />
-                </Avatar>
-                <Box sx={{ flex: 1 }}>
-                  <Typography
-                    variant="subtitle1"
-                    fontWeight="bold"
-                    sx={{
-                      color: "#2c3e50",
-                      fontSize: "0.95rem",
-                      lineHeight: 1.2,
-                      mb: 0.5,
-                    }}
-                  >
-                    {association.nombre}
-                  </Typography>
-
-                  <Stack
-                    direction="row"
-                    spacing={0.75}
-                    sx={{ mb: 1, flexWrap: "wrap" }}
-                  >
-                    <Chip
-                      label={`RFC: ${association.rfc}`}
-                      color="primary"
-                      variant="outlined"
-                      size="small"
-                      sx={{ fontWeight: "600", fontSize: "0.7rem" }}
-                    />
-                    <Chip
-                      label="Certificada SAT"
-                      color="success"
-                      size="small"
-                      sx={{ fontWeight: "600", fontSize: "0.7rem" }}
-                    />
-                  </Stack>
-
-                  <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-                    <Box>
-                      <Typography
-                        variant="caption"
-                        color="text.secondary"
-                        sx={{ fontSize: "0.7rem" }}
-                      >
-                        Representante Legal
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          color: "#2c3e50",
-                          fontWeight: "600",
-                          fontSize: "0.8rem",
-                        }}
-                      >
-                        {association.representanteLegal}
-                      </Typography>
-                    </Box>
-
-                    <Box>
-                      <Typography
-                        variant="caption"
-                        color="text.secondary"
-                        sx={{ fontSize: "0.7rem" }}
-                      >
-                        Constitución
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          color: "#2c3e50",
-                          fontWeight: "600",
-                          fontSize: "0.8rem",
-                        }}
-                      >
-                        {association.fechaConstitucion}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Box>
-              </Box>
-
-              <Divider sx={{ my: 1.5 }} />
-
-              <Stack spacing={0.75}>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
-                  <PhoneIcon sx={{ fontSize: 14, color: "#7f8c8d" }} />
-                  <Typography
-                    variant="caption"
-                    sx={{ color: "#7f8c8d", fontSize: "0.75rem" }}
-                  >
-                    {association.telefono}
-                  </Typography>
-                </Box>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
-                  <EmailIcon sx={{ fontSize: 14, color: "#7f8c8d" }} />
-                  <Typography
-                    variant="caption"
-                    sx={{ color: "#7f8c8d", fontSize: "0.75rem" }}
-                  >
-                    {association.email}
-                  </Typography>
-                </Box>
-              </Stack>
-            </CardContent>
-          </Card>
-
-          {/* Card de Configuración */}
-          <Card
-            sx={{
-              flex: "0 0 auto",
-              borderRadius: 1.5,
-            }}
-          >
-            <CardContent sx={{ p: 2 }}>
-              <Typography
-                variant="subtitle1"
-                sx={{
-                  mb: 1.5,
-                  fontWeight: "bold",
-                  color: "#2c3e50",
-                  fontSize: "0.95rem",
-                }}
-              >
-                Configuración
-              </Typography>
-
-              <Stack spacing={1}>
-                {/* Idioma */}
-                <Box>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{ fontSize: "0.7rem" }}
-                  >
-                    Idioma
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{ fontWeight: "600", fontSize: "0.8rem" }}
-                  >
-                    {association.idioma}
-                  </Typography>
-                </Box>
-
-                {/* Zona Horaria */}
-                <Box>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{ fontSize: "0.7rem" }}
-                  >
-                    Zona Horaria
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{ fontWeight: "600", fontSize: "0.8rem" }}
-                  >
-                    {association.zonaHoraria}
-                  </Typography>
-                </Box>
-
-                {/* Seguridad */}
-                <Box>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{ fontSize: "0.7rem" }}
-                  >
-                    Seguridad
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{ fontWeight: "600", fontSize: "0.8rem" }}
-                  >
-                    Accesos y permisos
-                  </Typography>
-                </Box>
-
-                <Divider sx={{ my: 0.5 }} />
-
-                {/* Contactos Especializados */}
-                <Box>
-                  <Typography
-                    variant="caption"
-                    fontWeight="bold"
-                    sx={{
-                      display: "block",
-                      color: "#2c3e50",
-                      fontSize: "0.75rem",
-                      mb: 0.5,
-                    }}
-                  >
-                    Contactos Especializados
-                  </Typography>
-
-                  <Stack spacing={0.5}>
-                    <Box>
-                      <Typography
-                        variant="caption"
-                        color="text.secondary"
-                        sx={{ fontSize: "0.7rem" }}
-                      >
-                        Administrativo
-                      </Typography>
-                      <Typography variant="body2" sx={{ fontSize: "0.8rem" }}>
-                        {association.contactoAdministrativo}
-                      </Typography>
-                    </Box>
-
-                    <Divider sx={{ my: 0.25 }} />
-
-                    <Box>
-                      <Typography
-                        variant="caption"
-                        color="text.secondary"
-                        sx={{ fontSize: "0.7rem" }}
-                      >
-                        Técnico
-                      </Typography>
-                      <Typography variant="body2" sx={{ fontSize: "0.8rem" }}>
-                        {association.contactoTecnico}
-                      </Typography>
-                    </Box>
-                  </Stack>
-                </Box>
-              </Stack>
-            </CardContent>
-          </Card>
-        </Box>
-
-        {/* Columna derecha - Datos Fiscales y Legales */}
-        <Box
-          sx={{
-            width: "50%",
-            display: "flex",
-            flexDirection: "column",
-            minWidth: 0,
-          }}
-        >
+      
+        
           <Card
             sx={{
               flex: 1,
@@ -537,6 +264,150 @@ const AssociationProfile = () => {
                 }}
               >
                 <Stack spacing={1.5}>
+                  <Card
+                    sx={{
+                      flex: "0 0 auto",
+                      borderRadius: 1.5,
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                      border: "1px solid rgba(52, 152, 219, 0.1)",
+                    }}
+                  >
+                    <CardContent sx={{ p: 2 }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "flex-start",
+                          gap: 2,
+                        }}
+                      >
+                        <Avatar
+                          sx={{
+                            width: 70,
+                            height: 70,
+                            bgcolor: "#3498db",
+                            border: "3px solid #e8f4fd",
+                            flexShrink: 0,
+                          }}
+                        >
+                          <BusinessIcon sx={{ fontSize: 32 }} />
+                        </Avatar>
+                        <Box sx={{ flex: 1 }}>
+                          <Typography
+                            variant="subtitle1"
+                            fontWeight="bold"
+                            sx={{
+                              color: "#2c3e50",
+                              fontSize: "0.95rem",
+                              lineHeight: 1.2,
+                              mb: 0.5,
+                            }}
+                          >
+                            {association.nombre}
+                          </Typography>
+
+                          <Stack
+                            direction="row"
+                            spacing={0.75}
+                            sx={{ mb: 1, flexWrap: "wrap" }}
+                          >
+                            <Chip
+                              label={`RFC: ${association.rfc}`}
+                              color="primary"
+                              variant="outlined"
+                              size="small"
+                              sx={{ fontWeight: "600", fontSize: "0.7rem" }}
+                            />
+                            <Chip
+                              label="Certificada SAT"
+                              color="success"
+                              size="small"
+                              sx={{ fontWeight: "600", fontSize: "0.7rem" }}
+                            />
+                          </Stack>
+
+                          <Box
+                            sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}
+                          >
+                            <Box>
+                              <Typography
+                                variant="caption"
+                                color="text.secondary"
+                                sx={{ fontSize: "0.7rem" }}
+                              >
+                                Representante Legal
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  color: "#2c3e50",
+                                  fontWeight: "600",
+                                  fontSize: "0.8rem",
+                                }}
+                              >
+                                {association.representanteLegal}
+                              </Typography>
+                            </Box>
+
+                            <Box>
+                              <Typography
+                                variant="caption"
+                                color="text.secondary"
+                                sx={{ fontSize: "0.7rem" }}
+                              >
+                                Constitución
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  color: "#2c3e50",
+                                  fontWeight: "600",
+                                  fontSize: "0.8rem",
+                                }}
+                              >
+                                {association.fechaConstitucion}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </Box>
+                      </Box>
+
+                      <Divider sx={{ my: 1.5 }} />
+
+                      <Stack spacing={0.75}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0.75,
+                          }}
+                        >
+                          <PhoneIcon sx={{ fontSize: 14, color: "#7f8c8d" }} />
+                          <Typography
+                            variant="caption"
+                            sx={{ color: "#7f8c8d", fontSize: "0.75rem" }}
+                          >
+                            {association.telefono}
+                          </Typography>
+                        </Box>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0.75,
+                          }}
+                        >
+                          <EmailIcon sx={{ fontSize: 14, color: "#7f8c8d" }} />
+                          <Typography
+                            variant="caption"
+                            sx={{ color: "#7f8c8d", fontSize: "0.75rem" }}
+                          >
+                            {association.email}
+                          </Typography>
+                        </Box>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                  
                   {/* Información fiscal */}
                   <Box>
                     <Typography
@@ -871,56 +742,14 @@ const AssociationProfile = () => {
                 </Stack>
               </Box>
 
-              {/* Botones de edición */}
-              {editMode && (
-                <Box
-                  sx={{
-                    mt: "auto",
-                    pt: 1.5,
-                    borderTop: "1px solid rgba(0,0,0,0.1)",
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    gap: 1,
-                    flexShrink: 0,
-                  }}
-                >
-                  <Button
-                    onClick={() => setEditMode(false)}
-                    variant="outlined"
-                    size="small"
-                    sx={{
-                      fontWeight: "600",
-                      textTransform: "none",
-                      fontSize: "0.75rem",
-                    }}
-                  >
-                    Cancelar
-                  </Button>
-                  <Button
-                    onClick={handleSave}
-                    variant="contained"
-                    color="success"
-                    size="small"
-                    sx={{
-                      fontWeight: "600",
-                      textTransform: "none",
-                      fontSize: "0.75rem",
-                    }}
-                  >
-                    Guardar
-                  </Button>
-                </Box>
-              )}
+
+              
             </CardContent>
           </Card>
+
+
         </Box>
-      </Box>
-
-
-
-
-
-
+     
     </Box>
   );
 };

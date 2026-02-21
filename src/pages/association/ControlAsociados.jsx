@@ -527,18 +527,6 @@ const UserManagement = () => {
             <Stack direction="row" spacing={1} justifyContent="flex-end" flexWrap="wrap">
               <Button
                 variant="outlined"
-                startIcon={<RefreshIcon />}
-                onClick={() => {
-                  setSearchTerm('');
-                  setSelectedTab('todos');
-                  setPage(1);
-                }}
-                disabled={loading}
-              >
-                Limpiar Filtros
-              </Button>
-              <Button
-                variant="outlined"
                 startIcon={<DownloadIcon />}
                 onClick={() => {
                   const data = filteredUsers.map(user => ({

@@ -9,11 +9,11 @@ import {
   Box,
   Chip,
   Paper,
-  Grid,
   Divider,
   Avatar,
   Button,
-  Stack
+  Stack,
+  Grid,
 } from "@mui/material";
 
 import {
@@ -23,15 +23,12 @@ import {
   Description as DescriptionIcon,
   Fingerprint as FingerprintIcon,
   Computer as ComputerIcon,
-  Person as PersonIcon,
   CheckCircle as CheckCircleIcon,
   Warning as WarningIcon,
-  Error as ErrorIcon
+  Error as ErrorIcon,
 } from "@mui/icons-material";
 
-/* =========================
-   HELPERS
-========================= */
+/* helpers */
 
 const getSeverityColor = (severity) => {
   switch (severity) {
@@ -50,7 +47,6 @@ const getSeverityColor = (severity) => {
 
 const getSeverityIcon = (severity) => {
   const color = getSeverityColor(severity);
-
   switch (severity) {
     case "success":
       return <CheckCircleIcon sx={{ color }} />;
@@ -80,15 +76,23 @@ const getRoleColor = (role) => {
   }
 };
 
-/* =========================
-   COMPONENT
-========================= */
-
-const ActivityDetailModal = ({ open, onClose, activity }) => {
+export default function ActivityDetailModal({ open, onClose, activity }) {
   if (!activity) return null;
 
   const severityColor = getSeverityColor(activity.severity);
   const roleColor = getRoleColor(activity.user.role);
+
+  const Item = ({ icon, label, value }) => (
+    <Stack direction="row" spacing={1} alignItems="center">
+      {icon}
+      <Box>
+        <Typography variant="caption" color="text.secondary">
+          {label}
+        </Typography>
+        <Typography fontWeight={500}>{value}</Typography>
+      </Box>
+    </Stack>
+  );
 
   return (
     <Dialog
@@ -96,301 +100,146 @@ const ActivityDetailModal = ({ open, onClose, activity }) => {
       onClose={onClose}
       maxWidth="md"
       fullWidth
-      PaperProps={{
-        sx: {
-          borderRadius: 3,
-          overflow: "hidden"
-        }
-      }}
+      PaperProps={{ sx: { borderRadius: 3 } }}
     >
       {/* HEADER */}
-      <DialogTitle
-        sx={{
-          borderBottom: "1px solid #eee",
-          bgcolor: "#fafafa",
-          py: 2.5
-        }}
-      >
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
-
+      <DialogTitle sx={{ borderBottom: "1px solid #eee", bgcolor: "#fafafa" }}>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
           <Stack direction="row" spacing={1.5} alignItems="center">
-
             {getSeverityIcon(activity.severity)}
 
             <Box>
-              <Typography fontWeight="bold" fontSize={18}>
-                Detalles de la Actividad
-              </Typography>
+              <Typography fontWeight={700}>Detalles de la Actividad</Typography>
 
               <Typography variant="caption" color="text.secondary">
                 Evento #{activity.id}
               </Typography>
-
             </Box>
-
           </Stack>
 
           <Chip
             label={activity.severity}
             size="small"
             sx={{
-              bgcolor: `${severityColor}15`,
+              bgcolor: severityColor + "20",
               color: severityColor,
               fontWeight: 600,
-              textTransform: "capitalize"
             }}
           />
-
         </Stack>
       </DialogTitle>
 
       {/* CONTENT */}
       <DialogContent sx={{ py: 3 }}>
+        <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
+          {/* INFO ACCION */}
+          <Typography fontWeight={700} mb={2}>
+            Información de la Acción
+          </Typography>
 
-        <Grid container spacing={3}>
+          {/* GRID EN COLUMNAS */}
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6}>
+              <Item
+                icon={<HistoryIcon fontSize="small" color="action" />}
+                label="Fecha y Hora"
+                value={activity.timestamp}
+              />
+            </Grid>
 
-          {/* ACCION */}
-          <Grid item xs={12}>
+            <Grid item xs={12} md={6}>
+              <Item
+                icon={<InfoIcon fontSize="small" color="action" />}
+                label="Acción"
+                value={activity.actionName}
+              />
+            </Grid>
 
-            <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
+            <Grid item xs={12} md={6}>
+              <Item
+                icon={<BusinessIcon fontSize="small" color="action" />}
+                label="Instancia"
+                value={activity.instanceName}
+              />
+            </Grid>
 
-              <Typography fontWeight="bold" mb={2}>
-                Información de la Acción
+            <Grid item xs={12} md={6}>
+              <Item
+                icon={<DescriptionIcon fontSize="small" color="action" />}
+                label="Entidad"
+                value={activity.entity}
+              />
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <Item
+                icon={<FingerprintIcon fontSize="small" color="action" />}
+                label="ID Entidad"
+                value={activity.entityId}
+              />
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <Item
+                icon={<ComputerIcon fontSize="small" color="action" />}
+                label="IP"
+                value={activity.ip}
+              />
+            </Grid>
+            <Typography fontWeight={700} mb={2}>
+              Usuario
+            </Typography>
+            <Avatar
+              sx={{
+                width: 32,
+                height: 32,
+                bgcolor: roleColor,
+                fontWeight: 700,
+                 fontSize: 14
+              }}
+            >
+              {activity.user.avatar}
+            </Avatar>
+
+            <Box>
+              <Typography fontWeight={700}>{activity.user.name}</Typography>
+
+              <Chip
+                label={activity.user.role}
+                size="small"
+                sx={{
+                  bgcolor: roleColor + "20",
+                  color: roleColor,
+                  mt: 0.5,
+                }}
+              />
+
+              <Typography variant="body2" color="text.secondary" mt={0.5}>
+                {activity.user.email}
               </Typography>
 
-              <Grid container spacing={2}>
-
-                <Grid item xs={12} md={6}>
-
-                  <Stack spacing={2}>
-
-                    <Stack direction="row" spacing={1.5}>
-                      <HistoryIcon fontSize="small" color="action" />
-                      <Box>
-                        <Typography variant="caption">Fecha y Hora</Typography>
-                        <Typography fontWeight={500}>
-                          {activity.timestamp}
-                        </Typography>
-                      </Box>
-                    </Stack>
-
-                    <Stack direction="row" spacing={1.5}>
-                      <InfoIcon fontSize="small" color="action" />
-                      <Box>
-                        <Typography variant="caption">Acción</Typography>
-                        <Typography fontWeight={500}>
-                          {activity.actionName}
-                        </Typography>
-                      </Box>
-                    </Stack>
-
-                    <Stack direction="row" spacing={1.5}>
-                      <BusinessIcon fontSize="small" color="action" />
-                      <Box>
-                        <Typography variant="caption">Instancia</Typography>
-                        <Typography fontWeight={500}>
-                          {activity.instanceName}
-                        </Typography>
-                      </Box>
-                    </Stack>
-
-                  </Stack>
-
-                </Grid>
-
-                <Grid item xs={12} md={6}>
-
-                  <Stack spacing={2}>
-
-                    <Stack direction="row" spacing={1.5}>
-                      <DescriptionIcon fontSize="small" color="action" />
-                      <Box>
-                        <Typography variant="caption">Entidad</Typography>
-                        <Typography fontWeight={500}>
-                          {activity.entity}
-                        </Typography>
-                      </Box>
-                    </Stack>
-
-                    <Stack direction="row" spacing={1.5}>
-                      <FingerprintIcon fontSize="small" color="action" />
-                      <Box>
-                        <Typography variant="caption">ID Entidad</Typography>
-                        <Typography fontWeight={500}>
-                          {activity.entityId}
-                        </Typography>
-                      </Box>
-                    </Stack>
-
-                    <Stack direction="row" spacing={1.5}>
-                      <ComputerIcon fontSize="small" color="action" />
-                      <Box>
-                        <Typography variant="caption">IP</Typography>
-                        <Typography fontWeight={500}>
-                          {activity.ip}
-                        </Typography>
-                      </Box>
-                    </Stack>
-
-                  </Stack>
-
-                </Grid>
-
-                <Grid item xs={12}>
-                  <Divider sx={{ my: 1 }} />
-
-                  <Typography fontWeight="bold" mb={1}>
-                    Detalles
-                  </Typography>
-
-                  <Typography color="text.secondary">
-                    {activity.details}
-                  </Typography>
-
-                </Grid>
-
-              </Grid>
-
-            </Paper>
-
-          </Grid>
-
-          {/* USUARIO */}
-          <Grid item xs={12} md={6}>
-
-            <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
-
-              <Typography fontWeight="bold" mb={2}>
-                Usuario
+              <Typography variant="caption" color="text.secondary">
+                ID: USR-{activity.id}
               </Typography>
-
-              <Stack direction="row" spacing={2} alignItems="center">
-
-                <Avatar
-                  sx={{
-                    width: 50,
-                    height: 50,
-                    bgcolor: roleColor,
-                    fontWeight: "bold"
-                  }}
-                >
-                  {activity.user.avatar}
-                </Avatar>
-
-                <Box>
-
-                  <Typography fontWeight="bold">
-                    {activity.user.name}
-                  </Typography>
-
-                  <Chip
-                    label={activity.user.role}
-                    size="small"
-                    sx={{
-                      bgcolor: `${roleColor}15`,
-                      color: roleColor,
-                      mt: 0.5
-                    }}
-                  />
-
-                </Box>
-
-              </Stack>
-
-              <Divider sx={{ my: 2 }} />
-
-              <Stack spacing={1}>
-
-                <Stack direction="row" spacing={1}>
-                  <PersonIcon fontSize="small" color="action" />
-                  <Typography>
-                    {activity.user.email}
-                  </Typography>
-                </Stack>
-
-                <Stack direction="row" spacing={1}>
-                  <FingerprintIcon fontSize="small" color="action" />
-                  <Typography>
-                    ID: USR-{activity.id}
-                  </Typography>
-                </Stack>
-
-              </Stack>
-
-            </Paper>
-
+            </Box>
           </Grid>
-
-          {/* METADATA */}
-          <Grid item xs={12} md={6}>
-
-            <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
-
-              <Typography fontWeight="bold" mb={2}>
-                Metadatos
-              </Typography>
-
-              <Grid container spacing={2}>
-
-                <Grid item xs={6}>
-                  <Typography variant="caption">
-                    Evento
-                  </Typography>
-                  <Typography fontWeight={500}>
-                    EVT-{activity.id.toString().padStart(6, "0")}
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography variant="caption">
-                    Versión
-                  </Typography>
-                  <Typography fontWeight={500}>
-                    v2.1.0
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography variant="caption">
-                    Módulo
-                  </Typography>
-                  <Typography fontWeight={500}>
-                    {activity.instanceName}
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography variant="caption">
-                    Traza
-                  </Typography>
-                  <Typography fontWeight={500}>
-                    #{activity.id}
-                  </Typography>
-                </Grid>
-
-              </Grid>
-
-            </Paper>
-
-          </Grid>
-
-        </Grid>
-
+ </Paper>
       </DialogContent>
 
       {/* FOOTER */}
-      <DialogActions sx={{ borderTop: "1px solid #eee", p: 2 }}>
+      <DialogActions sx={{ p: 2 }}>
         <Button
           onClick={onClose}
           variant="contained"
-          sx={{ borderRadius: 2 }}
+          sx={{ borderRadius: 2, px: 4 }}
         >
           Cerrar
         </Button>
       </DialogActions>
-
     </Dialog>
   );
-};
-
-export default ActivityDetailModal;
+}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react'; 
 import {
   Box,
   Grid,
@@ -18,14 +18,13 @@ import {
   TableRow,
   IconButton,
   LinearProgress,
-  Badge,
   Avatar,
   MenuItem,
   Select,
   FormControl,
   InputLabel,
-  ToggleButton,
-  ToggleButtonGroup
+  Container,
+  Pagination
 } from '@mui/material';
 import {
   People as PeopleIcon,
@@ -34,515 +33,359 @@ import {
   TrendingUp as TrendingUpIcon,
   Business as BusinessIcon,
   LocationOn as LocationIcon,
-  Assignment as AssignmentIcon,
-  AccountBalance as BalanceIcon,
-  Receipt as ReceiptIcon,
-  VerifiedUser as VerifiedIcon,
   CalendarToday as CalendarIcon,
   Visibility as VisibilityIcon,
-  CheckCircle as CheckCircleIcon
+  CheckCircle as CheckCircleIcon,
+  Assignment as AssignmentIcon,
+  Verified as VerifiedIcon,
+  Folder as FolderIcon
 } from '@mui/icons-material';
+
 
 const AssociationDashboard = () => {
   const [timeRange, setTimeRange] = useState('month');
-  const [viewMode, setViewMode] = useState('overview');
+    const [page, setPage] = useState(1);
+  const rowsPerPage = 5;
+  const tableRef = useRef(null);
 
-  // Datos de la asociación actual
-  const currentAssociation = {
-    id: 'ASOC-001',
-    name: 'Asociación Aduanal del Norte, S.A. de C.V.',
-    region: 'Norte',
-    rfc: 'AAN240101XYZ',
-    status: 'Activa',
-    membersCount: 45,
-    startDate: '15/01/2020',
-    compliance: 94
+  // Datos de la asociación
+  const associationData = {
+    info: {
+      id: 'ASOC-001',
+      name: 'Asociación Aduanal del Norte, S.A. de C.V.',
+      region: 'Norte',
+      rfc: 'AAN240101XYZ',
+      status: 'Activa',
+      membersCount: 45,
+      startDate: '15/01/2020',
+      compliance: 94
+    },
+    areas: [
+      { 
+        title: 'Agentes Activos', 
+        value: '32', 
+        change: '+3', 
+        icon: PeopleIcon,
+        color: '#2563eb', 
+        detail: 'Meta: 35',
+        progress: 91
+      },
+      { 
+        title: 'Pendientes Aprobación', 
+        value: '8', 
+        change: '-2', 
+        icon: WarningIcon,
+        color: '#dc2626', 
+        detail: 'Reducción semanal',
+        progress: 80
+      }
+    ],
+    metrics: [
+      { name: 'Cumplimiento de Declaraciones', value: 96, target: 95, status: 'excelente', icon: DescriptionIcon },
+      { name: 'Cumplimiento Certificaciones', value: 88, target: 90, status: 'regular', icon: VerifiedIcon },
+      { name: 'Cumplimiento de Expedientes', value: 91, target: 90, status: 'excelente', icon: FolderIcon }
+    ],
+    members: [
+      { id: 'AA-001', name: 'Luis Rodríguez', role: 'Agente Aduanal', compliance: 98, status: 'activo' },
+    { id: 'AA-002', name: 'María López', role: 'Agente Aduanal', compliance: 87, status: 'activo' },
+    { id: 'AA-003', name: 'Carlos Pérez', role: 'Agente Aduanal', compliance: 92, status: 'activo' },
+    { id: 'AA-004', name: 'Ana Gómez', role: 'Agente Aduanal', compliance: 75, status: 'pendiente' },
+    { id: 'AA-005', name: 'Jorge Hernández', role: 'Agente Aduanal', compliance: 65, status: 'inactivo' },
+    { id: 'AA-006', name: 'Sofía Martínez', role: 'Agente Aduanal', compliance: 88, status: 'activo' },
+    { id: 'AA-007', name: 'Ricardo Torres', role: 'Agente Aduanal', compliance: 90, status: 'activo' },
+    { id: 'AA-008', name: 'Lucía Fernández', role: 'Agente Aduanal', compliance: 80, status: 'pendiente' },
+    { id: 'AA-009', name: 'Fernando Castillo', role: 'Agente Aduanal', compliance: 70, status: 'inactivo' },
+    { id: 'AA-010', name: 'Patricia Ruiz', role: 'Agente Aduanal', compliance: 95, status: 'activo' },
+    { id: 'AA-011', name: 'Miguel Ramírez', role: 'Agente Aduanal', compliance: 85, status: 'activo' },
+    { id: 'AA-012', name: 'Gabriela Sánchez', role: 'Agente Aduanal', compliance: 77, status: 'pendiente' },
+    { id: 'AA-013', name: 'Eduardo Jiménez', role: 'Agente Aduanal', compliance: 69, status: 'inactivo' },
+    { id: 'AA-014', name: 'Valeria Ortega', role: 'Agente Aduanal', compliance: 93, status: 'activo' },
+    { id: 'AA-015', name: 'Diego Morales', role: 'Agente Aduanal', compliance: 82, status: 'activo' },
+    ]
   };
 
-  // Datos mock optimizados para vista de asociación
-  const associationStats = [
-    { 
-      title: 'Agentes Activos', 
-      value: '28', 
-      change: '+3', 
-      icon: PeopleIcon,
-      color: '#3498db', 
-      trend: 'up', 
-      detail: 'De 32 totales',
-      target: 35
-    },
-    { 
-      title: 'Pendientes Aprobación', 
-      value: '14', 
-      change: '-2', 
-      icon: WarningIcon,
-      color: '#f39c12', 
-      trend: 'down', 
-      detail: 'Reducción semanal',
-      target: 10
-    },
-    { 
-      title: 'Cumplimiento SAT', 
-      value: '96%', 
-      change: '+1.5%', 
-      icon: TrendingUpIcon,
-      color: '#9b59b6', 
-      trend: 'up', 
-      detail: 'Óptimo: >95%',
-      target: 95
-    },
-  ];
-
-  // Miembros de la asociación
-  const associationMembers = [
-    { id: 1, name: 'Luis Rodríguez', role: 'Agente Aduanal', status: 'Activo', compliance: 98, pending: 0, lastActivity: '15 min', avatar: 'LR', agentId: 'AA-001' },
-    { id: 2, name: 'Ana Martínez', role: 'Agente Senior', status: 'Activo', compliance: 95, pending: 2, lastActivity: '30 min', avatar: 'AM', agentId: 'AA-002' },
-    { id: 3, name: 'Carlos López', role: 'Agente', status: 'Activo', compliance: 92, pending: 1, lastActivity: '1 h', avatar: 'CL', agentId: 'AA-003' },
-    { id: 4, name: 'María Sánchez', role: 'Agente Junior', status: 'Inactivo', compliance: 85, pending: 3, lastActivity: '2 días', avatar: 'MS', agentId: 'AA-004' },
-  ];
-
-  const complianceMetrics = [
-    { metric: 'Cumplimiento de Declaraciones', current: 96, target: 95, status: 'excelente' },
-    { metric: 'Cumplimiento Certificaciones', current: 88, target: 90, status: 'regular' },
-    { metric: 'Cumplimiento de Expedientes', current: 91, target: 90, status: 'excelente' },
-  ];
-
+  
   const getStatusColor = (status) => {
-    switch(status) {
-      case 'excelente': return '#27ae60';
-      case 'bueno': return '#2ecc71';
-      case 'regular': return '#f39c12';
-      case 'critico': return '#e74c3c';
-      case 'Activo': return '#27ae60';
-      case 'Inactivo': return '#e74c3c';
-      case 'Pendiente': return '#f39c12';
-      default: return '#7f8c8d';
-    }
+    const colors = {
+      excelente: '#059669',
+      regular: '#d97706',
+      activo: '#059669',
+      inactivo: '#6b7280',
+      pendiente: '#d97706'
+    };
+    return colors[status] || colors.inactivo;
   };
+
+    // Paginar miembros
+  const paginatedMembers = associationData.members.slice(
+    (page - 1) * rowsPerPage,
+    page * rowsPerPage
+  );
+  const totalPages = Math.ceil(associationData.members.length / rowsPerPage);
 
   return (
     <Box sx={{ 
-      p: 2.5,
-      backgroundColor: '#f5f7fa',
       minHeight: '100vh',
-      maxWidth: '100vw',
-      overflowX: 'hidden'
+      bgcolor: '#f3f4f6',
+      py: 4
     }}>
-      {/* Header de la asociación */}
-      <Box sx={{ mb: 3 }}>
-        <Box sx={{ 
-          p: 2, 
-          backgroundColor: 'white', 
-          borderRadius: 2,
-          boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-          mb: 2
-        }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 2 }}>
-            <Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
-                <BusinessIcon sx={{ color: '#3498db', fontSize: 32 }} />
+      <Container maxWidth="xl">
+        {/* Header de la Asociación */}
+        <Paper 
+          elevation={0}
+          sx={{ 
+            p: 3, 
+            mb: 4,
+            borderRadius: 3,
+            border: '1px solid #e5e7eb'
+          }}
+        >
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={8}>
+              <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+                <Box sx={{ 
+                  p: 1.5, 
+                  bgcolor: '#2563eb', 
+                  borderRadius: 2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <BusinessIcon sx={{ color: 'white', fontSize: 32 }} />
+                </Box>
+                
                 <Box>
-                  <Typography variant="h4" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
-                    {currentAssociation.name}
+                  <Typography variant="h5" sx={{ fontWeight: 700, color: '#111827', mb: 0.5 }}>
+                    {associationData.info.name}
                   </Typography>
-                  <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 0.5 }}>
+                  
+                  <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
                     <Chip 
-                      label={currentAssociation.status}
-                      color="success"
+                      label={associationData.info.status}
                       size="small"
+                      sx={{ 
+                        bgcolor: '#d1fae5',
+                        color: '#065f46',
+                        fontWeight: 600,
+                        fontSize: '0.75rem'
+                      }}
                     />
-                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                      RFC: {currentAssociation.rfc} • ID: {currentAssociation.id}
+                    <Typography variant="caption" sx={{ color: '#6b7280' }}>
+                      RFC: {associationData.info.rfc} • ID: {associationData.info.id}
                     </Typography>
+                  </Stack>
+
+                  <Stack direction="row" spacing={3}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <LocationIcon sx={{ color: '#6b7280', fontSize: 18 }} />
+                      <Typography variant="body2" sx={{ color: '#374151', fontWeight: 500 }}>
+                        {associationData.info.region}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <PeopleIcon sx={{ color: '#6b7280', fontSize: 18 }} />
+                      <Typography variant="body2" sx={{ color: '#374151', fontWeight: 500 }}>
+                        {associationData.info.membersCount} agentes
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <CalendarIcon sx={{ color: '#6b7280', fontSize: 18 }} />
+                      <Typography variant="body2" sx={{ color: '#374151', fontWeight: 500 }}>
+                        Desde {associationData.info.startDate}
+                      </Typography>
+                    </Box>
                   </Stack>
                 </Box>
               </Box>
-              
-              <Stack direction="row" spacing={3} sx={{ mt: 1 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <LocationIcon sx={{ color: '#7f8c8d', fontSize: 16 }} />
-                  <Typography variant="body2" sx={{ color: '#2c3e50', fontWeight: 'medium' }}>
-                    {currentAssociation.region}
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <PeopleIcon sx={{ color: '#7f8c8d', fontSize: 16 }} />
-                  <Typography variant="body2" sx={{ color: '#2c3e50', fontWeight: 'medium' }}>
-                    {currentAssociation.membersCount} agentes
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <CalendarIcon sx={{ color: '#7f8c8d', fontSize: 16 }} />
-                  <Typography variant="body2" sx={{ color: '#2c3e50', fontWeight: 'medium' }}>
-                    Desde {currentAssociation.startDate}
-                  </Typography>
-                </Box>
-              </Stack>
-            </Box>
-            
-            <Box sx={{ display: 'flex', gap: 1.5 }}>
-              <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel>Período</InputLabel>
-                <Select
-                  value={timeRange}
-                  onChange={(e) => setTimeRange(e.target.value)}
-                  label="Período"
-                >
-                  <MenuItem value="day">Hoy</MenuItem>
-                  <MenuItem value="week">Esta semana</MenuItem>
-                  <MenuItem value="month">Este mes</MenuItem>
-                  <MenuItem value="quarter">Este trimestre</MenuItem>
-                  <MenuItem value="year">Este año</MenuItem>
-                </Select>
-              </FormControl>
-              
-              <ToggleButtonGroup
-                value={viewMode}
-                exclusive
-                onChange={(e, newValue) => newValue && setViewMode(newValue)}
-                size="small"
-              >
-        
-              </ToggleButtonGroup>
-            </Box>
-          </Box>
+            </Grid>
 
-          {/* Indicador de cumplimiento general */}
-          <Box sx={{ mt: 3, pt: 2, borderTop: '1px solid #ecf0f1' }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-              <Typography variant="subtitle1" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
-                Cumplimiento General de la Asociación
-              </Typography>
-              <Typography variant="h5" sx={{ color: '#27ae60', fontWeight: 'bold' }}>
-                {currentAssociation.compliance}%
-              </Typography>
-            </Box>
-            <LinearProgress 
-              variant="determinate" 
-              value={currentAssociation.compliance}
-              sx={{ 
-                height: 10,
-                borderRadius: 5,
-                backgroundColor: '#ecf0f1',
-                '& .MuiLinearProgress-bar': {
-                  backgroundColor: currentAssociation.compliance >= 95 ? '#27ae60' : 
-                                  currentAssociation.compliance >= 90 ? '#f39c12' : '#e74c3c',
-                  borderRadius: 5
-                }
-              }}
-            />
-          </Box>
-        </Box>
-      </Box>
-
-      {/* Layout principal: 2 columnas */}
-      <Grid container spacing={2}>
-
-        {/* Columna izquierda  */}
-        <Grid item xs={12} lg={12}>
-          
-          {/* KPI Cards */}
-          <Grid container spacing={3} sx={{ mb: 3 }}>
-            {associationStats.map((stat, index) => {
-              const IconComponent = stat.icon;
-              return (
-                <Grid item xs={12} sm={4}md={4} key={index}>
-                  <Card sx={{ 
-                    height: '100%', 
-                    width: '100%',
-                    borderLeft: `4px solid ${stat.color}`,
-                    transition: 'transform 0.2s',
-                    '&:hover': { transform: 'translateY(-2px)' }
-                  }}>
-                    <CardContent sx={{ p: 3 }}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <Box sx={{ flex: 1 }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                            <Box sx={{ color: stat.color }}>
-                              <IconComponent fontSize="medium" />
-                            </Box>
-                            <Typography variant="caption" sx={{ color: '#7f8c8d', fontWeight: 500 }}>
-                              {stat.title}
-                            </Typography>
-                          </Box>
-                          <Typography variant="h4" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 0.5 }}>
-                            {stat.value}
-                          </Typography>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Typography variant="caption" sx={{ color: '#95a5a6' }}>
-                              {stat.detail}
-                            </Typography>
-                            <Chip 
-                              label={stat.change}
-                              size="small"
-                              sx={{
-                                bgcolor: stat.trend === 'up' ? '#2ecc7120' : '#e74c3c20',
-                                color: stat.trend === 'up' ? '#27ae60' : '#e74c3c',
-                                fontWeight: 'bold',
-                                fontSize: '0.7rem',
-                                height: 20
-                              }}
-                            />
-                          </Box>
-                          
-                          {/* Progress bar for target */}
-                          <Box sx={{ mt: 1.5 }}>
-                            <LinearProgress 
-                              variant="determinate" 
-                              value={(parseInt(stat.value) / stat.target) * 100}
-                              sx={{ 
-                                height: 4,
-                                borderRadius: 2,
-                                backgroundColor: '#ecf0f1',
-                                '& .MuiLinearProgress-bar': {
-                                  backgroundColor: stat.color,
-                                  borderRadius: 2
-                                }
-                              }}
-                            />
-                            <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', mt: 0.5 }}>
-                              Meta: {stat.target}
-                            </Typography>
-                          </Box>
-                        </Box>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              );
-            })}
+         
           </Grid>
+         
+        </Paper>
 
-          
-          <Card sx={{ mb: 4 }}>
-            <CardContent sx={{ p: 4 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold', fontSize: '1rem' }}>
-                  Agentes de la Asociación
-                </Typography>
-                <Box sx={{ display: 'flex', gap: 0.5 }}>
-                  <Button 
-                    size="small" 
-                    startIcon={<PeopleIcon />}
-                    sx={{ fontSize: '0.75rem' }}
-                  >
-                    Ver Todos
-                  </Button>
+<Grid container sx={{ mb: 4, display: 'flex', flexWrap: 'nowrap', gap: 2 }}>
+  {associationData.areas.concat(associationData.metrics).map((item, index) => {
+    const IconComponent = item.icon;
+    return (
+      <Box key={index} sx={{ flex: '0 0 19%', minWidth: 0 }}> {/* Ajuste para que no se salga */}
+        <Card
+          sx={{
+            borderRadius: 3,
+            border: '1px solid #e5e7eb',
+            boxShadow: 'none',
+            transition: 'all 0.2s',
+            '&:hover': {
+              boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+              transform: 'translateY(-2px)',
+            },
+          }}
+        >
+          <CardContent sx={{ p: 3 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                mb: 2,
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <Box
+                  sx={{
+                    p: 1,
+                    bgcolor: `${item.color ? item.color + '10' : getStatusColor(item.status) + '10'}`,
+                    borderRadius: 2,
+                  }}
+                >
+                  <IconComponent
+                    sx={{ color: item.color || getStatusColor(item.status), fontSize: 24 }}
+                  />
                 </Box>
-              </Box>
-
-              <TableContainer>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow sx={{ backgroundColor: '#f8f9fa' }}>
-                      <TableCell sx={{ fontWeight: 'bold', py: 1, fontSize: '0.75rem' }}>Agente</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', py: 1, fontSize: '0.75rem' }}>ID Agente</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', py: 1, fontSize: '0.75rem' }}>Rol</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', py: 1, fontSize: '0.75rem' }}>Cumplimiento</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', py: 1, fontSize: '0.75rem' }}>Estado</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', py: 1, fontSize: '0.75rem' }}>Acción</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {associationMembers.map((member) => (
-                      <TableRow 
-                        key={member.id} 
-                        hover
-                        sx={{ '&:last-child td': { borderBottom: 0 } }}
-                      >
-                        <TableCell sx={{ py: 1 }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                            <Avatar sx={{ 
-                              width: 32, 
-                              height: 32,
-                              fontSize: '0.75rem',
-                              bgcolor: getStatusColor(member.status)
-                            }}>
-                              {member.avatar}
-                            </Avatar>
-                            <Box>
-                              <Typography variant="body2" sx={{ fontWeight: '500', color: '#2c3e50' }}>
-                                {member.name}
-                              </Typography>
-                              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                                {member.lastActivity}
-                              </Typography>
-                            </Box>
-                          </Box>
-                        </TableCell>
-                        <TableCell sx={{ py: 1, fontSize: '0.875rem' }}>{member.agentId}</TableCell>
-                        <TableCell sx={{ py: 1 }}>
-                          <Chip 
-                            label={member.role}
-                            size="small"
-                            sx={{
-                              bgcolor: '#ecf0f1',
-                              color: '#2c3e50',
-                              fontWeight: '500',
-                              fontSize: '0.7rem',
-                              height: 20
-                            }}
-                          />
-                        </TableCell>
-                        <TableCell sx={{ py: 1 }}>
-                          <Box>
-                            <Typography variant="body2" sx={{ fontWeight: 'bold', color: getStatusColor(member.compliance >= 95 ? 'excelente' : member.compliance >= 90 ? 'bueno' : 'regular') }}>
-                              {member.compliance}%
-                            </Typography>
-                            {member.pending > 0 && (
-                              <Chip 
-                                label={`${member.pending} pendientes`}
-                                size="small"
-                                color="warning"
-                                sx={{ height: 18, fontSize: '0.65rem', mt: 0.5 }}
-                              />
-                            )}
-                          </Box>
-                        </TableCell>
-                        <TableCell sx={{ py: 1 }}>
-                          <Chip 
-                            label={member.status}
-                            size="small"
-                            sx={{
-                              bgcolor: `${getStatusColor(member.status)}20`,
-                              color: getStatusColor(member.status),
-                              fontWeight: 'bold',
-                              fontSize: '0.7rem',
-                              height: 20
-                            }}
-                          />
-                        </TableCell>
-                        <TableCell sx={{ py: 1 }}>
-                          <IconButton size="small">
-                            <VisibilityIcon fontSize="small" />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {/* Columna derecha (más estrecha) */}
-        <Grid item xs={12} lg={4}>
-          <Stack spacing={3}>
-            {/* Métricas de cumplimiento */}
-            <Card>
-              <CardContent sx={{ p: 4 }}>
-                <Typography variant="h6" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold', fontSize: '1rem' }}>
-                  Métricas de Cumplimiento
+                <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#111827' }}>
+                  {item.title || item.name}
                 </Typography>
+              </Box>
+              {item.change && (
+                <Chip
+                  label={item.change}
+                  size="small"
+                  sx={{
+                    bgcolor: item.change.includes('+') ? '#d1fae5' : '#fee2e2',
+                    color: item.change.includes('+') ? '#065f46' : '#991b1b',
+                    fontWeight: 600,
+                    fontSize: '0.75rem',
+                  }}
+                />
+              )}
+            </Box>
 
-                <Stack spacing={2}>
-                  {complianceMetrics.map((metric, index) => (
-                    <Box key={index}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                        <Typography variant="body2" sx={{ fontWeight: '600', color: '#2c3e50' }}>
-                          {metric.metric}
+            {item.value && (
+              <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, mb: 1 }}>
+                <Typography variant="h3" sx={{ fontWeight: 700, color: '#111827' }}>
+                  {item.value}
+                </Typography>
+                {item.detail && (
+                  <Typography variant="body2" sx={{ color: '#6b7280' }}>
+                    {item.detail}
+                  </Typography>
+                )}
+              </Box>
+            )}
+
+            {item.progress && (
+              <Box sx={{ mt: 2 }}>
+                <LinearProgress
+                  variant="determinate"
+                  value={item.progress}
+                  sx={{
+                    height: 6,
+                    borderRadius: 3,
+                    bgcolor: '#e5e7eb',
+                    '& .MuiLinearProgress-bar': {
+                      bgcolor: item.color || getStatusColor(item.status),
+                      borderRadius: 3,
+                    },
+                  }}
+                />
+              </Box>
+            )}
+
+            {item.target && item.value && (
+              <Typography variant="caption" sx={{ color: '#6b7280' }}>
+                Meta: {item.target}%
+              </Typography>
+            )}
+          </CardContent>
+        </Card>
+      </Box>
+    );
+  })}
+</Grid>
+
+        {/* Tabla de Agentes */}
+  <Paper sx={{ borderRadius: 3, border: '1px solid #e5e7eb', overflow: 'hidden', mb: 4 }}>
+          <Box sx={{ p: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #e5e7eb' }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, color: '#111827' }}>
+              Agentes de la Asociación
+            </Typography>
+          </Box>
+
+          <TableContainer ref={tableRef}>
+            <Table>
+              <TableHead>
+                <TableRow sx={{ bgcolor: '#f9fafb' }}>
+                  <TableCell sx={{ fontWeight: 600, color: '#374151' }}>Agente</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: '#374151' }}>ID Agente</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: '#374151' }}>Rol</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: '#374151' }}>Cumplimiento</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: '#374151' }}>Estado</TableCell>
+                  <TableCell sx={{ fontWeight: 600, color: '#374151' }}>Acción</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {paginatedMembers.map((member) => (
+                  <TableRow key={member.id} hover>
+                    <TableCell>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                        <Avatar sx={{ width: 36, height: 36, bgcolor: getStatusColor(member.status), fontSize: '0.875rem', fontWeight: 600 }}>
+                          {member.name.split(' ').map(n => n[0]).join('')}
+                        </Avatar>
+                        <Typography variant="body2" sx={{ fontWeight: 500, color: '#111827' }}>
+                          {member.name}
                         </Typography>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                          <Typography variant="body2" sx={{ 
-                            fontWeight: 'bold', 
-                            color: getStatusColor(metric.status)
-                          }}>
-                            {metric.current}%
-                          </Typography>
-                          <Chip 
-                            label={metric.status}
-                            size="small"
-                            sx={{
-                              bgcolor: `${getStatusColor(metric.status)}20`,
-                              color: getStatusColor(metric.status),
-                              fontWeight: 'bold',
-                              fontSize: '0.65rem',
-                              height: 18
-                            }}
-                          />
-                        </Box>
                       </Box>
-                      
-                      <LinearProgress 
-                        variant="determinate" 
-                        value={metric.current}
+                    </TableCell>
+                    <TableCell><Typography variant="body2" sx={{ color: '#6b7280' }}>{member.id}</Typography></TableCell>
+                    <TableCell>
+                      <Chip label={member.role} size="small" sx={{ bgcolor: '#f3f4f6', color: '#374151', fontWeight: 500, fontSize: '0.75rem' }} />
+                    </TableCell>
+                    <TableCell>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 600, color: '#059669' }}>{member.compliance}%</Typography>
+                        {member.compliance >= 95 && <CheckCircleIcon sx={{ color: '#059669', fontSize: 16 }} />}
+                      </Box>
+                    </TableCell>
+                    <TableCell>
+                      <Chip 
+                        label={member.status} 
+                        size="small" 
                         sx={{ 
-                          height: 6,
-                          borderRadius: 3,
-                          backgroundColor: '#ecf0f1',
-                          '& .MuiLinearProgress-bar': {
-                            backgroundColor: getStatusColor(metric.status),
-                            borderRadius: 3
-                          }
+                          bgcolor: member.status === 'activo' ? '#d1fae5' : '#fee2e2',
+                          color: member.status === 'activo' ? '#065f46' : '#991b1b',
+                          fontWeight: 600,
+                          fontSize: '0.75rem'
                         }}
                       />
-                      
-                      <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', mt: 0.5, textAlign: 'right' }}>
-                        Meta: {metric.target}%
-                      </Typography>
-                    </Box>
-                  ))}
-                </Stack>
+                    </TableCell>
+                    <TableCell>
+                      <IconButton size="small" sx={{ color: '#6b7280' }}>
+                        <VisibilityIcon fontSize="small" />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
-                <Divider sx={{ my: 2 }} />
-                
-  
-              </CardContent>
-            </Card>
+          {/* Paginación */}
+          {totalPages > 1 && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+              <Pagination 
+                count={totalPages} 
+                page={page} 
+                onChange={(e, value) => {
+                  setPage(value);
+                  tableRef.current?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                color="primary"
+              />
+            </Box>
+          )}
+        </Paper>
 
-
-            {/* Información adicional de la asociación */}
-            <Card>
-              <CardContent sx={{ p: 6 }}>
-                <Typography variant="h6" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold', fontSize: '1rem' }}>
-                  Información de la Asociación
-                </Typography>
-                
-                <Stack spacing={1.5}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                      Año de Fundación:
-                    </Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                      2020
-                    </Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                      Tipo de Asociación:
-                    </Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
-                      Aduanal
-                    </Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-                      Puntuación:
-                    </Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#27ae60' }}>
-                      9.8/10
-                    </Typography>
-                  </Box>
-                </Stack>
-
-                <Box sx={{ textAlign: 'center', mt: 2 }}>
-                  <Button 
-                    variant="outlined" 
-                    size="small"
-                    fullWidth
-                    startIcon={<DescriptionIcon />}
-                  >
-                    Ver Detalles Completos
-                  </Button>
-                </Box>
-              </CardContent>
-            </Card>
-          </Stack>
-        </Grid>
-      </Grid>
-
-    
+      </Container>
     </Box>
   );
 };

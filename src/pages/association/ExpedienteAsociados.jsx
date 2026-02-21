@@ -925,13 +925,7 @@ const Expediente = () => {
           </Typography>
         </Box>
         
-        <Button
-          variant="outlined"
-          startIcon={<DownloadIcon />}
-          sx={{ textTransform: 'none' }}
-        >
-          Exportar Expediente
-        </Button>
+
       </Box>
 
       {/* Nivel de Cumplimiento */}
