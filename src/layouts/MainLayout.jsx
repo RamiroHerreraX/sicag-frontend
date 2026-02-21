@@ -119,6 +119,7 @@ const MainLayout = () => {
     { text: 'CERTIFICADOS', icon: <CertificationsIcon />, path: '/certifications', description: 'Certificaciones y documentos' },
     { text: 'DECLARACIÓN', icon: <DeclaracionesIcon2 />, path: '/declaraciones', description: 'Declaraciones aduanales' },
     { text: 'AUDITORIA', icon: <AuditIcon />, path: '/audit-agent', description: 'Auditoría y cumplimiento' },
+     { text: 'ALERTAS', icon: <NotificationsIcon />, path: '/notificaciones', description: 'Notificaciones y alertas' },
     { text: 'PERFIL', icon: <ProfileIcon />, path: '/profile', description: 'Mi perfil y configuración' },
     { text: 'MAPA DEL SITIO', icon: <SiteMapIcon />, path: '/sitemap', description: 'Navegación del sitio' },
   ];
@@ -598,7 +599,7 @@ const MainLayout = () => {
               <IconButton
                 color="inherit"
                 component={Link}
-                to="/notifications"
+                to="/notificaciones"
                 sx={{ 
                   color: committeeTheme.grayMedium,
                   '&:hover': {
