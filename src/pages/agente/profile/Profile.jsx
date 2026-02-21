@@ -50,6 +50,35 @@ import {
   ContactPhone as ContactPhoneIcon
 } from '@mui/icons-material';
 
+// Paleta corporativa del UserManagement
+const colors = {
+  primary: {
+    dark: '#0D2A4D',
+    main: '#133B6B',
+    light: '#3A6EA5'
+  },
+  secondary: {
+    main: '#00A8A8',
+    light: '#00C2D1',
+    lighter: '#35D0FF'
+  },
+  accents: {
+    blue: '#0099FF',
+    purple: '#6C5CE7'
+  },
+  status: {
+    success: '#00A8A8',
+    warning: '#00C2D1',
+    error: '#0099FF',
+    info: '#3A6EA5'
+  },
+  text: {
+    primary: '#0D2A4D',
+    secondary: '#3A6EA5',
+    light: '#6C5CE7'
+  }
+};
+
 const Profile = () => {
   const [editMode, setEditMode] = useState(false);
   const [addDialog, setAddDialog] = useState(false);
@@ -202,7 +231,7 @@ const Profile = () => {
     <Box>
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h4" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
+        <Typography variant="h4" sx={{ color: colors.primary.dark, fontWeight: 'bold' }}>
           Mi Perfil
         </Typography>
       </Box>
@@ -214,8 +243,8 @@ const Profile = () => {
           <Card sx={{ 
             height: '100%',
             borderRadius: 2,
-            boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-            border: '1px solid rgba(52, 152, 219, 0.1)',
+            boxShadow: `0 4px 12px ${colors.primary.main}15`,
+            border: `1px solid ${colors.primary.main}20`,
             background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
           }}>
             <CardContent sx={{ 
@@ -233,10 +262,10 @@ const Profile = () => {
                   width: 120, 
                   height: 120, 
                   fontSize: '2.8rem', 
-                  bgcolor: '#3498db',
+                  bgcolor: colors.primary.main,
                   margin: '0 auto',
-                  border: '4px solid #e8f4fd',
-                  boxShadow: '0 4px 12px rgba(52, 152, 219, 0.2)'
+                  border: `4px solid ${colors.primary.main}20`,
+                  boxShadow: `0 4px 12px ${colors.primary.main}30`
                 }}>
                   LR
                 </Avatar>
@@ -261,7 +290,7 @@ const Profile = () => {
               {/* Nombre */}
               <Typography variant="h6" fontWeight="bold" sx={{ 
                 mt: 2,
-                color: '#2c3e50',
+                color: colors.text.primary,
                 fontSize: '1.25rem',
                 letterSpacing: '0.3px',
                 textShadow: '0 1px 2px rgba(0,0,0,0.05)'
@@ -272,7 +301,6 @@ const Profile = () => {
               {/* Rol */}
               <Chip 
                 label={profile.rol} 
-                color="primary" 
                 size="medium" 
                 sx={{ 
                   mt: 1.5, 
@@ -281,7 +309,9 @@ const Profile = () => {
                   fontSize: '0.85rem',
                   height: '28px',
                   borderRadius: '16px',
-                  boxShadow: '0 2px 4px rgba(52, 152, 219, 0.15)'
+                  boxShadow: `0 2px 4px ${colors.primary.main}30`,
+                  bgcolor: colors.primary.main,
+                  color: 'white'
                 }} 
               />
 
@@ -295,12 +325,12 @@ const Profile = () => {
                   mb: 2,
                   p: 1.5,
                   borderRadius: '10px',
-                  bgcolor: 'rgba(52, 152, 219, 0.05)',
-                  borderLeft: '4px solid #3498db'
+                  bgcolor: `${colors.primary.main}10`,
+                  borderLeft: `4px solid ${colors.primary.main}`
                 }}>
                   
                   <Typography variant="body1" sx={{ 
-                    color: '#2c3e50', 
+                    color: colors.text.primary, 
                     fontWeight: '700',
                     fontSize: '1.1rem',
                     lineHeight: 1.2
@@ -309,7 +339,7 @@ const Profile = () => {
                     
                   </Typography>
                   <Typography variant="body1" sx={{ 
-                    color: '#2c3e50', 
+                    color: colors.text.primary, 
                     fontWeight: '600',
                     fontSize: '0.95rem',
                     lineHeight: 1.3
@@ -323,12 +353,12 @@ const Profile = () => {
                 <Box sx={{ 
                   p: 1.5,
                   borderRadius: '10px',
-                  bgcolor: 'rgba(155, 89, 182, 0.05)',
-                  borderLeft: '4px solid #9b59b6'
+                  bgcolor: `${colors.accents.purple}10`,
+                  borderLeft: `4px solid ${colors.accents.purple}`
                 }}>
                  
                   <Typography variant="body1" sx={{ 
-                    color: '#2c3e50', 
+                    color: colors.text.primary, 
                     fontWeight: '700',
                     fontSize: '1.1rem',
                     lineHeight: 1.2
@@ -340,14 +370,14 @@ const Profile = () => {
 
               {/* Fecha de registro */}
               <Typography variant="body2" sx={{ 
-                color: '#95a5a6',
+                color: colors.text.secondary,
                 fontWeight: '500',
                 fontSize: '0.85rem',
                 mt: 2,
                 pt: 2,
-                borderTop: '1px solid rgba(0,0,0,0.08)'
+                borderTop: `1px solid ${colors.primary.main}20`
               }}>
-                Miembro desde: <span style={{ fontWeight: '600', color: '#7f8c8d' }}>{profile.fechaRegistro}</span>
+                Miembro desde: <span style={{ fontWeight: '600', color: colors.text.primary }}>{profile.fechaRegistro}</span>
               </Typography>
             </CardContent>
           </Card>
@@ -360,7 +390,7 @@ const Profile = () => {
               <Typography variant="h6" sx={{ 
                 mb: 3, 
                 fontWeight: 'bold', 
-                color: '#2c3e50',
+                color: colors.text.primary,
                 textAlign: 'center'
               }}>
                 Mi Actividad
@@ -373,10 +403,10 @@ const Profile = () => {
                   borderRadius: 1,
                   bgcolor: '#f8f9fa'
                 }}>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                  <Typography variant="body2" sx={{ color: colors.text.secondary, mb: 0.5 }}>
                     Certificaciones Activas
                   </Typography>
-                  <Typography variant="h3" fontWeight="bold" sx={{ color: '#2c3e50' }}>
+                  <Typography variant="h3" fontWeight="bold" sx={{ color: colors.text.primary }}>
                     8
                   </Typography>
                 </Box>
@@ -385,12 +415,12 @@ const Profile = () => {
                   textAlign: 'center',
                   p: 1.5,
                   borderRadius: 1,
-                  bgcolor: '#fff8e1'
+                  bgcolor: `${colors.status.warning}15`
                 }}>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                  <Typography variant="body2" sx={{ color: colors.text.secondary, mb: 0.5 }}>
                     En Revisión
                   </Typography>
-                  <Typography variant="h3" sx={{ color: '#f39c12', fontWeight: 'bold' }}>
+                  <Typography variant="h3" sx={{ color: colors.status.warning, fontWeight: 'bold' }}>
                     2
                   </Typography>
                 </Box>
@@ -399,12 +429,12 @@ const Profile = () => {
                   textAlign: 'center',
                   p: 1.5,
                   borderRadius: 1,
-                  bgcolor: '#ffebee'
+                  bgcolor: `${colors.status.error}15`
                 }}>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                  <Typography variant="body2" sx={{ color: colors.text.secondary, mb: 0.5 }}>
                     Por Vencer (30 días)
                   </Typography>
-                  <Typography variant="h3" sx={{ color: '#e74c3c', fontWeight: 'bold' }}>
+                  <Typography variant="h3" sx={{ color: colors.status.error, fontWeight: 'bold' }}>
                     1
                   </Typography>
                 </Box>
@@ -412,15 +442,15 @@ const Profile = () => {
                 <Box sx={{ 
                   pt: 2, 
                   mt: 2,
-                  borderTop: '1px solid #e0e0e0',
+                  borderTop: `1px solid ${colors.primary.main}20`,
                   textAlign: 'center'
                 }}>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                  <Typography variant="body2" sx={{ color: colors.text.secondary, mb: 0.5 }}>
                     Último Acceso
                   </Typography>
                   <Typography variant="body1" sx={{ 
                     fontWeight: 'medium',
-                    color: '#2c3e50'
+                    color: colors.text.primary
                   }}>
                     {profile.ultimoAcceso}
                   </Typography>
@@ -442,7 +472,7 @@ const Profile = () => {
               }}>
                 <Typography variant="h6" sx={{ 
                   fontWeight: 'bold', 
-                  color: '#2c3e50',
+                  color: colors.text.primary,
                   fontSize: '1rem'
                 }}>
                   Mis Aduanas
@@ -458,7 +488,9 @@ const Profile = () => {
                     fontWeight: 'bold',
                     height: '28px',
                     minWidth: '75px',
-                    p: '2px 10px'
+                    p: '2px 10px',
+                    bgcolor: colors.primary.main,
+                    '&:hover': { bgcolor: colors.primary.dark }
                   }}
                 >
                   Agregar
@@ -469,8 +501,8 @@ const Profile = () => {
                 height: 'calc(100% - 60px)',
                 p: 1.5,
                 borderRadius: 1,
-                bgcolor: '#f0f7ff',
-                border: '1px solid #d0e3ff',
+                bgcolor: `${colors.primary.main}10`,
+                border: `1px solid ${colors.primary.main}30`,
                 overflow: 'auto'
               }}>
                 <Stack spacing={1}>
@@ -481,9 +513,9 @@ const Profile = () => {
                       sx={{ 
                         p: 1,
                         borderRadius: 0.8,
-                        border: '1px solid #e0e0e0',
-                        bgcolor: aduana.tipo === 'Principal' ? '#fff8e1' : 'white',
-                        borderLeft: `3px solid ${aduana.tipo === 'Principal' ? '#ff9800' : '#3498db'}`
+                        border: `1px solid ${colors.primary.main}20`,
+                        bgcolor: aduana.tipo === 'Principal' ? `${colors.status.warning}15` : 'white',
+                        borderLeft: `3px solid ${aduana.tipo === 'Principal' ? colors.status.warning : colors.primary.main}`
                       }}
                     >
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -491,26 +523,30 @@ const Profile = () => {
                           <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
                             <LocationCityIcon sx={{ 
                               mr: 1, 
-                              color: aduana.tipo === 'Principal' ? '#ff9800' : '#3498db',
+                              color: aduana.tipo === 'Principal' ? colors.status.warning : colors.primary.main,
                               fontSize: '1rem'
                             }} />
-                            <Typography variant="caption" fontWeight="bold" sx={{ fontSize: '0.75rem' }}>
+                            <Typography variant="caption" fontWeight="bold" sx={{ fontSize: '0.75rem', color: colors.text.primary }}>
                               {aduana.nombre.length > 22 ? `${aduana.nombre.substring(0, 22)}...` : aduana.nombre}
                             </Typography>
                           </Box>
-                          <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.65rem', display: 'block', pl: 2 }}>
+                          <Typography variant="caption" sx={{ color: colors.text.secondary, fontSize: '0.65rem', display: 'block', pl: 2 }}>
                             <strong>Registro:</strong> {aduana.numeroRegistro}
                           </Typography>
                           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pl: 2, mt: 0.5 }}>
-                            <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.65rem' }}>
+                            <Typography variant="caption" sx={{ color: colors.text.secondary, fontSize: '0.65rem' }}>
                               <strong>Fecha:</strong> {aduana.fechaRegistro}
                             </Typography>
                             {aduana.tipo === 'Principal' && (
                               <Chip
                                 label="Principal"
                                 size="small"
-                                color="warning"
-                                sx={{ height: 18, fontSize: '0.6rem' }}
+                                sx={{ 
+                                  height: 18, 
+                                  fontSize: '0.6rem',
+                                  bgcolor: colors.status.warning,
+                                  color: 'white'
+                                }}
                               />
                             )}
                           </Box>
@@ -523,7 +559,7 @@ const Profile = () => {
                               onClick={() => handleSetPrincipal(aduana.id)}
                               disabled={aduana.tipo === 'Principal'}
                               sx={{ 
-                                color: aduana.tipo === 'Principal' ? '#ff9800' : '#bdbdbd',
+                                color: aduana.tipo === 'Principal' ? colors.status.warning : colors.text.secondary,
                                 p: 0.25
                               }}
                             >
@@ -534,7 +570,7 @@ const Profile = () => {
                           <IconButton 
                             size="small" 
                             onClick={() => handleDeleteAduana(aduana.id)}
-                            sx={{ color: '#f44336', p: 0.25 }}
+                            sx={{ color: colors.status.error, p: 0.25 }}
                           >
                             <DeleteIcon fontSize="small" />
                           </IconButton>
@@ -547,10 +583,10 @@ const Profile = () => {
                     <Box sx={{ 
                       textAlign: 'center', 
                       py: 3,
-                      color: 'text.secondary'
+                      color: colors.text.secondary
                     }}>
                       <LocationCityIcon sx={{ fontSize: 32, mb: 1, opacity: 0.3 }} />
-                      <Typography variant="body2" sx={{ mb: 1, fontSize: '0.8rem' }}>
+                      <Typography variant="body2" sx={{ mb: 1, fontSize: '0.8rem', color: colors.text.primary }}>
                         No hay aduanas registradas
                       </Typography>
                       <Button 
@@ -558,7 +594,11 @@ const Profile = () => {
                         size="small"
                         startIcon={<AddCircleIcon />}
                         onClick={() => setAduanaDialog(true)}
-                        sx={{ fontSize: '0.7rem' }}
+                        sx={{ 
+                          fontSize: '0.7rem',
+                          color: colors.primary.main,
+                          borderColor: colors.primary.main
+                        }}
                       >
                         Agregar primera aduana
                       </Button>
@@ -566,12 +606,13 @@ const Profile = () => {
                   )}
                 </Stack>
                 
-                <Typography variant="caption" color="text.secondary" sx={{ 
+                <Typography variant="caption" sx={{ 
                   mt: 2, 
                   display: 'block',
                   fontStyle: 'italic',
                   fontSize: '0.65rem',
-                  textAlign: 'center'
+                  textAlign: 'center',
+                  color: colors.text.secondary
                 }}>
                   Límite: 4 aduanas (1 principal + 3 secundarias)
                 </Typography>
@@ -587,7 +628,7 @@ const Profile = () => {
               <Typography variant="h6" sx={{ 
                 mb: 2, 
                 fontWeight: 'bold', 
-                color: '#2c3e50',
+                color: colors.text.primary,
                 fontSize: '0.95rem'
               }}>
                 Preferencias y Comunicación
@@ -598,16 +639,16 @@ const Profile = () => {
                 <Paper elevation={0} sx={{ 
                   p: 1.2,
                   borderRadius: 0.8,
-                  border: '1px solid #e0e0e0',
+                  border: `1px solid ${colors.primary.main}20`,
                   bgcolor: '#f8f9fa'
                 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                     <NotificationsIcon sx={{ 
                       mr: 1, 
-                      color: '#3498db',
+                      color: colors.primary.main,
                       fontSize: '1.3rem'
                     }} />
-                    <Typography fontWeight="bold" variant="body2" sx={{ fontSize: '0.8rem' }}>
+                    <Typography fontWeight="bold" variant="body2" sx={{ fontSize: '0.8rem', color: colors.text.primary }}>
                       Notificaciones
                     </Typography>
                   </Box>
@@ -618,9 +659,20 @@ const Profile = () => {
                           size="small" 
                           checked={preferences.notificacionesEmail}
                           onChange={handlePreferenceChange('notificacionesEmail')}
+                          sx={{
+                            '& .MuiSwitch-switchBase.Mui-checked': {
+                              color: colors.secondary.main,
+                              '&:hover': {
+                                backgroundColor: `${colors.secondary.main}20`,
+                              },
+                            },
+                            '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                              backgroundColor: colors.secondary.main,
+                            },
+                          }}
                         />
                       }
-                      label={<Typography variant="caption">Email</Typography>}
+                      label={<Typography variant="caption" sx={{ color: colors.text.primary }}>Email</Typography>}
                       sx={{ mb: 0.5 }}
                     />
                     <FormControlLabel
@@ -629,9 +681,20 @@ const Profile = () => {
                           size="small" 
                           checked={preferences.notificacionesSMS}
                           onChange={handlePreferenceChange('notificacionesSMS')}
+                          sx={{
+                            '& .MuiSwitch-switchBase.Mui-checked': {
+                              color: colors.secondary.main,
+                              '&:hover': {
+                                backgroundColor: `${colors.secondary.main}20`,
+                              },
+                            },
+                            '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                              backgroundColor: colors.secondary.main,
+                            },
+                          }}
                         />
                       }
-                      label={<Typography variant="caption">SMS</Typography>}
+                      label={<Typography variant="caption" sx={{ color: colors.text.primary }}>SMS</Typography>}
                     />
                   </Box>
                 </Paper>
@@ -640,16 +703,16 @@ const Profile = () => {
                 <Paper elevation={0} sx={{ 
                   p: 1.2,
                   borderRadius: 0.8,
-                  border: '1px solid #e0e0e0',
+                  border: `1px solid ${colors.primary.main}20`,
                   bgcolor: '#f8f9fa'
                 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
                     <SecurityIcon sx={{ 
                       mr: 1, 
-                      color: '#e74c3c',
+                      color: colors.status.error,
                       fontSize: '1.3rem'
                     }} />
-                    <Typography fontWeight="bold" variant="body2" sx={{ fontSize: '0.8rem' }}>
+                    <Typography fontWeight="bold" variant="body2" sx={{ fontSize: '0.8rem', color: colors.text.primary }}>
                       Seguridad
                     </Typography>
                   </Box>
@@ -660,7 +723,9 @@ const Profile = () => {
                     sx={{ 
                       mt: 1,
                       fontSize: '0.7rem',
-                      height: '26px'
+                      height: '26px',
+                      color: colors.primary.main,
+                      borderColor: colors.primary.main
                     }}
                   >
                     Cambiar Contraseña
@@ -671,16 +736,16 @@ const Profile = () => {
                 <Paper elevation={0} sx={{ 
                   p: 1.2,
                   borderRadius: 0.8,
-                  border: '1px solid #e0e0e0',
+                  border: `1px solid ${colors.primary.main}20`,
                   bgcolor: '#f8f9fa'
                 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
                     <HistoryIcon sx={{ 
                       mr: 1, 
-                      color: '#9b59b6',
+                      color: colors.accents.purple,
                       fontSize: '1.3rem'
                     }} />
-                    <Typography fontWeight="bold" variant="body2" sx={{ fontSize: '0.8rem' }}>
+                    <Typography fontWeight="bold" variant="body2" sx={{ fontSize: '0.8rem', color: colors.text.primary }}>
                       Historial
                     </Typography>
                   </Box>
@@ -691,7 +756,9 @@ const Profile = () => {
                     sx={{ 
                       mt: 1,
                       fontSize: '0.7rem',
-                      height: '26px'
+                      height: '26px',
+                      color: colors.primary.main,
+                      borderColor: colors.primary.main
                     }}
                   >
                     Ver Actividad
@@ -702,26 +769,26 @@ const Profile = () => {
                 <Paper elevation={0} sx={{ 
                   p: 1.2,
                   borderRadius: 0.8,
-                  border: '1px solid #e0e0e0',
+                  border: `1px solid ${colors.primary.main}20`,
                   bgcolor: '#f8f9fa',
                   mt: 'auto'
                 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
                     <LanguageIcon sx={{ 
                       mr: 1, 
-                      color: '#2ecc71',
+                      color: colors.status.success,
                       fontSize: '1.3rem'
                     }} />
-                    <Typography fontWeight="bold" variant="body2" sx={{ fontSize: '0.8rem' }}>
+                    <Typography fontWeight="bold" variant="body2" sx={{ fontSize: '0.8rem', color: colors.text.primary }}>
                       Configuración
                     </Typography>
                   </Box>
                   <Box sx={{ pl: 3.5 }}>
-                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+                    <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mb: 0.5 }}>
                       <ScheduleIcon sx={{ fontSize: '0.7rem', mr: 0.5, verticalAlign: 'middle' }} />
                       Zona: {preferences.zonaHoraria}
                     </Typography>
-                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                    <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
                       <VisibilityIcon sx={{ fontSize: '0.7rem', mr: 0.5, verticalAlign: 'middle' }} />
                       Tema: {preferences.tema === 'claro' ? 'Claro' : 'Oscuro'}
                     </Typography>
@@ -743,11 +810,11 @@ const Profile = () => {
             alignItems: 'center', 
             mb: 3,
             pb: 2,
-            borderBottom: '2px solid #2c3e50'
+            borderBottom: `2px solid ${colors.primary.dark}`
           }}>
             <Box sx={{ width: '100%' }}>
               <Typography variant="h5" sx={{ 
-                color: '#2c3e50', 
+                color: colors.primary.dark, 
                 fontWeight: 'bold',
                 mb: 2
               }}>
@@ -760,19 +827,40 @@ const Profile = () => {
                     label="Datos Personales" 
                     icon={<ContactPhoneIcon sx={{ fontSize: 18 }} />}
                     iconPosition="start"
-                    sx={{ fontSize: '0.85rem', minHeight: 40 }}
+                    sx={{ 
+                      fontSize: '0.85rem', 
+                      minHeight: 40,
+                      color: colors.text.secondary,
+                      '&.Mui-selected': {
+                        color: colors.primary.main
+                      }
+                    }}
                   />
                   <Tab 
                     label="Información de Contacto" 
                     icon={<EmailIcon sx={{ fontSize: 18 }} />}
                     iconPosition="start"
-                    sx={{ fontSize: '0.85rem', minHeight: 40 }}
+                    sx={{ 
+                      fontSize: '0.85rem', 
+                      minHeight: 40,
+                      color: colors.text.secondary,
+                      '&.Mui-selected': {
+                        color: colors.primary.main
+                      }
+                    }}
                   />
                   <Tab 
                     label="Información Fiscal" 
                     icon={<AccountBalanceIcon sx={{ fontSize: 18 }} />}
                     iconPosition="start"
-                    sx={{ fontSize: '0.85rem', minHeight: 40 }}
+                    sx={{ 
+                      fontSize: '0.85rem', 
+                      minHeight: 40,
+                      color: colors.text.secondary,
+                      '&.Mui-selected': {
+                        color: colors.primary.main
+                      }
+                    }}
                   />
                 </Tabs>
               </Box>
@@ -787,7 +875,9 @@ const Profile = () => {
                   sx={{ 
                     fontWeight: '600',
                     textTransform: 'none',
-                    fontSize: '0.85rem'
+                    fontSize: '0.85rem',
+                    color: colors.primary.main,
+                    borderColor: colors.primary.main
                   }}
                 >
                   MODIFICAR
@@ -797,16 +887,27 @@ const Profile = () => {
                   <Button
                     onClick={() => setEditMode(false)} 
                     variant="outlined"
-                    sx={{ fontWeight: '600', textTransform: 'none', fontSize: '0.85rem' }}
+                    sx={{ 
+                      fontWeight: '600', 
+                      textTransform: 'none', 
+                      fontSize: '0.85rem',
+                      color: colors.primary.main,
+                      borderColor: colors.primary.main
+                    }}
                   >
                     CANCELAR
                   </Button>
                   <Button 
                     onClick={handleSave} 
                     variant="contained" 
-                    color="success"
                     startIcon={<SaveIcon />}
-                    sx={{ fontWeight: '600', textTransform: 'none', fontSize: '0.85rem' }}
+                    sx={{ 
+                      fontWeight: '600', 
+                      textTransform: 'none', 
+                      fontSize: '0.85rem',
+                      bgcolor: colors.status.success,
+                      '&:hover': { bgcolor: colors.primary.dark }
+                    }}
                   >
                     GUARDAR
                   </Button>
@@ -822,20 +923,20 @@ const Profile = () => {
               <Grid item xs={12} md={6}>
                 <Paper elevation={0} sx={{ 
                   p: 3, 
-                  border: '1px solid #e0e0e0',
+                  border: `1px solid ${colors.primary.main}20`,
                   borderRadius: 2,
                   bgcolor: '#f8f9fa',
                   height: '100%'
                 }}>
                   <Typography variant="h6" sx={{ 
                     mb: 2, 
-                    color: '#2c3e50', 
+                    color: colors.text.primary, 
                     fontWeight: 'bold',
                     display: 'flex',
                     alignItems: 'center',
                     gap: 1
                   }}>
-                    <ContactPhoneIcon />
+                    <ContactPhoneIcon sx={{ color: colors.primary.main }} />
                     Datos Personales
                   </Typography>
                   
@@ -849,6 +950,7 @@ const Profile = () => {
                         disabled={!editMode}
                         size="small"
                         sx={{ mb: 2 }}
+                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
                     </Grid>
                     
@@ -861,6 +963,7 @@ const Profile = () => {
                         disabled={!editMode}
                         size="small"
                         sx={{ mb: 2 }}
+                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
                     </Grid>
                     
@@ -873,6 +976,7 @@ const Profile = () => {
                         disabled={!editMode}
                         size="small"
                         sx={{ mb: 2 }}
+                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
                     </Grid>
                     
@@ -885,7 +989,7 @@ const Profile = () => {
                         onChange={handleInputChange('fechaNacimiento')}
                         disabled={!editMode}
                         size="small"
-                        InputLabelProps={{ shrink: true }}
+                        InputLabelProps={{ shrink: true, sx: { color: colors.text.primary } }}
                         sx={{ mb: 2 }}
                       />
                     </Grid>
@@ -899,6 +1003,7 @@ const Profile = () => {
                         disabled={!editMode}
                         size="small"
                         sx={{ mb: 2 }}
+                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
                     </Grid>
                     
@@ -911,6 +1016,7 @@ const Profile = () => {
                         disabled={!editMode}
                         size="small"
                         sx={{ mb: 2 }}
+                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
                     </Grid>
                     
@@ -924,6 +1030,7 @@ const Profile = () => {
                         disabled={!editMode}
                         size="small"
                         sx={{ mb: 2 }}
+                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       >
                         <MenuItem value="Soltero">Soltero</MenuItem>
                         <MenuItem value="Casado">Casado</MenuItem>
@@ -946,20 +1053,20 @@ const Profile = () => {
               <Grid item xs={12} md={6}>
                 <Paper elevation={0} sx={{ 
                   p: 3, 
-                  border: '1px solid #e0e0e0',
+                  border: `1px solid ${colors.primary.main}20`,
                   borderRadius: 2,
                   bgcolor: '#f8f9fa',
                   height: '100%'
                 }}>
                   <Typography variant="h6" sx={{ 
                     mb: 2, 
-                    color: '#2c3e50', 
+                    color: colors.text.primary, 
                     fontWeight: 'bold',
                     display: 'flex',
                     alignItems: 'center',
                     gap: 1
                   }}>
-                    <PhoneIcon />
+                    <PhoneIcon sx={{ color: colors.primary.main }} />
                     Contacto Principal
                   </Typography>
                   
@@ -974,8 +1081,9 @@ const Profile = () => {
                         size="small"
                         sx={{ mb: 2 }}
                         InputProps={{
-                          startAdornment: <PhoneIcon sx={{ mr: 1, color: '#3498db', fontSize: '1rem' }} />
+                          startAdornment: <PhoneIcon sx={{ mr: 1, color: colors.primary.main, fontSize: '1rem' }} />
                         }}
+                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
                     </Grid>
                     
@@ -989,8 +1097,9 @@ const Profile = () => {
                         size="small"
                         sx={{ mb: 2 }}
                         InputProps={{
-                          startAdornment: <PhoneIcon sx={{ mr: 1, color: '#9b59b6', fontSize: '1rem' }} />
+                          startAdornment: <PhoneIcon sx={{ mr: 1, color: colors.accents.purple, fontSize: '1rem' }} />
                         }}
+                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
                     </Grid>
                     
@@ -1005,8 +1114,9 @@ const Profile = () => {
                         size="small"
                         sx={{ mb: 2 }}
                         InputProps={{
-                          startAdornment: <EmailIcon sx={{ mr: 1, color: '#e74c3c', fontSize: '1rem' }} />
+                          startAdornment: <EmailIcon sx={{ mr: 1, color: colors.status.error, fontSize: '1rem' }} />
                         }}
+                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
                     </Grid>
                     
@@ -1021,8 +1131,9 @@ const Profile = () => {
                         size="small"
                         sx={{ mb: 2 }}
                         InputProps={{
-                          startAdornment: <EmailIcon sx={{ mr: 1, color: '#f39c12', fontSize: '1rem' }} />
+                          startAdornment: <EmailIcon sx={{ mr: 1, color: colors.status.warning, fontSize: '1rem' }} />
                         }}
+                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
                     </Grid>
                   </Grid>
@@ -1033,20 +1144,20 @@ const Profile = () => {
               <Grid item xs={12} md={6}>
                 <Paper elevation={0} sx={{ 
                   p: 3, 
-                  border: '1px solid #e0e0e0',
+                  border: `1px solid ${colors.primary.main}20`,
                   borderRadius: 2,
                   bgcolor: '#f8f9fa',
                   height: '100%'
                 }}>
                   <Typography variant="h6" sx={{ 
                     mb: 2, 
-                    color: '#2c3e50', 
+                    color: colors.text.primary, 
                     fontWeight: 'bold',
                     display: 'flex',
                     alignItems: 'center',
                     gap: 1
                   }}>
-                    <LocationIcon />
+                    <LocationIcon sx={{ color: colors.primary.main }} />
                     Ubicación y Acceso
                   </Typography>
                   
@@ -1060,8 +1171,9 @@ const Profile = () => {
                         size="small"
                         sx={{ mb: 2 }}
                         InputProps={{
-                          startAdornment: <HistoryIcon sx={{ mr: 1, color: '#9b59b6', fontSize: '1rem' }} />
+                          startAdornment: <HistoryIcon sx={{ mr: 1, color: colors.accents.purple, fontSize: '1rem' }} />
                         }}
+                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
                     </Grid>
                     
@@ -1074,8 +1186,9 @@ const Profile = () => {
                         size="small"
                         sx={{ mb: 2 }}
                         InputProps={{
-                          startAdornment: <ScheduleIcon sx={{ mr: 1, color: '#2ecc71', fontSize: '1rem' }} />
+                          startAdornment: <ScheduleIcon sx={{ mr: 1, color: colors.status.success, fontSize: '1rem' }} />
                         }}
+                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
                     </Grid>
                     
@@ -1083,13 +1196,13 @@ const Profile = () => {
                       <Box sx={{ 
                         p: 2,
                         borderRadius: 1,
-                        bgcolor: 'rgba(52, 152, 219, 0.1)',
+                        bgcolor: `${colors.primary.main}10`,
                         mt: 2
                       }}>
-                        <Typography variant="subtitle2" fontWeight="bold" color="#2c3e50" sx={{ mb: 0.5 }}>
+                        <Typography variant="subtitle2" fontWeight="bold" sx={{ color: colors.text.primary, mb: 0.5 }}>
                           Estado de la Cuenta
                         </Typography>
-                        <Typography variant="body1" color="#2c3e50">
+                        <Typography variant="body1" sx={{ color: colors.text.primary }}>
                           Activa • Última actualización: Hoy
                         </Typography>
                       </Box>
@@ -1106,19 +1219,19 @@ const Profile = () => {
               <Grid item xs={12}>
                 <Paper elevation={0} sx={{ 
                   p: 3, 
-                  border: '1px solid #e0e0e0',
+                  border: `1px solid ${colors.primary.main}20`,
                   borderRadius: 2,
                   bgcolor: '#f8f9fa'
                 }}>
                   <Typography variant="h6" sx={{ 
                     mb: 2, 
-                    color: '#2c3e50', 
+                    color: colors.text.primary, 
                     fontWeight: 'bold',
                     display: 'flex',
                     alignItems: 'center',
                     gap: 1
                   }}>
-                    <AccountBalanceIcon />
+                    <AccountBalanceIcon sx={{ color: colors.primary.main }} />
                     Información Fiscal
                   </Typography>
                   
@@ -1134,6 +1247,7 @@ const Profile = () => {
                         multiline
                         rows={3}
                         sx={{ mb: 2 }}
+                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
                     </Grid>
                     
@@ -1148,6 +1262,7 @@ const Profile = () => {
                         multiline
                         rows={3}
                         sx={{ mb: 2 }}
+                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
                     </Grid>
                     
@@ -1155,20 +1270,20 @@ const Profile = () => {
                       <Box sx={{ 
                         p: 2,
                         borderRadius: 1,
-                        bgcolor: 'rgba(155, 89, 182, 0.1)',
+                        bgcolor: `${colors.accents.purple}10`,
                         mt: 2
                       }}>
-                        <Typography variant="subtitle2" fontWeight="bold" color="#2c3e50" sx={{ mb: 0.5 }}>
+                        <Typography variant="subtitle2" fontWeight="bold" sx={{ color: colors.text.primary, mb: 0.5 }}>
                           Información de Identificación Fiscal
                         </Typography>
                         <Grid container spacing={2}>
                           <Grid item xs={12} sm={6}>
-                            <Typography variant="body2" color="text.secondary">
+                            <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                               <strong>RFC:</strong> {formData.rfc}
                             </Typography>
                           </Grid>
                           <Grid item xs={12} sm={6}>
-                            <Typography variant="body2" color="text.secondary">
+                            <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                               <strong>CURP:</strong> {formData.curp}
                             </Typography>
                           </Grid>
@@ -1186,8 +1301,8 @@ const Profile = () => {
       {/* Diálogo para agregar nueva aduana */}
       <Dialog open={aduanaDialog} onClose={() => setAduanaDialog(false)} maxWidth="sm" fullWidth>
         <DialogTitle>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <AddCircleIcon />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: colors.text.primary }}>
+            <AddCircleIcon sx={{ color: colors.primary.main }} />
             Agregar Nueva Aduana
           </Box>
         </DialogTitle>
@@ -1200,10 +1315,11 @@ const Profile = () => {
               onChange={handleAduanaChange('nombre')}
               required
               helperText="Ej: Aduana de Querétaro, Aduana de Ciudad de México"
+              InputLabelProps={{ sx: { color: colors.text.primary } }}
             />
             
             <FormControl fullWidth>
-              <InputLabel>Tipo de Aduana</InputLabel>
+              <InputLabel sx={{ color: colors.text.primary }}>Tipo de Aduana</InputLabel>
               <Select
                 value={newAduana.tipo}
                 onChange={handleAduanaChange('tipo')}
@@ -1221,6 +1337,7 @@ const Profile = () => {
               onChange={handleAduanaChange('numeroRegistro')}
               required
               helperText="Número oficial de registro en la aduana"
+              InputLabelProps={{ sx: { color: colors.text.primary } }}
             />
             
             <TextField
@@ -1229,7 +1346,7 @@ const Profile = () => {
               fullWidth
               value={newAduana.fechaRegistro}
               onChange={handleAduanaChange('fechaRegistro')}
-              InputLabelProps={{ shrink: true }}
+              InputLabelProps={{ shrink: true, sx: { color: colors.text.primary } }}
               helperText="Fecha en que se registró en esta aduana"
             />
           </Stack>
@@ -1240,6 +1357,7 @@ const Profile = () => {
             onClick={handleAddAduana} 
             variant="contained" 
             disabled={!newAduana.nombre || !newAduana.numeroRegistro || aduanaList.length >= 4}
+            sx={{ bgcolor: colors.primary.main, '&:hover': { bgcolor: colors.primary.dark } }}
           >
             Agregar
           </Button>

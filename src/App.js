@@ -37,13 +37,14 @@ import CommitteeDashboard from "./pages/committee/CommitteeDashboard";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
 // NUEVO DASHBOARD
 
-// Certifications
+// Certifications agente
 import Certifications from "./pages/agente/certifications/Certifications";
 import CertificationDetail from "./pages/agente/certifications/CertificationDetail";
 import NewCertification from "./pages/agente/certifications/NewCertification";
 import NewUserCertification from "./pages/agente/expediente/NewUserCertification";
 import Declaraciones from "./pages/agente/expediente/Declaraciones";
 import VistaCertificacion from "./pages/agente/certifications/VistaCertificacion";
+import Notificaciones from "./pages/agente/notifications/AlertsAgent";
 
 // Expediente
 import Expediente from "./pages/agente/expediente/Expediente";
@@ -145,6 +146,7 @@ function App() {
               <Route path="/profile" element={<Profile />} />
               <Route path="/sitemap" element={<SiteMap />} />
               <Route path="/audit-agent" element={<AuditAgent />} />
+              <Route path="/notificaciones" element={<Notificaciones />} />
             </Route>
 
             {/* Rutas para COMITÉ */}

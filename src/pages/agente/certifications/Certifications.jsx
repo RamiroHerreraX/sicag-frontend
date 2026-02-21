@@ -51,6 +51,35 @@ import {
   ArrowForward as ArrowForwardIcon
 } from '@mui/icons-material';
 
+// Paleta corporativa del UserManagement
+const colors = {
+  primary: {
+    dark: '#0D2A4D',
+    main: '#133B6B',
+    light: '#3A6EA5'
+  },
+  secondary: {
+    main: '#00A8A8',
+    light: '#00C2D1',
+    lighter: '#35D0FF'
+  },
+  accents: {
+    blue: '#0099FF',
+    purple: '#6C5CE7'
+  },
+  status: {
+    success: '#00A8A8',
+    warning: '#00C2D1',
+    error: '#0099FF',
+    info: '#3A6EA5'
+  },
+  text: {
+    primary: '#0D2A4D',
+    secondary: '#3A6EA5',
+    light: '#6C5CE7'
+  }
+};
+
 const Certifications = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('all');
@@ -233,7 +262,7 @@ const Certifications = () => {
           }}
         >
           <DialogTitle sx={{ 
-            bgcolor: '#2c3e50', 
+            bgcolor: colors.primary.dark, 
             color: 'white',
             py: 2,
             flexShrink: 0
@@ -280,14 +309,14 @@ const Certifications = () => {
                     flex: 1,
                     display: 'flex',
                     flexDirection: 'column',
-                    border: '2px solid #2ecc71',
+                    border: `2px solid ${colors.status.success}`,
                     borderRadius: 2,
                     overflow: 'hidden'
                   }}
                 >
                   {/* Encabezado */}
                   <Box sx={{ 
-                    bgcolor: '#2ecc71', 
+                    bgcolor: colors.status.success, 
                     p: 2,
                     textAlign: 'center',
                     flexShrink: 0
@@ -306,7 +335,7 @@ const Certifications = () => {
                   }}>
                     {/* Permisos */}
                     <Box sx={{ mb: 3 }}>
-                      <Typography variant="subtitle1" fontWeight="bold" color="success.dark" sx={{ mb: 1.5, display: 'flex', alignItems: 'center' }}>
+                      <Typography variant="subtitle1" fontWeight="bold" sx={{ color: colors.status.success, mb: 1.5, display: 'flex', alignItems: 'center' }}>
                         <ArrowForwardIcon sx={{ mr: 1, fontSize: 18 }} />
                         Tu asociación PODRÁ:
                       </Typography>
@@ -320,8 +349,8 @@ const Certifications = () => {
                               mb: 1.5
                             }}
                           >
-                            <CheckCircleIcon sx={{ color: '#2ecc71', mr: 1.5, mt: 0.2, fontSize: 16 }} />
-                            <Typography variant="body2" color="text.primary">
+                            <CheckCircleIcon sx={{ color: colors.status.success, mr: 1.5, mt: 0.2, fontSize: 16 }} />
+                            <Typography variant="body2" color={colors.text.primary}>
                               {permission}
                             </Typography>
                           </Box>
@@ -349,14 +378,14 @@ const Certifications = () => {
                     flex: 1,
                     display: 'flex',
                     flexDirection: 'column',
-                    border: '2px solid #e74c3c',
+                    border: `2px solid ${colors.status.error}`,
                     borderRadius: 2,
                     overflow: 'hidden'
                   }}
                 >
                   {/* Encabezado */}
                   <Box sx={{ 
-                    bgcolor: '#e74c3c', 
+                    bgcolor: colors.status.error, 
                     p: 2,
                     textAlign: 'center',
                     flexShrink: 0
@@ -375,7 +404,7 @@ const Certifications = () => {
                   }}>
                     {/* Restricciones */}
                     <Box sx={{ mb: 3 }}>
-                      <Typography variant="subtitle1" fontWeight="bold" color="error.dark" sx={{ mb: 1.5, display: 'flex', alignItems: 'center' }}>
+                      <Typography variant="subtitle1" fontWeight="bold" sx={{ color: colors.status.error, mb: 1.5, display: 'flex', alignItems: 'center' }}>
                         <ArrowForwardIcon sx={{ mr: 1, fontSize: 18 }} />
                         Tu asociación NO PODRÁ:
                       </Typography>
@@ -389,8 +418,8 @@ const Certifications = () => {
                               mb: 1.5
                             }}
                           >
-                            <CancelIcon sx={{ color: '#e74c3c', mr: 1.5, mt: 0.2, fontSize: 16 }} />
-                            <Typography variant="body2" color="text.primary">
+                            <CancelIcon sx={{ color: colors.status.error, mr: 1.5, mt: 0.2, fontSize: 16 }} />
+                            <Typography variant="body2" color={colors.text.primary}>
                               {restriction}
                             </Typography>
                           </Box>
@@ -422,12 +451,12 @@ const Certifications = () => {
               }}
             >
               <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-                <InfoIcon color="primary" />
+                <InfoIcon sx={{ color: colors.primary.main }} />
                 <Box>
-                  <Typography variant="subtitle2" color="primary" fontWeight="bold" sx={{ mb: 0.5 }}>
+                  <Typography variant="subtitle2" sx={{ color: colors.primary.main, fontWeight: 'bold', mb: 0.5 }}>
                     Nota importante sobre responsabilidades
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color={colors.text.secondary}>
                     Independientemente de tu decisión, <strong>eres el único responsable</strong> del cumplimiento de tus obligaciones como agente aduanal.
                     La asociación funciona como entidad auxiliar y <strong>NO sustituye tu responsabilidad individual</strong>.
                     Esta autorización puede ser modificada en cualquier momento desde la sección de configuración de tu cuenta.
@@ -442,18 +471,19 @@ const Certifications = () => {
             justifyContent: 'space-between', 
             p: 2.5,
             bgcolor: '#f8f9fa',
-            borderTop: '1px solid #e0e0e0',
+            borderTop: `1px solid ${colors.primary.main}20`,
             flexShrink: 0
           }}>
             <Button 
               onClick={() => handleAssociationConsent(false)}
               variant="contained"
-              color="error"
               startIcon={<CloseIcon />}
               sx={{ 
                 px: 3,
                 fontWeight: 'bold',
-                minWidth: 140
+                minWidth: 140,
+                bgcolor: colors.status.error,
+                '&:hover': { bgcolor: colors.primary.dark }
               }}
             >
               No Autorizar
@@ -465,10 +495,11 @@ const Certifications = () => {
                
               }}
               variant="outlined"
-              color="primary"
               sx={{ 
                 px: 3,
-                fontWeight: 'bold'
+                fontWeight: 'bold',
+                color: colors.primary.main,
+                borderColor: colors.primary.main
               }}
             >
               Decidir después
@@ -477,12 +508,13 @@ const Certifications = () => {
             <Button 
               onClick={() => handleAssociationConsent(true)}
               variant="contained"
-              color="success"
               startIcon={<CheckIcon />}
               sx={{ 
                 px: 3,
                 fontWeight: 'bold',
-                minWidth: 140
+                minWidth: 140,
+                bgcolor: colors.status.success,
+                '&:hover': { bgcolor: colors.primary.dark }
               }}
             >
               Autorizar
@@ -494,10 +526,10 @@ const Certifications = () => {
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Box>
-          <Typography variant="h4" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 1 }}>
+          <Typography variant="h4" sx={{ color: colors.primary.dark, fontWeight: 'bold', mb: 1 }}>
             Mis Certificaciones
           </Typography>
-          <Typography variant="body1" sx={{ color: '#7f8c8d' }}>
+          <Typography variant="body1" sx={{ color: colors.text.secondary }}>
             Gestiona todas tus certificaciones en el sistema SICAG
           </Typography>
           
@@ -519,7 +551,10 @@ const Certifications = () => {
           startIcon={<AddIcon />}
           component={Link}
           to="/certifications/new"
-          sx={{ bgcolor: '#2c3e50', '&:hover': { bgcolor: '#34495e' } }}
+          sx={{ 
+            bgcolor: colors.primary.main, 
+            '&:hover': { bgcolor: colors.primary.dark } 
+          }}
         >
           Nueva Certificación
         </Button>
@@ -528,48 +563,48 @@ const Certifications = () => {
       {/* Estadísticas */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ borderLeft: '4px solid #3498db' }}>
+          <Card sx={{ borderLeft: `4px solid ${colors.primary.main}` }}>
             <CardContent>
-              <Typography variant="h3" sx={{ color: '#3498db', fontWeight: 'bold', mb: 1 }}>
+              <Typography variant="h3" sx={{ color: colors.primary.main, fontWeight: 'bold', mb: 1 }}>
                 {stats.total}
               </Typography>
-              <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+              <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                 Total Certificaciones
               </Typography>
             </CardContent>
           </Card>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ borderLeft: '4px solid #2ecc71' }}>
+          <Card sx={{ borderLeft: `4px solid ${colors.status.success}` }}>
             <CardContent>
-              <Typography variant="h3" sx={{ color: '#2ecc71', fontWeight: 'bold', mb: 1 }}>
+              <Typography variant="h3" sx={{ color: colors.status.success, fontWeight: 'bold', mb: 1 }}>
                 {stats.valid}
               </Typography>
-              <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+              <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                 Vigentes
               </Typography>
             </CardContent>
           </Card>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ borderLeft: '4px solid #f39c12' }}>
+          <Card sx={{ borderLeft: `4px solid ${colors.status.warning}` }}>
             <CardContent>
-              <Typography variant="h3" sx={{ color: '#f39c12', fontWeight: 'bold', mb: 1 }}>
+              <Typography variant="h3" sx={{ color: colors.status.warning, fontWeight: 'bold', mb: 1 }}>
                 {stats.expiring}
               </Typography>
-              <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+              <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                 Por Vencer
               </Typography>
             </CardContent>
           </Card>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ borderLeft: '4px solid #e74c3c' }}>
+          <Card sx={{ borderLeft: `4px solid ${colors.status.error}` }}>
             <CardContent>
-              <Typography variant="h3" sx={{ color: '#e74c3c', fontWeight: 'bold', mb: 1 }}>
+              <Typography variant="h3" sx={{ color: colors.status.error, fontWeight: 'bold', mb: 1 }}>
                 {stats.review}
               </Typography>
-              <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+              <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                 En Revisión
               </Typography>
             </CardContent>
@@ -589,7 +624,7 @@ const Certifications = () => {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon />
+                    <SearchIcon sx={{ color: colors.primary.main }} />
                   </InputAdornment>
                 ),
               }}
@@ -605,7 +640,7 @@ const Certifications = () => {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <FilterIcon />
+                    <FilterIcon sx={{ color: colors.primary.main }} />
                   </InputAdornment>
                 ),
               }}
@@ -623,6 +658,10 @@ const Certifications = () => {
               fullWidth
               variant="outlined"
               startIcon={<DownloadIcon />}
+              sx={{
+                color: colors.primary.main,
+                borderColor: colors.primary.main
+              }}
             >
               Exportar Lista
             </Button>
@@ -636,36 +675,36 @@ const Certifications = () => {
           <Table>
             <TableHead sx={{ bgcolor: '#f5f7fa' }}>
               <TableRow>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2c3e50' }}>Tipo de Certificación</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2c3e50' }}>Número</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2c3e50' }}>Emisión / Vencimiento</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2c3e50' }}>Estado</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2c3e50' }}>Progreso</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2c3e50' }}>Documentos</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2c3e50' }}>Última Actualización</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2c3e50' }}>Acciones</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark }}>Tipo de Certificación</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark }}>Número</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark }}>Emisión / Vencimiento</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark }}>Estado</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark }}>Progreso</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark }}>Documentos</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark }}>Última Actualización</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark }}>Acciones</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {filteredCerts.map((cert) => (
                 <TableRow key={cert.id} hover>
                   <TableCell>
-                    <Typography sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                    <Typography sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
                       {cert.type}
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                    <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                       {cert.number}
                     </Typography>
                   </TableCell>
                   <TableCell>
                     <Box>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block' }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
                         Emisión: {cert.issueDate}
                       </Typography>
                       <Typography variant="caption" sx={{ 
-                        color: cert.status === 'POR VENCER' ? '#f39c12' : '#7f8c8d',
+                        color: cert.status === 'POR VENCER' ? colors.status.warning : colors.text.secondary,
                         display: 'block'
                       }}>
                         Vence: {cert.expirationDate}
@@ -687,7 +726,7 @@ const Certifications = () => {
                           sx={{ 
                             height: 8, 
                             width: '100%', 
-                            bgcolor: '#f0f0f0',
+                            bgcolor: `${colors.primary.main}15`,
                             borderRadius: 4,
                             overflow: 'hidden'
                           }}
@@ -697,24 +736,24 @@ const Certifications = () => {
                               height: '100%', 
                               width: `${cert.progress}%`,
                               bgcolor: 
-                                cert.progress > 70 ? '#2ecc71' :
-                                cert.progress > 30 ? '#f39c12' : '#e74c3c'
+                                cert.progress > 70 ? colors.status.success :
+                                cert.progress > 30 ? colors.status.warning : colors.status.error
                             }}
                           />
                         </Box>
                       </Box>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                         {cert.progress}%
                       </Typography>
                     </Box>
                   </TableCell>
                   <TableCell>
-                    <Typography align="center" sx={{ fontWeight: 'bold' }}>
+                    <Typography align="center" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
                       {cert.documents}
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                    <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                       {cert.lastUpdate}
                     </Typography>
                   </TableCell>
@@ -724,7 +763,7 @@ const Certifications = () => {
                         size="small" 
                         component={Link}
                         to="/vista-certification"
-                        sx={{ color: '#3498db' }}
+                        sx={{ color: colors.primary.main }}
                       >
                         <VisibilityIcon />
                       </IconButton>
@@ -732,14 +771,14 @@ const Certifications = () => {
                         size="small"
                         component={Link}
                         to="/new-user-certification"
-                        sx={{ color: '#f39c12' }}
+                        sx={{ color: colors.status.warning }}
                       >
                         <EditIcon />
                       </IconButton>
                       <IconButton 
                         size="small"
                         onClick={() => handleDeleteClick(cert)}
-                        sx={{ color: '#e74c3c' }}
+                        sx={{ color: colors.status.error }}
                       >
                         <DeleteIcon />
                       </IconButton>
@@ -754,18 +793,18 @@ const Certifications = () => {
 
       {/* Diálogo de confirmación de eliminación */}
       <Dialog open={deleteDialog} onClose={() => setDeleteDialog(false)}>
-        <DialogTitle>Confirmar Eliminación</DialogTitle>
+        <DialogTitle sx={{ color: colors.primary.dark }}>Confirmar Eliminación</DialogTitle>
         <DialogContent>
-          <Typography>
+          <Typography sx={{ color: colors.text.primary }}>
             ¿Está seguro de que desea eliminar la certificación "{selectedCert?.type}"?
           </Typography>
-          <Typography variant="body2" sx={{ color: '#e74c3c', mt: 1 }}>
+          <Typography variant="body2" sx={{ color: colors.status.error, mt: 1 }}>
             Esta acción no se puede deshacer.
           </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDeleteDialog(false)}>Cancelar</Button>
-          <Button onClick={handleDeleteConfirm} color="error" variant="contained">
+          <Button onClick={handleDeleteConfirm} variant="contained" sx={{ bgcolor: colors.status.error, '&:hover': { bgcolor: colors.primary.dark } }}>
             Eliminar
           </Button>
         </DialogActions>
@@ -775,22 +814,22 @@ const Certifications = () => {
       <Paper elevation={1} sx={{ p: 3, mt: 3, bgcolor: '#f8f9fa' }}>
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
-            <Typography variant="subtitle1" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
-              📋 Guía Rápida
+            <Typography variant="subtitle1" sx={{ color: colors.primary.dark, mb: 2, fontWeight: 'bold' }}>
+               Guía Rápida
             </Typography>
-            <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
-              • <strong style={{ color: '#2e7d32' }}>Aceptados:</strong> Certificación validada y activa<br />
-              • <strong style={{ color: '#ed6c02' }}>En revisión:</strong> En proceso de validación por el comité<br />
-              • <strong style={{ color: '#1976d2' }}>Información adicional:</strong> Requiere documentación complementaria<br />
-              • <strong style={{ color: '#0288d1' }}>Registro:</strong> Registro inicial pendiente de validación<br />
-              • <strong style={{ color: '#d32f2f' }}>Rechazado:</strong> Certificación no aprobada o vencida
+            <Typography variant="body2" sx={{ color: colors.text.secondary }}>
+              • <strong style={{ color: colors.status.success }}>Aceptados:</strong> Certificación validada y activa<br />
+              • <strong style={{ color: colors.status.warning }}>En revisión:</strong> En proceso de validación por el comité<br />
+              • <strong style={{ color: colors.primary.main }}>Información adicional:</strong> Requiere documentación complementaria<br />
+              • <strong style={{ color: colors.primary.light }}>Registro:</strong> Registro inicial pendiente de validación<br />
+              • <strong style={{ color: colors.status.error }}>Rechazado:</strong> Certificación no aprobada o vencida
             </Typography>
           </Grid>
           <Grid item xs={12} md={6}>
-            <Typography variant="subtitle1" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
-              ⚡ Acciones Disponibles
+            <Typography variant="subtitle1" sx={{ color: colors.primary.dark, mb: 2, fontWeight: 'bold' }}>
+               Acciones Disponibles
             </Typography>
-            <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+            <Typography variant="body2" sx={{ color: colors.text.secondary }}>
               • <strong>Ver:</strong> Consultar detalles completos<br />
               • <strong>Editar:</strong> Modificar información (si está permitido)<br />
               • <strong>Eliminar:</strong> Remover certificación (solo si no ha sido validada)<br />

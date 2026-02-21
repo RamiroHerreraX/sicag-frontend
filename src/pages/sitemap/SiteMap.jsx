@@ -25,12 +25,41 @@ import {
   Map as MapIcon
 } from '@mui/icons-material';
 
+// Paleta corporativa del UserManagement
+const colors = {
+  primary: {
+    dark: '#0D2A4D',
+    main: '#133B6B',
+    light: '#3A6EA5'
+  },
+  secondary: {
+    main: '#00A8A8',
+    light: '#00C2D1',
+    lighter: '#35D0FF'
+  },
+  accents: {
+    blue: '#0099FF',
+    purple: '#6C5CE7'
+  },
+  status: {
+    success: '#00A8A8',
+    warning: '#00C2D1',
+    error: '#0099FF',
+    info: '#3A6EA5'
+  },
+  text: {
+    primary: '#0D2A4D',
+    secondary: '#3A6EA5',
+    light: '#6C5CE7'
+  }
+};
+
 const SiteMap = () => {
   const modules = [
     {
       title: 'Módulo de Autenticación',
       description: 'Acceso seguro y control por rol',
-      color: '#3498db',
+      color: colors.primary.main,
       icon: <SecurityIcon />,
       items: [
         { text: 'Inicio de Sesión', path: '/login' },
@@ -42,7 +71,7 @@ const SiteMap = () => {
     {
       title: 'Dashboard Principal',
       description: 'Vista general del sistema',
-      color: '#2ecc71',
+      color: colors.status.success,
       icon: <DashboardIcon />,
       items: [
         { text: 'Dashboard Usuario', path: '/dashboard' },
@@ -53,7 +82,7 @@ const SiteMap = () => {
     {
       title: 'Gestión de Certificaciones',
       description: 'Núcleo del sistema - Control de certificaciones',
-      color: '#9b59b6',
+      color: colors.accents.purple,
       icon: <DescriptionIcon />,
       items: [
         { text: 'Mis Certificaciones', path: '/certifications' },
@@ -64,7 +93,7 @@ const SiteMap = () => {
     {
       title: 'Expediente Digital',
       description: 'Contenedor de documentación',
-      color: '#f39c12',
+      color: colors.status.warning,
       icon: <FolderIcon />,
       items: [
         { text: 'Mi Expediente', path: '/expediente' },
@@ -74,7 +103,7 @@ const SiteMap = () => {
     {
       title: 'Comité de Cumplimiento',
       description: 'Validación de certificaciones',
-      color: '#1a237e',
+      color: colors.primary.dark,
       icon: <GavelIcon />,
       items: [
         { text: 'Revisión de Certificaciones', path: '/committee/review' },
@@ -84,7 +113,7 @@ const SiteMap = () => {
     {
       title: 'Administración',
       description: 'Gestión completa del sistema',
-      color: '#1b5e20',
+      color: colors.primary.main,
       icon: <SettingsIcon />,
       items: [
         { text: 'Gestión de Usuarios', path: '/admin/users' },
@@ -96,7 +125,7 @@ const SiteMap = () => {
     {
       title: 'Perfil y Configuración',
       description: 'Gestión personal',
-      color: '#34495e',
+      color: colors.text.secondary,
       icon: <PersonIcon />,
       items: [
         { text: 'Mi Perfil', path: '/profile' },
@@ -109,11 +138,11 @@ const SiteMap = () => {
     <Box>
       {/* Header */}
       <Box sx={{ textAlign: 'center', mb: 6 }}>
-        <MapIcon sx={{ fontSize: 60, color: '#2c3e50', mb: 2 }} />
-        <Typography variant="h3" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 2 }}>
+        <MapIcon sx={{ fontSize: 60, color: colors.primary.dark, mb: 2 }} />
+        <Typography variant="h3" sx={{ color: colors.primary.dark, fontWeight: 'bold', mb: 2 }}>
           Mapa del Sitio
         </Typography>
-        <Typography variant="h6" sx={{ color: '#7f8c8d', maxWidth: 800, mx: 'auto' }}>
+        <Typography variant="h6" sx={{ color: colors.text.secondary, maxWidth: 800, mx: 'auto' }}>
           Explore la estructura completa del Sistema Integral de Consultoría y Asesoría Gremial
         </Typography>
       </Box>
@@ -123,20 +152,44 @@ const SiteMap = () => {
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} md={4}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Chip label="USUARIO" color="primary" size="small" sx={{ mr: 1 }} />
-              <Typography variant="body2">Acceso para Agentes/Usuarios</Typography>
+              <Chip 
+                label="USUARIO" 
+                size="small" 
+                sx={{ 
+                  mr: 1, 
+                  bgcolor: colors.primary.main,
+                  color: 'white'
+                }} 
+              />
+              <Typography variant="body2" sx={{ color: colors.text.primary }}>Acceso para Agentes/Usuarios</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} md={4}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Chip label="COMITÉ" color="secondary" size="small" sx={{ mr: 1 }} />
-              <Typography variant="body2">Acceso para miembros del Comité</Typography>
+              <Chip 
+                label="COMITÉ" 
+                size="small" 
+                sx={{ 
+                  mr: 1, 
+                  bgcolor: colors.status.warning,
+                  color: 'white'
+                }} 
+              />
+              <Typography variant="body2" sx={{ color: colors.text.primary }}>Acceso para miembros del Comité</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} md={4}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Chip label="ADMIN" color="success" size="small" sx={{ mr: 1 }} />
-              <Typography variant="body2">Acceso para Administradores</Typography>
+              <Chip 
+                label="ADMIN" 
+                size="small" 
+                sx={{ 
+                  mr: 1, 
+                  bgcolor: colors.status.success,
+                  color: 'white'
+                }} 
+              />
+              <Typography variant="body2" sx={{ color: colors.text.primary }}>Acceso para Administradores</Typography>
             </Box>
           </Grid>
         </Grid>
@@ -163,16 +216,16 @@ const SiteMap = () => {
                     {module.icon}
                   </Box>
                   <Box>
-                    <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
+                    <Typography variant="h6" sx={{ color: colors.text.primary, fontWeight: 'bold' }}>
                       {module.title}
                     </Typography>
-                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                    <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                       {module.description}
                     </Typography>
                   </Box>
                 </Box>
 
-                <Divider sx={{ my: 2 }} />
+                <Divider sx={{ my: 2, borderColor: `${module.color}20` }} />
 
                 <List dense>
                   {module.items.map((item, idx) => (
@@ -181,7 +234,7 @@ const SiteMap = () => {
                       component={Link}
                       to={item.path}
                       sx={{
-                        color: '#2c3e50',
+                        color: colors.text.primary,
                         textDecoration: 'none',
                         borderRadius: 1,
                         mb: 0.5,
@@ -197,7 +250,8 @@ const SiteMap = () => {
                         primary={item.text}
                         primaryTypographyProps={{
                           variant: 'body2',
-                          fontWeight: 'medium'
+                          fontWeight: 'medium',
+                          color: colors.text.primary
                         }}
                       />
                     </ListItem>
@@ -210,8 +264,8 @@ const SiteMap = () => {
       </Grid>
 
       {/* Flujo del sistema */}
-      <Paper elevation={1} sx={{ p: 4, mt: 6, bgcolor: '#f0f7ff' }}>
-        <Typography variant="h5" sx={{ color: '#2c3e50', mb: 3, fontWeight: 'bold', textAlign: 'center' }}>
+      <Paper elevation={1} sx={{ p: 4, mt: 6, bgcolor: `${colors.primary.main}10` }}>
+        <Typography variant="h5" sx={{ color: colors.primary.dark, mb: 3, fontWeight: 'bold', textAlign: 'center' }}>
           🔄 Flujo del Sistema SICAG
         </Typography>
         
@@ -226,8 +280,16 @@ const SiteMap = () => {
             '7. Asigna nivel de reconocimiento'
           ].map((step, index) => (
             <Grid item xs={12} sm={6} md={3} key={index}>
-              <Paper sx={{ p: 2, textAlign: 'center', bgcolor: 'white' }}>
-                <Typography variant="body2" sx={{ color: '#2c3e50', fontWeight: 'medium' }}>
+              <Paper sx={{ 
+                p: 2, 
+                textAlign: 'center', 
+                bgcolor: 'white',
+                borderLeft: `3px solid ${colors.primary.main}`,
+                '&:hover': {
+                  bgcolor: `${colors.primary.main}05`
+                }
+              }}>
+                <Typography variant="body2" sx={{ color: colors.text.primary, fontWeight: 'medium' }}>
                   {step}
                 </Typography>
               </Paper>
@@ -238,13 +300,13 @@ const SiteMap = () => {
 
       {/* Información de contacto */}
       <Box sx={{ mt: 6, textAlign: 'center' }}>
-        <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+        <Typography variant="body2" sx={{ color: colors.text.secondary }}>
           Para soporte técnico o preguntas sobre el sistema:
         </Typography>
-        <Typography variant="body1" sx={{ color: '#2c3e50', fontWeight: 'bold', mt: 1 }}>
+        <Typography variant="body1" sx={{ color: colors.primary.dark, fontWeight: 'bold', mt: 1 }}>
           soporte@sicag.com | +52 55 1234 5678
         </Typography>
-        <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', mt: 2 }}>
+        <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mt: 2 }}>
           © 2026 SICAG - Sistema Integral de Consultoría y Asesoría Gremial
         </Typography>
       </Box>

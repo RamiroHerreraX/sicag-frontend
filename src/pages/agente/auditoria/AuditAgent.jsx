@@ -70,6 +70,35 @@ import {
   Update as UpdateIcon
 } from '@mui/icons-material';
 
+// Paleta corporativa del UserManagement
+const colors = {
+  primary: {
+    dark: '#0D2A4D',
+    main: '#133B6B',
+    light: '#3A6EA5'
+  },
+  secondary: {
+    main: '#00A8A8',
+    light: '#00C2D1',
+    lighter: '#35D0FF'
+  },
+  accents: {
+    blue: '#0099FF',
+    purple: '#6C5CE7'
+  },
+  status: {
+    success: '#00A8A8',
+    warning: '#00C2D1',
+    error: '#0099FF',
+    info: '#3A6EA5'
+  },
+  text: {
+    primary: '#0D2A4D',
+    secondary: '#3A6EA5',
+    light: '#6C5CE7'
+  }
+};
+
 const AuditAgent = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
@@ -82,42 +111,42 @@ const AuditAgent = () => {
   const statusConfig = {
     'Aceptados': {
       label: 'Aceptados',
-      color: '#2e7d32',
+      color: colors.status.success,
       bgColor: '#e8f5e9',
       icon: <CheckCircleIcon />,
       description: 'Certificación validada y activa'
     },
     'En revisión': {
       label: 'En revisión',
-      color: '#ed6c02',
+      color: colors.status.warning,
       bgColor: '#fff3e0',
       icon: <PendingIcon />,
       description: 'En proceso de validación por el comité'
     },
     'Información adicional': {
       label: 'Información adicional',
-      color: '#1976d2',
+      color: colors.primary.main,
       bgColor: '#e3f2fd',
       icon: <InfoIcon />,
       description: 'Requiere documentación complementaria'
     },
     'Desactualizado': {
       label: 'Desactualizado',
-      color: '#cfd219',
+      color: colors.status.warning,
       bgColor: '#fffde7',
       icon: <UpdateIcon />,
       description: 'Requiere actualización'
     },
     'Registro': {
       label: 'Registro',
-      color: '#0288d1',
+      color: colors.primary.light,
       bgColor: '#e1f5fe',
       icon: <AddIcon />,
       description: 'Registro inicial pendiente de validación'
     },
     'Rechazado': {
       label: 'Rechazado',
-      color: '#d32f2f',
+      color: colors.status.error,
       bgColor: '#ffebee',
       icon: <ErrorIcon />,
       description: 'Certificación no aprobada o vencida'
@@ -400,11 +429,11 @@ const AuditAgent = () => {
 
   const getSeverityColor = (severity) => {
     switch(severity) {
-      case 'success': return '#27ae60';
-      case 'info': return '#3498db';
-      case 'warning': return '#f39c12';
-      case 'error': return '#e74c3c';
-      default: return '#7f8c8d';
+      case 'success': return colors.status.success;
+      case 'info': return colors.primary.main;
+      case 'warning': return colors.status.warning;
+      case 'error': return colors.status.error;
+      default: return colors.text.secondary;
     }
   };
 
@@ -538,12 +567,12 @@ const AuditAgent = () => {
       {/* Estadísticas */}
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid item xs={6} sm={4} md={2.4}>
-          <Card sx={{ borderLeft: '4px solid #3498db' }}>
+          <Card sx={{ borderLeft: `4px solid ${colors.primary.main}` }}>
             <CardContent sx={{ p: 2, textAlign: 'center' }}>
-              <Typography variant="h4" sx={{ color: '#3498db', fontWeight: 'bold', mb: 0.5 }}>
+              <Typography variant="h4" sx={{ color: colors.primary.main, fontWeight: 'bold', mb: 0.5 }}>
                 {stats.total}
               </Typography>
-              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                 Total de Eventos
               </Typography>
             </CardContent>
@@ -551,12 +580,12 @@ const AuditAgent = () => {
         </Grid>
         
         <Grid item xs={6} sm={4} md={2.4}>
-          <Card sx={{ borderLeft: '4px solid #2e7d32' }}>
+          <Card sx={{ borderLeft: `4px solid ${colors.status.success}` }}>
             <CardContent sx={{ p: 2, textAlign: 'center' }}>
-              <Typography variant="h4" sx={{ color: '#2e7d32', fontWeight: 'bold', mb: 0.5 }}>
+              <Typography variant="h4" sx={{ color: colors.status.success, fontWeight: 'bold', mb: 0.5 }}>
                 {stats.byStatus.aceptados}
               </Typography>
-              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                 Aceptados
               </Typography>
             </CardContent>
@@ -564,12 +593,12 @@ const AuditAgent = () => {
         </Grid>
         
         <Grid item xs={6} sm={4} md={2.4}>
-          <Card sx={{ borderLeft: '4px solid #ed6c02' }}>
+          <Card sx={{ borderLeft: `4px solid ${colors.status.warning}` }}>
             <CardContent sx={{ p: 2, textAlign: 'center' }}>
-              <Typography variant="h4" sx={{ color: '#ed6c02', fontWeight: 'bold', mb: 0.5 }}>
+              <Typography variant="h4" sx={{ color: colors.status.warning, fontWeight: 'bold', mb: 0.5 }}>
                 {stats.byStatus.enRevision}
               </Typography>
-              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                 En Revisión
               </Typography>
             </CardContent>
@@ -577,12 +606,12 @@ const AuditAgent = () => {
         </Grid>
         
         <Grid item xs={6} sm={4} md={2.4}>
-          <Card sx={{ borderLeft: '4px solid #cfd219' }}>
+          <Card sx={{ borderLeft: `4px solid ${colors.status.warning}` }}>
             <CardContent sx={{ p: 2, textAlign: 'center' }}>
-              <Typography variant="h4" sx={{ color: '#cfd219', fontWeight: 'bold', mb: 0.5 }}>
+              <Typography variant="h4" sx={{ color: colors.status.warning, fontWeight: 'bold', mb: 0.5 }}>
                 {stats.byStatus.desactualizado}
               </Typography>
-              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                 Desactualizados
               </Typography>
             </CardContent>
@@ -590,12 +619,12 @@ const AuditAgent = () => {
         </Grid>
         
         <Grid item xs={6} sm={4} md={2.4}>
-          <Card sx={{ borderLeft: '4px solid #d32f2f' }}>
+          <Card sx={{ borderLeft: `4px solid ${colors.status.error}` }}>
             <CardContent sx={{ p: 2, textAlign: 'center' }}>
-              <Typography variant="h4" sx={{ color: '#d32f2f', fontWeight: 'bold', mb: 0.5 }}>
+              <Typography variant="h4" sx={{ color: colors.status.error, fontWeight: 'bold', mb: 0.5 }}>
                 {stats.byStatus.rechazado}
               </Typography>
-              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                 Rechazados
               </Typography>
             </CardContent>
@@ -616,7 +645,7 @@ const AuditAgent = () => {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon fontSize="small" />
+                    <SearchIcon fontSize="small" sx={{ color: colors.primary.main }} />
                   </InputAdornment>
                 ),
               }}
@@ -625,7 +654,7 @@ const AuditAgent = () => {
           
           <Grid item xs={12} md={2.5}>
             <FormControl fullWidth size="small">
-              <InputLabel>Tipo de Acción</InputLabel>
+              <InputLabel sx={{ color: colors.text.primary }}>Tipo de Acción</InputLabel>
               <Select
                 value={filterType}
                 label="Tipo de Acción"
@@ -640,7 +669,7 @@ const AuditAgent = () => {
           
           <Grid item xs={12} md={2.5}>
             <FormControl fullWidth size="small">
-              <InputLabel>Entidad</InputLabel>
+              <InputLabel sx={{ color: colors.text.primary }}>Entidad</InputLabel>
               <Select
                 value={filterEntity}
                 label="Entidad"
@@ -655,7 +684,7 @@ const AuditAgent = () => {
           
           <Grid item xs={12} md={2.5}>
             <FormControl fullWidth size="small">
-              <InputLabel>Estado</InputLabel>
+              <InputLabel sx={{ color: colors.text.primary }}>Estado</InputLabel>
               <Select
                 value={filterEntity}
                 label="Estado"
@@ -685,6 +714,10 @@ const AuditAgent = () => {
                   setFilterEntity('all');
                   setPage(1);
                 }}
+                sx={{
+                  color: colors.primary.main,
+                  borderColor: colors.primary.main
+                }}
               >
                 Limpiar
               </Button>
@@ -693,6 +726,10 @@ const AuditAgent = () => {
                 variant="contained"
                 size="small"
                 startIcon={<DownloadIcon />}
+                sx={{
+                  bgcolor: colors.primary.main,
+                  '&:hover': { bgcolor: colors.primary.dark }
+                }}
               >
                 Exportar
               </Button>
@@ -705,12 +742,12 @@ const AuditAgent = () => {
       <Paper elevation={1} sx={{ mb: 3 }}>
         <Box sx={{ 
           p: 2, 
-          borderBottom: '1px solid #e0e0e0',
+          borderBottom: `1px solid ${colors.primary.main}20`,
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center'
         }}>
-          <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: colors.text.primary }}>
             Mi Historial de Actividades - {filteredLogs.length} eventos
           </Typography>
           
@@ -720,11 +757,13 @@ const AuditAgent = () => {
               size="small"
               color="primary"
               variant="outlined"
+              sx={{ color: colors.primary.main, borderColor: colors.primary.main }}
             />
             <Chip 
               label={`${paginatedLogs.length} mostrados`}
               size="small"
               variant="outlined"
+              sx={{ color: colors.text.secondary, borderColor: colors.text.secondary }}
             />
           </Stack>
         </Box>
@@ -733,12 +772,12 @@ const AuditAgent = () => {
           <Table stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell sx={{ fontWeight: 'bold', width: '15%' }}>Fecha y Hora</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', width: '20%' }}>Acción Realizada</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', width: '15%' }}>Entidad</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', width: '15%' }}>Estado</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', width: '30%' }}>Detalles</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', width: '5%' }}></TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: colors.text.primary, width: '15%' }}>Fecha y Hora</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: colors.text.primary, width: '20%' }}>Acción Realizada</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: colors.text.primary, width: '15%' }}>Entidad</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: colors.text.primary, width: '15%' }}>Estado</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: colors.text.primary, width: '30%' }}>Detalles</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: colors.text.primary, width: '5%' }}></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -753,10 +792,10 @@ const AuditAgent = () => {
                 >
                   <TableCell>
                     <Box>
-                      <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                      <Typography variant="body2" sx={{ fontWeight: 'bold', color: colors.text.primary }}>
                         {log.timestamp.split(' ')[0]}
                       </Typography>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                         {log.timestamp.split(' ')[1]}
                       </Typography>
                     </Box>
@@ -768,7 +807,7 @@ const AuditAgent = () => {
                         {getActionIcon(log.action)}
                       </Box>
                       <Box>
-                        <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                        <Typography variant="body2" sx={{ fontWeight: 'medium', color: colors.text.primary }}>
                           {log.actionName}
                         </Typography>
                         <Chip 
@@ -788,10 +827,10 @@ const AuditAgent = () => {
                   
                   <TableCell>
                     <Box>
-                      <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                      <Typography variant="body2" sx={{ fontWeight: 'medium', color: colors.text.primary }}>
                         {log.entity}
                       </Typography>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                         ID: {log.entityId}
                       </Typography>
                     </Box>
@@ -803,7 +842,7 @@ const AuditAgent = () => {
                   
                   <TableCell>
                     <Box>
-                      <Typography variant="body2" sx={{ color: '#5a6c7d' }}>
+                      <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                         {log.details}
                       </Typography>
                     </Box>
@@ -811,7 +850,7 @@ const AuditAgent = () => {
                   
                   <TableCell>
                     <Tooltip title="Ver detalles completos">
-                      <IconButton size="small">
+                      <IconButton size="small" sx={{ color: colors.primary.main }}>
                         <VisibilityIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
@@ -823,8 +862,8 @@ const AuditAgent = () => {
         </TableContainer>
 
         {/* Paginación */}
-        <Box sx={{ p: 2, borderTop: '1px solid #e0e0e0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+        <Box sx={{ p: 2, borderTop: `1px solid ${colors.primary.main}20`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="caption" sx={{ color: colors.text.secondary }}>
             Mostrando {((page - 1) * rowsPerPage) + 1} - {Math.min(page * rowsPerPage, filteredLogs.length)} de {filteredLogs.length} eventos
           </Typography>
           <Pagination
@@ -832,7 +871,18 @@ const AuditAgent = () => {
             page={page}
             onChange={(e, value) => setPage(value)}
             size="small"
-            color="primary"
+            sx={{
+              '& .MuiPaginationItem-root': {
+                color: colors.primary.main,
+                '&.Mui-selected': {
+                  backgroundColor: colors.primary.main,
+                  color: 'white',
+                  '&:hover': {
+                    backgroundColor: colors.primary.dark,
+                  }
+                }
+              }
+            }}
           />
         </Box>
       </Paper>
@@ -841,17 +891,17 @@ const AuditAgent = () => {
 
   const renderTraceabilityView = () => (
     <Box>
-      <Alert severity="info" sx={{ mb: 3 }}>
-        <Typography variant="body2">
+      <Alert severity="info" sx={{ mb: 3, backgroundColor: `${colors.primary.main}10` }}>
+        <Typography variant="body2" sx={{ color: colors.text.primary }}>
           <strong>Trazabilidad de Certificaciones:</strong> Seguimiento completo del ciclo de vida de cada certificación, desde su creación hasta su estado actual.
         </Typography>
       </Alert>
 
       {certificationTrace.map((cert) => (
-        <Paper key={cert.id} sx={{ p: 3, mb: 3, borderLeft: `4px solid ${statusConfig[cert.status]?.color || '#3498db'}` }}>
+        <Paper key={cert.id} sx={{ p: 3, mb: 3, borderLeft: `4px solid ${statusConfig[cert.status]?.color || colors.primary.main}` }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
             <Box>
-              <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 1 }}>
+              <Typography variant="h6" sx={{ color: colors.text.primary, fontWeight: 'bold', mb: 1 }}>
                 {cert.certification}
               </Typography>
               {getStatusChip(cert.status)}
@@ -860,12 +910,16 @@ const AuditAgent = () => {
               variant="outlined"
               size="small"
               startIcon={<VisibilityIcon />}
+              sx={{
+                color: colors.primary.main,
+                borderColor: colors.primary.main
+              }}
             >
               Ver Certificación
             </Button>
           </Box>
 
-          <Typography variant="subtitle2" sx={{ color: '#7f8c8d', mb: 2, fontWeight: 'bold' }}>
+          <Typography variant="subtitle2" sx={{ color: colors.text.secondary, mb: 2, fontWeight: 'bold' }}>
             📋 Historial de Trazabilidad
           </Typography>
 
@@ -892,7 +946,7 @@ const AuditAgent = () => {
                   width: 12,
                   height: 12,
                   borderRadius: '50%',
-                  backgroundColor: statusConfig[step.status]?.color || '#3498db',
+                  backgroundColor: statusConfig[step.status]?.color || colors.primary.main,
                   border: '2px solid white',
                   boxShadow: '0 0 0 2px #e0e0e0'
                 }} />
@@ -900,10 +954,10 @@ const AuditAgent = () => {
                 {/* Contenido */}
                 <Box>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                    <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                    <Typography variant="body2" sx={{ fontWeight: 'bold', color: colors.text.primary }}>
                       {step.action}
                     </Typography>
-                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                    <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                       {step.date}
                     </Typography>
                   </Box>
@@ -913,19 +967,19 @@ const AuditAgent = () => {
                         width: 20, 
                         height: 20, 
                         fontSize: '0.7rem',
-                        bgcolor: step.user === 'Luis Rodríguez' ? '#3498db' : '#2ecc71'
+                        bgcolor: step.user === 'Luis Rodríguez' ? colors.primary.main : colors.status.success
                       }}
                     >
                       {step.user.split(' ').map(n => n[0]).join('')}
                     </Avatar>
-                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                    <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                       {step.user}
                     </Typography>
                     {step.user === 'Luis Rodríguez' && (
                       <Chip 
                         label="Tú"
                         size="small"
-                        sx={{ height: 16, fontSize: '0.6rem' }}
+                        sx={{ height: 16, fontSize: '0.6rem', bgcolor: colors.primary.main, color: 'white' }}
                       />
                     )}
                     <Box sx={{ ml: 1 }}>
@@ -940,17 +994,17 @@ const AuditAgent = () => {
       ))}
 
       <Paper sx={{ p: 3, bgcolor: '#f8f9fa' }}>
-        <Typography variant="subtitle1" sx={{ color: '#2c3e50', mb: 2, fontWeight: 'bold' }}>
+        <Typography variant="subtitle1" sx={{ color: colors.text.primary, mb: 2, fontWeight: 'bold' }}>
           🔍 Análisis de Trazabilidad por Estado
         </Typography>
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
             <Box sx={{ mb: 2 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
-                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                   Aceptados:
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#2e7d32', fontWeight: 'bold' }}>
+                <Typography variant="caption" sx={{ color: colors.status.success, fontWeight: 'bold' }}>
                   {stats.byStatus.aceptados} eventos
                 </Typography>
               </Box>
@@ -961,17 +1015,17 @@ const AuditAgent = () => {
                   height: 8,
                   borderRadius: 4,
                   backgroundColor: '#e0e0e0',
-                  '& .MuiLinearProgress-bar': { bgcolor: '#2e7d32' }
+                  '& .MuiLinearProgress-bar': { bgcolor: colors.status.success }
                 }}
               />
             </Box>
             
             <Box sx={{ mb: 2 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
-                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                   En revisión:
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#ed6c02', fontWeight: 'bold' }}>
+                <Typography variant="caption" sx={{ color: colors.status.warning, fontWeight: 'bold' }}>
                   {stats.byStatus.enRevision} eventos
                 </Typography>
               </Box>
@@ -982,7 +1036,7 @@ const AuditAgent = () => {
                   height: 8,
                   borderRadius: 4,
                   backgroundColor: '#e0e0e0',
-                  '& .MuiLinearProgress-bar': { bgcolor: '#ed6c02' }
+                  '& .MuiLinearProgress-bar': { bgcolor: colors.status.warning }
                 }}
               />
             </Box>
@@ -991,10 +1045,10 @@ const AuditAgent = () => {
           <Grid item xs={12} md={6}>
             <Box sx={{ mb: 2 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
-                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                   Desactualizados:
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#cfd219', fontWeight: 'bold' }}>
+                <Typography variant="caption" sx={{ color: colors.status.warning, fontWeight: 'bold' }}>
                   {stats.byStatus.desactualizado} eventos
                 </Typography>
               </Box>
@@ -1005,17 +1059,17 @@ const AuditAgent = () => {
                   height: 8,
                   borderRadius: 4,
                   backgroundColor: '#e0e0e0',
-                  '& .MuiLinearProgress-bar': { bgcolor: '#cfd219' }
+                  '& .MuiLinearProgress-bar': { bgcolor: colors.status.warning }
                 }}
               />
             </Box>
             
             <Box sx={{ mb: 2 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
-                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                   Rechazados:
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#d32f2f', fontWeight: 'bold' }}>
+                <Typography variant="caption" sx={{ color: colors.status.error, fontWeight: 'bold' }}>
                   {stats.byStatus.rechazado} eventos
                 </Typography>
               </Box>
@@ -1026,7 +1080,7 @@ const AuditAgent = () => {
                   height: 8,
                   borderRadius: 4,
                   backgroundColor: '#e0e0e0',
-                  '& .MuiLinearProgress-bar': { bgcolor: '#d32f2f' }
+                  '& .MuiLinearProgress-bar': { bgcolor: colors.status.error }
                 }}
               />
             </Box>
@@ -1042,10 +1096,10 @@ const AuditAgent = () => {
       <Box sx={{ mb: 3 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
           <Box>
-            <Typography variant="h5" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 0.5 }}>
+            <Typography variant="h5" sx={{ color: colors.primary.dark, fontWeight: 'bold', mb: 0.5 }}>
               Auditoría y Trazabilidad - Agente Aduanal
             </Typography>
-            <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+            <Typography variant="body2" sx={{ color: colors.text.secondary }}>
               Registro completo de todas tus acciones en el sistema SICAG
             </Typography>
           </Box>
@@ -1056,6 +1110,16 @@ const AuditAgent = () => {
               exclusive
               onChange={(e, newMode) => newMode && setViewMode(newMode)}
               size="small"
+              sx={{
+                '& .MuiToggleButton-root': {
+                  color: colors.text.secondary,
+                  '&.Mui-selected': {
+                    color: colors.primary.main,
+                    backgroundColor: `${colors.primary.main}15`,
+                    borderColor: colors.primary.main
+                  }
+                }
+              }}
             >
               <ToggleButton value="auditoria" sx={{ textTransform: 'none' }}>
                 <HistoryIcon sx={{ mr: 1 }} />
@@ -1071,6 +1135,10 @@ const AuditAgent = () => {
               startIcon={<RefreshIcon />}
               size="small"
               onClick={() => window.location.reload()}
+              sx={{
+                bgcolor: colors.primary.main,
+                '&:hover': { bgcolor: colors.primary.dark }
+              }}
             >
               Actualizar
             </Button>
@@ -1078,7 +1146,7 @@ const AuditAgent = () => {
         </Box>
 
         {/* Información del agente */}
-        <Paper sx={{ p: 2, mb: 3, bgcolor: '#e8f4fd' }}>
+        <Paper sx={{ p: 2, mb: 3, bgcolor: `${colors.primary.main}10` }}>
           <Grid container alignItems="center" spacing={2}>
             <Grid item xs={12} md={8}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -1086,7 +1154,7 @@ const AuditAgent = () => {
                   sx={{ 
                     width: 48, 
                     height: 48, 
-                    bgcolor: '#3498db',
+                    bgcolor: colors.primary.main,
                     fontSize: '1.2rem',
                     fontWeight: 'bold'
                   }}
@@ -1094,10 +1162,10 @@ const AuditAgent = () => {
                   LR
                 </Avatar>
                 <Box>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: colors.text.primary }}>
                     Luis Rodríguez - Agente Aduanal
                   </Typography>
-                  <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+                  <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                     Nivel II • Aduana Principal: Querétaro • Miembro desde: 15/01/2024
                   </Typography>
                 </Box>
@@ -1109,18 +1177,21 @@ const AuditAgent = () => {
                   icon={<CheckCircleIcon />}
                   label="8 aceptados"
                   size="small"
-                  color="success"
+                  sx={{ 
+                    bgcolor: '#e8f5e9',
+                    color: colors.status.success,
+                    borderColor: colors.status.success
+                  }}
                   variant="outlined"
-                  sx={{ bgcolor: '#e8f5e9' }}
                 />
                 <Chip 
                   icon={<PendingIcon />}
                   label="3 en revisión"
                   size="small"
                   sx={{ 
-                    color: '#ed6c02',
+                    color: colors.status.warning,
                     bgcolor: '#fff3e0',
-                    borderColor: '#ed6c02'
+                    borderColor: colors.status.warning
                   }}
                   variant="outlined"
                 />
@@ -1129,9 +1200,9 @@ const AuditAgent = () => {
                   label="2 desactualizados"
                   size="small"
                   sx={{ 
-                    color: '#cfd219',
+                    color: colors.status.warning,
                     bgcolor: '#fffde7',
-                    borderColor: '#cfd219'
+                    borderColor: colors.status.warning
                   }}
                   variant="outlined"
                 />
@@ -1147,17 +1218,17 @@ const AuditAgent = () => {
 
         {/* Información adicional */}
         <Paper elevation={0} sx={{ mt: 2, p: 2, bgcolor: '#f8f9fa' }}>
-          <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1, fontWeight: 'bold' }}>
-            📊 Distribución de Tus Actividades por Estado
+          <Typography variant="subtitle2" sx={{ color: colors.text.primary, mb: 1, fontWeight: 'bold' }}>
+             Distribución de Tus Actividades por Estado
           </Typography>
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
               <Box sx={{ mb: 2 }}>
-                <Typography variant="caption" sx={{ color: '#7f8c8d', mb: 0.5, display: 'block' }}>
+                <Typography variant="caption" sx={{ color: colors.text.secondary, mb: 0.5, display: 'block' }}>
                   Estados principales:
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Typography variant="caption" sx={{ minWidth: 140 }}>
+                  <Typography variant="caption" sx={{ minWidth: 140, color: colors.text.primary }}>
                     Aceptados:
                   </Typography>
                   <LinearProgress 
@@ -1168,21 +1239,21 @@ const AuditAgent = () => {
                       height: 8,
                       borderRadius: 4,
                       backgroundColor: '#e0e0e0',
-                      '& .MuiLinearProgress-bar': { bgcolor: '#2e7d32' }
+                      '& .MuiLinearProgress-bar': { bgcolor: colors.status.success }
                     }}
                   />
-                  <Typography variant="caption" sx={{ fontWeight: 'bold', minWidth: 30 }}>
+                  <Typography variant="caption" sx={{ fontWeight: 'bold', minWidth: 30, color: colors.text.primary }}>
                     {stats.byStatus.aceptados}
                   </Typography>
                 </Box>
               </Box>
               
               <Box sx={{ mb: 2 }}>
-                <Typography variant="caption" sx={{ color: '#7f8c8d', mb: 0.5, display: 'block' }}>
+                <Typography variant="caption" sx={{ color: colors.text.secondary, mb: 0.5, display: 'block' }}>
                   En revisión:
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Typography variant="caption" sx={{ minWidth: 140 }}>
+                  <Typography variant="caption" sx={{ minWidth: 140, color: colors.text.primary }}>
                     Validación:
                   </Typography>
                   <LinearProgress 
@@ -1193,10 +1264,10 @@ const AuditAgent = () => {
                       height: 8,
                       borderRadius: 4,
                       backgroundColor: '#e0e0e0',
-                      '& .MuiLinearProgress-bar': { bgcolor: '#ed6c02' }
+                      '& .MuiLinearProgress-bar': { bgcolor: colors.status.warning }
                     }}
                   />
-                  <Typography variant="caption" sx={{ fontWeight: 'bold', minWidth: 30 }}>
+                  <Typography variant="caption" sx={{ fontWeight: 'bold', minWidth: 30, color: colors.text.primary }}>
                     {stats.byStatus.enRevision}
                   </Typography>
                 </Box>
@@ -1205,11 +1276,11 @@ const AuditAgent = () => {
             
             <Grid item xs={12} md={6}>
               <Box sx={{ mb: 2 }}>
-                <Typography variant="caption" sx={{ color: '#7f8c8d', mb: 0.5, display: 'block' }}>
+                <Typography variant="caption" sx={{ color: colors.text.secondary, mb: 0.5, display: 'block' }}>
                   Atención requerida:
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Typography variant="caption" sx={{ minWidth: 140 }}>
+                  <Typography variant="caption" sx={{ minWidth: 140, color: colors.text.primary }}>
                     Desactualizados:
                   </Typography>
                   <LinearProgress 
@@ -1220,21 +1291,21 @@ const AuditAgent = () => {
                       height: 8,
                       borderRadius: 4,
                       backgroundColor: '#e0e0e0',
-                      '& .MuiLinearProgress-bar': { bgcolor: '#cfd219' }
+                      '& .MuiLinearProgress-bar': { bgcolor: colors.status.warning }
                     }}
                   />
-                  <Typography variant="caption" sx={{ fontWeight: 'bold', minWidth: 30 }}>
+                  <Typography variant="caption" sx={{ fontWeight: 'bold', minWidth: 30, color: colors.text.primary }}>
                     {stats.byStatus.desactualizado}
                   </Typography>
                 </Box>
               </Box>
               
               <Box sx={{ mb: 2 }}>
-                <Typography variant="caption" sx={{ color: '#7f8c8d', mb: 0.5, display: 'block' }}>
+                <Typography variant="caption" sx={{ color: colors.text.secondary, mb: 0.5, display: 'block' }}>
                   Rechazados:
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Typography variant="caption" sx={{ minWidth: 140 }}>
+                  <Typography variant="caption" sx={{ minWidth: 140, color: colors.text.primary }}>
                     No aprobados:
                   </Typography>
                   <LinearProgress 
@@ -1245,10 +1316,10 @@ const AuditAgent = () => {
                       height: 8,
                       borderRadius: 4,
                       backgroundColor: '#e0e0e0',
-                      '& .MuiLinearProgress-bar': { bgcolor: '#d32f2f' }
+                      '& .MuiLinearProgress-bar': { bgcolor: colors.status.error }
                     }}
                   />
-                  <Typography variant="caption" sx={{ fontWeight: 'bold', minWidth: 30 }}>
+                  <Typography variant="caption" sx={{ fontWeight: 'bold', minWidth: 30, color: colors.text.primary }}>
                     {stats.byStatus.rechazado}
                   </Typography>
                 </Box>
@@ -1256,9 +1327,9 @@ const AuditAgent = () => {
             </Grid>
           </Grid>
           
-          <Divider sx={{ my: 2 }} />
+          <Divider sx={{ my: 2, borderColor: `${colors.primary.main}20` }} />
           
-          <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block' }}>
+          <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
             <strong>Nota:</strong> Esta auditoría registra todas tus acciones en el sistema para garantizar transparencia y cumplimiento. 
             Los registros se mantienen por 5 años según normativa vigente.
           </Typography>

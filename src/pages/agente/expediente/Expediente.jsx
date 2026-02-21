@@ -61,6 +61,35 @@ import {
   Send as SendIcon
 } from '@mui/icons-material';
 
+// Paleta corporativa del UserManagement
+const colors = {
+  primary: {
+    dark: '#0D2A4D',
+    main: '#133B6B',
+    light: '#3A6EA5'
+  },
+  secondary: {
+    main: '#00A8A8',
+    light: '#00C2D1',
+    lighter: '#35D0FF'
+  },
+  accents: {
+    blue: '#0099FF',
+    purple: '#6C5CE7'
+  },
+  status: {
+    success: '#00A8A8',
+    warning: '#00C2D1',
+    error: '#0099FF',
+    info: '#3A6EA5'
+  },
+  text: {
+    primary: '#0D2A4D',
+    secondary: '#3A6EA5',
+    light: '#6C5CE7'
+  }
+};
+
 const Expediente = () => {
   const navigate = useNavigate();
   const [editMode, setEditMode] = useState(false);
@@ -340,9 +369,9 @@ a actos de soborno y corrupción en operaciones comerciales.`,
         sx={{ 
           mb: 2,
           border: '2px solid',
-          borderColor: '#2e7d32',
+          borderColor: colors.status.success,
           borderRadius: '8px !important',
-          boxShadow: '0 2px 12px rgba(46, 125, 50, 0.1)',
+          boxShadow: `0 2px 12px ${colors.status.success}20`,
           '&:before': { display: 'none' }
         }}
       >
@@ -363,7 +392,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
               height: 40,
               borderRadius: '50%',
               backgroundColor: '#e8f5e9',
-              color: '#2e7d32'
+              color: colors.status.success
             }}>
               {section.icon}
             </Box>
@@ -371,7 +400,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
             <Box sx={{ flexGrow: 1 }}>
               <Typography sx={{ 
                 fontWeight: '700', 
-                color: '#333',
+                color: colors.text.primary,
                 fontSize: '1rem',
                 mb: 0.5
               }}>
@@ -427,21 +456,21 @@ a actos de soborno y corrupción en operaciones comerciales.`,
               p: 3, 
               mb: 3,
               borderRadius: 2,
-              border: '2px solid #e0e0e0',
+              border: `2px solid ${colors.primary.main}20`,
               '&:hover': {
-                borderColor: '#1976d2'
+                borderColor: colors.primary.main
               }
             }}
           >
             <Typography variant="h6" sx={{ 
               fontWeight: '600',
-              color: '#2c3e50',
+              color: colors.text.primary,
               mb: 3,
               display: 'flex',
               alignItems: 'center',
               gap: 1.5
             }}>
-              <SecurityIcon sx={{ color: '#1976d2' }} />
+              <SecurityIcon sx={{ color: colors.primary.main }} />
               Sistema de seguridad de Cadena de Suministros
             </Typography>
             
@@ -478,7 +507,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                   {cumplimientoData.seguridadCadenaSuministro.documento ? (
                     <Box sx={{ width: '100%' }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
-                        <Typography variant="body2" sx={{ color: '#2c3e50', fontWeight: '500', flex: 1 }}>
+                        <Typography variant="body2" sx={{ color: colors.text.primary, fontWeight: '500', flex: 1 }}>
                           Documento cargado: {cumplimientoData.seguridadCadenaSuministro.documento}
                         </Typography>
                         <Chip 
@@ -488,7 +517,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                         />
                       </Box>
                       {cumplimientoData.seguridadCadenaSuministro.fechaRevision && (
-                        <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', mb: 2 }}>
+                        <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mb: 2 }}>
                           Última revisión: {cumplimientoData.seguridadCadenaSuministro.fechaRevision}
                         </Typography>
                       )}
@@ -498,7 +527,11 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                           startIcon={<VisibilityIcon />}
                           variant="outlined"
                           onClick={() => handleVerDocumento('seguridadCadenaSuministro')}
-                          sx={{ textTransform: 'none' }}
+                          sx={{ 
+                            textTransform: 'none',
+                            color: colors.primary.main,
+                            borderColor: colors.primary.main
+                          }}
                         >
                           Ver Documento
                         </Button>
@@ -507,7 +540,11 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                           startIcon={<CloudUploadIcon />}
                           variant="outlined"
                           onClick={() => handleDocumentoUpload('seguridadCadenaSuministro')}
-                          sx={{ textTransform: 'none' }}
+                          sx={{ 
+                            textTransform: 'none',
+                            color: colors.primary.main,
+                            borderColor: colors.primary.main
+                          }}
                         >
                           Reemplazar
                         </Button>
@@ -519,7 +556,12 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                       startIcon={<CloudUploadIcon />}
                       variant="contained"
                       onClick={() => handleDocumentoUpload('seguridadCadenaSuministro')}
-                      sx={{ textTransform: 'none', py: 1.5 }}
+                      sx={{ 
+                        textTransform: 'none', 
+                        py: 1.5,
+                        bgcolor: colors.primary.main,
+                        '&:hover': { bgcolor: colors.primary.dark }
+                      }}
                     >
                       Cargar Documento del Sistema
                     </Button>
@@ -535,21 +577,21 @@ a actos de soborno y corrupción en operaciones comerciales.`,
             sx={{ 
               p: 3, 
               borderRadius: 2,
-              border: '2px solid #e0e0e0',
+              border: `2px solid ${colors.primary.main}20`,
               '&:hover': {
-                borderColor: '#d32f2f'
+                borderColor: colors.status.error
               }
             }}
           >
             <Typography variant="h6" sx={{ 
               fontWeight: '600',
-              color: '#2c3e50',
+              color: colors.text.primary,
               mb: 3,
               display: 'flex',
               alignItems: 'center',
               gap: 1.5
             }}>
-              <GavelIcon sx={{ color: '#d32f2f' }} />
+              <GavelIcon sx={{ color: colors.status.error }} />
               Políticas Antisobornos
             </Typography>
             
@@ -586,7 +628,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                   {cumplimientoData.antisobornos.documento ? (
                     <Box sx={{ width: '100%' }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
-                        <Typography variant="body2" sx={{ color: '#2c3e50', fontWeight: '500', flex: 1 }}>
+                        <Typography variant="body2" sx={{ color: colors.text.primary, fontWeight: '500', flex: 1 }}>
                           Documento cargado: {cumplimientoData.antisobornos.documento}
                         </Typography>
                         <Chip 
@@ -596,7 +638,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                         />
                       </Box>
                       {cumplimientoData.antisobornos.fechaRevision && (
-                        <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', mb: 2 }}>
+                        <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mb: 2 }}>
                           Última revisión: {cumplimientoData.antisobornos.fechaRevision}
                         </Typography>
                       )}
@@ -606,7 +648,11 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                           startIcon={<VisibilityIcon />}
                           variant="outlined"
                           onClick={() => handleVerDocumento('antisobornos')}
-                          sx={{ textTransform: 'none' }}
+                          sx={{ 
+                            textTransform: 'none',
+                            color: colors.primary.main,
+                            borderColor: colors.primary.main
+                          }}
                         >
                           Ver Documento
                         </Button>
@@ -615,7 +661,11 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                           startIcon={<CloudUploadIcon />}
                           variant="outlined"
                           onClick={() => handleDocumentoUpload('antisobornos')}
-                          sx={{ textTransform: 'none' }}
+                          sx={{ 
+                            textTransform: 'none',
+                            color: colors.primary.main,
+                            borderColor: colors.primary.main
+                          }}
                         >
                           Reemplazar
                         </Button>
@@ -626,9 +676,13 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                       fullWidth
                       startIcon={<CloudUploadIcon />}
                       variant="contained"
-                      color="error"
                       onClick={() => handleDocumentoUpload('antisobornos')}
-                      sx={{ textTransform: 'none', py: 1.5 }}
+                      sx={{ 
+                        textTransform: 'none', 
+                        py: 1.5,
+                        bgcolor: colors.status.error,
+                        '&:hover': { bgcolor: colors.primary.dark }
+                      }}
                     >
                       Cargar Documento de Políticas
                     </Button>
@@ -644,28 +698,29 @@ a actos de soborno y corrupción en operaciones comerciales.`,
             p: 2.5, 
             backgroundColor: '#f8f9fa', 
             borderRadius: 2,
-            border: '1px solid #e0e0e0'
+            border: `1px solid ${colors.primary.main}20`
           }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Box>
-                <Typography variant="body1" sx={{ fontWeight: '600', color: '#333', mb: 0.5 }}>
+                <Typography variant="body1" sx={{ fontWeight: '600', color: colors.text.primary, mb: 0.5 }}>
                   Validación de Documentos
                 </Typography>
-                <Typography variant="body2" sx={{ color: '#666' }}>
+                <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                   Una vez completados los documentos, envíelos para revisión por el comité
                 </Typography>
               </Box>
               
               <Button
                 variant="contained"
-                color="primary"
                 startIcon={<SendIcon />}
                 onClick={() => handleAbrirValidacionDialog(section.id, section.title)}
                 disabled={estadoValidacion.enviado}
                 sx={{ 
                   textTransform: 'none',
                   px: 3,
-                  py: 1
+                  py: 1,
+                  bgcolor: colors.primary.main,
+                  '&:hover': { bgcolor: colors.primary.dark }
                 }}
               >
                 {estadoValidacion.enviado ? 'Enviado para Revisión' : 'Enviar para Validación'}
@@ -691,9 +746,9 @@ a actos de soborno y corrupción en operaciones comerciales.`,
         sx={{ 
           mb: 2,
           border: '2px solid',
-          borderColor: '#9c27b0',
+          borderColor: colors.accents.purple,
           borderRadius: '8px !important',
-          boxShadow: '0 2px 12px rgba(156, 39, 176, 0.1)',
+          boxShadow: `0 2px 12px ${colors.accents.purple}20`,
           '&:before': { display: 'none' }
         }}
       >
@@ -714,7 +769,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
               height: 40,
               borderRadius: '50%',
               backgroundColor: '#f3e5f5',
-              color: '#9c27b0'
+              color: colors.accents.purple
             }}>
               {section.icon}
             </Box>
@@ -722,7 +777,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
             <Box sx={{ flexGrow: 1 }}>
               <Typography sx={{ 
                 fontWeight: '700', 
-                color: '#333',
+                color: colors.text.primary,
                 fontSize: '1rem',
                 mb: 0.5
               }}>
@@ -756,7 +811,11 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                 sx={{ 
                   width: '60px',
                   height: '6px',
-                  borderRadius: '3px'
+                  borderRadius: '3px',
+                  backgroundColor: `${colors.primary.main}15`,
+                  '& .MuiLinearProgress-bar': {
+                    backgroundColor: colors.accents.purple
+                  }
                 }}
               />
             </Box>
@@ -779,7 +838,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
             </Alert>
           )}
           
-          <Typography variant="body2" sx={{ color: '#666', mb: 3, lineHeight: 1.6 }}>
+          <Typography variant="body2" sx={{ color: colors.text.secondary, mb: 3, lineHeight: 1.6 }}>
             Documentación oficial requerida para el expediente. Verifique y actualice cada documento según corresponda.
           </Typography>
           
@@ -791,21 +850,21 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                   sx={{ 
                     p: 2.5, 
                     borderRadius: 2,
-                    border: '2px solid #e0e0e0',
+                    border: `2px solid ${colors.primary.main}20`,
                     height: '100%',
                     display: 'flex',
                     flexDirection: 'column',
                     transition: 'all 0.2s',
                     '&:hover': {
-                      borderColor: '#9c27b0',
-                      boxShadow: '0 4px 12px rgba(156, 39, 176, 0.1)'
+                      borderColor: colors.accents.purple,
+                      boxShadow: `0 4px 12px ${colors.accents.purple}20`
                     }
                   }}
                 >
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                     <Typography variant="subtitle1" sx={{ 
                       fontWeight: '600',
-                      color: '#2c3e50',
+                      color: colors.text.primary,
                       fontSize: '0.95rem',
                       lineHeight: 1.3,
                       flex: 1
@@ -814,9 +873,9 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                     </Typography>
                     <Box sx={{ ml: 1 }}>
                       {doc.status === 'completo' ? (
-                        <CheckCircleIcon sx={{ color: '#27ae60', fontSize: '1.5rem' }} />
+                        <CheckCircleIcon sx={{ color: colors.status.success, fontSize: '1.5rem' }} />
                       ) : (
-                        <WarningIcon sx={{ color: '#f39c12', fontSize: '1.5rem' }} />
+                        <WarningIcon sx={{ color: colors.status.warning, fontSize: '1.5rem' }} />
                       )}
                     </Box>
                   </Box>
@@ -833,7 +892,9 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                       sx={{ 
                         fontSize: '0.8rem', 
                         py: 1,
-                        textTransform: 'none'
+                        textTransform: 'none',
+                        color: colors.primary.main,
+                        borderColor: colors.primary.main
                       }}
                     >
                       VER DOCUMENTO
@@ -843,12 +904,13 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                       size="small"
                       startIcon={<CloudUploadIcon />}
                       variant="contained"
-                      color="secondary"
                       onClick={handleUploadCertification}
                       sx={{ 
                         fontSize: '0.8rem', 
                         py: 1,
-                        textTransform: 'none'
+                        textTransform: 'none',
+                        bgcolor: colors.secondary.main,
+                        '&:hover': { bgcolor: colors.secondary.light }
                       }}
                     >
                       ACTUALIZAR
@@ -865,28 +927,29 @@ a actos de soborno y corrupción en operaciones comerciales.`,
             p: 2.5, 
             backgroundColor: '#f8f9fa', 
             borderRadius: 2,
-            border: '1px solid #e0e0e0'
+            border: `1px solid ${colors.primary.main}20`
           }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Box>
-                <Typography variant="body1" sx={{ fontWeight: '600', color: '#333', mb: 0.5 }}>
+                <Typography variant="body1" sx={{ fontWeight: '600', color: colors.text.primary, mb: 0.5 }}>
                   Validación de Documentos
                 </Typography>
-                <Typography variant="body2" sx={{ color: '#666' }}>
+                <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                   Una vez completados los documentos, envíelos para revisión por el comité
                 </Typography>
               </Box>
               
               <Button
                 variant="contained"
-                color="primary"
                 startIcon={<SendIcon />}
                 onClick={() => handleAbrirValidacionDialog(section.id, section.title)}
                 disabled={estadoValidacion.enviado || completedDocs < totalDocs}
                 sx={{ 
                   textTransform: 'none',
                   px: 3,
-                  py: 1
+                  py: 1,
+                  bgcolor: colors.primary.main,
+                  '&:hover': { bgcolor: colors.primary.dark }
                 }}
               >
                 {estadoValidacion.enviado ? 'Enviado para Revisión' : 'Enviar para Validación'}
@@ -921,9 +984,9 @@ a actos de soborno y corrupción en operaciones comerciales.`,
         sx={{ 
           mb: 2,
           border: '2px solid',
-          borderColor: completionPercentage === 100 ? '#4caf50' : '#ff9800',
+          borderColor: completionPercentage === 100 ? colors.status.success : colors.status.warning,
           borderRadius: '8px !important',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.05)',
+          boxShadow: `0 2px 12px ${completionPercentage === 100 ? colors.status.success + '20' : colors.status.warning + '20'}`,
           '&:before': { display: 'none' }
         }}
       >
@@ -945,7 +1008,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
               height: 40,
               borderRadius: '50%',
               backgroundColor: completionPercentage === 100 ? '#e8f5e9' : '#fff3e0',
-              color: completionPercentage === 100 ? '#4caf50' : '#ff9800'
+              color: completionPercentage === 100 ? colors.status.success : colors.status.warning
             }}>
               {section.icon}
             </Box>
@@ -953,7 +1016,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
             <Box sx={{ flexGrow: 1 }}>
               <Typography sx={{ 
                 fontWeight: '700', 
-                color: '#333',
+                color: colors.text.primary,
                 fontSize: '1rem',
                 mb: 0.5
               }}>
@@ -964,13 +1027,13 @@ a actos de soborno y corrupción en operaciones comerciales.`,
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Box sx={{ textAlign: 'center', minWidth: '60px' }}>
                 <Typography variant="h6" sx={{ 
-                  color: completionPercentage === 100 ? '#4caf50' : '#ff9800',
+                  color: completionPercentage === 100 ? colors.status.success : colors.status.warning,
                   fontWeight: 'bold',
                   fontSize: '1.1rem'
                 }}>
                   {Math.round(completionPercentage)}%
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#666', fontSize: '0.7rem' }}>
+                <Typography variant="caption" sx={{ color: colors.text.secondary, fontSize: '0.7rem' }}>
                   Completado
                 </Typography>
               </Box>
@@ -1026,10 +1089,10 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                   mb: 1,
                   borderRadius: 1,
                   backgroundColor: '#fff',
-                  border: '1px solid #e0e0e0',
+                  border: `1px solid ${colors.primary.main}20`,
                   '&:hover': {
                     backgroundColor: '#f8f9fa',
-                    borderColor: '#1976d2'
+                    borderColor: colors.primary.main
                   }
                 }}
                 secondaryAction={
@@ -1037,9 +1100,9 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                     <IconButton 
                       size="small" 
                       sx={{ 
-                        color: '#1976d2',
-                        backgroundColor: '#e3f2fd',
-                        '&:hover': { backgroundColor: '#bbdefb' }
+                        color: colors.primary.main,
+                        backgroundColor: `${colors.primary.main}15`,
+                        '&:hover': { backgroundColor: `${colors.primary.main}25` }
                       }}
                     >
                       <VisibilityIcon fontSize="small" />
@@ -1047,7 +1110,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                     <IconButton 
                       size="small" 
                       sx={{ 
-                        color: '#27ae60',
+                        color: colors.status.success,
                         backgroundColor: '#e8f5e9',
                         '&:hover': { backgroundColor: '#c8e6c9' }
                       }}
@@ -1058,7 +1121,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                       <IconButton 
                         size="small" 
                       sx={{ 
-                        color: '#e74c3c',
+                        color: colors.status.error,
                         backgroundColor: '#ffebee',
                         '&:hover': { backgroundColor: '#ffcdd2' }
                       }}
@@ -1072,7 +1135,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                 <ListItemIcon sx={{ minWidth: 44 }}>
                   {item.status === 'completo' ? (
                     <CheckCircleIcon sx={{ 
-                      color: '#27ae60', 
+                      color: colors.status.success, 
                       fontSize: '1.5rem',
                       backgroundColor: '#e8f5e9',
                       borderRadius: '50%',
@@ -1080,7 +1143,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                     }} />
                   ) : (
                     <WarningIcon sx={{ 
-                      color: '#f39c12', 
+                      color: colors.status.warning, 
                       fontSize: '1.5rem',
                       backgroundColor: '#fff3e0',
                       borderRadius: '50%',
@@ -1091,7 +1154,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                 <ListItemText 
                   primary={item.name}
                   primaryTypographyProps={{
-                    color: item.status === 'completo' ? '#2c3e50' : '#7f8c8d',
+                    color: item.status === 'completo' ? colors.text.primary : colors.text.secondary,
                     fontWeight: item.status === 'completo' ? '600' : '500',
                     fontSize: '0.95rem',
                     lineHeight: 1.4
@@ -1108,9 +1171,9 @@ a actos de soborno y corrupción en operaciones comerciales.`,
             p: 2,
             backgroundColor: '#f8f9fa',
             borderRadius: 2,
-            border: '1px solid #e0e0e0'
+            border: `1px solid ${colors.primary.main}20`
           }}>
-            <Typography variant="body2" sx={{ color: '#666' }}>
+            <Typography variant="body2" sx={{ color: colors.text.secondary }}>
               {section.items.length} documentos en esta sección
             </Typography>
             <Button
@@ -1121,7 +1184,9 @@ a actos de soborno y corrupción en operaciones comerciales.`,
               sx={{ 
                 fontSize: '0.85rem', 
                 textTransform: 'none',
-                px: 3
+                px: 3,
+                color: colors.primary.main,
+                borderColor: colors.primary.main
               }}
             >
               Agregar Documento
@@ -1134,28 +1199,29 @@ a actos de soborno y corrupción en operaciones comerciales.`,
             p: 2.5, 
             backgroundColor: '#f8f9fa', 
             borderRadius: 2,
-            border: '1px solid #e0e0e0'
+            border: `1px solid ${colors.primary.main}20`
           }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Box>
-                <Typography variant="body1" sx={{ fontWeight: '600', color: '#333', mb: 0.5 }}>
+                <Typography variant="body1" sx={{ fontWeight: '600', color: colors.text.primary, mb: 0.5 }}>
                   Validación de Documentos
                 </Typography>
-                <Typography variant="body2" sx={{ color: '#666' }}>
+                <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                   Una vez completados los documentos, envíelos para revisión por el comité
                 </Typography>
               </Box>
               
               <Button
                 variant="contained"
-                color="primary"
                 startIcon={<SendIcon />}
                 onClick={() => handleAbrirValidacionDialog(section.id, section.title)}
                 disabled={estadoValidacion.enviado || completedItems < totalItems}
                 sx={{ 
                   textTransform: 'none',
                   px: 3,
-                  py: 1
+                  py: 1,
+                  bgcolor: colors.primary.main,
+                  '&:hover': { bgcolor: colors.primary.dark }
                 }}
               >
                 {estadoValidacion.enviado ? 'Enviado para Revisión' : 'Enviar para Validación'}
@@ -1180,10 +1246,10 @@ a actos de soborno y corrupción en operaciones comerciales.`,
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Box>
-          <Typography variant="h4" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 1 }}>
+          <Typography variant="h4" sx={{ color: colors.primary.dark, fontWeight: 'bold', mb: 1 }}>
             Expediente Digital
           </Typography>
-          <Typography variant="body1" sx={{ color: '#7f8c8d' }}>
+          <Typography variant="body1" sx={{ color: colors.text.secondary }}>
             Documentación completa para el cumplimiento normativo
           </Typography>
         </Box>
@@ -1192,7 +1258,11 @@ a actos de soborno y corrupción en operaciones comerciales.`,
           <Button
             variant="outlined"
             startIcon={<DownloadIcon />}
-            sx={{ textTransform: 'none' }}
+            sx={{ 
+              textTransform: 'none',
+              color: colors.primary.main,
+              borderColor: colors.primary.main
+            }}
           >
             Exportar Expediente
           </Button>
@@ -1200,8 +1270,11 @@ a actos de soborno y corrupción en operaciones comerciales.`,
       </Box>
 
       {/* Nivel de Cumplimiento con Resumen de Estado integrado */}
-      <Card sx={{ mb: 4, bgcolor: compliance >= 90 ? '#e8f5e9' : 
-                                     compliance >= 70 ? '#fffde7' : '#ffebee' }}>
+      <Card sx={{ 
+        mb: 4, 
+        bgcolor: compliance >= 90 ? '#e8f5e9' : 
+                 compliance >= 70 ? '#fffde7' : '#ffebee'
+      }}>
         <CardContent>
           <Grid container alignItems="center" spacing={3}>
             {/* Sección izquierda: Porcentaje + Información de estado */}
@@ -1211,15 +1284,15 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                 <Grid item xs={4} sm={3} md={3}>
                   <Box sx={{ textAlign: 'center' }}>
                     <Typography variant="h2" sx={{ 
-                      color: compliance >= 90 ? '#27ae60' : 
-                             compliance >= 70 ? '#f39c12' : '#e74c3c',
+                      color: compliance >= 90 ? colors.status.success : 
+                             compliance >= 70 ? colors.status.warning : colors.status.error,
                       fontWeight: 'bold',
                       mb: 0.5,
                       fontSize: { xs: '3rem', sm: '3.5rem' }
                     }}>
                       {compliance}%
                     </Typography>
-                    <Typography variant="body2" sx={{ color: '#7f8c8d', fontWeight: '500' }}>
+                    <Typography variant="body2" sx={{ color: colors.text.secondary, fontWeight: '500' }}>
                       Cumplimiento
                     </Typography>
                   </Box>
@@ -1233,7 +1306,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                 {/* Información de estado y progreso */}
                 <Grid item xs={8} sm={8} md={8}>
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, flexWrap: 'wrap', gap: 1 }}>
-                    <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold', fontSize: '1.1rem' }}>
+                    <Typography variant="h6" sx={{ color: colors.primary.dark, fontWeight: 'bold', fontSize: '1.1rem' }}>
                       Nivel de Cumplimiento
                     </Typography>
                     <Chip 
@@ -1245,7 +1318,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                       sx={{ height: '24px' }}
                     />
                   </Box>
-                  <Typography variant="body2" sx={{ color: '#7f8c8d', mb: 2 }}>
+                  <Typography variant="body2" sx={{ color: colors.text.secondary, mb: 2 }}>
                     {compliance >= 90 ? 'Tu expediente está completo y vigente' : 
                      compliance >= 70 ? 'Faltan algunos documentos por completar' : 
                      'Requiere atención inmediata para completar la documentación'}
@@ -1259,8 +1332,8 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                       borderRadius: 5,
                       backgroundColor: '#f0f0f0',
                       '& .MuiLinearProgress-bar': {
-                        backgroundColor: compliance >= 90 ? '#27ae60' : 
-                                         compliance >= 70 ? '#f39c12' : '#e74c3c'
+                        backgroundColor: compliance >= 90 ? colors.status.success : 
+                                         compliance >= 70 ? colors.status.warning : colors.status.error
                       }
                     }}
                   />
@@ -1279,10 +1352,10 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                 {/* Primera fila de estadísticas */}
                 <Grid item xs={6}>
                   <Paper sx={{ p: 1.5, textAlign: 'center', borderRadius: 2, height: '100%' }}>
-                    <Typography variant="h5" sx={{ color: '#27ae60', fontWeight: 'bold', mb: 0.5 }}>
+                    <Typography variant="h5" sx={{ color: colors.status.success, fontWeight: 'bold', mb: 0.5 }}>
                       3/5
                     </Typography>
-                    <Typography variant="caption" sx={{ color: '#7f8c8d', fontWeight: '500', fontSize: '0.7rem' }}>
+                    <Typography variant="caption" sx={{ color: colors.text.secondary, fontWeight: '500', fontSize: '0.7rem' }}>
                       Certificaciones Vigentes
                     </Typography>
                   </Paper>
@@ -1290,10 +1363,10 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                 
                 <Grid item xs={6}>
                   <Paper sx={{ p: 1.5, textAlign: 'center', borderRadius: 2, height: '100%' }}>
-                    <Typography variant="h5" sx={{ color: '#f39c12', fontWeight: 'bold', mb: 0.5 }}>
+                    <Typography variant="h5" sx={{ color: colors.status.warning, fontWeight: 'bold', mb: 0.5 }}>
                       2
                     </Typography>
-                    <Typography variant="caption" sx={{ color: '#7f8c8d', fontWeight: '500', fontSize: '0.7rem' }}>
+                    <Typography variant="caption" sx={{ color: colors.text.secondary, fontWeight: '500', fontSize: '0.7rem' }}>
                       Próx. Vencimientos
                     </Typography>
                   </Paper>
@@ -1302,10 +1375,10 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                 {/* Segunda fila de estadísticas */}
                 <Grid item xs={6}>
                   <Paper sx={{ p: 1.5, textAlign: 'center', borderRadius: 2, height: '100%' }}>
-                    <Typography variant="h5" sx={{ color: '#e74c3c', fontWeight: 'bold', mb: 0.5 }}>
+                    <Typography variant="h5" sx={{ color: colors.status.error, fontWeight: 'bold', mb: 0.5 }}>
                       1
                     </Typography>
-                    <Typography variant="caption" sx={{ color: '#7f8c8d', fontWeight: '500', fontSize: '0.7rem' }}>
+                    <Typography variant="caption" sx={{ color: colors.text.secondary, fontWeight: '500', fontSize: '0.7rem' }}>
                       Observaciones
                     </Typography>
                   </Paper>
@@ -1313,10 +1386,10 @@ a actos de soborno y corrupción en operaciones comerciales.`,
                 
                 <Grid item xs={6}>
                   <Paper sx={{ p: 1.5, textAlign: 'center', borderRadius: 2, height: '100%' }}>
-                    <Typography variant="h6" sx={{ color: '#3498db', fontWeight: 'bold', mb: 0.5, fontSize: '1rem' }}>
+                    <Typography variant="h6" sx={{ color: colors.primary.main, fontWeight: 'bold', mb: 0.5, fontSize: '1rem' }}>
                       15/03/26
                     </Typography>
-                    <Typography variant="caption" sx={{ color: '#7f8c8d', fontWeight: '500', fontSize: '0.7rem' }}>
+                    <Typography variant="caption" sx={{ color: colors.text.secondary, fontWeight: '500', fontSize: '0.7rem' }}>
                       Próx. Revisión
                     </Typography>
                   </Paper>
@@ -1328,7 +1401,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
           <Divider sx={{ my: 2 }} />
           
           <Box sx={{ textAlign: 'center' }}>
-            <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+            <Typography variant="caption" sx={{ color: colors.text.secondary }}>
               El expediente se revisa semestralmente para mantenerlo actualizado.
             </Typography>
           </Box>
@@ -1338,10 +1411,10 @@ a actos de soborno y corrupción en operaciones comerciales.`,
       {/* Lista completa de todos los apartados en una sola columna */}
       <Box>
         <Typography variant="h5" sx={{ 
-          color: '#2c3e50', 
+          color: colors.primary.dark, 
           mb: 3, 
           fontWeight: 'bold',
-          borderBottom: '3px solid #2c3e50',
+          borderBottom: `3px solid ${colors.primary.dark}`,
           pb: 1.5,
           display: 'flex',
           alignItems: 'center',
@@ -1364,7 +1437,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
 
       {/* Diálogo para agregar campo */}
       <Dialog open={addDialog} onClose={() => setAddDialog(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>Agregar Nuevo Campo</DialogTitle>
+        <DialogTitle sx={{ color: colors.primary.dark }}>Agregar Nuevo Campo</DialogTitle>
         <DialogContent>
           <TextField
             fullWidth
@@ -1392,7 +1465,7 @@ a actos de soborno y corrupción en operaciones comerciales.`,
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setAddDialog(false)}>Cancelar</Button>
-          <Button onClick={() => setAddDialog(false)} variant="contained">
+          <Button onClick={() => setAddDialog(false)} variant="contained" sx={{ bgcolor: colors.primary.main }}>
             Agregar
           </Button>
         </DialogActions>
@@ -1400,17 +1473,17 @@ a actos de soborno y corrupción en operaciones comerciales.`,
 
       {/* Diálogo de confirmación de validación */}
       <Dialog open={validacionDialog.open} onClose={handleCerrarValidacionDialog} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ borderBottom: '1px solid #e0e0e0', pb: 2 }}>
+        <DialogTitle sx={{ borderBottom: `1px solid ${colors.primary.main}20`, pb: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            <SendIcon sx={{ color: '#1976d2' }} />
-            <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: '600' }}>
+            <SendIcon sx={{ color: colors.primary.main }} />
+            <Typography variant="h6" sx={{ color: colors.primary.dark, fontWeight: '600' }}>
               Enviar Documentos para Validación
             </Typography>
           </Box>
         </DialogTitle>
         <DialogContent sx={{ pt: 3, pb: 2 }}>
           <Alert severity="info" sx={{ mb: 3, backgroundColor: '#e3f2fd' }}>
-            <Typography variant="body2" sx={{ fontWeight: '600', color: '#1976d2' }}>
+            <Typography variant="body2" sx={{ fontWeight: '600', color: colors.primary.main }}>
               Confirmación de Envío
             </Typography>
             <Typography variant="body2" sx={{ mt: 0.5 }}>
@@ -1421,25 +1494,25 @@ a actos de soborno y corrupción en operaciones comerciales.`,
           <Paper variant="outlined" sx={{ p: 2.5, mb: 3, backgroundColor: '#f8f9fa' }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <Typography variant="body2" sx={{ color: '#666', fontWeight: '500', mb: 0.5 }}>
+                <Typography variant="body2" sx={{ color: colors.text.secondary, fontWeight: '500', mb: 0.5 }}>
                   Apartado a validar:
                 </Typography>
-                <Typography variant="body1" sx={{ color: '#2c3e50', fontWeight: '600' }}>
+                <Typography variant="body1" sx={{ color: colors.primary.dark, fontWeight: '600' }}>
                   {validacionDialog.titulo}
                 </Typography>
               </Grid>
               
               <Grid item xs={12}>
-                <Typography variant="body2" sx={{ color: '#666', fontWeight: '500', mb: 0.5 }}>
+                <Typography variant="body2" sx={{ color: colors.text.secondary, fontWeight: '500', mb: 0.5 }}>
                   Fecha de envío:
                 </Typography>
-                <Typography variant="body1" sx={{ color: '#2c3e50', fontWeight: '600' }}>
+                <Typography variant="body1" sx={{ color: colors.primary.dark, fontWeight: '600' }}>
                   {validacionDialog.fecha}
                 </Typography>
               </Grid>
               
               <Grid item xs={12}>
-                <Typography variant="body2" sx={{ color: '#666', fontWeight: '500', mb: 0.5 }}>
+                <Typography variant="body2" sx={{ color: colors.text.secondary, fontWeight: '500', mb: 0.5 }}>
                   Estado:
                 </Typography>
                 <Chip 
@@ -1458,20 +1531,27 @@ a actos de soborno y corrupción en operaciones comerciales.`,
             </Typography>
           </Alert>
         </DialogContent>
-        <DialogActions sx={{ px: 3, py: 2, borderTop: '1px solid #e0e0e0' }}>
+        <DialogActions sx={{ px: 3, py: 2, borderTop: `1px solid ${colors.primary.main}20` }}>
           <Button 
             onClick={handleCerrarValidacionDialog}
             variant="outlined"
-            sx={{ textTransform: 'none' }}
+            sx={{ 
+              textTransform: 'none',
+              color: colors.primary.main,
+              borderColor: colors.primary.main
+            }}
           >
             Cancelar
           </Button>
           <Button 
             onClick={handleConfirmarValidacion}
             variant="contained"
-            color="primary"
             startIcon={<SendIcon />}
-            sx={{ textTransform: 'none' }}
+            sx={{ 
+              textTransform: 'none',
+              bgcolor: colors.primary.main,
+              '&:hover': { bgcolor: colors.primary.dark }
+            }}
           >
             Confirmar Envío
           </Button>
