@@ -63,6 +63,22 @@ import { useNavigate } from 'react-router-dom';
 import { format, parseISO, isAfter, addMonths } from 'date-fns';
 import { es } from 'date-fns/locale';
 
+// Colores institucionales
+const institutionalColors = {
+  primary: '#133B6B',      // Azul oscuro principal
+  secondary: '#1a4c7a',    // Azul medio
+  accent: '#e9e9e9',       // Color para acentos (gris claro)
+  background: '#f4f6f8',   // Fondo claro
+  lightBlue: 'rgba(19, 59, 107, 0.08)',  // Azul transparente para hover
+  darkBlue: '#0D2A4D',     // Azul más oscuro
+  textPrimary: '#111827',  // Texto principal
+  textSecondary: '#6b7280', // Texto secundario
+  success: '#059669',      // Verde para éxito
+  warning: '#d97706',      // Naranja para advertencias
+  error: '#dc2626',        // Rojo para errores
+  info: '#1976d2',         // Azul para información
+};
+
 // Datos iniciales actualizados sin el campo isActive
 const initialUsers = [
   { 
@@ -199,11 +215,11 @@ const UserManagement = () => {
 
   // Tipos de certificaciones
   const certificationTypes = [
-    { value: 'operativa', label: 'Operativa', color: '#2196f3' },
-    { value: 'fiscal', label: 'Fiscal', color: '#4caf50' },
+    { value: 'operativa', label: 'Operativa', color: institutionalColors.primary },
+    { value: 'fiscal', label: 'Fiscal', color: institutionalColors.success },
     { value: 'legal', label: 'Legal', color: '#9c27b0' },
-    { value: 'administrativa', label: 'Administrativa', color: '#ff9800' },
-    { value: 'seguridad', label: 'Seguridad', color: '#f44336' },
+    { value: 'administrativa', label: 'Administrativa', color: institutionalColors.warning },
+    { value: 'seguridad', label: 'Seguridad', color: institutionalColors.error },
   ];
 
   // Regiones disponibles
@@ -472,18 +488,18 @@ const UserManagement = () => {
 
   const getRoleColor = (role) => {
     const colors = {
-      admin: '#1b5e20',
-      comite: '#1a237e',
+      admin: institutionalColors.success,
+      comite: institutionalColors.primary,
       agente: '#526F78',
       profesionista: '#2e7d32',
       empresario: '#ed6c02'
     };
-    return colors[role] || '#7f8c8d';
+    return colors[role] || institutionalColors.textSecondary;
   };
 
   const getCertificationColor = (type) => {
     const certType = certificationTypes.find(t => t.value === type);
-    return certType ? certType.color : '#7f8c8d';
+    return certType ? certType.color : institutionalColors.textSecondary;
   };
 
   // Definir las tabs (sin la de desactivados)
@@ -494,7 +510,7 @@ const UserManagement = () => {
   ];
 
   return (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', gap: 2, bgcolor: institutionalColors.background, p: 2 }}>
       {/* Snackbar para notificaciones */}
       <Snackbar
         open={snackbar.open}
@@ -512,13 +528,13 @@ const UserManagement = () => {
       </Snackbar>
 
       {/* Header */}
-      <Paper elevation={0} sx={{ p: 3, bgcolor: 'background.paper' }}>
+      <Paper elevation={0} sx={{ p: 3, bgcolor: 'background.paper', border: `1px solid #e5e7eb` }}>
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} md={6}>
-            <Typography variant="h4" sx={{ color: 'primary.main', fontWeight: 'bold', mb: 0.5 }}>
+            <Typography variant="h4" sx={{ color: institutionalColors.primary, fontWeight: 'bold', mb: 0.5 }}>
               Control de Asociados
             </Typography>
-            <Typography variant="body1" color="text.secondary">
+            <Typography variant="body1" sx={{ color: institutionalColors.textSecondary }}>
               Gestión de permisos y certificaciones de usuarios asociados
             </Typography>
           </Grid>
@@ -558,6 +574,14 @@ const UserManagement = () => {
                   });
                 }}
                 disabled={loading}
+                sx={{
+                  borderColor: institutionalColors.primary,
+                  color: institutionalColors.primary,
+                  '&:hover': {
+                    borderColor: institutionalColors.secondary,
+                    bgcolor: institutionalColors.lightBlue,
+                  }
+                }}
               >
                 Exportar CSV
               </Button>
@@ -567,8 +591,8 @@ const UserManagement = () => {
                 onClick={handleAddExistingUser}
                 disabled={loading}
                 sx={{
-                  bgcolor: 'primary.main',
-                  '&:hover': { bgcolor: 'primary.dark' }
+                  bgcolor: institutionalColors.primary,
+                  '&:hover': { bgcolor: institutionalColors.secondary }
                 }}
               >
                 Agregar Asociado 
@@ -579,7 +603,7 @@ const UserManagement = () => {
       </Paper>
 
       {/* Filtro de búsqueda */}
-      <Paper elevation={1} sx={{ p: 2 }}>
+      <Paper elevation={1} sx={{ p: 2, border: `1px solid #e5e7eb` }}>
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12}>
             <TextField
@@ -594,13 +618,13 @@ const UserManagement = () => {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon />
+                    <SearchIcon sx={{ color: institutionalColors.textSecondary }} />
                   </InputAdornment>
                 ),
                 endAdornment: searchTerm && (
                   <InputAdornment position="end">
                     <IconButton size="small" onClick={() => setSearchTerm('')}>
-                      <CloseIcon />
+                      <CloseIcon sx={{ color: institutionalColors.textSecondary }} />
                     </IconButton>
                   </InputAdornment>
                 )
@@ -611,7 +635,7 @@ const UserManagement = () => {
       </Paper>
 
       {/* Tabs de navegación */}
-      <Paper elevation={1} sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <Paper elevation={1} sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', border: `1px solid #e5e7eb` }}>
         <Tabs
           value={selectedTab}
           onChange={(e, newValue) => {
@@ -620,7 +644,19 @@ const UserManagement = () => {
           }}
           variant="scrollable"
           scrollButtons="auto"
-          sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: 'background.paper' }}
+          sx={{ 
+            borderBottom: 1, 
+            borderColor: 'divider', 
+            bgcolor: 'background.paper',
+            '& .MuiTab-root.Mui-selected': {
+              color: selectedTab === 'con-permisos' ? institutionalColors.success : 
+                     selectedTab === 'sin-permisos' ? institutionalColors.error : institutionalColors.primary
+            },
+            '& .MuiTabs-indicator': {
+              backgroundColor: selectedTab === 'con-permisos' ? institutionalColors.success : 
+                             selectedTab === 'sin-permisos' ? institutionalColors.error : institutionalColors.primary
+            }
+          }}
         >
           {tabs.map((tab) => (
             <Tab
@@ -631,10 +667,6 @@ const UserManagement = () => {
               label={tab.label}
               sx={{ 
                 minHeight: 48,
-                '&.Mui-selected': {
-                  color: tab.value === 'con-permisos' ? 'success.main' : 
-                         tab.value === 'sin-permisos' ? 'error.main' : 'primary.main'
-                }
               }}
             />
           ))}
@@ -644,18 +676,18 @@ const UserManagement = () => {
         <TableContainer sx={{ flex: 1 }}>
           {loading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 200 }}>
-              <CircularProgress />
+              <CircularProgress sx={{ color: institutionalColors.primary }} />
             </Box>
           ) : (
             <Table stickyHeader size="medium">
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Usuario</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Rol / Departamento</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Región</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Certificaciones</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Permiso de Subida</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }} align="center">Acciones</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: institutionalColors.primary }}>Usuario</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: institutionalColors.primary }}>Rol / Departamento</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: institutionalColors.primary }}>Región</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: institutionalColors.primary }}>Certificaciones</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: institutionalColors.primary }}>Permiso de Subida</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: institutionalColors.primary }} align="center">Acciones</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -671,16 +703,17 @@ const UserManagement = () => {
                             width: 40,
                             height: 40,
                             bgcolor: getRoleColor(user.role),
-                            fontWeight: 'bold'
+                            fontWeight: 'bold',
+                            color: 'white'
                           }}
                         >
                           {user.avatar}
                         </Avatar>
                         <Box>
-                          <Typography variant="subtitle2" fontWeight="bold">
+                          <Typography variant="subtitle2" fontWeight="bold" sx={{ color: institutionalColors.textPrimary }}>
                             {user.name}
                           </Typography>
-                          <Typography variant="body2" color="text.secondary">
+                          <Typography variant="body2" sx={{ color: institutionalColors.textSecondary }}>
                             {user.email}
                           </Typography>
                         </Box>
@@ -699,7 +732,7 @@ const UserManagement = () => {
                             mb: 0.5
                           }}
                         />
-                        <Typography variant="caption" display="block" color="text.secondary">
+                        <Typography variant="caption" display="block" sx={{ color: institutionalColors.textSecondary }}>
                           {user.department}
                         </Typography>
                       </Box>
@@ -707,14 +740,14 @@ const UserManagement = () => {
 
                     <TableCell>
                       <Stack direction="row" spacing={1} alignItems="center">
-                        <LocationIcon fontSize="small" color="action" />
-                        <Typography variant="body2">{user.region}</Typography>
+                        <LocationIcon fontSize="small" sx={{ color: institutionalColors.textSecondary }} />
+                        <Typography variant="body2" sx={{ color: institutionalColors.textPrimary }}>{user.region}</Typography>
                       </Stack>
                     </TableCell>
 
                     <TableCell>
                       <Stack spacing={0.5}>
-                        <Typography variant="body1" fontWeight="bold">
+                        <Typography variant="body1" fontWeight="bold" sx={{ color: institutionalColors.textPrimary }}>
                           {user.associationCertifications?.length || 0}
                         </Typography>
                         {user.associationCertifications?.slice(0, 2).map((cert, index) => (
@@ -734,6 +767,10 @@ const UserManagement = () => {
                             label={`+${user.associationCertifications.length - 2} más`}
                             size="small"
                             variant="outlined"
+                            sx={{
+                              borderColor: institutionalColors.textSecondary,
+                              color: institutionalColors.textSecondary
+                            }}
                           />
                         )}
                       </Stack>
@@ -743,21 +780,21 @@ const UserManagement = () => {
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         {user.uploadPermission === 'permitido' ? (
                           <>
-                            <CheckCircleIcon color="success" fontSize="small" />
-                            <Typography variant="body2" color="success.main">
+                            <CheckCircleIcon sx={{ color: institutionalColors.success }} fontSize="small" />
+                            <Typography variant="body2" sx={{ color: institutionalColors.success }}>
                               Permitido
                             </Typography>
-                            <Typography variant="caption" color="text.secondary" display="block">
+                            <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }} display="block">
                               (Usuario dio permiso)
                             </Typography>
                           </>
                         ) : (
                           <>
-                            <CancelIcon color="error" fontSize="small" />
-                            <Typography variant="body2" color="error.main">
+                            <CancelIcon sx={{ color: institutionalColors.error }} fontSize="small" />
+                            <Typography variant="body2" sx={{ color: institutionalColors.error }}>
                               No Permitido
                             </Typography>
-                            <Typography variant="caption" color="text.secondary" display="block">
+                            <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }} display="block">
                               (Usuario debe dar permiso)
                             </Typography>
                           </>
@@ -774,7 +811,7 @@ const UserManagement = () => {
                               setSelectedUser(user);
                               setOpenDetailsDialog(true);
                             }}
-                            color="primary"
+                            sx={{ color: institutionalColors.primary }}
                           >
                             <VisibilityIcon />
                           </IconButton>
@@ -799,7 +836,9 @@ const UserManagement = () => {
                                   });
                                 }
                               }}
-                              color={user.uploadPermission === 'permitido' ? 'success' : 'default'}
+                              sx={{ 
+                                color: user.uploadPermission === 'permitido' ? institutionalColors.success : institutionalColors.textSecondary 
+                              }}
                             >
                               <VerifiedIcon />
                             </IconButton>
@@ -820,9 +859,9 @@ const UserManagement = () => {
             direction="row"
             justifyContent="space-between"
             alignItems="center"
-            sx={{ p: 2, borderTop: 1, borderColor: 'divider' }}
+            sx={{ p: 2, borderTop: 1, borderColor: 'divider', bgcolor: 'background.paper' }}
           >
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{ color: institutionalColors.textSecondary }}>
               Mostrando {((page - 1) * rowsPerPage) + 1} - {Math.min(page * rowsPerPage, filteredUsers.length)} de {filteredUsers.length} usuarios
             </Typography>
             <Pagination
@@ -831,24 +870,42 @@ const UserManagement = () => {
               onChange={(e, value) => setPage(value)}
               color="primary"
               size="small"
+              sx={{
+                '& .MuiPaginationItem-root.Mui-selected': {
+                  bgcolor: institutionalColors.primary,
+                  color: 'white',
+                  '&:hover': {
+                    bgcolor: institutionalColors.secondary,
+                  }
+                }
+              }}
             />
           </Stack>
         )}
 
         {filteredUsers.length === 0 && !loading && (
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', p: 8, flex: 1 }}>
-            <GroupIcon sx={{ fontSize: 64, color: 'grey.400', mb: 2 }} />
-            <Typography variant="h6" color="text.secondary" gutterBottom>
+            <GroupIcon sx={{ fontSize: 64, color: institutionalColors.textSecondary, mb: 2 }} />
+            <Typography variant="h6" sx={{ color: institutionalColors.textSecondary }} gutterBottom>
               No se encontraron usuarios en esta categoría
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            <Typography variant="body2" sx={{ color: institutionalColors.textSecondary, mb: 3 }}>
               {selectedTab === 'todos' 
                 ? 'No hay usuarios en la asociación' 
                 : selectedTab === 'con-permisos'
                   ? 'No hay usuarios con permisos de subida'
                   : 'Todos los usuarios tienen permisos de subida'}
             </Typography>
-            <Button variant="contained" onClick={handleAddExistingUser}>
+            <Button 
+              variant="contained" 
+              onClick={handleAddExistingUser}
+              sx={{
+                bgcolor: institutionalColors.primary,
+                '&:hover': {
+                  bgcolor: institutionalColors.secondary,
+                }
+              }}
+            >
               Agregar Usuarios
             </Button>
           </Box>
@@ -859,12 +916,12 @@ const UserManagement = () => {
       <Dialog open={openAddUserDialog} onClose={() => setOpenAddUserDialog(false)} maxWidth="md" fullWidth>
         <DialogTitle>
           <Stack direction="row" spacing={2} alignItems="center">
-            <PersonAddIcon color="primary" />
-            <Typography variant="h6">Agregar Usuario Existente a la Asociación</Typography>
+            <PersonAddIcon sx={{ color: institutionalColors.primary }} />
+            <Typography variant="h6" sx={{ color: institutionalColors.textPrimary }}>Agregar Usuario Existente a la Asociación</Typography>
           </Stack>
         </DialogTitle>
         <DialogContent>
-          <Typography variant="body2" color="text.secondary" paragraph>
+          <Typography variant="body2" sx={{ color: institutionalColors.textSecondary }} paragraph>
             Selecciona un usuario existente en el sistema para agregarlo a tu asociación. 
             <strong> IMPORTANTE:</strong> El permiso para subir documentos lo debe dar el usuario desde su dispositivo.
           </Typography>
@@ -873,10 +930,10 @@ const UserManagement = () => {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>Usuario</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell>Rol</TableCell>
-                  <TableCell align="right">Acción</TableCell>
+                  <TableCell sx={{ color: institutionalColors.primary }}>Usuario</TableCell>
+                  <TableCell sx={{ color: institutionalColors.primary }}>Email</TableCell>
+                  <TableCell sx={{ color: institutionalColors.primary }}>Rol</TableCell>
+                  <TableCell align="right" sx={{ color: institutionalColors.primary }}>Acción</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -889,16 +946,17 @@ const UserManagement = () => {
                             width: 32,
                             height: 32,
                             bgcolor: getRoleColor(user.role),
-                            fontWeight: 'bold'
+                            fontWeight: 'bold',
+                            color: 'white'
                           }}
                         >
                           {user.name.split(' ').map(n => n[0]).join('')}
                         </Avatar>
-                        <Typography variant="body2">{user.name}</Typography>
+                        <Typography variant="body2" sx={{ color: institutionalColors.textPrimary }}>{user.name}</Typography>
                       </Stack>
                     </TableCell>
                     <TableCell>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" sx={{ color: institutionalColors.textSecondary }}>
                         {user.email}
                       </Typography>
                     </TableCell>
@@ -918,6 +976,12 @@ const UserManagement = () => {
                         variant="contained"
                         onClick={() => handleAddUserToAssociation(user)}
                         disabled={loading}
+                        sx={{
+                          bgcolor: institutionalColors.primary,
+                          '&:hover': {
+                            bgcolor: institutionalColors.secondary,
+                          }
+                        }}
                       >
                         Agregar
                       </Button>
@@ -938,8 +1002,10 @@ const UserManagement = () => {
       {/* Diálogo para agregar/editar certificación */}
       <Dialog open={openCertificationDialog} onClose={() => setOpenCertificationDialog(false)} maxWidth="sm" fullWidth>
         <DialogTitle>
-          {selectedCertification ? 'Editar Certificación' : 'Nueva Certificación'}
-          <Typography variant="caption" display="block" color="text.secondary">
+          <Typography variant="h6" sx={{ color: institutionalColors.textPrimary }}>
+            {selectedCertification ? 'Editar Certificación' : 'Nueva Certificación'}
+          </Typography>
+          <Typography variant="caption" display="block" sx={{ color: institutionalColors.textSecondary }}>
             {selectedUser?.uploadPermission === 'permitido' 
               ? 'Permiso de subida concedido por el usuario'
               : 'No tienes permiso para subir documentos para este usuario'}
@@ -947,7 +1013,7 @@ const UserManagement = () => {
         </DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ mt: 1 }}>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{ color: institutionalColors.textSecondary }}>
               Usuario: <strong>{selectedUser?.name}</strong>
             </Typography>
             
@@ -977,12 +1043,17 @@ const UserManagement = () => {
                 />
                 
                 <FormControl fullWidth>
-                  <InputLabel>Tipo de certificación</InputLabel>
+                  <InputLabel sx={{ '&.Mui-focused': { color: institutionalColors.primary } }}>Tipo de certificación</InputLabel>
                   <Select
                     value={newCertification.type}
                     onChange={(e) => setNewCertification({ ...newCertification, type: e.target.value })}
                     label="Tipo de certificación"
                     disabled={!selectedUser || selectedUser.uploadPermission !== 'permitido'}
+                    sx={{
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: institutionalColors.primary,
+                      }
+                    }}
                   >
                     {certificationTypes.map((type) => (
                       <MenuItem key={type.value} value={type.value}>
@@ -1042,7 +1113,13 @@ const UserManagement = () => {
               onClick={handleSaveCertification}
               variant="contained"
               disabled={loading}
-              startIcon={loading ? <CircularProgress size={20} /> : <SaveIcon />}
+              startIcon={loading ? <CircularProgress size={20} sx={{ color: 'white' }} /> : <SaveIcon />}
+              sx={{
+                bgcolor: institutionalColors.primary,
+                '&:hover': {
+                  bgcolor: institutionalColors.secondary,
+                }
+              }}
             >
               {loading ? 'Guardando...' : selectedCertification ? 'Actualizar' : 'Agregar'}
             </Button>
@@ -1051,229 +1128,242 @@ const UserManagement = () => {
       </Dialog>
 
       {/* Diálogo de detalles del usuario */}
-<Dialog 
-  open={openDetailsDialog} 
-  onClose={() => setOpenDetailsDialog(false)} 
-  maxWidth="md"
-  fullWidth
->
-  {selectedUser && (
-    <>
-      <DialogTitle>
-        <Stack direction="row" spacing={2} alignItems="center">
-          <Avatar
-            sx={{
-              width: 48,
-              height: 48,
-              bgcolor: getRoleColor(selectedUser.role),
-              fontWeight: 'bold'
-            }}
-          >
-            {selectedUser.avatar}
-          </Avatar>
-          <Box>
-            <Typography variant="h6">{selectedUser.name}</Typography>
-            <Typography variant="body2" color="text.secondary">
-              {selectedUser.roleName} • {selectedUser.department}
-            </Typography>
-          </Box>
-        </Stack>
-      </DialogTitle>
+      <Dialog 
+        open={openDetailsDialog} 
+        onClose={() => setOpenDetailsDialog(false)} 
+        maxWidth="md"
+        fullWidth
+      >
+        {selectedUser && (
+          <>
+            <DialogTitle>
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Avatar
+                  sx={{
+                    width: 48,
+                    height: 48,
+                    bgcolor: getRoleColor(selectedUser.role),
+                    fontWeight: 'bold',
+                    color: 'white'
+                  }}
+                >
+                  {selectedUser.avatar}
+                </Avatar>
+                <Box>
+                  <Typography variant="h6" sx={{ color: institutionalColors.textPrimary }}>{selectedUser.name}</Typography>
+                  <Typography variant="body2" sx={{ color: institutionalColors.textSecondary }}>
+                    {selectedUser.roleName} • {selectedUser.department}
+                  </Typography>
+                </Box>
+              </Stack>
+            </DialogTitle>
 
-      <DialogContent dividers>
-        <Grid container spacing={3}>
-          {/* ================= INFO PERSONAL ================= */}
-          <Grid item xs={12} md={6}>
-            <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-              Información Personal
-            </Typography>
-            <List dense>
-              <ListItem>
-                <ListItemIcon>
-                  <MailIcon color="action" />
-                </ListItemIcon>
-                <ListItemText 
-                  primary="Email" 
-                  secondary={selectedUser.email}
-                />
-              </ListItem>
+            <DialogContent dividers>
+              <Grid container spacing={3}>
+                {/* ================= INFO PERSONAL ================= */}
+                <Grid item xs={12} md={6}>
+                  <Typography variant="subtitle2" sx={{ color: institutionalColors.textSecondary }} gutterBottom>
+                    Información Personal
+                  </Typography>
+                  <List dense>
+                    <ListItem>
+                      <ListItemIcon>
+                        <MailIcon sx={{ color: institutionalColors.textSecondary }} />
+                      </ListItemIcon>
+                      <ListItemText 
+                        primary="Email" 
+                        secondary={selectedUser.email}
+                        primaryTypographyProps={{ sx: { color: institutionalColors.textSecondary } }}
+                        secondaryTypographyProps={{ sx: { color: institutionalColors.textPrimary } }}
+                      />
+                    </ListItem>
 
-              <ListItem>
-                <ListItemIcon>
-                  <PhoneIcon color="action" />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Teléfono"
-                  secondary={selectedUser.phone}
-                />
-              </ListItem>
+                    <ListItem>
+                      <ListItemIcon>
+                        <PhoneIcon sx={{ color: institutionalColors.textSecondary }} />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary="Teléfono"
+                        secondary={selectedUser.phone}
+                        primaryTypographyProps={{ sx: { color: institutionalColors.textSecondary } }}
+                        secondaryTypographyProps={{ sx: { color: institutionalColors.textPrimary } }}
+                      />
+                    </ListItem>
 
-              <ListItem>
-                <ListItemIcon>
-                  <LocationIcon color="action" />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Región"
-                  secondary={selectedUser.region}
-                />
-              </ListItem>
-            </List>
-          </Grid>
+                    <ListItem>
+                      <ListItemIcon>
+                        <LocationIcon sx={{ color: institutionalColors.textSecondary }} />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary="Región"
+                        secondary={selectedUser.region}
+                        primaryTypographyProps={{ sx: { color: institutionalColors.textSecondary } }}
+                        secondaryTypographyProps={{ sx: { color: institutionalColors.textPrimary } }}
+                      />
+                    </ListItem>
+                  </List>
+                </Grid>
 
-          {/* ================= CERTIFICACIONES ================= */}
-          <Grid item xs={12}>
-            <Divider sx={{ my: 2 }} />
+                {/* ================= CERTIFICACIONES ================= */}
+                <Grid item xs={12}>
+                  <Divider sx={{ my: 2 }} />
 
-            {/* HEADER + PERMISO CHIQUITO */}
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                mb: 2
-              }}
-            >
-              <Typography variant="subtitle2" color="text.secondary">
-                Certificaciones de la Asociación
-              </Typography>
+                  {/* HEADER + PERMISO CHIQUITO */}
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      mb: 2
+                    }}
+                  >
+                    <Typography variant="subtitle2" sx={{ color: institutionalColors.textSecondary }}>
+                      Certificaciones de la Asociación
+                    </Typography>
 
-              <Chip
-                size="small"
-                icon={
-                  selectedUser.uploadPermission === 'concedido'
-                    ? <CheckCircleIcon />
-                    : <CancelIcon />
-                }
-                label={
-                  selectedUser.uploadPermission === 'concedido'
-                    ? 'Permiso de carga concedido'
-                    : 'Permiso de carga no concedido'
-                }
-                color={
-                  selectedUser.uploadPermission === 'concedido'
-                    ? 'success'
-                    : 'default'
-                }
-                variant="outlined"
-              />
-            </Box>
+                    <Chip
+                      size="small"
+                      icon={
+                        selectedUser.uploadPermission === 'permitido'
+                          ? <CheckCircleIcon />
+                          : <CancelIcon />
+                      }
+                      label={
+                        selectedUser.uploadPermission === 'permitido'
+                          ? 'Permiso de carga concedido'
+                          : 'Permiso de carga no concedido'
+                      }
+                      sx={{
+                        bgcolor: selectedUser.uploadPermission === 'permitido' 
+                          ? `${institutionalColors.success}15` 
+                          : `${institutionalColors.error}15`,
+                        color: selectedUser.uploadPermission === 'permitido' 
+                          ? institutionalColors.success 
+                          : institutionalColors.error,
+                        borderColor: selectedUser.uploadPermission === 'permitido' 
+                          ? institutionalColors.success 
+                          : institutionalColors.error
+                      }}
+                      variant="outlined"
+                    />
+                  </Box>
 
-            {selectedUser.associationCertifications?.length > 0 ? (
-              <TableContainer>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Certificación</TableCell>
-                      <TableCell>Tipo</TableCell>
-                      <TableCell>Emisión</TableCell>
-                      <TableCell>Vencimiento</TableCell>
-                      <TableCell align="right">Acciones</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {selectedUser.associationCertifications.map((cert) => (
-                      <TableRow key={cert.id} hover>
-                        <TableCell>
-                          <Box>
-                            <Typography variant="body2" fontWeight="bold">
-                              {cert.name}
-                            </Typography>
-                          </Box>
-                        </TableCell>
+                  {selectedUser.associationCertifications?.length > 0 ? (
+                    <TableContainer>
+                      <Table size="small">
+                        <TableHead>
+                          <TableRow>
+                            <TableCell sx={{ color: institutionalColors.primary }}>Certificación</TableCell>
+                            <TableCell sx={{ color: institutionalColors.primary }}>Tipo</TableCell>
+                            <TableCell sx={{ color: institutionalColors.primary }}>Emisión</TableCell>
+                            <TableCell sx={{ color: institutionalColors.primary }}>Vencimiento</TableCell>
+                            <TableCell align="right" sx={{ color: institutionalColors.primary }}>Acciones</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {selectedUser.associationCertifications.map((cert) => (
+                            <TableRow key={cert.id} hover>
+                              <TableCell>
+                                <Box>
+                                  <Typography variant="body2" fontWeight="bold" sx={{ color: institutionalColors.textPrimary }}>
+                                    {cert.name}
+                                  </Typography>
+                                </Box>
+                              </TableCell>
 
-                        <TableCell>
-                          <Chip
-                            label={
-                              certificationTypes.find(
-                                t => t.value === cert.type
-                              )?.label || cert.type
-                            }
-                            size="small"
-                            sx={{
-                              bgcolor: `${getCertificationColor(cert.type)}15`,
-                              color: getCertificationColor(cert.type)
-                            }}
-                          />
-                        </TableCell>
+                              <TableCell>
+                                <Chip
+                                  label={
+                                    certificationTypes.find(
+                                      t => t.value === cert.type
+                                    )?.label || cert.type
+                                  }
+                                  size="small"
+                                  sx={{
+                                    bgcolor: `${getCertificationColor(cert.type)}15`,
+                                    color: getCertificationColor(cert.type)
+                                  }}
+                                />
+                              </TableCell>
 
-                        <TableCell>
-                          <Typography variant="body2">
-                            {format(parseISO(cert.issueDate), 'dd/MM/yyyy', { locale: es })}
-                          </Typography>
-                        </TableCell>
+                              <TableCell>
+                                <Typography variant="body2" sx={{ color: institutionalColors.textPrimary }}>
+                                  {format(parseISO(cert.issueDate), 'dd/MM/yyyy', { locale: es })}
+                                </Typography>
+                              </TableCell>
 
-                        <TableCell>
-                          <Typography variant="body2">
-                            {format(parseISO(cert.expiryDate), 'dd/MM/yyyy', { locale: es })}
-                          </Typography>
-                          {isAfter(new Date(), parseISO(cert.expiryDate)) && (
-                            <Chip
-                              label="Vencida"
-                              size="small"
-                              color="error"
-                              sx={{ mt: 0.5 }}
-                            />
-                          )}
-                        </TableCell>
+                              <TableCell>
+                                <Typography variant="body2" sx={{ color: institutionalColors.textPrimary }}>
+                                  {format(parseISO(cert.expiryDate), 'dd/MM/yyyy', { locale: es })}
+                                </Typography>
+                                {isAfter(new Date(), parseISO(cert.expiryDate)) && (
+                                  <Chip
+                                    label="Vencida"
+                                    size="small"
+                                    sx={{ 
+                                      mt: 0.5,
+                                      bgcolor: `${institutionalColors.error}15`,
+                                      color: institutionalColors.error
+                                    }}
+                                  />
+                                )}
+                              </TableCell>
 
-                        <TableCell align="right">
-                          <Stack direction="row" spacing={0.5} justifyContent="flex-end">
-                            <IconButton
-                              size="small"
-                              onClick={() => handleEditCertification(selectedUser, cert)}
-                              disabled={selectedUser.uploadPermission !== 'concedido'}
-                            >
-                              <EditIcon fontSize="small" />
-                            </IconButton>
+                              <TableCell align="right">
+                                <Stack direction="row" spacing={0.5} justifyContent="flex-end">
+                                  <IconButton
+                                    size="small"
+                                    onClick={() => handleEditCertification(selectedUser, cert)}
+                                    disabled={selectedUser.uploadPermission !== 'permitido'}
+                                    sx={{ color: selectedUser.uploadPermission === 'permitido' ? institutionalColors.primary : institutionalColors.textSecondary }}
+                                  >
+                                    <EditIcon fontSize="small" />
+                                  </IconButton>
 
-                            <IconButton
-                              size="small"
-                              onClick={() =>
-                                handleDeleteCertification(selectedUser.id, cert.id)
-                              }
-                              color="error"
-                              disabled={selectedUser.uploadPermission !== 'concedido'}
-                            >
-                              <DeleteIcon fontSize="small" />
-                            </IconButton>
-                          </Stack>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            ) : (
-              <Box sx={{ textAlign: 'center', py: 4 }}>
-                <VerifiedIcon
-                  sx={{ fontSize: 48, color: 'grey.400', mb: 2 }}
-                />
-                <Typography variant="body1" color="text.secondary" gutterBottom>
-                  No hay certificaciones registradas
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {selectedUser.uploadPermission === 'concedido'
-                    ? 'Agrega certificaciones para este usuario'
-                    : 'Este usuario no tiene permiso para agregar certificaciones'}
-                </Typography>
-              </Box>
-            )}
-          </Grid>
-        </Grid>
-      </DialogContent>
+                                  <IconButton
+                                    size="small"
+                                    onClick={() =>
+                                      handleDeleteCertification(selectedUser.id, cert.id)
+                                    }
+                                    disabled={selectedUser.uploadPermission !== 'permitido'}
+                                    sx={{ color: institutionalColors.error }}
+                                  >
+                                    <DeleteIcon fontSize="small" />
+                                  </IconButton>
+                                </Stack>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  ) : (
+                    <Box sx={{ textAlign: 'center', py: 4 }}>
+                      <VerifiedIcon
+                        sx={{ fontSize: 48, color: institutionalColors.textSecondary, mb: 2 }}
+                      />
+                      <Typography variant="body1" sx={{ color: institutionalColors.textSecondary }} gutterBottom>
+                        No hay certificaciones registradas
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: institutionalColors.textSecondary }}>
+                        {selectedUser.uploadPermission === 'permitido'
+                          ? 'Agrega certificaciones para este usuario'
+                          : 'Este usuario no tiene permiso para agregar certificaciones'}
+                      </Typography>
+                    </Box>
+                  )}
+                </Grid>
+              </Grid>
+            </DialogContent>
 
-      <DialogActions>
-        <Button onClick={() => setOpenDetailsDialog(false)}>
-          Cerrar
-        </Button>
-      </DialogActions>
-    </>
-  )}
-</Dialog>
-
-
-
-      
+            <DialogActions>
+              <Button onClick={() => setOpenDetailsDialog(false)}>
+                Cerrar
+              </Button>
+            </DialogActions>
+          </>
+        )}
+      </Dialog>
     </Box>
   );
 };

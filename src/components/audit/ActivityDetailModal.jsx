@@ -28,20 +28,35 @@ import {
   Error as ErrorIcon,
 } from "@mui/icons-material";
 
-/* helpers */
+// Colores institucionales
+const institutionalColors = {
+  primary: '#133B6B',      // Azul oscuro principal
+  secondary: '#1a4c7a',    // Azul medio
+  accent: '#e9e9e9',       // Color para acentos (gris claro)
+  background: '#f8fafc',   // Fondo claro
+  lightBlue: 'rgba(19, 59, 107, 0.08)',  // Azul transparente para hover
+  darkBlue: '#0D2A4D',     // Azul más oscuro
+  textPrimary: '#2c3e50',  // Texto principal
+  textSecondary: '#7f8c8d', // Texto secundario
+  success: '#27ae60',      // Verde para éxito
+  warning: '#f39c12',      // Naranja para advertencias
+  error: '#e74c3c',        // Rojo para errores
+  info: '#3498db',         // Azul para información
+};
 
+/* helpers */
 const getSeverityColor = (severity) => {
   switch (severity) {
     case "success":
-      return "#27ae60";
+      return institutionalColors.success;
     case "info":
-      return "#3498db";
+      return institutionalColors.info;
     case "warning":
-      return "#f39c12";
+      return institutionalColors.warning;
     case "error":
-      return "#e74c3c";
+      return institutionalColors.error;
     default:
-      return "#7f8c8d";
+      return institutionalColors.textSecondary;
   }
 };
 
@@ -62,9 +77,9 @@ const getSeverityIcon = (severity) => {
 const getRoleColor = (role) => {
   switch (role) {
     case "admin":
-      return "#1b5e20";
+      return institutionalColors.success;
     case "comite":
-      return "#1a237e";
+      return institutionalColors.primary;
     case "agente":
       return "#526F78";
     case "profesionista":
@@ -72,7 +87,7 @@ const getRoleColor = (role) => {
     case "empresario":
       return "#ed6c02";
     default:
-      return "#7f8c8d";
+      return institutionalColors.textSecondary;
   }
 };
 
@@ -84,12 +99,14 @@ export default function ActivityDetailModal({ open, onClose, activity }) {
 
   const Item = ({ icon, label, value }) => (
     <Stack direction="row" spacing={1} alignItems="center">
-      {icon}
+      <Box sx={{ color: institutionalColors.primary, minWidth: 24 }}>
+        {icon}
+      </Box>
       <Box>
-        <Typography variant="caption" color="text.secondary">
+        <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
           {label}
         </Typography>
-        <Typography fontWeight={500}>{value}</Typography>
+        <Typography fontWeight={500} sx={{ color: institutionalColors.textPrimary }}>{value}</Typography>
       </Box>
     </Stack>
   );
@@ -100,10 +117,18 @@ export default function ActivityDetailModal({ open, onClose, activity }) {
       onClose={onClose}
       maxWidth="md"
       fullWidth
-      PaperProps={{ sx: { borderRadius: 3 } }}
+      PaperProps={{ 
+        sx: { 
+          borderRadius: 3,
+          border: `1px solid ${institutionalColors.lightBlue}`,
+        } 
+      }}
     >
       {/* HEADER */}
-      <DialogTitle sx={{ borderBottom: "1px solid #eee", bgcolor: "#fafafa" }}>
+      <DialogTitle sx={{ 
+        borderBottom: `1px solid ${institutionalColors.lightBlue}`, 
+        bgcolor: institutionalColors.background,
+      }}>
         <Stack
           direction="row"
           justifyContent="space-between"
@@ -113,9 +138,11 @@ export default function ActivityDetailModal({ open, onClose, activity }) {
             {getSeverityIcon(activity.severity)}
 
             <Box>
-              <Typography fontWeight={700}>Detalles de la Actividad</Typography>
+              <Typography fontWeight={700} sx={{ color: institutionalColors.primary }}>
+                Detalles de la Actividad
+              </Typography>
 
-              <Typography variant="caption" color="text.secondary">
+              <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                 Evento #{activity.id}
               </Typography>
             </Box>
@@ -128,6 +155,7 @@ export default function ActivityDetailModal({ open, onClose, activity }) {
               bgcolor: severityColor + "20",
               color: severityColor,
               fontWeight: 600,
+              border: `1px solid ${severityColor}`,
             }}
           />
         </Stack>
@@ -135,9 +163,13 @@ export default function ActivityDetailModal({ open, onClose, activity }) {
 
       {/* CONTENT */}
       <DialogContent sx={{ py: 3 }}>
-        <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
+        <Paper variant="outlined" sx={{ 
+          p: 3, 
+          borderRadius: 2,
+          borderColor: institutionalColors.lightBlue,
+        }}>
           {/* INFO ACCION */}
-          <Typography fontWeight={700} mb={2}>
+          <Typography fontWeight={700} mb={2} sx={{ color: institutionalColors.primary }}>
             Información de la Acción
           </Typography>
 
@@ -145,7 +177,7 @@ export default function ActivityDetailModal({ open, onClose, activity }) {
           <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
               <Item
-                icon={<HistoryIcon fontSize="small" color="action" />}
+                icon={<HistoryIcon fontSize="small" />}
                 label="Fecha y Hora"
                 value={activity.timestamp}
               />
@@ -153,7 +185,7 @@ export default function ActivityDetailModal({ open, onClose, activity }) {
 
             <Grid item xs={12} md={6}>
               <Item
-                icon={<InfoIcon fontSize="small" color="action" />}
+                icon={<InfoIcon fontSize="small" />}
                 label="Acción"
                 value={activity.actionName}
               />
@@ -161,7 +193,7 @@ export default function ActivityDetailModal({ open, onClose, activity }) {
 
             <Grid item xs={12} md={6}>
               <Item
-                icon={<BusinessIcon fontSize="small" color="action" />}
+                icon={<BusinessIcon fontSize="small" />}
                 label="Instancia"
                 value={activity.instanceName}
               />
@@ -169,7 +201,7 @@ export default function ActivityDetailModal({ open, onClose, activity }) {
 
             <Grid item xs={12} md={6}>
               <Item
-                icon={<DescriptionIcon fontSize="small" color="action" />}
+                icon={<DescriptionIcon fontSize="small" />}
                 label="Entidad"
                 value={activity.entity}
               />
@@ -177,7 +209,7 @@ export default function ActivityDetailModal({ open, onClose, activity }) {
 
             <Grid item xs={12} md={6}>
               <Item
-                icon={<FingerprintIcon fontSize="small" color="action" />}
+                icon={<FingerprintIcon fontSize="small" />}
                 label="ID Entidad"
                 value={activity.entityId}
               />
@@ -185,28 +217,38 @@ export default function ActivityDetailModal({ open, onClose, activity }) {
 
             <Grid item xs={12} md={6}>
               <Item
-                icon={<ComputerIcon fontSize="small" color="action" />}
+                icon={<ComputerIcon fontSize="small" />}
                 label="IP"
                 value={activity.ip}
               />
             </Grid>
-            <Typography fontWeight={700} mb={2}>
-              Usuario
-            </Typography>
+          </Grid>
+
+          <Divider sx={{ my: 3, borderColor: institutionalColors.lightBlue }} />
+
+          {/* Información del Usuario */}
+          <Typography fontWeight={700} mb={2} sx={{ color: institutionalColors.primary }}>
+            Usuario
+          </Typography>
+          
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Avatar
               sx={{
-                width: 32,
-                height: 32,
+                width: 48,
+                height: 48,
                 bgcolor: roleColor,
                 fontWeight: 700,
-                 fontSize: 14
+                fontSize: 16,
+                border: `2px solid ${institutionalColors.lightBlue}`,
               }}
             >
               {activity.user.avatar}
             </Avatar>
 
             <Box>
-              <Typography fontWeight={700}>{activity.user.name}</Typography>
+              <Typography fontWeight={700} sx={{ color: institutionalColors.textPrimary }}>
+                {activity.user.name}
+              </Typography>
 
               <Chip
                 label={activity.user.role}
@@ -215,27 +257,39 @@ export default function ActivityDetailModal({ open, onClose, activity }) {
                   bgcolor: roleColor + "20",
                   color: roleColor,
                   mt: 0.5,
+                  border: `1px solid ${roleColor}`,
                 }}
               />
 
-              <Typography variant="body2" color="text.secondary" mt={0.5}>
+              <Typography variant="body2" sx={{ color: institutionalColors.textSecondary, mt: 0.5 }}>
                 {activity.user.email}
               </Typography>
 
-              <Typography variant="caption" color="text.secondary">
+              <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                 ID: USR-{activity.id}
               </Typography>
             </Box>
-          </Grid>
- </Paper>
+          </Box>
+        </Paper>
       </DialogContent>
 
       {/* FOOTER */}
-      <DialogActions sx={{ p: 2 }}>
+      <DialogActions sx={{ 
+        p: 2, 
+        borderTop: `1px solid ${institutionalColors.lightBlue}`,
+        bgcolor: institutionalColors.background,
+      }}>
         <Button
           onClick={onClose}
           variant="contained"
-          sx={{ borderRadius: 2, px: 4 }}
+          sx={{ 
+            borderRadius: 2, 
+            px: 4,
+            bgcolor: institutionalColors.primary,
+            '&:hover': {
+              bgcolor: institutionalColors.secondary,
+            }
+          }}
         >
           Cerrar
         </Button>

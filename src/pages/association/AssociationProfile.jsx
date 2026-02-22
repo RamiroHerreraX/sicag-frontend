@@ -29,6 +29,22 @@ import {
   Person as PersonIcon,
 } from "@mui/icons-material";
 
+// Colores institucionales
+const institutionalColors = {
+  primary: '#133B6B',      // Azul oscuro principal
+  secondary: '#1a4c7a',    // Azul medio
+  accent: '#e9e9e9',       // Color para acentos (gris claro)
+  background: '#f4f6f8',   // Fondo claro
+  lightBlue: 'rgba(19, 59, 107, 0.08)',  // Azul transparente para hover
+  darkBlue: '#0D2A4D',     // Azul más oscuro
+  textPrimary: '#111827',  // Texto principal
+  textSecondary: '#6b7280', // Texto secundario
+  success: '#059669',      // Verde para éxito
+  warning: '#d97706',      // Naranja para advertencias
+  error: '#dc2626',        // Rojo para errores
+  info: '#1976d2',         // Azul para información
+};
+
 const AssociationProfile = () => {
   const [editMode, setEditMode] = useState(false);
   
@@ -65,7 +81,7 @@ const AssociationProfile = () => {
     height: "100%",
     borderRadius: 3,
     bgcolor: "#f9fafb",
-    border: "1px solid #e5e7eb",
+    border: `1px solid #e5e7eb`,
   };
 
   const renderTextField = (name, label, value, multiline = false, rows = 1) => (
@@ -83,18 +99,18 @@ const AssociationProfile = () => {
         sx={{ mt: 0.5 }}
       />
     ) : (
-      <Typography>{value || "No especificado"}</Typography>
+      <Typography sx={{ color: institutionalColors.textPrimary }}>{value || "No especificado"}</Typography>
     )
   );
 
   return (
-    <Box sx={{ minHeight: "100vh", bgcolor: "#f4f6f8" }}>
+    <Box sx={{ minHeight: "100vh", bgcolor: institutionalColors.background }}>
       {/* HEADER */}
       <Paper
         elevation={0}
         sx={{
           p: 2.5,
-          borderBottom: "1px solid #e5e7eb",
+          borderBottom: `1px solid #e5e7eb`,
           bgcolor: "#fff",
         }}
       >
@@ -108,14 +124,14 @@ const AssociationProfile = () => {
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <BusinessIcon sx={{ fontSize: 32, color: "#1976d2" }} />
+            <BusinessIcon sx={{ fontSize: 32, color: institutionalColors.primary }} />
 
             <Box>
-              <Typography variant="h6" fontWeight="bold">
+              <Typography variant="h6" fontWeight="bold" sx={{ color: institutionalColors.textPrimary }}>
                 Perfil de la Asociación
               </Typography>
 
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" sx={{ color: institutionalColors.textSecondary }}>
                 Datos fiscales y legales
               </Typography>
             </Box>
@@ -130,6 +146,10 @@ const AssociationProfile = () => {
               borderRadius: 2,
               textTransform: "none",
               px: 3,
+              bgcolor: editMode ? institutionalColors.success : institutionalColors.primary,
+              '&:hover': {
+                bgcolor: editMode ? institutionalColors.success : institutionalColors.secondary,
+              }
             }}
           >
             {editMode ? "Guardar Cambios" : "Editar Perfil"}
@@ -149,7 +169,7 @@ const AssociationProfile = () => {
                   sx={{
                     width: 90,
                     height: 90,
-                    bgcolor: "#1976d2",
+                    bgcolor: institutionalColors.primary,
                   }}
                 >
                   <BusinessIcon sx={{ fontSize: 50 }} />
@@ -169,7 +189,7 @@ const AssociationProfile = () => {
                     sx={{ mb: 2 }}
                   />
                 ) : (
-                  <Typography variant="h5" fontWeight="bold" gutterBottom>
+                  <Typography variant="h5" fontWeight="bold" sx={{ color: institutionalColors.textPrimary }} gutterBottom>
                     {formData.nombre}
                   </Typography>
                 )}
@@ -178,27 +198,33 @@ const AssociationProfile = () => {
                   <Chip
                     label={`RFC: ${formData.rfc}`}
                     variant="outlined"
-                    color="primary"
+                    sx={{ 
+                      borderColor: institutionalColors.primary,
+                      color: institutionalColors.primary,
+                    }}
                   />
 
                   <Chip
                     label="Certificada SAT"
-                    color="success"
+                    sx={{ 
+                      bgcolor: '#d1fae5',
+                      color: institutionalColors.success,
+                    }}
                     icon={<BadgeIcon />}
                   />
                 </Stack>
 
                 <Stack direction="row" spacing={3} flexWrap="wrap">
                   <Stack direction="row" spacing={1} alignItems="center">
-                    <PersonIcon fontSize="small" color="action" />
-                    <Typography variant="body2">
+                    <PersonIcon fontSize="small" sx={{ color: institutionalColors.textSecondary }} />
+                    <Typography variant="body2" sx={{ color: institutionalColors.textPrimary }}>
                       <b>Representante:</b> {formData.representanteLegal}
                     </Typography>
                   </Stack>
 
                   <Stack direction="row" spacing={1} alignItems="center">
-                    <CalendarIcon fontSize="small" color="action" />
-                    <Typography variant="body2">
+                    <CalendarIcon fontSize="small" sx={{ color: institutionalColors.textSecondary }} />
+                    <Typography variant="body2" sx={{ color: institutionalColors.textPrimary }}>
                       <b>Constitución:</b> {formData.fechaConstitucion}
                     </Typography>
                   </Stack>
@@ -206,38 +232,38 @@ const AssociationProfile = () => {
               </Grid>
             </Grid>
 
-            <Divider sx={{ my: 4 }} />
+            <Divider sx={{ my: 4, borderColor: '#e5e7eb' }} />
 
             {/* GRID PRINCIPAL */}
-<Grid container spacing={3} columns={12} wrap="nowrap">
+            <Grid container spacing={3} columns={12} wrap="nowrap">
               {/* Fiscal */}
-  <Grid item xs={3}>
+              <Grid item xs={3}>
                 <Card sx={cardStyle}>
                   <CardContent>
                     <Stack direction="row" spacing={1} mb={2}>
-                      <BalanceIcon color="primary" />
-                      <Typography fontWeight="bold">
+                      <BalanceIcon sx={{ color: institutionalColors.primary }} />
+                      <Typography fontWeight="bold" sx={{ color: institutionalColors.textPrimary }}>
                         Información Fiscal
                       </Typography>
                     </Stack>
 
                     <Stack spacing={2}>
                       <Box>
-                        <Typography variant="caption" color="text.secondary">
+                        <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                           RFC
                         </Typography>
                         {renderTextField("rfc", "RFC", formData.rfc)}
                       </Box>
 
                       <Box>
-                        <Typography variant="caption" color="text.secondary">
+                        <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                           Régimen
                         </Typography>
                         {renderTextField("regimenFiscal", "Régimen Fiscal", formData.regimenFiscal)}
                       </Box>
 
                       <Box>
-                        <Typography variant="caption" color="text.secondary">
+                        <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                           Certificación SAT
                         </Typography>
                         {renderTextField("numeroCertificacionSAT", "Número de Certificación", formData.numeroCertificacionSAT)}
@@ -252,31 +278,31 @@ const AssociationProfile = () => {
               </Grid>
 
               {/* Representante */}
-  <Grid item xs={3}>
+              <Grid item xs={3}>
                 <Card sx={cardStyle}>
                   <CardContent>
                     <Stack direction="row" spacing={1} mb={2}>
-                      <PersonIcon color="primary" />
-                      <Typography fontWeight="bold">
+                      <PersonIcon sx={{ color: institutionalColors.primary }} />
+                      <Typography fontWeight="bold" sx={{ color: institutionalColors.textPrimary }}>
                         Representante Legal
                       </Typography>
                     </Stack>
 
                     <Stack spacing={2}>
                       <Box>
-                        <Typography variant="caption">Nombre</Typography>
+                        <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>Nombre</Typography>
                         {renderTextField("representanteLegal", "Representante Legal", formData.representanteLegal)}
                       </Box>
 
                       <Box>
-                        <Typography variant="caption">
+                        <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                           Fecha designación
                         </Typography>
                         {renderTextField("fechaConstitucion", "Fecha de Constitución", formData.fechaConstitucion)}
                       </Box>
 
                       <Box>
-                        <Typography variant="caption">Vigencia</Typography>
+                        <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>Vigencia</Typography>
                         {renderTextField("vigenciaCertificacionSAT", "Vigencia", formData.vigenciaCertificacionSAT)}
                       </Box>
                     </Stack>
@@ -285,12 +311,12 @@ const AssociationProfile = () => {
               </Grid>
               
               {/* Domicilio */}
-  <Grid item xs={3}>
+              <Grid item xs={3}>
                 <Card sx={cardStyle}>
                   <CardContent>
                     <Stack direction="row" spacing={1} mb={2}>
-                      <LocationIcon color="primary" />
-                      <Typography fontWeight="bold">
+                      <LocationIcon sx={{ color: institutionalColors.primary }} />
+                      <Typography fontWeight="bold" sx={{ color: institutionalColors.textPrimary }}>
                         Domicilio Fiscal
                       </Typography>
                     </Stack>
@@ -307,17 +333,17 @@ const AssociationProfile = () => {
               </Grid>
 
               {/* Contacto */}
-  <Grid item xs={3}>
+              <Grid item xs={3}>
                 <Card sx={cardStyle}>
                   <CardContent>
                     <Stack direction="row" spacing={1} mb={2}>
-                      <PhoneIcon color="primary" />
-                      <Typography fontWeight="bold">Contacto</Typography>
+                      <PhoneIcon sx={{ color: institutionalColors.primary }} />
+                      <Typography fontWeight="bold" sx={{ color: institutionalColors.textPrimary }}>Contacto</Typography>
                     </Stack>
 
                     <Stack spacing={2}>
                       <Stack direction="row" spacing={1} alignItems="center">
-                        <PhoneIcon fontSize="small" />
+                        <PhoneIcon fontSize="small" sx={{ color: institutionalColors.textSecondary }} />
                         {editMode ? (
                           <TextField
                             fullWidth
@@ -327,12 +353,12 @@ const AssociationProfile = () => {
                             onChange={handleChange}
                           />
                         ) : (
-                          <Typography>{formData.telefono}</Typography>
+                          <Typography sx={{ color: institutionalColors.textPrimary }}>{formData.telefono}</Typography>
                         )}
                       </Stack>
 
                       <Stack direction="row" spacing={1} alignItems="center">
-                        <EmailIcon fontSize="small" />
+                        <EmailIcon fontSize="small" sx={{ color: institutionalColors.textSecondary }} />
                         {editMode ? (
                           <TextField
                             fullWidth
@@ -342,12 +368,12 @@ const AssociationProfile = () => {
                             onChange={handleChange}
                           />
                         ) : (
-                          <Typography>{formData.email}</Typography>
+                          <Typography sx={{ color: institutionalColors.textPrimary }}>{formData.email}</Typography>
                         )}
                       </Stack>
 
                       <Stack direction="row" spacing={1} alignItems="center">
-                        <LanguageIcon fontSize="small" />
+                        <LanguageIcon fontSize="small" sx={{ color: institutionalColors.textSecondary }} />
                         {editMode ? (
                           <TextField
                             fullWidth
@@ -357,7 +383,7 @@ const AssociationProfile = () => {
                             onChange={handleChange}
                           />
                         ) : (
-                          <Typography>{formData.paginaWeb}</Typography>
+                          <Typography sx={{ color: institutionalColors.textPrimary }}>{formData.paginaWeb}</Typography>
                         )}
                       </Stack>
                     </Stack>
@@ -371,7 +397,7 @@ const AssociationProfile = () => {
               sx={{
                 mt: 3,
                 borderRadius: 3,
-                bgcolor: "#eef6ff",
+                bgcolor: institutionalColors.lightBlue,
               }}
             >
               <CardContent
@@ -382,14 +408,17 @@ const AssociationProfile = () => {
                 }}
               >
                 <Box>
-                  <Typography variant="caption">Certificación SAT</Typography>
-                  <Typography fontWeight="bold">
+                  <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>Certificación SAT</Typography>
+                  <Typography fontWeight="bold" sx={{ color: institutionalColors.primary }}>
                     {formData.numeroCertificacionSAT}
                   </Typography>
                 </Box>
 
                 <Chip
-                  color="success"
+                  sx={{ 
+                    bgcolor: '#d1fae5',
+                    color: institutionalColors.success,
+                  }}
                   label={`Vigente hasta ${formData.vigenciaCertificacionSAT}`}
                 />
               </CardContent>

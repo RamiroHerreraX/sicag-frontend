@@ -48,6 +48,22 @@ import {
   Place as PlaceIcon
 } from '@mui/icons-material';
 
+// Colores institucionales
+const institutionalColors = {
+  primary: '#133B6B',      // Azul oscuro principal
+  secondary: '#1a4c7a',    // Azul medio
+  accent: '#e9e9e9',       // Color para acentos (gris claro)
+  background: '#f8fafc',   // Fondo claro
+  lightBlue: 'rgba(19, 59, 107, 0.08)',  // Azul transparente para hover
+  darkBlue: '#0D2A4D',     // Azul más oscuro
+  textPrimary: '#2c3e50',  // Texto principal
+  textSecondary: '#7f8c8d', // Texto secundario
+  success: '#27ae60',      // Verde para éxito
+  warning: '#f39c12',      // Naranja para advertencias
+  error: '#e74c3c',        // Rojo para errores
+  info: '#3498db',         // Azul para información
+};
+
 const CommitteeAlerts = () => {
   const [tabValue, setTabValue] = useState(0);
   const [filterType, setFilterType] = useState('all');
@@ -220,11 +236,11 @@ const CommitteeAlerts = () => {
 
   const getAlertColor = (type) => {
     switch(type) {
-      case 'warning': return '#f39c12';
-      case 'error': return '#e74c3c';
-      case 'info': return '#3498db';
-      case 'success': return '#27ae60';
-      default: return '#7f8c8d';
+      case 'warning': return institutionalColors.warning;
+      case 'error': return institutionalColors.error;
+      case 'info': return institutionalColors.info;
+      case 'success': return institutionalColors.success;
+      default: return institutionalColors.textSecondary;
     }
   };
 
@@ -280,24 +296,25 @@ const CommitteeAlerts = () => {
       overflow: 'hidden',
       display: 'flex',
       flexDirection: 'column',
-      p: 2
+      p: 2,
+      bgcolor: institutionalColors.background
     }}>
       {/* Header Compacto */}
       <Box sx={{ mb: 3 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
           <Box>
-            <Typography variant="h5" sx={{ color: '#2c3e50', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
-              <NotificationsIcon sx={{ color: '#1a237e' }} />
+            <Typography variant="h5" sx={{ color: institutionalColors.primary, fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
+              <NotificationsIcon sx={{ color: institutionalColors.primary }} />
               Centro de Alertas
             </Typography>
-            <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+            <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
               Monitoreo y gestión de notificaciones del sistema
             </Typography>
           </Box>
         </Box>
 
         {/* Filtros Rápidos en Línea */}
-        <Paper elevation={0} sx={{ p: 2, mb: 2, bgcolor: '#f8f9fa' }}>
+        <Paper elevation={0} sx={{ p: 2, mb: 2, bgcolor: 'white', border: `1px solid ${institutionalColors.lightBlue}` }}>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} md={4}>
               <TextField
@@ -309,13 +326,13 @@ const CommitteeAlerts = () => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon fontSize="small" />
+                      <SearchIcon fontSize="small" sx={{ color: institutionalColors.textSecondary }} />
                     </InputAdornment>
                   ),
                   endAdornment: searchTerm && (
                     <InputAdornment position="end">
                       <IconButton size="small" onClick={() => setSearchTerm('')}>
-                        <RefreshIcon fontSize="small" />
+                        <RefreshIcon fontSize="small" sx={{ color: institutionalColors.textSecondary }} />
                       </IconButton>
                     </InputAdornment>
                   )
@@ -331,6 +348,14 @@ const CommitteeAlerts = () => {
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
                 label="Tipo"
+                sx={{
+                  '& .MuiInputLabel-root.Mui-focused': {
+                    color: institutionalColors.primary
+                  },
+                  '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: institutionalColors.primary
+                  }
+                }}
               >
                 <MenuItem value="all">Todos</MenuItem>
                 <MenuItem value="warning">Advertencias</MenuItem>
@@ -348,6 +373,14 @@ const CommitteeAlerts = () => {
                 value={filterPriority}
                 onChange={(e) => setFilterPriority(e.target.value)}
                 label="Prioridad"
+                sx={{
+                  '& .MuiInputLabel-root.Mui-focused': {
+                    color: institutionalColors.primary
+                  },
+                  '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: institutionalColors.primary
+                  }
+                }}
               >
                 <MenuItem value="all">Todas</MenuItem>
                 <MenuItem value="alta">Alta</MenuItem>
@@ -364,6 +397,14 @@ const CommitteeAlerts = () => {
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
                 label="Estado"
+                sx={{
+                  '& .MuiInputLabel-root.Mui-focused': {
+                    color: institutionalColors.primary
+                  },
+                  '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: institutionalColors.primary
+                  }
+                }}
               >
                 <MenuItem value="all">Todos</MenuItem>
                 <MenuItem value="unread">No leídas</MenuItem>
@@ -384,6 +425,14 @@ const CommitteeAlerts = () => {
                   setSearchTerm('');
                   setTabValue(0);
                 }}
+                sx={{
+                  borderColor: institutionalColors.primary,
+                  color: institutionalColors.primary,
+                  '&:hover': {
+                    borderColor: institutionalColors.secondary,
+                    bgcolor: institutionalColors.lightBlue
+                  }
+                }}
               >
                 Limpiar
               </Button>
@@ -395,13 +444,22 @@ const CommitteeAlerts = () => {
       {/* Contenido Principal */}
       <Box sx={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
         {/* Tabs Compactas */}
-        <Paper elevation={1} sx={{ mb: 2 }}>
+        <Paper elevation={1} sx={{ mb: 2, border: `1px solid ${institutionalColors.lightBlue}` }}>
           <Tabs 
             value={tabValue} 
             onChange={handleTabChange}
             variant="scrollable"
             scrollButtons="auto"
-            sx={{ minHeight: 48 }}
+            sx={{ 
+              minHeight: 48,
+              '& .MuiTab-root.Mui-selected': {
+                color: institutionalColors.primary,
+                fontWeight: 'bold'
+              },
+              '& .MuiTabs-indicator': {
+                backgroundColor: institutionalColors.primary
+              }
+            }}
           >
             {tabs.map((tab) => (
               <Tab 
@@ -425,32 +483,39 @@ const CommitteeAlerts = () => {
         </Paper>
 
         {/* Lista de Alertas - Scroll Interno */}
-        <Paper elevation={1} sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <Paper elevation={1} sx={{ 
+          flex: 1, 
+          display: 'flex', 
+          flexDirection: 'column', 
+          overflow: 'hidden',
+          border: `1px solid ${institutionalColors.lightBlue}`
+        }}>
           <Box sx={{ 
             p: 2, 
-            borderBottom: '1px solid #e0e0e0',
+            borderBottom: `1px solid ${institutionalColors.lightBlue}`,
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'center'
+            alignItems: 'center',
+            bgcolor: 'white'
           }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: institutionalColors.textPrimary }}>
               {filteredAlerts.length} alertas encontradas
             </Typography>
             <Stack direction="row" spacing={1}>
               <Tooltip title="Marcar todas como leídas">
-                <IconButton size="small">
+                <IconButton size="small" sx={{ color: institutionalColors.primary }}>
                   <MarkReadIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
               <Tooltip title="Configurar vista">
-                <IconButton size="small">
+                <IconButton size="small" sx={{ color: institutionalColors.primary }}>
                   <SortIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
             </Stack>
           </Box>
 
-          <Box sx={{ flex: 1, overflowY: 'auto', p: 1 }}>
+          <Box sx={{ flex: 1, overflowY: 'auto', p: 1, bgcolor: '#f8fafc' }}>
             {filteredAlerts.map((alert) => (
               <Card 
                 key={alert.id}
@@ -458,9 +523,9 @@ const CommitteeAlerts = () => {
                 sx={{
                   mb: 1,
                   borderLeft: `4px solid ${getAlertColor(alert.type)}`,
-                  bgcolor: alert.read ? 'transparent' : '#f8f9fa',
+                  bgcolor: alert.read ? 'white' : institutionalColors.lightBlue,
                   cursor: 'pointer',
-                  '&:hover': { bgcolor: '#f0f0f0' },
+                  '&:hover': { bgcolor: '#e8f0fe' },
                   transition: 'all 0.2s'
                 }}
                 onClick={() => handleAlertClick(alert.id)}
@@ -473,7 +538,7 @@ const CommitteeAlerts = () => {
                           <Box sx={{ color: getAlertColor(alert.type) }}>
                             {getAlertIcon(alert.type)}
                           </Box>
-                          <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                          <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: institutionalColors.textPrimary }}>
                             {alert.title}
                           </Typography>
                           {alert.priority === 'alta' && !alert.read && (
@@ -493,12 +558,13 @@ const CommitteeAlerts = () => {
                               <IconButton 
                                 size="small"
                                 onClick={(e) => handleMarkAsRead(alert.id, e)}
+                                sx={{ color: institutionalColors.primary }}
                               >
                                 <MarkReadIcon fontSize="small" />
                               </IconButton>
                             </Tooltip>
                           )}
-                          <IconButton size="small">
+                          <IconButton size="small" sx={{ color: institutionalColors.textSecondary }}>
                             <MoreVertIcon fontSize="small" />
                           </IconButton>
                         </Stack>
@@ -506,7 +572,7 @@ const CommitteeAlerts = () => {
                     </Grid>
 
                     <Grid item xs={12}>
-                      <Typography variant="body2" sx={{ color: '#5a6c7d', mb: 1.5 }}>
+                      <Typography variant="body2" sx={{ color: institutionalColors.textSecondary, mb: 1.5 }}>
                         {alert.message}
                       </Typography>
                     </Grid>
@@ -517,10 +583,16 @@ const CommitteeAlerts = () => {
                         <Stack direction="row" spacing={2} alignItems="center">
                           {alert.user && (
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                              <Avatar sx={{ width: 24, height: 24, fontSize: '0.75rem' }}>
+                              <Avatar sx={{ 
+                                width: 24, 
+                                height: 24, 
+                                fontSize: '0.75rem',
+                                bgcolor: institutionalColors.primary,
+                                color: 'white'
+                              }}>
                                 {alert.user.avatar}
                               </Avatar>
-                              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                              <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                                 {alert.user.name}
                               </Typography>
                             </Box>
@@ -531,20 +603,24 @@ const CommitteeAlerts = () => {
                               label={alert.certificationNumber}
                               size="small"
                               variant="outlined"
-                              sx={{ height: 20 }}
+                              sx={{ 
+                                height: 20,
+                                borderColor: institutionalColors.primary,
+                                color: institutionalColors.primary
+                              }}
                             />
                           )}
                           
                           {alert.region && (
-                            <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                              <PlaceIcon sx={{ fontSize: '0.8rem', verticalAlign: 'middle', mr: 0.5 }} />
+                            <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
+                              <PlaceIcon sx={{ fontSize: '0.8rem', verticalAlign: 'middle', mr: 0.5, color: institutionalColors.primary }} />
                               {alert.region}
                             </Typography>
                           )}
                         </Stack>
                         
-                        <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                          <EventIcon sx={{ fontSize: '0.8rem', verticalAlign: 'middle', mr: 0.5 }} />
+                        <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
+                          <EventIcon sx={{ fontSize: '0.8rem', verticalAlign: 'middle', mr: 0.5, color: institutionalColors.primary }} />
                           {alert.time}
                         </Typography>
                       </Box>
@@ -552,9 +628,9 @@ const CommitteeAlerts = () => {
 
                     {/* Panel Expandible */}
                     {expandedAlert === alert.id && (
-                      <Grid item xs={12} sx={{ mt: 2, pt: 2, borderTop: '1px dashed #e0e0e0' }}>
+                      <Grid item xs={12} sx={{ mt: 2, pt: 2, borderTop: `1px dashed ${institutionalColors.lightBlue}` }}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <Typography variant="caption" sx={{ fontWeight: 'bold', color: '#7f8c8d' }}>
+                          <Typography variant="caption" sx={{ fontWeight: 'bold', color: institutionalColors.textSecondary }}>
                             ACCIONES DISPONIBLES:
                           </Typography>
                           <Stack direction="row" spacing={1}>
@@ -564,7 +640,12 @@ const CommitteeAlerts = () => {
                                 variant="contained"
                                 startIcon={<OpenInNewIcon />}
                                 onClick={(e) => handleQuickAction(alert, 'review', e)}
-                                sx={{ bgcolor: '#1a237e' }}
+                                sx={{ 
+                                  bgcolor: institutionalColors.primary,
+                                  '&:hover': {
+                                    bgcolor: institutionalColors.secondary
+                                  }
+                                }}
                               >
                                 Revisar
                               </Button>
@@ -574,6 +655,14 @@ const CommitteeAlerts = () => {
                                 size="small"
                                 variant="outlined"
                                 onClick={(e) => handleQuickAction(alert, 'extend', e)}
+                                sx={{
+                                  borderColor: institutionalColors.primary,
+                                  color: institutionalColors.primary,
+                                  '&:hover': {
+                                    borderColor: institutionalColors.secondary,
+                                    bgcolor: institutionalColors.lightBlue
+                                  }
+                                }}
                               >
                                 Extender
                               </Button>
@@ -583,6 +672,14 @@ const CommitteeAlerts = () => {
                                 size="small"
                                 variant="outlined"
                                 onClick={(e) => handleQuickAction(alert, 'contact', e)}
+                                sx={{
+                                  borderColor: institutionalColors.primary,
+                                  color: institutionalColors.primary,
+                                  '&:hover': {
+                                    borderColor: institutionalColors.secondary,
+                                    bgcolor: institutionalColors.lightBlue
+                                  }
+                                }}
                               >
                                 Contactar
                               </Button>
@@ -598,11 +695,11 @@ const CommitteeAlerts = () => {
 
             {filteredAlerts.length === 0 && (
               <Box sx={{ p: 8, textAlign: 'center' }}>
-                <CircleNotificationsIcon sx={{ fontSize: 60, color: '#bdc3c7', mb: 2 }} />
-                <Typography variant="h6" sx={{ color: '#7f8c8d', mb: 1 }}>
+                <CircleNotificationsIcon sx={{ fontSize: 60, color: institutionalColors.textSecondary, mb: 2 }} />
+                <Typography variant="h6" sx={{ color: institutionalColors.textSecondary, mb: 1 }}>
                   No hay alertas que coincidan
                 </Typography>
-                <Typography variant="body2" sx={{ color: '#95a5a6' }}>
+                <Typography variant="body2" sx={{ color: institutionalColors.textSecondary }}>
                   Intenta ajustar los filtros de búsqueda
                 </Typography>
               </Box>
@@ -610,8 +707,6 @@ const CommitteeAlerts = () => {
           </Box>
         </Paper>
       </Box>
-
-
     </Box>
   );
 };

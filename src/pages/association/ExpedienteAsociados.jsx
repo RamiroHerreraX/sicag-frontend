@@ -53,6 +53,22 @@ import {
   AccountBalance as AccountBalanceIcon
 } from '@mui/icons-material';
 
+// Colores institucionales
+const institutionalColors = {
+  primary: '#133B6B',      // Azul oscuro principal
+  secondary: '#1a4c7a',    // Azul medio
+  accent: '#e9e9e9',       // Color para acentos (gris claro)
+  background: '#f4f6f8',   // Fondo claro
+  lightBlue: 'rgba(19, 59, 107, 0.08)',  // Azul transparente para hover
+  darkBlue: '#0D2A4D',     // Azul más oscuro
+  textPrimary: '#2c3e50',  // Texto principal
+  textSecondary: '#7f8c8d', // Texto secundario
+  success: '#1a4c7a',      // Verde para éxito
+  warning: '#1a4c7a',      // Naranja para advertencias
+  error: '#1a4c7a',        // Rojo para errores
+  info: '#1a4c7a',         // Azul para información
+};
+
 // ============================================
 // DATOS SIMULADOS DE BASE DE DATOS
 // ============================================
@@ -87,16 +103,16 @@ const iconosApartados = {
   'certificacion': VerifiedIcon
 };
 
-// Colores para diferentes tipos de apartados
+// Colores para diferentes tipos de apartados - ACTUALIZADOS CON AZULES INSTITUCIONALES
 const coloresApartados = {
-  'documento_simple': '#1976d2',
-  'documento_con_campos': '#9c27b0',
-  'registro_tabla': '#2e7d32',
-  'sistema_complejo': '#d32f2f',
-  'antisoborno': '#ed6c02',
-  'presidente': '#7b1fa2',
-  'reuniones': '#0288d1',
-  'certificacion': '#388e3c'
+  'documento_simple': institutionalColors.primary,
+  'documento_con_campos': '#1a4c7a',
+  'registro_tabla': institutionalColors.success,
+  'sistema_complejo': institutionalColors.error,
+  'antisoborno': institutionalColors.warning,
+  'presidente': '#1a4c7a',
+  'reuniones': institutionalColors.info,
+  'certificacion': institutionalColors.success
 };
 
 // ============================================
@@ -497,12 +513,17 @@ const Expediente = () => {
       case tiposCampos.seleccion:
         return (
           <FormControl fullWidth sx={{ mb: 2 }}>
-            <InputLabel shrink>{campo.label}</InputLabel>
+            <InputLabel shrink sx={{ '&.Mui-focused': { color: institutionalColors.primary } }}>{campo.label}</InputLabel>
             <Select
               value={campo.valor || ''}
               onChange={(e) => handleCampoChange(apartadoId, campo.id, e.target.value)}
               label={campo.label}
               required={campo.requerido}
+              sx={{
+                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor: institutionalColors.primary,
+                }
+              }}
             >
               {campo.opciones?.map((opcion, index) => (
                 <MenuItem key={index} value={opcion.valor}>
@@ -536,7 +557,7 @@ const Expediente = () => {
   const renderApartado = (apartado) => {
     const estadoValidacion = obtenerEstadoValidacion(apartado.id);
     const Icono = iconosApartados[apartado.tipo] || DescriptionIcon;
-    const color = coloresApartados[apartado.tipo] || '#1976d2';
+    const color = coloresApartados[apartado.tipo] || institutionalColors.primary;
     const tieneDocumento = !!apartado.documento;
     
     return (
@@ -547,7 +568,7 @@ const Expediente = () => {
         sx={{ 
           mb: 3,
           border: '2px solid',
-          borderColor: tieneDocumento ? color : '#ff9800',
+          borderColor: tieneDocumento ? color : institutionalColors.warning,
           borderRadius: '8px !important',
           boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
           '&:before': { display: 'none' }
@@ -571,7 +592,7 @@ const Expediente = () => {
               height: 40,
               borderRadius: '50%',
               backgroundColor: tieneDocumento ? `${color}20` : '#fff3e0',
-              color: tieneDocumento ? color : '#ff9800'
+              color: tieneDocumento ? color : institutionalColors.warning
             }}>
               <Icono />
             </Box>
@@ -579,13 +600,13 @@ const Expediente = () => {
             <Box sx={{ flexGrow: 1 }}>
               <Typography sx={{ 
                 fontWeight: '700', 
-                color: '#333',
+                color: institutionalColors.textPrimary,
                 fontSize: '1rem',
                 mb: 0.5
               }}>
                 {apartado.titulo} {apartado.obligatorio && '(OBLIGATORIO)'}
               </Typography>
-              <Typography variant="caption" sx={{ color: '#666' }}>
+              <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                 {apartado.subtitulo}
               </Typography>
             </Box>
@@ -595,16 +616,23 @@ const Expediente = () => {
                 <Chip 
                   label="DINÁMICO"
                   size="small"
-                  color="info"
-                  sx={{ height: '24px', fontSize: '0.7rem' }}
+                  sx={{ 
+                    bgcolor: institutionalColors.lightBlue,
+                    color: institutionalColors.primary,
+                    height: '24px', 
+                    fontSize: '0.7rem' 
+                  }}
                 />
               )}
               {apartado.esTabla && (
                 <Chip 
                   label={`${apartado.datosTabla?.length || 0} REGISTROS`}
                   size="small"
-                  color="info"
-                  sx={{ height: '24px' }}
+                  sx={{ 
+                    bgcolor: institutionalColors.lightBlue,
+                    color: institutionalColors.primary,
+                    height: '24px' 
+                  }}
                 />
               )}
               <Chip 
@@ -618,8 +646,11 @@ const Expediente = () => {
                   icon={<CheckCircleIcon />}
                   label="En revisión"
                   size="small"
-                  color="info"
-                  sx={{ height: '24px' }}
+                  sx={{ 
+                    bgcolor: institutionalColors.lightBlue,
+                    color: institutionalColors.primary,
+                    height: '24px' 
+                  }}
                 />
               )}
             </Box>
@@ -631,13 +662,13 @@ const Expediente = () => {
           {estadoValidacion.enviado && (
             <Alert 
               severity="info" 
-              sx={{ mb: 3, backgroundColor: '#e3f2fd' }}
-              icon={<VerifiedIcon />}
+              sx={{ mb: 3, bgcolor: institutionalColors.lightBlue }}
+              icon={<VerifiedIcon sx={{ color: institutionalColors.primary }} />}
             >
-              <Typography variant="body2">
+              <Typography variant="body2" sx={{ color: institutionalColors.textPrimary }}>
                 <strong>Documento enviado a revisión por el comité</strong>
               </Typography>
-              <Typography variant="body2" sx={{ mt: 0.5 }}>
+              <Typography variant="body2" sx={{ mt: 0.5, color: institutionalColors.textSecondary }}>
                 Enviado el {estadoValidacion.fechaEnvio}
               </Typography>
             </Alert>
@@ -657,7 +688,7 @@ const Expediente = () => {
           >
             <Typography variant="h6" sx={{ 
               fontWeight: '600',
-              color: '#2c3e50',
+              color: institutionalColors.primary,
               mb: 3,
               display: 'flex',
               alignItems: 'center',
@@ -669,7 +700,7 @@ const Expediente = () => {
             
             {/* Descripción del apartado */}
             {apartado.descripcion && (
-              <Typography variant="body2" sx={{ color: '#666', mb: 3, lineHeight: 1.6 }}>
+              <Typography variant="body2" sx={{ color: institutionalColors.textSecondary, mb: 3, lineHeight: 1.6 }}>
                 {apartado.descripcion}
               </Typography>
             )}
@@ -689,7 +720,7 @@ const Expediente = () => {
             {apartado.esTabla && apartado.datosTabla && (
               <Box sx={{ mb: 4 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                  <Typography variant="subtitle1" sx={{ fontWeight: '600', color: '#2c3e50' }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: '600', color: institutionalColors.textPrimary }}>
                     Registros
                   </Typography>
                   <Button
@@ -697,7 +728,11 @@ const Expediente = () => {
                     variant="contained"
                     size="small"
                     onClick={() => handleAbrirDialogReunion(apartado.id)}
-                    sx={{ textTransform: 'none', backgroundColor: color }}
+                    sx={{ 
+                      textTransform: 'none', 
+                      backgroundColor: color,
+                      '&:hover': { backgroundColor: institutionalColors.secondary }
+                    }}
                   >
                     Agregar Registro
                   </Button>
@@ -707,23 +742,23 @@ const Expediente = () => {
                   <Table size="small">
                     <TableHead>
                       <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-                        <TableCell sx={{ fontWeight: '600' }}>Fecha</TableCell>
-                        <TableCell sx={{ fontWeight: '600' }}>Tipo</TableCell>
-                        <TableCell sx={{ fontWeight: '600' }}>Asunto</TableCell>
-                        <TableCell sx={{ fontWeight: '600' }}>Participantes</TableCell>
-                        <TableCell sx={{ fontWeight: '600' }}>Acuerdos</TableCell>
-                        <TableCell sx={{ fontWeight: '600' }}>Estado</TableCell>
-                        <TableCell sx={{ fontWeight: '600' }}>Acciones</TableCell>
+                        <TableCell sx={{ fontWeight: '600', color: institutionalColors.primary }}>Fecha</TableCell>
+                        <TableCell sx={{ fontWeight: '600', color: institutionalColors.primary }}>Tipo</TableCell>
+                        <TableCell sx={{ fontWeight: '600', color: institutionalColors.primary }}>Asunto</TableCell>
+                        <TableCell sx={{ fontWeight: '600', color: institutionalColors.primary }}>Participantes</TableCell>
+                        <TableCell sx={{ fontWeight: '600', color: institutionalColors.primary }}>Acuerdos</TableCell>
+                        <TableCell sx={{ fontWeight: '600', color: institutionalColors.primary }}>Estado</TableCell>
+                        <TableCell sx={{ fontWeight: '600', color: institutionalColors.primary }}>Acciones</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
                       {apartado.datosTabla.map((reunion) => (
                         <TableRow key={reunion.id} hover>
-                          <TableCell>{reunion.fecha}</TableCell>
-                          <TableCell>{reunion.tipo}</TableCell>
-                          <TableCell>{reunion.asunto}</TableCell>
-                          <TableCell>{reunion.participantes}</TableCell>
-                          <TableCell>{reunion.acuerdos}</TableCell>
+                          <TableCell sx={{ color: institutionalColors.textPrimary }}>{reunion.fecha}</TableCell>
+                          <TableCell sx={{ color: institutionalColors.textPrimary }}>{reunion.tipo}</TableCell>
+                          <TableCell sx={{ color: institutionalColors.textPrimary }}>{reunion.asunto}</TableCell>
+                          <TableCell sx={{ color: institutionalColors.textPrimary }}>{reunion.participantes}</TableCell>
+                          <TableCell sx={{ color: institutionalColors.textPrimary }}>{reunion.acuerdos}</TableCell>
                           <TableCell>
                             <Chip 
                               label={reunion.estado === 'aprobado' ? 'APROBADO' : 'PENDIENTE'}
@@ -736,14 +771,14 @@ const Expediente = () => {
                               <IconButton 
                                 size="small"
                                 onClick={() => handleAbrirDialogReunion(apartado.id, reunion)}
-                                sx={{ color: '#1976d2' }}
+                                sx={{ color: institutionalColors.primary }}
                               >
                                 <EditIcon fontSize="small" />
                               </IconButton>
                               <IconButton 
                                 size="small"
                                 onClick={() => handleEliminarReunion(apartado.id, reunion.id)}
-                                sx={{ color: '#d32f2f' }}
+                                sx={{ color: institutionalColors.error }}
                               >
                                 <DeleteIcon fontSize="small" />
                               </IconButton>
@@ -751,7 +786,7 @@ const Expediente = () => {
                                 <IconButton 
                                   size="small"
                                   onClick={() => handleVerDocumento(reunion.documento)}
-                                  sx={{ color: '#2e7d32' }}
+                                  sx={{ color: institutionalColors.success }}
                                 >
                                   <VisibilityIcon fontSize="small" />
                                 </IconButton>
@@ -768,7 +803,7 @@ const Expediente = () => {
             
             {/* Upload de documento */}
             <Box sx={{ mt: 3 }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: '600', color: '#2c3e50', mb: 2 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: '600', color: institutionalColors.textPrimary, mb: 2 }}>
                 Documento del Sistema
               </Typography>
               
@@ -776,7 +811,7 @@ const Expediente = () => {
                 {apartado.documento ? (
                   <Box sx={{ width: '100%' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
-                      <Typography variant="body2" sx={{ color: '#2c3e50', fontWeight: '500', flex: 1 }}>
+                      <Typography variant="body2" sx={{ color: institutionalColors.textPrimary, fontWeight: '500', flex: 1 }}>
                         Documento cargado: {apartado.documento}
                       </Typography>
                       <Chip 
@@ -786,7 +821,7 @@ const Expediente = () => {
                       />
                     </Box>
                     {apartado.fechaRevision && (
-                      <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', mb: 2 }}>
+                      <Typography variant="caption" sx={{ color: institutionalColors.textSecondary, display: 'block', mb: 2 }}>
                         Última revisión: {apartado.fechaRevision}
                       </Typography>
                     )}
@@ -796,7 +831,15 @@ const Expediente = () => {
                         startIcon={<VisibilityIcon />}
                         variant="outlined"
                         onClick={() => handleVerDocumento(apartado.documento)}
-                        sx={{ textTransform: 'none' }}
+                        sx={{ 
+                          textTransform: 'none',
+                          borderColor: institutionalColors.primary,
+                          color: institutionalColors.primary,
+                          '&:hover': {
+                            borderColor: institutionalColors.secondary,
+                            bgcolor: institutionalColors.lightBlue
+                          }
+                        }}
                       >
                         Ver Documento
                       </Button>
@@ -804,7 +847,15 @@ const Expediente = () => {
                         size="small"
                         startIcon={<CloudUploadIcon />}
                         variant="outlined"
-                        sx={{ textTransform: 'none', borderColor: color, color }}
+                        sx={{ 
+                          textTransform: 'none', 
+                          borderColor: color, 
+                          color: color,
+                          '&:hover': {
+                            borderColor: institutionalColors.secondary,
+                            bgcolor: institutionalColors.lightBlue
+                          }
+                        }}
                         onClick={() => handleDocumentoUpload(apartado.id)}
                       >
                         Reemplazar
@@ -820,7 +871,7 @@ const Expediente = () => {
                       textTransform: 'none', 
                       py: 1.5,
                       backgroundColor: color,
-                      '&:hover': { backgroundColor: color }
+                      '&:hover': { backgroundColor: institutionalColors.secondary }
                     }}
                     onClick={() => handleDocumentoUpload(apartado.id)}
                   >
@@ -833,7 +884,7 @@ const Expediente = () => {
             {/* Alertas específicas por tipo */}
             {apartado.obligatorio && (
               <Alert severity="warning" sx={{ mt: 3, backgroundColor: '#fff3e0' }}>
-                <Typography variant="body2">
+                <Typography variant="body2" sx={{ color: institutionalColors.textPrimary }}>
                   <strong>Importante:</strong> Este documento es obligatorio para completar su expediente. 
                   Debe ser aprobado por el comité antes de continuar.
                 </Typography>
@@ -851,17 +902,16 @@ const Expediente = () => {
           }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Box>
-                <Typography variant="body1" sx={{ fontWeight: '600', color: '#333', mb: 0.5 }}>
+                <Typography variant="body1" sx={{ fontWeight: '600', color: institutionalColors.textPrimary, mb: 0.5 }}>
                   Validación del Documento
                 </Typography>
-                <Typography variant="body2" sx={{ color: '#666' }}>
+                <Typography variant="body2" sx={{ color: institutionalColors.textSecondary }}>
                   Envíe el documento para revisión formal
                 </Typography>
               </Box>
               
               <Button
                 variant="contained"
-                color="primary"
                 startIcon={<SendIcon />}
                 onClick={() => handleAbrirValidacionDialog(apartado.id, apartado.titulo)}
                 disabled={
@@ -873,7 +923,9 @@ const Expediente = () => {
                 sx={{ 
                   textTransform: 'none',
                   px: 3,
-                  py: 1
+                  py: 1,
+                  bgcolor: institutionalColors.primary,
+                  '&:hover': { bgcolor: institutionalColors.secondary }
                 }}
               >
                 {estadoValidacion.enviado ? 'Enviado para Revisión' : 'Enviar para Validación'}
@@ -885,21 +937,21 @@ const Expediente = () => {
               <Box sx={{ mt: 2 }}>
                 {!apartado.documento && (
                   <Alert severity="warning" sx={{ py: 1, mb: 1 }}>
-                    <Typography variant="body2">
+                    <Typography variant="body2" sx={{ color: institutionalColors.textPrimary }}>
                       Debe subir el documento primero
                     </Typography>
                   </Alert>
                 )}
                 {apartado.campos && apartado.campos.some(c => c.requerido && !c.valor) && (
                   <Alert severity="warning" sx={{ py: 1, mb: 1 }}>
-                    <Typography variant="body2">
+                    <Typography variant="body2" sx={{ color: institutionalColors.textPrimary }}>
                       Complete todos los campos requeridos
                     </Typography>
                   </Alert>
                 )}
                 {apartado.esTabla && (!apartado.datosTabla || apartado.datosTabla.length === 0) && (
                   <Alert severity="warning" sx={{ py: 1 }}>
-                    <Typography variant="body2">
+                    <Typography variant="body2" sx={{ color: institutionalColors.textPrimary }}>
                       Debe agregar al menos un registro a la tabla
                     </Typography>
                   </Alert>
@@ -917,15 +969,13 @@ const Expediente = () => {
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Box>
-          <Typography variant="h4" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 1 }}>
+          <Typography variant="h4" sx={{ color: institutionalColors.primary, fontWeight: 'bold', mb: 1 }}>
             Expediente Digital
           </Typography>
-          <Typography variant="body1" sx={{ color: '#7f8c8d' }}>
+          <Typography variant="body1" sx={{ color: institutionalColors.textSecondary }}>
             Sistema dinámico de cumplimiento y control documental
           </Typography>
         </Box>
-        
-
       </Box>
 
       {/* Nivel de Cumplimiento */}
@@ -942,26 +992,26 @@ const Expediente = () => {
                 <Grid item xs={4} sm={3} md={3}>
                   <Box sx={{ textAlign: 'center' }}>
                     <Typography variant="h2" sx={{ 
-                      color: compliance === 100 ? '#27ae60' : 
-                             compliance >= 75 ? '#f39c12' : 
-                             compliance >= 50 ? '#e67e22' : '#e74c3c',
+                      color: compliance === 100 ? institutionalColors.success : 
+                             compliance >= 75 ? institutionalColors.warning : 
+                             compliance >= 50 ? '#1a4c7a' : institutionalColors.error,
                       fontWeight: 'bold',
                       mb: 0.5,
                       fontSize: { xs: '3rem', sm: '3.5rem' }
                     }}>
                       {compliance}%
                     </Typography>
-                    <Typography variant="body2" sx={{ color: '#7f8c8d', fontWeight: '500' }}>
+                    <Typography variant="body2" sx={{ color: institutionalColors.textSecondary, fontWeight: '500' }}>
                       Cumplimiento
                     </Typography>
                   </Box>
                 </Grid>
                 
                 <Grid item xs={8} sm={8} md={8}>
-                  <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 1, fontSize: '1.1rem' }}>
+                  <Typography variant="h6" sx={{ color: institutionalColors.textPrimary, fontWeight: 'bold', mb: 1, fontSize: '1.1rem' }}>
                     Progreso de Documentos Obligatorios
                   </Typography>
-                  <Typography variant="body2" sx={{ color: '#7f8c8d', mb: 2 }}>
+                  <Typography variant="body2" sx={{ color: institutionalColors.textSecondary, mb: 2 }}>
                     {compliance === 100 ? 'Todos los documentos obligatorios están completos' : 
                      compliance >= 75 ? 'Mayoría de documentos completados' : 
                      compliance >= 50 ? 'Documentos básicos completados' : 
@@ -976,9 +1026,9 @@ const Expediente = () => {
                       borderRadius: 5,
                       backgroundColor: '#f0f0f0',
                       '& .MuiLinearProgress-bar': {
-                        backgroundColor: compliance === 100 ? '#27ae60' : 
-                                         compliance >= 75 ? '#f39c12' : 
-                                         compliance >= 50 ? '#e67e22' : '#e74c3c'
+                        backgroundColor: compliance === 100 ? institutionalColors.success : 
+                                         compliance >= 75 ? institutionalColors.warning : 
+                                         compliance >= 50 ? '#1a4c7a' : institutionalColors.error
                       }
                     }}
                   />
@@ -989,7 +1039,7 @@ const Expediente = () => {
             <Grid item xs={12} md={4}>
               <Grid container spacing={1.5}>
                 {apartados.slice(0, 4).map((apartado) => {
-                  const color = apartado.documento ? '#27ae60' : '#e74c3c';
+                  const color = apartado.documento ? institutionalColors.success : institutionalColors.error;
                   return (
                     <Grid item xs={6} key={apartado.id}>
                       <Paper sx={{ 
@@ -1007,7 +1057,7 @@ const Expediente = () => {
                           {apartado.documento ? '1' : '0'}
                         </Typography>
                         <Typography variant="caption" sx={{ 
-                          color: '#7f8c8d', 
+                          color: institutionalColors.textSecondary, 
                           fontSize: '0.7rem',
                           fontWeight: '500'
                         }}>
@@ -1026,10 +1076,10 @@ const Expediente = () => {
       {/* Apartados Dinámicos */}
       <Box>
         <Typography variant="h5" sx={{ 
-          color: '#2c3e50', 
+          color: institutionalColors.primary, 
           mb: 3, 
           fontWeight: 'bold',
-          borderBottom: '3px solid #2c3e50',
+          borderBottom: `3px solid ${institutionalColors.primary}`,
           pb: 1.5
         }}>
           SISTEMAS DE CUMPLIMIENTO Y CONTROL
@@ -1042,8 +1092,8 @@ const Expediente = () => {
       <Dialog open={reunionDialog.open} onClose={handleCerrarDialogReunion} maxWidth="md" fullWidth>
         <DialogTitle sx={{ borderBottom: '1px solid #e0e0e0', pb: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            {reunionDialog.editing ? <EditIcon sx={{ color: '#1976d2' }} /> : <AddIcon sx={{ color: '#1976d2' }} />}
-            <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: '600' }}>
+            {reunionDialog.editing ? <EditIcon sx={{ color: institutionalColors.primary }} /> : <AddIcon sx={{ color: institutionalColors.primary }} />}
+            <Typography variant="h6" sx={{ color: institutionalColors.textPrimary, fontWeight: '600' }}>
               {reunionDialog.editing ? 'Editar Registro' : 'Agregar Nuevo Registro'}
             </Typography>
           </Box>
@@ -1108,7 +1158,15 @@ const Expediente = () => {
                 startIcon={<CloudUploadIcon />}
                 variant="outlined"
                 fullWidth
-                sx={{ py: 1.5 }}
+                sx={{ 
+                  py: 1.5,
+                  borderColor: institutionalColors.primary,
+                  color: institutionalColors.primary,
+                  '&:hover': {
+                    borderColor: institutionalColors.secondary,
+                    bgcolor: institutionalColors.lightBlue
+                  }
+                }}
               >
                 Adjuntar Documento
               </Button>
@@ -1119,15 +1177,26 @@ const Expediente = () => {
           <Button 
             onClick={handleCerrarDialogReunion}
             variant="outlined"
-            sx={{ textTransform: 'none' }}
+            sx={{ 
+              textTransform: 'none',
+              borderColor: institutionalColors.primary,
+              color: institutionalColors.primary,
+              '&:hover': {
+                borderColor: institutionalColors.secondary,
+                bgcolor: institutionalColors.lightBlue
+              }
+            }}
           >
             Cancelar
           </Button>
           <Button 
             onClick={handleAgregarReunion}
             variant="contained"
-            color="primary"
-            sx={{ textTransform: 'none' }}
+            sx={{ 
+              textTransform: 'none',
+              bgcolor: institutionalColors.primary,
+              '&:hover': { bgcolor: institutionalColors.secondary }
+            }}
             disabled={!nuevaReunion.fecha || !nuevaReunion.tipo || !nuevaReunion.asunto}
           >
             {reunionDialog.editing ? 'Actualizar Registro' : 'Agregar Registro'}
@@ -1139,18 +1208,18 @@ const Expediente = () => {
       <Dialog open={validacionDialog.open} onClose={handleCerrarValidacionDialog} maxWidth="sm" fullWidth>
         <DialogTitle sx={{ borderBottom: '1px solid #e0e0e0', pb: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            <SendIcon sx={{ color: '#1976d2' }} />
-            <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: '600' }}>
+            <SendIcon sx={{ color: institutionalColors.primary }} />
+            <Typography variant="h6" sx={{ color: institutionalColors.textPrimary, fontWeight: '600' }}>
               Enviar Documento para Validación
             </Typography>
           </Box>
         </DialogTitle>
         <DialogContent sx={{ pt: 3, pb: 2 }}>
-          <Alert severity="info" sx={{ mb: 3, backgroundColor: '#e3f2fd' }}>
-            <Typography variant="body2" sx={{ fontWeight: '600', color: '#1976d2' }}>
+          <Alert severity="info" sx={{ mb: 3, bgcolor: institutionalColors.lightBlue }}>
+            <Typography variant="body2" sx={{ fontWeight: '600', color: institutionalColors.primary }}>
               Confirmación de Envío
             </Typography>
-            <Typography variant="body2" sx={{ mt: 0.5 }}>
+            <Typography variant="body2" sx={{ mt: 0.5, color: institutionalColors.textSecondary }}>
               ¿Está seguro de enviar el documento para revisión por el comité?
             </Typography>
           </Alert>
@@ -1158,19 +1227,19 @@ const Expediente = () => {
           <Paper variant="outlined" sx={{ p: 2.5, mb: 3, backgroundColor: '#f8f9fa' }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <Typography variant="body2" sx={{ color: '#666', fontWeight: '500', mb: 0.5 }}>
+                <Typography variant="body2" sx={{ color: institutionalColors.textSecondary, fontWeight: '500', mb: 0.5 }}>
                   Documento a validar:
                 </Typography>
-                <Typography variant="body1" sx={{ color: '#2c3e50', fontWeight: '600' }}>
+                <Typography variant="body1" sx={{ color: institutionalColors.textPrimary, fontWeight: '600' }}>
                   {validacionDialog.titulo}
                 </Typography>
               </Grid>
               
               <Grid item xs={12}>
-                <Typography variant="body2" sx={{ color: '#666', fontWeight: '500', mb: 0.5 }}>
+                <Typography variant="body2" sx={{ color: institutionalColors.textSecondary, fontWeight: '500', mb: 0.5 }}>
                   Fecha de envío:
                 </Typography>
-                <Typography variant="body1" sx={{ color: '#2c3e50', fontWeight: '600' }}>
+                <Typography variant="body1" sx={{ color: institutionalColors.textPrimary, fontWeight: '600' }}>
                   {validacionDialog.fecha}
                 </Typography>
               </Grid>
@@ -1178,7 +1247,7 @@ const Expediente = () => {
           </Paper>
           
           <Alert severity="warning" sx={{ backgroundColor: '#fff8e1' }}>
-            <Typography variant="body2">
+            <Typography variant="body2" sx={{ color: institutionalColors.textPrimary }}>
               <strong>Nota importante:</strong> Una vez enviado, el documento no podrá ser modificado hasta que el comité complete la revisión.
             </Typography>
           </Alert>
@@ -1187,16 +1256,27 @@ const Expediente = () => {
           <Button 
             onClick={handleCerrarValidacionDialog}
             variant="outlined"
-            sx={{ textTransform: 'none' }}
+            sx={{ 
+              textTransform: 'none',
+              borderColor: institutionalColors.primary,
+              color: institutionalColors.primary,
+              '&:hover': {
+                borderColor: institutionalColors.secondary,
+                bgcolor: institutionalColors.lightBlue
+              }
+            }}
           >
             Cancelar
           </Button>
           <Button 
             onClick={handleConfirmarValidacion}
             variant="contained"
-            color="primary"
             startIcon={<SendIcon />}
-            sx={{ textTransform: 'none' }}
+            sx={{ 
+              textTransform: 'none',
+              bgcolor: institutionalColors.primary,
+              '&:hover': { bgcolor: institutionalColors.secondary }
+            }}
           >
             Confirmar Envío
           </Button>
