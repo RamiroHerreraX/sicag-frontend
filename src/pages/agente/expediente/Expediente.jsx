@@ -507,7 +507,7 @@ const handleGuardarDocumentoCumplimiento = () => {
   const informacionComplementaria = [
     { 
       id: 'certificados',
-      title: 'CERTIFICADOS',
+      title: 'CERTIFICADOS DE NIVEL GREMIAL',
       icon: <DescriptionIcon />,
       items: [] // Vacío porque ahora manejamos certificados por separado
     },
@@ -857,7 +857,7 @@ const handleGuardarDocumentoCumplimiento = () => {
               borderRadius: 2,
               border: `1px solid ${colors.primary.main}20`
             }}>
-              <Button
+            <Button
                 startIcon={<AddIcon />}
                 size="small"
                 variant="outlined"
@@ -1023,7 +1023,7 @@ const handleGuardarDocumentoCumplimiento = () => {
               borderRadius: 2,
               border: `1px solid ${colors.primary.main}20`
             }}>
-              <Button
+               <Button
                 startIcon={<AddIcon />}
                 size="small"
                 variant="outlined"

@@ -30,7 +30,16 @@ import {
   Pagination,
   ToggleButton,
   ToggleButtonGroup,
-  Alert
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  TablePagination
 } from '@mui/material';
 import {
   Search as SearchIcon,
@@ -67,7 +76,11 @@ import {
   Info as InfoIcon,
   Error as ErrorIcon,
   Pending as PendingIcon,
-  Update as UpdateIcon
+  Update as UpdateIcon,
+  Close as CloseIcon,
+  PictureAsPdf as PdfIcon,
+  Image as ImageIcon,
+  InsertDriveFile as FileIcon
 } from '@mui/icons-material';
 
 // Paleta corporativa del UserManagement
@@ -103,9 +116,16 @@ const AuditAgent = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [filterEntity, setFilterEntity] = useState('all');
+  const [filterStatus, setFilterStatus] = useState('all');
   const [page, setPage] = useState(1);
   const [viewMode, setViewMode] = useState('auditoria'); // 'auditoria' o 'trazabilidad'
   const rowsPerPage = 10;
+
+  // Estados para modales
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
+  const [selectedLog, setSelectedLog] = useState(null);
+  const [certModalOpen, setCertModalOpen] = useState(false);
+  const [selectedCert, setSelectedCert] = useState(null);
 
   // Estados personalizados basados en los que proporcionaste
   const statusConfig = {
@@ -164,9 +184,12 @@ const AuditAgent = () => {
       entity: 'Sistema',
       entityId: 'N/A',
       details: 'Inicio de sesión desde dispositivo principal',
+      ipAddress: '192.168.1.105',
+      device: 'Chrome / Windows',
       severity: 'info',
       status: 'Aceptados',
-      icon: <LoginIcon />
+      icon: <LoginIcon />,
+      
     },
     {
       id: 2,
@@ -177,9 +200,12 @@ const AuditAgent = () => {
       entity: 'Certificación',
       entityId: 'PA-2026-00145',
       details: 'Patente Aduanal creada para expediente EXP-2024-567',
+      ipAddress: '192.168.1.105',
+      device: 'Chrome / Windows',
       severity: 'success',
       status: 'Aceptados',
-      icon: <AddIcon />
+      icon: <AddIcon />,
+      
     },
     {
       id: 3,
@@ -190,9 +216,12 @@ const AuditAgent = () => {
       entity: 'Certificación',
       entityId: 'PA-2026-00122',
       details: 'Fecha de vencimiento extendida para patente aduanal',
+      ipAddress: '192.168.1.105',
+      device: 'Chrome / Windows',
       severity: 'info',
       status: 'En revisión',
-      icon: <EditIcon />
+      icon: <EditIcon />,
+      
     },
     {
       id: 4,
@@ -203,9 +232,12 @@ const AuditAgent = () => {
       entity: 'Documento',
       entityId: 'DOC-2026-78901',
       details: 'Comprobante de domicilio actualizado en expediente',
+      ipAddress: '192.168.1.105',
+      device: 'Chrome / Windows',
       severity: 'info',
       status: 'Aceptados',
-      icon: <CloudUploadIcon />
+      icon: <CloudUploadIcon />,
+      
     },
     {
       id: 5,
@@ -216,9 +248,12 @@ const AuditAgent = () => {
       entity: 'Declaración',
       entityId: 'DEC-2026-04567',
       details: 'Declaración de cumplimiento aduanero - Artículos 95-98',
+      ipAddress: '192.168.1.105',
+      device: 'Chrome / Windows',
       severity: 'success',
       status: 'En revisión',
-      icon: <AssignmentTurnedInIcon />
+      icon: <AssignmentTurnedInIcon />,
+     
     },
     {
       id: 6,
@@ -229,9 +264,12 @@ const AuditAgent = () => {
       entity: 'Expediente',
       entityId: 'EXP-2024-567',
       details: 'Información profesional actualizada (CV, certificaciones)',
+      ipAddress: '192.168.1.105',
+      device: 'Chrome / Windows',
       severity: 'info',
       status: 'Información adicional',
-      icon: <DescriptionIcon />
+      icon: <DescriptionIcon />,
+      
     },
     {
       id: 7,
@@ -242,9 +280,12 @@ const AuditAgent = () => {
       entity: 'Aduana',
       entityId: 'ADQ-2024-00123',
       details: 'Aduana de Querétaro registrada como principal',
+      ipAddress: '192.168.1.105',
+      device: 'Chrome / Windows',
       severity: 'success',
       status: 'Aceptados',
-      icon: <LocationCityIcon />
+      icon: <LocationCityIcon />,
+     
     },
     {
       id: 8,
@@ -255,9 +296,12 @@ const AuditAgent = () => {
       entity: 'Usuario',
       entityId: 'USR-003',
       details: 'Cambio de contraseña exitoso por política de seguridad',
+      ipAddress: '192.168.1.105',
+      device: 'Chrome / Windows',
       severity: 'info',
       status: 'Registro',
-      icon: <SecurityIcon />
+      icon: <SecurityIcon />,
+      
     },
     {
       id: 9,
@@ -268,9 +312,12 @@ const AuditAgent = () => {
       entity: 'Validación',
       entityId: 'VAL-2026-00122',
       details: 'Documentos de cumplimiento organizacional enviados a comité',
+      ipAddress: '192.168.1.105',
+      device: 'Chrome / Windows',
       severity: 'warning',
       status: 'En revisión',
-      icon: <SendIcon />
+      icon: <SendIcon />,
+      
     },
     {
       id: 10,
@@ -281,9 +328,12 @@ const AuditAgent = () => {
       entity: 'Certificación',
       entityId: 'PA-2026-00145',
       details: 'Patente Aduanal descargada en formato PDF',
+      ipAddress: '192.168.1.105',
+      device: 'Chrome / Windows',
       severity: 'info',
       status: 'Aceptados',
-      icon: <DownloadIcon />
+      icon: <DownloadIcon />,
+      
     },
     {
       id: 11,
@@ -294,9 +344,12 @@ const AuditAgent = () => {
       entity: 'Perfil',
       entityId: 'PRO-003',
       details: 'Información de contacto y preferencias actualizada',
+      ipAddress: '192.168.1.105',
+      device: 'Chrome / Windows',
       severity: 'info',
       status: 'Desactualizado',
-      icon: <PersonIcon />
+      icon: <PersonIcon />,
+     
     },
     {
       id: 12,
@@ -307,9 +360,12 @@ const AuditAgent = () => {
       entity: 'Declaración',
       entityId: 'DEC-2026-04567',
       details: 'Borrador de declaración fiscal guardado',
+      ipAddress: '192.168.1.105',
+      device: 'Chrome / Windows',
       severity: 'info',
       status: 'Registro',
-      icon: <FactCheckIcon />
+      icon: <FactCheckIcon />,
+     
     },
     {
       id: 13,
@@ -320,9 +376,12 @@ const AuditAgent = () => {
       entity: 'Auditoría',
       entityId: 'AUD-2026-0001',
       details: 'Consulta de historial de actividades del mes',
+      ipAddress: '192.168.1.105',
+      device: 'Chrome / Windows',
       severity: 'info',
       status: 'Aceptados',
-      icon: <VisibilityIcon />
+      icon: <VisibilityIcon />,
+      
     },
     {
       id: 14,
@@ -333,9 +392,12 @@ const AuditAgent = () => {
       entity: 'Notificación',
       entityId: 'NOT-2026-0034',
       details: 'Notificación de vencimiento de certificación leída',
+      ipAddress: '192.168.1.105',
+      device: 'Chrome / Windows',
       severity: 'info',
       status: 'Desactualizado',
-      icon: <DescriptionIcon />
+      icon: <DescriptionIcon />,
+     
     },
     {
       id: 15,
@@ -346,9 +408,12 @@ const AuditAgent = () => {
       entity: 'Reporte',
       entityId: 'REP-2026-0001',
       details: 'Reporte de cumplimiento trimestral generado',
+      ipAddress: '192.168.1.105',
+      device: 'Chrome / Windows',
       severity: 'success',
       status: 'Rechazado',
-      icon: <AssessmentIcon />
+      icon: <AssessmentIcon />,
+      
     },
     {
       id: 16,
@@ -359,9 +424,12 @@ const AuditAgent = () => {
       entity: 'Certificación',
       entityId: 'PA-2025-00321',
       details: 'Patente Aduanal ha vencido - requiere renovación',
+      ipAddress: '192.168.1.105',
+      device: 'Chrome / Windows',
       severity: 'warning',
       status: 'Rechazado',
-      icon: <ErrorIcon />
+      icon: <ErrorIcon />,
+     
     },
     {
       id: 17,
@@ -372,9 +440,12 @@ const AuditAgent = () => {
       entity: 'Documento',
       entityId: 'DOC-2026-04512',
       details: 'Solicitud de documentación complementaria para validación',
+      ipAddress: '192.168.1.105',
+      device: 'Chrome / Windows',
       severity: 'info',
       status: 'Información adicional',
-      icon: <InfoIcon />
+      icon: <InfoIcon />,
+     
     },
     {
       id: 18,
@@ -385,9 +456,12 @@ const AuditAgent = () => {
       entity: 'Certificación',
       entityId: 'PA-2026-00178',
       details: 'Renovación exitosa de patente aduanal',
+      ipAddress: '192.168.1.105',
+      device: 'Chrome / Windows',
       severity: 'success',
       status: 'Aceptados',
-      icon: <CheckCircleIcon />
+      icon: <CheckCircleIcon />,
+     
     },
   ];
 
@@ -475,6 +549,30 @@ const AuditAgent = () => {
     );
   };
 
+  // Función para abrir modal de detalles
+  const handleOpenDetailModal = (log) => {
+    setSelectedLog(log);
+    setDetailModalOpen(true);
+  };
+
+  // Función para cerrar modal de detalles
+  const handleCloseDetailModal = () => {
+    setDetailModalOpen(false);
+    setSelectedLog(null);
+  };
+
+  // Función para abrir modal de certificación
+  const handleOpenCertModal = (cert) => {
+    setSelectedCert(cert);
+    setCertModalOpen(true);
+  };
+
+  // Función para cerrar modal de certificación
+  const handleCloseCertModal = () => {
+    setCertModalOpen(false);
+    setSelectedCert(null);
+  };
+
   const filteredLogs = auditLogs.filter(log => {
     const matchesSearch = 
       log.actionName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -487,7 +585,10 @@ const AuditAgent = () => {
     const matchesEntity = 
       filterEntity === 'all' ? true : log.entity === filterEntity;
     
-    return matchesSearch && matchesType && matchesEntity;
+    const matchesStatus = 
+      filterStatus === 'all' ? true : log.status === filterStatus;
+    
+    return matchesSearch && matchesType && matchesEntity && matchesStatus;
   });
 
   const paginatedLogs = filteredLogs.slice(
@@ -532,6 +633,14 @@ const AuditAgent = () => {
       id: 1,
       certification: 'Patente Aduanal PA-2026-00145',
       status: 'Aceptados',
+      tipo: 'Patente Aduanal',
+      numero: 'PA-2026-00145',
+      fechaEmision: '11/01/2026',
+      fechaVencimiento: '11/01/2029',
+      documentos: [
+        { nombre: 'patente_aduanal.pdf', tipo: 'PDF', tamaño: '1.2 MB' },
+        { nombre: 'comprobante_pago.pdf', tipo: 'PDF', tamaño: '0.8 MB' }
+      ],
       timeline: [
         { date: '11/01/2026 09:00', action: 'Certificación creada', user: 'Luis Rodríguez', status: 'Registro' },
         { date: '11/01/2026 10:30', action: 'Documentos subidos', user: 'Luis Rodríguez', status: 'Información adicional' },
@@ -544,6 +653,13 @@ const AuditAgent = () => {
       id: 2,
       certification: 'Opinión SAT OS-2025-03421',
       status: 'En revisión',
+      tipo: 'Opinión SAT',
+      numero: 'OS-2025-03421',
+      fechaEmision: '15/11/2025',
+      fechaVencimiento: '15/11/2026',
+      documentos: [
+        { nombre: 'opinion_sat.pdf', tipo: 'PDF', tamaño: '0.9 MB' }
+      ],
       timeline: [
         { date: '15/11/2025 10:00', action: 'Certificación creada', user: 'Luis Rodríguez', status: 'Registro' },
         { date: '10/01/2026 15:30', action: 'Documentación complementaria', user: 'Luis Rodríguez', status: 'Información adicional' },
@@ -554,6 +670,14 @@ const AuditAgent = () => {
       id: 3,
       certification: 'Cédula Profesional CP-2024-56789',
       status: 'Desactualizado',
+      tipo: 'Cédula Profesional',
+      numero: 'CP-2024-56789',
+      fechaEmision: '20/03/2024',
+      fechaVencimiento: '20/03/2027',
+      documentos: [
+        { nombre: 'cedula_profesional.pdf', tipo: 'PDF', tamaño: '1.1 MB' },
+        { nombre: 'titulo_universitario.pdf', tipo: 'PDF', tamaño: '2.3 MB' }
+      ],
       timeline: [
         { date: '20/03/2024 09:30', action: 'Registro inicial', user: 'Luis Rodríguez', status: 'Registro' },
         { date: '25/03/2024 14:20', action: 'Aprobación inicial', user: 'Carlos Martínez', status: 'Aceptados' },
@@ -561,6 +685,542 @@ const AuditAgent = () => {
       ]
     }
   ];
+
+  // Modal de detalles de actividad
+  const DetailModal = () => (
+    <Dialog 
+      open={detailModalOpen} 
+      onClose={handleCloseDetailModal}
+      maxWidth="sm"
+      fullWidth
+      PaperProps={{
+        sx: { borderRadius: 2 }
+      }}
+    >
+      {selectedLog && (
+        <>
+          <DialogTitle sx={{ 
+            borderBottom: `1px solid ${colors.primary.main}20`,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <Box sx={{ color: getSeverityColor(selectedLog.severity) }}>
+                {getActionIcon(selectedLog.action)}
+              </Box>
+              <Typography variant="h6" sx={{ color: colors.text.primary, fontWeight: 'bold' }}>
+                Detalles de la Actividad
+              </Typography>
+            </Box>
+            <IconButton onClick={handleCloseDetailModal} size="small">
+              <CloseIcon />
+            </IconButton>
+          </DialogTitle>
+          
+          <DialogContent sx={{ py: 3 }}>
+            <Grid container spacing={3}>
+              {/* Información principal */}
+              <Grid item xs={12} md={6}>
+                <Card variant="outlined" sx={{ height: '100%' }}>
+                  <CardContent>
+                    <Typography variant="subtitle2" sx={{ color: colors.primary.main, mb: 2, fontWeight: 'bold' }}>
+                      Información General
+                    </Typography>
+                    
+                    <Box sx={{ mb: 2 }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
+                        Acción realizada
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: colors.text.primary, fontWeight: 'bold' }}>
+                        {selectedLog.actionName}
+                      </Typography>
+                    </Box>
+                    
+                    <Box sx={{ mb: 2 }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
+                        Descripción completa
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: colors.text.primary }}>
+                        {selectedLog.details}
+                      </Typography>
+                    </Box>
+                    
+                    <Box sx={{ mb: 2 }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
+                        Fecha y hora
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: colors.text.primary }}>
+                        {selectedLog.timestamp}
+                      </Typography>
+                    </Box>
+                    
+                    <Box sx={{ mb: 2 }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
+                        Estado
+                      </Typography>
+                      <Box sx={{ mt: 0.5 }}>
+                        {getStatusChip(selectedLog.status)}
+                      </Box>
+                    </Box>
+                    
+                    <Box>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
+                        Severidad
+                      </Typography>
+                      <Chip 
+                        label={selectedLog.severity}
+                        size="small"
+                        sx={{ 
+                          bgcolor: `${getSeverityColor(selectedLog.severity)}15`,
+                          color: getSeverityColor(selectedLog.severity),
+                          fontSize: '0.75rem',
+                          mt: 0.5
+                        }}
+                      />
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+              
+              {/* Información de entidad y metadatos */}
+              <Grid item xs={12} md={6}>
+                <Card variant="outlined" sx={{ height: '100%' }}>
+                  <CardContent>
+                    <Typography variant="subtitle2" sx={{ color: colors.primary.main, mb: 2, fontWeight: 'bold' }}>
+                      Entidad y Metadatos
+                    </Typography>
+                    
+                    <Box sx={{ mb: 2 }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
+                        Entidad afectada
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: colors.text.primary, fontWeight: 'bold' }}>
+                        {selectedLog.entity}
+                      </Typography>
+                    </Box>
+                    
+                    <Box sx={{ mb: 2 }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
+                        ID de entidad
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: colors.text.primary }}>
+                        {selectedLog.entityId}
+                      </Typography>
+                    </Box>
+                    
+                    <Box sx={{ mb: 2 }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
+                        Usuario
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
+                        <Avatar sx={{ width: 24, height: 24, bgcolor: colors.primary.main }}>
+                          {selectedLog.user.avatar}
+                        </Avatar>
+                        <Typography variant="body2" sx={{ color: colors.text.primary }}>
+                          {selectedLog.user.name} ({selectedLog.user.role})
+                        </Typography>
+                      </Box>
+                    </Box>
+                    
+                    <Box sx={{ mb: 2 }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
+                        Dirección IP
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: colors.text.primary }}>
+                        {selectedLog.ipAddress || '192.168.1.105'}
+                      </Typography>
+                    </Box>
+                    
+                    <Box>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
+                        Dispositivo / Navegador
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: colors.text.primary }}>
+                        {selectedLog.device || 'Chrome / Windows'}
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+              
+              {/* Metadatos específicos según el tipo de acción */}
+              {selectedLog.metadata && Object.keys(selectedLog.metadata).length > 0 && (
+                <Grid item xs={12}>
+                  <Card variant="outlined">
+                    <CardContent>
+                      <Typography variant="subtitle2" sx={{ color: colors.primary.main, mb: 2, fontWeight: 'bold' }}>
+                        Información adicional
+                      </Typography>
+                      
+                      <Grid container spacing={2}>
+                        {Object.entries(selectedLog.metadata).map(([key, value]) => (
+                          <Grid item xs={12} sm={6} md={4} key={key}>
+                            <Box>
+                              <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
+                                {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}
+                              </Typography>
+                              <Typography variant="body2" sx={{ color: colors.text.primary, fontWeight: '500' }}>
+                                {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                              </Typography>
+                            </Box>
+                          </Grid>
+                        ))}
+                      </Grid>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              )}
+            </Grid>
+          </DialogContent>
+          
+          <DialogActions sx={{ p: 2.5, borderTop: `1px solid ${colors.primary.main}20` }}>
+            <Button 
+              onClick={handleCloseDetailModal}
+              variant="outlined"
+              sx={{ 
+                textTransform: 'none',
+                color: colors.primary.main,
+                borderColor: colors.primary.main
+              }}
+            >
+              Cerrar
+            </Button>
+            <Button 
+              variant="contained"
+              startIcon={<DownloadIcon />}
+              sx={{ 
+                textTransform: 'none',
+                bgcolor: colors.primary.main,
+                '&:hover': { bgcolor: colors.primary.dark }
+              }}
+            >
+              Exportar este evento
+            </Button>
+          </DialogActions>
+        </>
+      )}
+    </Dialog>
+  );
+
+  // Modal de vista previa de certificación - VERSIÓN COMPACTA Y ORGANIZADA
+const CertPreviewModal = () => (
+  <Dialog 
+    open={certModalOpen} 
+    onClose={handleCloseCertModal}
+    maxWidth="md"
+    fullWidth
+    PaperProps={{
+      sx: { 
+        borderRadius: 2,
+        overflow: 'hidden'
+      }
+    }}
+  >
+    {selectedCert && (
+      <>
+        {/* Header con gradiente */}
+        <DialogTitle sx={{ 
+          background: `linear-gradient(135deg, ${colors.primary.dark} 0%, ${colors.primary.main} 100%)`,
+          color: 'white',
+          py: 2,
+          px: 3
+        }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <VerifiedIcon sx={{ fontSize: 24 }} />
+              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                {selectedCert.certification}
+              </Typography>
+            </Box>
+            <IconButton onClick={handleCloseCertModal} size="small" sx={{ color: 'white' }}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </DialogTitle>
+        
+        <DialogContent sx={{ py: 2, px: 3, bgcolor: '#f8fafc' }}>
+          {/* Fila de estado y fechas clave - MÁS COMPACTA */}
+          <Paper elevation={0} sx={{ p: 2, mb: 2, bgcolor: 'white', borderRadius: 2 }}>
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={12} md={4}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                  <Box sx={{ 
+                    width: 36, 
+                    height: 36, 
+                    borderRadius: '50%', 
+                    bgcolor: `${statusConfig[selectedCert.status]?.color}15`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    {statusConfig[selectedCert.status]?.icon || <InfoIcon sx={{ fontSize: 18 }} />}
+                  </Box>
+                  <Box>
+                    <Typography variant="caption" sx={{ color: colors.text.secondary, fontSize: '0.7rem' }}>
+                      Estado actual
+                    </Typography>
+                    <Box sx={{ mt: 0.25 }}>
+                      {getStatusChip(selectedCert.status)}
+                    </Box>
+                  </Box>
+                </Box>
+              </Grid>
+              
+              <Grid item xs={6} md={4}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                  <CalendarIcon sx={{ fontSize: 18, color: colors.primary.main }} />
+                  <Box>
+                    <Typography variant="caption" sx={{ color: colors.text.secondary, fontSize: '0.7rem' }}>
+                      Emisión
+                    </Typography>
+                    <Typography variant="body2" sx={{ fontWeight: '500', fontSize: '0.9rem' }}>
+                      {selectedCert.fechaEmision}
+                    </Typography>
+                  </Box>
+                </Box>
+              </Grid>
+              
+              <Grid item xs={6} md={4}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                  <UpdateIcon sx={{ fontSize: 18, color: colors.status.warning }} />
+                  <Box>
+                    <Typography variant="caption" sx={{ color: colors.text.secondary, fontSize: '0.7rem' }}>
+                      Vencimiento
+                    </Typography>
+                    <Typography variant="body2" sx={{ fontWeight: '500', fontSize: '0.9rem' }}>
+                      {selectedCert.fechaVencimiento}
+                    </Typography>
+                  </Box>
+                </Box>
+              </Grid>
+            </Grid>
+          </Paper>
+
+          {/* SECCIÓN PRINCIPAL - DOS COLUMNAS ORGANIZADAS */}
+          <Paper elevation={0} sx={{ p: 2, mb: 2, bgcolor: 'white', borderRadius: 2 }}>
+            <Grid container spacing={3}>
+              {/* Columna izquierda - Detalles de Certificación */}
+              <Grid item xs={12} md={6}>
+                <Box sx={{ borderRight: { md: `1px solid ${colors.primary.main}20` }, pr: { md: 2 } }}>
+                  <Typography variant="subtitle2" sx={{ 
+                    color: colors.primary.main, 
+                    mb: 1.5, 
+                    fontWeight: 'bold',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5,
+                    fontSize: '0.9rem'
+                  }}>
+                    <FactCheckIcon sx={{ fontSize: 18 }} />
+                    Detalles de la Certificación
+                  </Typography>
+                  
+                  <Grid container spacing={1.5}>
+                    <Grid item xs={6}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', fontSize: '0.7rem' }}>
+                        Tipo
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontWeight: '500', fontSize: '0.9rem' }}>
+                        {selectedCert.tipo || 'Patente Aduanal'}
+                      </Typography>
+                    </Grid>
+                    
+                    <Grid item xs={6}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', fontSize: '0.7rem' }}>
+                        Número
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontWeight: '500', fontSize: '0.9rem', fontFamily: 'monospace' }}>
+                        {selectedCert.numero || 'PA-2026-00145'}
+                      </Typography>
+                    </Grid>
+                    
+                    <Grid item xs={6}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', fontSize: '0.7rem' }}>
+                        Autoridad emisora
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontSize: '0.9rem' }}>
+                        SAT - Servicio de Administración Tributaria
+                      </Typography>
+                    </Grid>
+                    
+                    <Grid item xs={6}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', fontSize: '0.7rem' }}>
+                        Última actualización
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontSize: '0.9rem' }}>
+                        15/01/2026
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Grid>
+              
+              {/* Columna derecha - Información Adicional */}
+              <Grid item xs={12} md={6}>
+                <Box>
+                  <Typography variant="subtitle2" sx={{ 
+                    color: colors.primary.main, 
+                    mb: 1.5, 
+                    fontWeight: 'bold',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5,
+                    fontSize: '0.9rem'
+                  }}>
+                    <DescriptionIcon sx={{ fontSize: 18 }} />
+                    Información Adicional
+                  </Typography>
+                  
+                  <Grid container spacing={1.5}>
+                    <Grid item xs={6}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', fontSize: '0.7rem' }}>
+                        Vigencia
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontSize: '0.9rem' }}>
+                        3 años
+                      </Typography>
+                    </Grid>
+                    
+                    <Grid item xs={6}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', fontSize: '0.7rem' }}>
+                        Horas acreditadas
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontWeight: '500', fontSize: '0.9rem' }}>
+                        40 horas
+                      </Typography>
+                    </Grid>
+                    
+                    <Grid item xs={6}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', fontSize: '0.7rem' }}>
+                        Ámbito
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontSize: '0.9rem' }}>
+                        Nacional
+                      </Typography>
+                    </Grid>
+                    
+                    <Grid item xs={6}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', fontSize: '0.7rem' }}>
+                        Estatus
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: colors.status.success, fontWeight: '500', fontSize: '0.9rem' }}>
+                        Vigente
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Grid>
+            </Grid>
+          </Paper>
+
+          {/* Documentos asociados - MÁS COMPACTO */}
+          <Paper elevation={0} sx={{ p: 2, bgcolor: 'white', borderRadius: 2 }}>
+            <Typography variant="subtitle2" sx={{ 
+              color: colors.primary.main, 
+              mb: 1.5, 
+              fontWeight: 'bold',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 0.5,
+              fontSize: '0.9rem'
+            }}>
+              <DownloadIcon sx={{ fontSize: 18 }} />
+              Documentos Asociados ({selectedCert.documents?.length || 2})
+            </Typography>
+            
+            <Grid container spacing={1.5}>
+              {(selectedCert.documents || [
+                { nombre: 'certificado_oficial.pdf', tipo: 'PDF', tamaño: '1.2 MB' },
+                { nombre: 'anexo_tecnico.pdf', tipo: 'PDF', tamaño: '0.8 MB' }
+              ]).map((doc, index) => (
+                <Grid item xs={12} key={index}>
+                  <Box 
+                    sx={{ 
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      p: 1.5,
+                      border: `1px solid ${colors.primary.main}20`,
+                      borderRadius: 1,
+                      '&:hover': {
+                        borderColor: colors.primary.main,
+                        bgcolor: '#f8f9fa'
+                      }
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      {doc.tipo === 'PDF' ? 
+                        <PdfIcon sx={{ color: colors.status.error, fontSize: 20 }} /> : 
+                        <FileIcon sx={{ color: colors.primary.main, fontSize: 20 }} />
+                      }
+                      <Box>
+                        <Typography variant="body2" sx={{ fontWeight: '500', fontSize: '0.9rem' }}>
+                          {doc.nombre}
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: colors.text.secondary, fontSize: '0.7rem' }}>
+                          {doc.tipo} • {doc.tamaño}
+                        </Typography>
+                      </Box>
+                    </Box>
+                    
+                    <Box>
+                      <Tooltip title="Ver">
+                        <IconButton size="small" sx={{ color: colors.primary.main }}>
+                          <VisibilityIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Descargar">
+                        <IconButton size="small" sx={{ color: colors.status.success }}>
+                          <DownloadIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
+                  </Box>
+                </Grid>
+              ))}
+            </Grid>
+          </Paper>
+        </DialogContent>
+        
+        <DialogActions sx={{ 
+          p: 2, 
+          borderTop: `1px solid ${colors.primary.main}20`,
+          bgcolor: '#f8fafc',
+          justifyContent: 'flex-end',
+          gap: 1
+        }}>
+          <Button 
+            onClick={handleCloseCertModal}
+            variant="outlined"
+            size="small"
+            sx={{ 
+              textTransform: 'none',
+              color: colors.primary.main,
+              borderColor: colors.primary.main,
+              px: 2
+            }}
+          >
+            Cerrar
+          </Button>
+          <Button 
+            variant="contained"
+            size="small"
+            startIcon={<DownloadIcon />}
+            sx={{ 
+              textTransform: 'none',
+              bgcolor: colors.primary.main,
+              '&:hover': { bgcolor: colors.primary.dark },
+              px: 2
+            }}
+          >
+            Descargar
+          </Button>
+        </DialogActions>
+      </>
+    )}
+  </Dialog>
+);
 
   const renderAuditView = () => (
     <>
@@ -686,9 +1346,9 @@ const AuditAgent = () => {
             <FormControl fullWidth size="small">
               <InputLabel sx={{ color: colors.text.primary }}>Estado</InputLabel>
               <Select
-                value={filterEntity}
+                value={filterStatus}
                 label="Estado"
-                onChange={(e) => setFilterEntity(e.target.value)}
+                onChange={(e) => setFilterStatus(e.target.value)}
               >
                 {statusFilter.map(status => (
                   <MenuItem key={status.value} value={status.value}>
@@ -712,6 +1372,7 @@ const AuditAgent = () => {
                   setSearchTerm('');
                   setFilterType('all');
                   setFilterEntity('all');
+                  setFilterStatus('all');
                   setPage(1);
                 }}
                 sx={{
@@ -850,7 +1511,11 @@ const AuditAgent = () => {
                   
                   <TableCell>
                     <Tooltip title="Ver detalles completos">
-                      <IconButton size="small" sx={{ color: colors.primary.main }}>
+                      <IconButton 
+                        size="small" 
+                        sx={{ color: colors.primary.main }}
+                        onClick={() => handleOpenDetailModal(log)}
+                      >
                         <VisibilityIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
@@ -910,6 +1575,7 @@ const AuditAgent = () => {
               variant="outlined"
               size="small"
               startIcon={<VisibilityIcon />}
+              onClick={() => handleOpenCertModal(cert)}
               sx={{
                 color: colors.primary.main,
                 borderColor: colors.primary.main
@@ -993,100 +1659,7 @@ const AuditAgent = () => {
         </Paper>
       ))}
 
-      <Paper sx={{ p: 3, bgcolor: '#f8f9fa' }}>
-        <Typography variant="subtitle1" sx={{ color: colors.text.primary, mb: 2, fontWeight: 'bold' }}>
-          🔍 Análisis de Trazabilidad por Estado
-        </Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
-            <Box sx={{ mb: 2 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
-                <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                  Aceptados:
-                </Typography>
-                <Typography variant="caption" sx={{ color: colors.status.success, fontWeight: 'bold' }}>
-                  {stats.byStatus.aceptados} eventos
-                </Typography>
-              </Box>
-              <LinearProgress 
-                variant="determinate" 
-                value={(stats.byStatus.aceptados / stats.total) * 100}
-                sx={{ 
-                  height: 8,
-                  borderRadius: 4,
-                  backgroundColor: '#e0e0e0',
-                  '& .MuiLinearProgress-bar': { bgcolor: colors.status.success }
-                }}
-              />
-            </Box>
-            
-            <Box sx={{ mb: 2 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
-                <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                  En revisión:
-                </Typography>
-                <Typography variant="caption" sx={{ color: colors.status.warning, fontWeight: 'bold' }}>
-                  {stats.byStatus.enRevision} eventos
-                </Typography>
-              </Box>
-              <LinearProgress 
-                variant="determinate" 
-                value={(stats.byStatus.enRevision / stats.total) * 100}
-                sx={{ 
-                  height: 8,
-                  borderRadius: 4,
-                  backgroundColor: '#e0e0e0',
-                  '& .MuiLinearProgress-bar': { bgcolor: colors.status.warning }
-                }}
-              />
-            </Box>
-          </Grid>
-          
-          <Grid item xs={12} md={6}>
-            <Box sx={{ mb: 2 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
-                <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                  Desactualizados:
-                </Typography>
-                <Typography variant="caption" sx={{ color: colors.status.warning, fontWeight: 'bold' }}>
-                  {stats.byStatus.desactualizado} eventos
-                </Typography>
-              </Box>
-              <LinearProgress 
-                variant="determinate" 
-                value={(stats.byStatus.desactualizado / stats.total) * 100}
-                sx={{ 
-                  height: 8,
-                  borderRadius: 4,
-                  backgroundColor: '#e0e0e0',
-                  '& .MuiLinearProgress-bar': { bgcolor: colors.status.warning }
-                }}
-              />
-            </Box>
-            
-            <Box sx={{ mb: 2 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
-                <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                  Rechazados:
-                </Typography>
-                <Typography variant="caption" sx={{ color: colors.status.error, fontWeight: 'bold' }}>
-                  {stats.byStatus.rechazado} eventos
-                </Typography>
-              </Box>
-              <LinearProgress 
-                variant="determinate" 
-                value={(stats.byStatus.rechazado / stats.total) * 100}
-                sx={{ 
-                  height: 8,
-                  borderRadius: 4,
-                  backgroundColor: '#e0e0e0',
-                  '& .MuiLinearProgress-bar': { bgcolor: colors.status.error }
-                }}
-              />
-            </Box>
-          </Grid>
-        </Grid>
-      </Paper>
+      
     </Box>
   );
 
@@ -1335,6 +1908,10 @@ const AuditAgent = () => {
           </Typography>
         </Paper>
       </Box>
+
+      {/* Modales */}
+      <DetailModal />
+      <CertPreviewModal />
     </Box>
   );
 };
