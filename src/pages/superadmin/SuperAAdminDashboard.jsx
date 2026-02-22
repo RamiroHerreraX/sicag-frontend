@@ -33,6 +33,21 @@ import {
 import FolderIcon from "@mui/icons-material/Folder";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 
+// Colores institucionales
+const institutionalColors = {
+  primary: '#133B6B',      // Azul oscuro principal
+  secondary: '#1a4c7a',    // Azul medio
+  accent: '#e9e9e9',       // Color para acentos (gris claro)
+  background: '#f5f7fa',   // Fondo claro
+  lightBlue: 'rgba(19, 59, 107, 0.08)',  // Azul transparente para hover
+  darkBlue: '#0D2A4D',     // Azul más oscuro
+  textPrimary: '#2c3e50',  // Texto principal
+  textSecondary: '#7f8c8d', // Texto secundario
+  success: '#27ae60',      // Verde para éxito
+  warning: '#f39c12',      // Naranja para advertencias
+  error: '#e74c3c',        // Rojo para errores
+  info: '#3498db',         // Azul para información
+};
 
 const SystemInstancesDashboard = () => {
   const [timeFilter, setTimeFilter] = useState("24h");
@@ -44,7 +59,7 @@ const SystemInstancesDashboard = () => {
       value: "8",
       change: "+1",
       icon: <DomainIcon />,
-      color: "#2c3e50",
+      color: institutionalColors.primary,
       trend: "up",
       detail: "De 10 totales",
     },
@@ -53,7 +68,7 @@ const SystemInstancesDashboard = () => {
       value: "1,245",
       change: "+45",
       icon: <PersonIcon />,
-      color: "#3498db",
+      color: institutionalColors.info,
       trend: "up",
       detail: "En todas las instancias",
     },
@@ -62,7 +77,7 @@ const SystemInstancesDashboard = () => {
       value: "15",
       change: "+2",
       icon: <AdminPanelSettingsIcon />,
-      color: "#2ecc71",
+      color: institutionalColors.success,
       trend: "up",
       detail: "En todas las instancias",
     },
@@ -71,7 +86,7 @@ const SystemInstancesDashboard = () => {
       value: "3,842",
       change: "+124",
       icon: <FolderIcon />,
-      color: "#f39c12",
+      color: institutionalColors.warning,
       trend: "up",
       detail: "En todas las instancias",
     },
@@ -164,65 +179,67 @@ const SystemInstancesDashboard = () => {
       version: "v2.1.0",
     },
   ];
-const instanceStats = [
-  {
-    type: "Instancias Activas",
-    count: 5,
-    percentage: 100,
-    status: "excelente",
-    trend: "+1",
-    icon: <CheckCircleOutlineIcon sx={{ color: "#27ae60" }} />,
-  },
-  {
-    type: "Instancias Inactivas",
-    count: 0,
-    percentage: 0,
-    status: "excelente",
-    trend: "0",
-    icon: <ErrorOutlineIcon sx={{ color: "#95a5a6" }} />,
-  },
-  {
-    type: "Expedientes Totales",
-    count: "3,842",
-    percentage: 100,
-    status: "excelente",
-    trend: "+124",
-    icon: <FolderIcon sx={{ color: "#f39c12" }} />,
-  },
-  {
-    type: "Usuarios Totales",
-    count: "1,245",
-    percentage: 100,
-    status: "excelente",
-    trend: "+45",
-    icon: <PersonIcon sx={{ color: "#3498db" }} />,
-  },
-];
+
+  const instanceStats = [
+    {
+      type: "Instancias Activas",
+      count: 5,
+      percentage: 100,
+      status: "excelente",
+      trend: "+1",
+      icon: <CheckCircleOutlineIcon sx={{ color: institutionalColors.success }} />,
+    },
+    {
+      type: "Instancias Inactivas",
+      count: 0,
+      percentage: 0,
+      status: "excelente",
+      trend: "0",
+      icon: <ErrorOutlineIcon sx={{ color: institutionalColors.textSecondary }} />,
+    },
+    {
+      type: "Expedientes Totales",
+      count: "3,842",
+      percentage: 100,
+      status: "excelente",
+      trend: "+124",
+      icon: <FolderIcon sx={{ color: institutionalColors.warning }} />,
+    },
+    {
+      type: "Usuarios Totales",
+      count: "1,245",
+      percentage: 100,
+      status: "excelente",
+      trend: "+45",
+      icon: <PersonIcon sx={{ color: institutionalColors.info }} />,
+    },
+  ];
+
   const getStatusColor = (status) => {
     switch (status) {
       case "excelente":
-        return "#27ae60";
+        return institutionalColors.success;
       case "bueno":
-        return "#2ecc71";
+        return institutionalColors.success;
       case "regular":
-        return "#f39c12";
+        return institutionalColors.warning;
       case "critico":
-        return "#e74c3c";
+        return institutionalColors.error;
       default:
-        return "#7f8c8d";
+        return institutionalColors.textSecondary;
     }
   };
 
   const getInstanceStatusColor = (status) => {
     switch (status) {
       case "active":
-        return "#2ecc71";
+        return institutionalColors.success;
       case "maintenance":
-        return "#f39c12";
+        return institutionalColors.warning;
       case "inactive":
-        return "#e74c3c";
+        return institutionalColors.error;
       default:
-        return "#7f8c8d";
+        return institutionalColors.textSecondary;
     }
   };
 
@@ -230,7 +247,7 @@ const instanceStats = [
     <Box
       sx={{
         p: 2.5,
-        backgroundColor: "#f5f7fa",
+        backgroundColor: institutionalColors.background,
         minHeight: "100vh",
       }}
     >
@@ -248,11 +265,11 @@ const instanceStats = [
         <Box>
           <Typography
             variant="h5"
-            sx={{ color: "#2c3e50", fontWeight: "bold", mb: 0.5 }}
+            sx={{ color: institutionalColors.primary, fontWeight: "bold", mb: 0.5 }}
           >
             Dashboard de Instancias
           </Typography>
-          <Typography variant="caption" sx={{ color: "#7f8c8d" }}>
+          <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
             Supervisión y estado de todas las instancias del sistema SICAG
           </Typography>
         </Box>
@@ -265,167 +282,164 @@ const instanceStats = [
             flexWrap: "wrap",
           }}
         >
-          
-
-          
         </Box>
       </Box>
 
-  {/* KPI Cards - 4 CARDS */}
-<Box
-  sx={{
-    display: "grid",
-    gridTemplateColumns: "repeat(4, 1fr)",
-    gap: 2,
-    mb: 3,
-    width: "100%",
-    "@media (max-width: 1200px)": {
-      gridTemplateColumns: "repeat(2, 1fr)",
-    },
-    "@media (max-width: 600px)": {
-      gridTemplateColumns: "1fr",
-    },
-  }}
->
-  {systemStats.map((stat, index) => (
-    <Card
-      key={index}
-      sx={{
-        borderLeft: `4px solid ${stat.color}`,
-        height: 120,
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-      }}
-    >
-      <CardContent
+      {/* KPI Cards - 4 CARDS */}
+      <Box
         sx={{
-          p: 1.5,
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          height: "100%",
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 1fr)",
+          gap: 2,
+          mb: 3,
+          width: "100%",
+          "@media (max-width: 1200px)": {
+            gridTemplateColumns: "repeat(2, 1fr)",
+          },
+          "@media (max-width: 600px)": {
+            gridTemplateColumns: "1fr",
+          },
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "flex-start",
-            justifyContent: "space-between",
-            gap: 1,
-            mb: 1,
-          }}
-        >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <Box sx={{ color: stat.color }}>{stat.icon}</Box>
-            <Typography
-              variant="body2"
+        {systemStats.map((stat, index) => (
+          <Card
+            key={index}
+            sx={{
+              borderLeft: `4px solid ${stat.color}`,
+              height: 120,
+              display: "flex",
+              flexDirection: "column",
+              overflow: "hidden",
+            }}
+          >
+            <CardContent
               sx={{
-                color: "#7f8c8d",
-                fontWeight: 500,
-                fontSize: "0.75rem",
-                lineHeight: 1.2,
+                p: 1.5,
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                height: "100%",
               }}
             >
-              {stat.title}
-            </Typography>
-          </Box>
-
-          <Typography
-            variant="h5"
-            sx={{
-              color: "#2c3e50",
-              fontWeight: "bold",
-              fontSize: "1.5rem",
-              lineHeight: 1,
-              textAlign: "right",
-            }}
-          >
-            {stat.value}
-          </Typography>
-        </Box>
-
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-end",
-            gap: 0.5,
-          }}
-        >
-          <Typography
-            variant="caption"
-            sx={{
-              color: "#95a5a6",
-              fontSize: "0.7rem",
-              lineHeight: 1.2,
-              flex: 1,
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-            }}
-          >
-            {stat.detail}
-          </Typography>
-
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 0.25,
-              flexShrink: 0,
-            }}
-          >
-            {stat.trend !== "stable" && (
               <Box
                 sx={{
-                  width: 0,
-                  height: 0,
-                  borderLeft: "3px solid transparent",
-                  borderRight: "3px solid transparent",
-                  borderBottom:
-                    stat.trend === "up"
-                      ? "4px solid #27ae60"
-                      : "4px solid #e74c3c",
-                  transform:
-                    stat.trend === "up" ? "none" : "rotate(180deg)",
+                  display: "flex",
+                  alignItems: "flex-start",
+                  justifyContent: "space-between",
+                  gap: 1,
+                  mb: 1,
                 }}
-              />
-            )}
-            <Chip
-              label={stat.change}
-              size="small"
-              sx={{
-                bgcolor:
-                  stat.trend === "up"
-                    ? "#2ecc7120"
-                    : stat.trend === "down"
-                    ? "#e74c3c20"
-                    : "#7f8c8d20",
-                color:
-                  stat.trend === "up"
-                    ? "#27ae60"
-                    : stat.trend === "down"
-                    ? "#e74c3c"
-                    : "#7f8c8d",
-                fontWeight: "bold",
-                fontSize: "0.65rem",
-                height: 20,
-                minWidth: "auto",
-                "& .MuiChip-label": {
-                  px: 0.5,
-                },
-              }}
-            />
-          </Box>
-        </Box>
-      </CardContent>
-    </Card>
-  ))}
-</Box>
+              >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <Box sx={{ color: stat.color }}>{stat.icon}</Box>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: institutionalColors.textSecondary,
+                      fontWeight: 500,
+                      fontSize: "0.75rem",
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    {stat.title}
+                  </Typography>
+                </Box>
+
+                <Typography
+                  variant="h5"
+                  sx={{
+                    color: institutionalColors.textPrimary,
+                    fontWeight: "bold",
+                    fontSize: "1.5rem",
+                    lineHeight: 1,
+                    textAlign: "right",
+                  }}
+                >
+                  {stat.value}
+                </Typography>
+              </Box>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "flex-end",
+                  gap: 0.5,
+                }}
+              >
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: institutionalColors.textSecondary,
+                    fontSize: "0.7rem",
+                    lineHeight: 1.2,
+                    flex: 1,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
+                  }}
+                >
+                  {stat.detail}
+                </Typography>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 0.25,
+                    flexShrink: 0,
+                  }}
+                >
+                  {stat.trend !== "stable" && (
+                    <Box
+                      sx={{
+                        width: 0,
+                        height: 0,
+                        borderLeft: "3px solid transparent",
+                        borderRight: "3px solid transparent",
+                        borderBottom:
+                          stat.trend === "up"
+                            ? `4px solid ${institutionalColors.success}`
+                            : `4px solid ${institutionalColors.error}`,
+                        transform:
+                          stat.trend === "up" ? "none" : "rotate(180deg)",
+                      }}
+                    />
+                  )}
+                  <Chip
+                    label={stat.change}
+                    size="small"
+                    sx={{
+                      bgcolor:
+                        stat.trend === "up"
+                          ? `${institutionalColors.success}20`
+                          : stat.trend === "down"
+                          ? `${institutionalColors.error}20`
+                          : `${institutionalColors.textSecondary}20`,
+                      color:
+                        stat.trend === "up"
+                          ? institutionalColors.success
+                          : stat.trend === "down"
+                          ? institutionalColors.error
+                          : institutionalColors.textSecondary,
+                      fontWeight: "bold",
+                      fontSize: "0.65rem",
+                      height: 20,
+                      minWidth: "auto",
+                      "& .MuiChip-label": {
+                        px: 0.5,
+                      },
+                    }}
+                  />
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        ))}
+      </Box>
 
       {/* Primera fila - Tabla y Estadísticas */}
       <Box
@@ -476,7 +490,7 @@ const instanceStats = [
                 <Typography
                   variant="h6"
                   sx={{
-                    color: "#2c3e50",
+                    color: institutionalColors.primary,
                     fontWeight: "bold",
                     fontSize: "1rem",
                   }}
@@ -487,14 +501,22 @@ const instanceStats = [
                   <Chip
                     label="6 INSTANCIAS"
                     size="small"
-                    color="primary"
-                    sx={{ fontSize: "0.65rem", height: 22 }}
+                    sx={{ 
+                      bgcolor: institutionalColors.lightBlue,
+                      color: institutionalColors.primary,
+                      fontSize: "0.65rem", 
+                      height: 22 
+                    }}
                   />
                   <Chip
                     label="5 ACTIVAS"
                     size="small"
-                    color="success"
-                    sx={{ fontSize: "0.65rem", height: 22 }}
+                    sx={{ 
+                      bgcolor: `${institutionalColors.success}20`,
+                      color: institutionalColors.success,
+                      fontSize: "0.65rem", 
+                      height: 22 
+                    }}
                   />
                 </Box>
               </Box>
@@ -504,37 +526,37 @@ const instanceStats = [
                   <TableHead>
                     <TableRow sx={{ backgroundColor: "#f8f9fa" }}>
                       <TableCell
-                        sx={{ fontWeight: "bold", py: 1, fontSize: "0.75rem" }}
+                        sx={{ fontWeight: "bold", py: 1, fontSize: "0.75rem", color: institutionalColors.primary }}
                       >
                         Instancia
                       </TableCell>
                       <TableCell
-                        sx={{ fontWeight: "bold", py: 1, fontSize: "0.75rem" }}
+                        sx={{ fontWeight: "bold", py: 1, fontSize: "0.75rem", color: institutionalColors.primary }}
                       >
                         Estado
                       </TableCell>
                       <TableCell
-                        sx={{ fontWeight: "bold", py: 1, fontSize: "0.75rem" }}
+                        sx={{ fontWeight: "bold", py: 1, fontSize: "0.75rem", color: institutionalColors.primary }}
                       >
                         Uptime
                       </TableCell>
                       <TableCell
-                        sx={{ fontWeight: "bold", py: 1, fontSize: "0.75rem" }}
+                        sx={{ fontWeight: "bold", py: 1, fontSize: "0.75rem", color: institutionalColors.primary }}
                       >
                         CPU
                       </TableCell>
                       <TableCell
-                        sx={{ fontWeight: "bold", py: 1, fontSize: "0.75rem" }}
+                        sx={{ fontWeight: "bold", py: 1, fontSize: "0.75rem", color: institutionalColors.primary }}
                       >
                         Memoria
                       </TableCell>
                       <TableCell
-                        sx={{ fontWeight: "bold", py: 1, fontSize: "0.75rem" }}
+                        sx={{ fontWeight: "bold", py: 1, fontSize: "0.75rem", color: institutionalColors.primary }}
                       >
                         Usuarios
                       </TableCell>
                       <TableCell
-                        sx={{ fontWeight: "bold", py: 1, fontSize: "0.75rem" }}
+                        sx={{ fontWeight: "bold", py: 1, fontSize: "0.75rem", color: institutionalColors.primary }}
                       >
                         Acciones
                       </TableCell>
@@ -547,13 +569,13 @@ const instanceStats = [
                           <Box>
                             <Typography
                               variant="body2"
-                              sx={{ fontWeight: "500", color: "#2c3e50" }}
+                              sx={{ fontWeight: "500", color: institutionalColors.textPrimary }}
                             >
                               {instance.name}
                             </Typography>
                             <Typography
                               variant="caption"
-                              sx={{ color: "#7f8c8d" }}
+                              sx={{ color: institutionalColors.textSecondary }}
                             >
                               {instance.code} • v{instance.version}
                             </Typography>
@@ -585,8 +607,8 @@ const instanceStats = [
                             sx={{
                               color:
                                 instance.uptime === "0%"
-                                  ? "#e74c3c"
-                                  : "#2c3e50",
+                                  ? institutionalColors.error
+                                  : institutionalColors.textPrimary,
                               fontWeight:
                                 instance.uptime === "0%" ? "bold" : "normal",
                             }}
@@ -613,14 +635,14 @@ const instanceStats = [
                                 "& .MuiLinearProgress-bar": {
                                   bgcolor:
                                     parseInt(instance.cpu) > 70
-                                      ? "#e74c3c"
+                                      ? institutionalColors.error
                                       : parseInt(instance.cpu) > 50
-                                        ? "#f39c12"
-                                        : "#27ae60",
+                                        ? institutionalColors.warning
+                                        : institutionalColors.success,
                                 },
                               }}
                             />
-                            <Typography variant="caption">
+                            <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                               {instance.cpu}
                             </Typography>
                           </Box>
@@ -644,14 +666,14 @@ const instanceStats = [
                                 "& .MuiLinearProgress-bar": {
                                   bgcolor:
                                     parseInt(instance.memory) > 70
-                                      ? "#e74c3c"
+                                      ? institutionalColors.error
                                       : parseInt(instance.memory) > 50
-                                        ? "#f39c12"
-                                        : "#27ae60",
+                                        ? institutionalColors.warning
+                                        : institutionalColors.success,
                                 },
                               }}
                             />
-                            <Typography variant="caption">
+                            <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                               {instance.memory}
                             </Typography>
                           </Box>
@@ -659,7 +681,7 @@ const instanceStats = [
                         <TableCell sx={{ py: 1 }}>
                           <Typography
                             variant="body2"
-                            sx={{ fontWeight: "500" }}
+                            sx={{ fontWeight: "500", color: institutionalColors.textPrimary }}
                           >
                             {instance.users}
                           </Typography>
@@ -667,12 +689,12 @@ const instanceStats = [
                         <TableCell sx={{ py: 1 }}>
                           <Box sx={{ display: "flex", gap: 0.5 }}>
                             <Tooltip title="Ver detalles">
-                              <IconButton size="small">
+                              <IconButton size="small" sx={{ color: institutionalColors.primary }}>
                                 <VisibilityIcon fontSize="small" />
                               </IconButton>
                             </Tooltip>
                             <Tooltip title="Configurar">
-                              <IconButton size="small">
+                              <IconButton size="small" sx={{ color: institutionalColors.primary }}>
                                 <SettingsIcon fontSize="small" />
                               </IconButton>
                             </Tooltip>
@@ -691,16 +713,19 @@ const instanceStats = [
                   alignItems: "center",
                   mt: 2,
                   pt: 1.5,
-                  borderTop: "1px solid #ecf0f1",
+                  borderTop: `1px solid #ecf0f1`,
                 }}
               >
-                <Typography variant="caption" sx={{ color: "#7f8c8d" }}>
+                <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                   Mostrando 6 de 8 instancias totales • Último backup: Hoy 02:45
                 </Typography>
                 <Button
                   size="small"
                   endIcon={<DomainIcon />}
-                  sx={{ fontSize: "0.75rem" }}
+                  sx={{ 
+                    fontSize: "0.75rem",
+                    color: institutionalColors.primary,
+                  }}
                 >
                   Ver todas
                 </Button>
@@ -738,7 +763,7 @@ const instanceStats = [
               <Typography
                 variant="h6"
                 sx={{
-                  color: "#2c3e50",
+                  color: institutionalColors.primary,
                   mb: 2,
                   fontWeight: "bold",
                   fontSize: "1rem",
@@ -764,7 +789,7 @@ const instanceStats = [
                         {stat.icon}
                         <Typography
                           variant="subtitle2"
-                          sx={{ fontWeight: "bold", color: "#2c3e50" }}
+                          sx={{ fontWeight: "bold", color: institutionalColors.textPrimary }}
                         >
                           {stat.type}
                         </Typography>
@@ -776,10 +801,10 @@ const instanceStats = [
                           variant="caption"
                           sx={{
                             color: stat.trend.startsWith("+")
-                              ? "#27ae60"
+                              ? institutionalColors.success
                               : stat.trend === "0"
-                                ? "#7f8c8d"
-                                : "#e74c3c",
+                                ? institutionalColors.textSecondary
+                                : institutionalColors.error,
                             fontWeight: "bold",
                           }}
                         >
@@ -817,7 +842,7 @@ const instanceStats = [
                     <Box
                       sx={{ display: "flex", justifyContent: "space-between" }}
                     >
-                      <Typography variant="caption" sx={{ color: "#7f8c8d" }}>
+                      <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                         {stat.percentage}% del total
                       </Typography>
                       <Chip
@@ -844,7 +869,7 @@ const instanceStats = [
                   alignItems: "center",
                 }}
               >
-                <Typography variant="caption" sx={{ color: "#7f8c8d" }}>
+                <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                   Rendimiento global
                 </Typography>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
@@ -854,10 +879,10 @@ const instanceStats = [
                         width: 8,
                         height: 8,
                         borderRadius: 1,
-                        bgcolor: "#27ae60",
+                        bgcolor: institutionalColors.success,
                       }}
                     />
-                    <Typography variant="caption">Óptimo</Typography>
+                    <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>Óptimo</Typography>
                   </Box>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                     <Box
@@ -865,10 +890,10 @@ const instanceStats = [
                         width: 8,
                         height: 8,
                         borderRadius: 1,
-                        bgcolor: "#f39c12",
+                        bgcolor: institutionalColors.warning,
                       }}
                     />
-                    <Typography variant="caption">Regular</Typography>
+                    <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>Regular</Typography>
                   </Box>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                     <Box
@@ -876,10 +901,10 @@ const instanceStats = [
                         width: 8,
                         height: 8,
                         borderRadius: 1,
-                        bgcolor: "#e74c3c",
+                        bgcolor: institutionalColors.error,
                       }}
                     />
-                    <Typography variant="caption">Crítico</Typography>
+                    <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>Crítico</Typography>
                   </Box>
                 </Box>
               </Box>
@@ -902,29 +927,34 @@ const instanceStats = [
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <Typography variant="caption" sx={{ color: "#7f8c8d" }}>
+          <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
             Sistema de Instancias SICAG • Última actualización: Hoy 10:30 AM
           </Typography>
           <Chip
             label="v2.1.0"
             size="small"
             variant="outlined"
-            sx={{ height: 20, fontSize: "0.6rem" }}
+            sx={{ 
+              height: 20, 
+              fontSize: "0.6rem",
+              borderColor: institutionalColors.primary,
+              color: institutionalColors.primary,
+            }}
           />
         </Box>
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-            <CheckCircleIcon sx={{ fontSize: 12, color: "#27ae60" }} />
-            <Typography variant="caption" sx={{ color: "#7f8c8d" }}>
+            <CheckCircleIcon sx={{ fontSize: 12, color: institutionalColors.success }} />
+            <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
               5/6 instancias operativas
             </Typography>
           </Box>
-          <Divider orientation="vertical" flexItem sx={{ height: 16 }} />
-          <Typography variant="caption" sx={{ color: "#7f8c8d" }}>
+          <Divider orientation="vertical" flexItem sx={{ height: 16, borderColor: institutionalColors.textSecondary }} />
+          <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
             Uptime global: 82.3%
           </Typography>
-          <Divider orientation="vertical" flexItem sx={{ height: 16 }} />
-          <Typography variant="caption" sx={{ color: "#7f8c8d" }}>
+          <Divider orientation="vertical" flexItem sx={{ height: 16, borderColor: institutionalColors.textSecondary }} />
+          <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
             Alertas: 3
           </Typography>
         </Box>

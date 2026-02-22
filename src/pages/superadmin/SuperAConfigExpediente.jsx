@@ -45,6 +45,22 @@ import {
   AdminPanelSettings as AdminPanelSettingsIcon
 } from '@mui/icons-material';
 
+// Colores institucionales
+const institutionalColors = {
+  primary: '#133B6B',      // Azul oscuro principal
+  secondary: '#1a4c7a',    // Azul medio
+  accent: '#e9e9e9',       // Color para acentos (gris claro)
+  background: '#f5f7fa',   // Fondo claro
+  lightBlue: 'rgba(19, 59, 107, 0.08)',  // Azul transparente para hover
+  darkBlue: '#0D2A4D',     // Azul más oscuro
+  textPrimary: '#2c3e50',  // Texto principal
+  textSecondary: '#7f8c8d', // Texto secundario
+  success: '#27ae60',      // Verde para éxito
+  warning: '#f39c12',      // Naranja para advertencias
+  error: '#e74c3c',        // Rojo para errores
+  info: '#3498db',         // Azul para información
+};
+
 const ConfigExpediente = () => {
   const [categories, setCategories] = useState([
     {
@@ -53,7 +69,7 @@ const ConfigExpediente = () => {
       description: 'Documentos de identificación y datos personales del solicitante',
       required: true,
       icon: '👤',
-      color: '#3498db',
+      color: institutionalColors.info,
       documents: [
         { 
           id: 101, 
@@ -120,7 +136,7 @@ const ConfigExpediente = () => {
       description: 'Certificaciones y credenciales profesionales requeridas',
       required: true,
       icon: '🎓',
-      color: '#2ecc71',
+      color: institutionalColors.success,
       documents: [
         { 
           id: 201, 
@@ -198,7 +214,7 @@ const ConfigExpediente = () => {
       description: 'Documentos relacionados con operaciones aduanales',
       required: true,
       icon: '📊',
-      color: '#f39c12',
+      color: institutionalColors.warning,
       documents: [
         { 
           id: 401, 
@@ -257,7 +273,7 @@ const ConfigExpediente = () => {
       description: '',
       required: false,
       icon: '📁',
-      color: '#7f8c8d',
+      color: institutionalColors.textSecondary,
       documents: [],
       order: categories.length + 1
     });
@@ -379,15 +395,15 @@ const ConfigExpediente = () => {
   };
 
   return (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: '#f5f7fa' }}>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: institutionalColors.background }}>
       {/* Header */}
       <Box sx={{ mb: 3, p: 2.5 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
           <Box>
-            <Typography variant="h5" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 0.5 }}>
+            <Typography variant="h5" sx={{ color: institutionalColors.primary, fontWeight: 'bold', mb: 0.5 }}>
               Configuración de Expedientes
             </Typography>
-            <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+            <Typography variant="body2" sx={{ color: institutionalColors.textSecondary }}>
               Panel de administración - Gestión de categorías y documentos del expediente
             </Typography>
             
@@ -397,7 +413,7 @@ const ConfigExpediente = () => {
                 label="Panel de Administración"
                 size="small"
                 sx={{ 
-                  bgcolor: '#2c3e50',
+                  bgcolor: institutionalColors.primary,
                   color: 'white',
                   fontWeight: 'bold'
                 }}
@@ -410,7 +426,10 @@ const ConfigExpediente = () => {
               variant="contained"
               startIcon={<AddIcon />}
               onClick={handleAddCategory}
-              sx={{ bgcolor: '#2c3e50' }}
+              sx={{ 
+                bgcolor: institutionalColors.primary,
+                '&:hover': { bgcolor: institutionalColors.secondary }
+              }}
             >
               Nueva Categoría
             </Button>
@@ -433,7 +452,7 @@ const ConfigExpediente = () => {
         }}>
           {/* Card 1: Categorías Totales */}
           <Card sx={{
-            borderLeft: '4px solid #2c3e50',
+            borderLeft: `4px solid ${institutionalColors.primary}`,
             height: 120,
             display: 'flex',
             flexDirection: 'column',
@@ -455,11 +474,11 @@ const ConfigExpediente = () => {
                 mb: 1
               }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Box sx={{ color: '#2c3e50' }}>
+                  <Box sx={{ color: institutionalColors.primary }}>
                     <FolderIcon />
                   </Box>
                   <Typography variant="body2" sx={{
-                    color: '#7f8c8d',
+                    color: institutionalColors.textSecondary,
                     fontWeight: 500,
                     fontSize: '0.75rem',
                     lineHeight: 1.2
@@ -468,7 +487,7 @@ const ConfigExpediente = () => {
                   </Typography>
                 </Box>
                 <Typography variant="h5" sx={{
-                  color: '#2c3e50',
+                  color: institutionalColors.textPrimary,
                   fontWeight: 'bold',
                   fontSize: '1.5rem',
                   lineHeight: 1,
@@ -484,7 +503,7 @@ const ConfigExpediente = () => {
                 gap: 0.5
               }}>
                 <Typography variant="caption" sx={{
-                  color: '#95a5a6',
+                  color: institutionalColors.textSecondary,
                   fontSize: '0.7rem',
                   lineHeight: 1.2,
                   flex: 1,
@@ -502,7 +521,7 @@ const ConfigExpediente = () => {
 
           {/* Card 2: Documentos Totales */}
           <Card sx={{
-            borderLeft: '4px solid #2ecc71',
+            borderLeft: `4px solid ${institutionalColors.success}`,
             height: 120,
             display: 'flex',
             flexDirection: 'column',
@@ -524,11 +543,11 @@ const ConfigExpediente = () => {
                 mb: 1
               }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Box sx={{ color: '#2ecc71' }}>
+                  <Box sx={{ color: institutionalColors.success }}>
                     <DescriptionIcon />
                   </Box>
                   <Typography variant="body2" sx={{
-                    color: '#7f8c8d',
+                    color: institutionalColors.textSecondary,
                     fontWeight: 500,
                     fontSize: '0.75rem',
                     lineHeight: 1.2
@@ -537,7 +556,7 @@ const ConfigExpediente = () => {
                   </Typography>
                 </Box>
                 <Typography variant="h5" sx={{
-                  color: '#2c3e50',
+                  color: institutionalColors.textPrimary,
                   fontWeight: 'bold',
                   fontSize: '1.5rem',
                   lineHeight: 1,
@@ -553,7 +572,7 @@ const ConfigExpediente = () => {
                 gap: 0.5
               }}>
                 <Typography variant="caption" sx={{
-                  color: '#95a5a6',
+                  color: institutionalColors.textSecondary,
                   fontSize: '0.7rem',
                   lineHeight: 1.2,
                   flex: 1,
@@ -571,7 +590,7 @@ const ConfigExpediente = () => {
 
           {/* Card 3: Rev. Comité */}
           <Card sx={{
-            borderLeft: '4px solid #d35400',
+            borderLeft: `4px solid ${institutionalColors.warning}`,
             height: 120,
             display: 'flex',
             flexDirection: 'column',
@@ -593,11 +612,11 @@ const ConfigExpediente = () => {
                 mb: 1
               }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Box sx={{ color: '#d35400' }}>
+                  <Box sx={{ color: institutionalColors.warning }}>
                     <PeopleIcon />
                   </Box>
                   <Typography variant="body2" sx={{
-                    color: '#7f8c8d',
+                    color: institutionalColors.textSecondary,
                     fontWeight: 500,
                     fontSize: '0.75rem',
                     lineHeight: 1.2
@@ -606,7 +625,7 @@ const ConfigExpediente = () => {
                   </Typography>
                 </Box>
                 <Typography variant="h5" sx={{
-                  color: '#2c3e50',
+                  color: institutionalColors.textPrimary,
                   fontWeight: 'bold',
                   fontSize: '1.5rem',
                   lineHeight: 1,
@@ -622,7 +641,7 @@ const ConfigExpediente = () => {
                 gap: 0.5
               }}>
                 <Typography variant="caption" sx={{
-                  color: '#95a5a6',
+                  color: institutionalColors.textSecondary,
                   fontSize: '0.7rem',
                   lineHeight: 1.2,
                   flex: 1,
@@ -640,7 +659,7 @@ const ConfigExpediente = () => {
 
           {/* Card 4: Categorías Obligatorias */}
           <Card sx={{
-            borderLeft: '4px solid #3498db',
+            borderLeft: `4px solid ${institutionalColors.info}`,
             height: 120,
             display: 'flex',
             flexDirection: 'column',
@@ -662,11 +681,11 @@ const ConfigExpediente = () => {
                 mb: 1
               }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Box sx={{ color: '#3498db' }}>
+                  <Box sx={{ color: institutionalColors.info }}>
                     <SaveIcon />
                   </Box>
                   <Typography variant="body2" sx={{
-                    color: '#7f8c8d',
+                    color: institutionalColors.textSecondary,
                     fontWeight: 500,
                     fontSize: '0.75rem',
                     lineHeight: 1.2
@@ -675,7 +694,7 @@ const ConfigExpediente = () => {
                   </Typography>
                 </Box>
                 <Typography variant="h5" sx={{
-                  color: '#2c3e50',
+                  color: institutionalColors.textPrimary,
                   fontWeight: 'bold',
                   fontSize: '1.5rem',
                   lineHeight: 1,
@@ -691,7 +710,7 @@ const ConfigExpediente = () => {
                 gap: 0.5
               }}>
                 <Typography variant="caption" sx={{
-                  color: '#95a5a6',
+                  color: institutionalColors.textSecondary,
                   fontSize: '0.7rem',
                   lineHeight: 1.2,
                   flex: 1,
@@ -724,29 +743,35 @@ const ConfigExpediente = () => {
           flexDirection: 'column', 
           overflow: 'hidden', 
           borderRadius: '8px',
-          height: '100%'
+          height: '100%',
+          border: `1px solid #e5e7eb`,
         }}>
           <Box sx={{ 
             p: 2, 
-            borderBottom: '1px solid #e0e0e0',
+            borderBottom: `1px solid #e5e7eb`,
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             bgcolor: '#fff'
           }}>
-            <Typography variant="h6" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
+            <Typography variant="h6" sx={{ color: institutionalColors.primary, fontWeight: 'bold' }}>
               Estructura del Expediente
             </Typography>
           </Box>
 
           {/* Lista de categorías */}
-          <Box sx={{ flex: 1, overflowY: 'auto', p: 2, bgcolor: '#f8f9fa' }}>
+          <Box sx={{ flex: 1, overflowY: 'auto', p: 2, bgcolor: institutionalColors.background }}>
             {categories.sort((a, b) => a.order - b.order).map((category) => (
               <Accordion 
                 key={category.id}
                 expanded={expandedCategory === category.id}
                 onChange={() => handleCategoryExpand(category.id)}
-                sx={{ mb: 2, borderRadius: '8px !important', overflow: 'hidden' }}
+                sx={{ 
+                  mb: 2, 
+                  borderRadius: '8px !important', 
+                  overflow: 'hidden',
+                  border: `1px solid #e5e7eb`,
+                }}
               >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ bgcolor: '#fff' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
@@ -767,7 +792,7 @@ const ConfigExpediente = () => {
                     
                     <Box sx={{ flex: 1 }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                        <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: institutionalColors.textPrimary }}>
                           {category.name}
                         </Typography>
                         {category.required && (
@@ -782,10 +807,15 @@ const ConfigExpediente = () => {
                           label={`${category.documents.length} docs`}
                           size="small"
                           variant="outlined"
-                          sx={{ height: 20, fontSize: '0.65rem' }}
+                          sx={{ 
+                            height: 20, 
+                            fontSize: '0.65rem',
+                            borderColor: institutionalColors.textSecondary,
+                            color: institutionalColors.textSecondary
+                          }}
                         />
                       </Box>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                      <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                         {category.description}
                       </Typography>
                     </Box>
@@ -798,6 +828,7 @@ const ConfigExpediente = () => {
                             e.stopPropagation();
                             handleEditCategory(category);
                           }}
+                          sx={{ color: institutionalColors.primary }}
                         >
                           <EditIcon fontSize="small" />
                         </IconButton>
@@ -809,6 +840,7 @@ const ConfigExpediente = () => {
                             e.stopPropagation();
                             handleDeleteCategory(category.id);
                           }}
+                          sx={{ color: institutionalColors.error }}
                         >
                           <DeleteIcon fontSize="small" />
                         </IconButton>
@@ -828,21 +860,21 @@ const ConfigExpediente = () => {
                             p: 1.5,
                             mb: 1,
                             borderRadius: '6px',
-                            bgcolor: '#f8f9fa',
-                            borderLeft: `3px solid ${document.required ? '#e74c3c' : '#7f8c8d'}`
+                            bgcolor: institutionalColors.background,
+                            borderLeft: `3px solid ${document.required ? institutionalColors.error : institutionalColors.textSecondary}`
                           }}
                         >
                           <ListItemIcon sx={{ minWidth: 36 }}>
-                            <DragIndicatorIcon sx={{ color: '#7f8c8d' }} />
+                            <DragIndicatorIcon sx={{ color: institutionalColors.textSecondary }} />
                           </ListItemIcon>
                           
                           <ListItemIcon sx={{ minWidth: 36 }}>
-                            <DescriptionIcon sx={{ color: document.required ? '#e74c3c' : '#7f8c8d' }} />
+                            <DescriptionIcon sx={{ color: document.required ? institutionalColors.error : institutionalColors.textSecondary }} />
                           </ListItemIcon>
                           
                           <Box sx={{ flex: 1 }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                              <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                              <Typography variant="body2" sx={{ fontWeight: 'bold', color: institutionalColors.textPrimary }}>
                                 {document.name}
                               </Typography>
                               {document.required ? (
@@ -863,31 +895,31 @@ const ConfigExpediente = () => {
                               {/* Mostrar icono de revisión por comité */}
                               {document.committeeReview && (
                                 <Tooltip title="Requiere revisión por comité">
-                                  <PeopleIcon sx={{ fontSize: 16, color: '#d35400' }} />
+                                  <PeopleIcon sx={{ fontSize: 16, color: institutionalColors.warning }} />
                                 </Tooltip>
                               )}
                               {/* Mostrar icono de revisión periódica si es mayor a 0 */}
                               {parseInt(document.periodicReview) > 0 && (
                                 <Tooltip title={getReviewDescription(document)}>
-                                  <TimerIcon sx={{ fontSize: 16, color: '#3498db' }} />
+                                  <TimerIcon sx={{ fontSize: 16, color: institutionalColors.info }} />
                                 </Tooltip>
                               )}
                             </Box>
                             
-                            <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', mb: 1 }}>
+                            <Typography variant="caption" sx={{ color: institutionalColors.textSecondary, display: 'block', mb: 1 }}>
                               {document.description}
                             </Typography>
                             
                             {/* INFORMACIÓN SIMPLIFICADA */}
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
-                              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                              <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                                 <strong>Formato:</strong> {document.format}
                               </Typography>
-                              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                              <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                                 <strong>Tamaño:</strong> {document.maxSize}
                               </Typography>
                               {parseInt(document.periodicReview) > 0 && (
-                                <Typography variant="caption" sx={{ color: '#3498db' }}>
+                                <Typography variant="caption" sx={{ color: institutionalColors.info }}>
                                   <strong>Revisión:</strong> {getReviewDescription(document)}
                                 </Typography>
                               )}
@@ -903,7 +935,14 @@ const ConfigExpediente = () => {
                                       size="small"
                                       checked={document.required}
                                       onChange={() => handleToggleRequired(category.id, document.id)}
-                                      color="primary"
+                                      sx={{
+                                        '& .MuiSwitch-switchBase.Mui-checked': {
+                                          color: institutionalColors.primary,
+                                        },
+                                        '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                                          backgroundColor: institutionalColors.primary,
+                                        }
+                                      }}
                                     />
                                   }
                                   label=""
@@ -913,6 +952,7 @@ const ConfigExpediente = () => {
                                 <IconButton 
                                   size="small"
                                   onClick={() => handleEditDocument(category, document)}
+                                  sx={{ color: institutionalColors.primary }}
                                 >
                                   <EditIcon fontSize="small" />
                                 </IconButton>
@@ -921,6 +961,7 @@ const ConfigExpediente = () => {
                                 <IconButton 
                                   size="small"
                                   onClick={() => handleDeleteDocument(category.id, document.id)}
+                                  sx={{ color: institutionalColors.error }}
                                 >
                                   <DeleteIcon fontSize="small" />
                                 </IconButton>
@@ -935,7 +976,13 @@ const ConfigExpediente = () => {
                       startIcon={<AddIcon />}
                       size="small"
                       onClick={() => handleAddDocument(category.id)}
-                      sx={{ mt: 2 }}
+                      sx={{ 
+                        mt: 2,
+                        color: institutionalColors.primary,
+                        '&:hover': {
+                          bgcolor: institutionalColors.lightBlue,
+                        }
+                      }}
                     >
                       Agregar Documento a esta Categoría
                     </Button>
@@ -958,9 +1005,11 @@ const ConfigExpediente = () => {
         }}
       >
         <DialogTitle>
-          {editMode === 'category' ? 
-            (currentCategory?.id > 100 ? 'Nueva Categoría' : 'Editar Categoría') : 
-            (currentDocument?.id > 1000 ? 'Nuevo Documento' : 'Editar Documento')}
+          <Typography variant="h6" sx={{ color: institutionalColors.textPrimary }}>
+            {editMode === 'category' ? 
+              (currentCategory?.id > 100 ? 'Nueva Categoría' : 'Editar Categoría') : 
+              (currentDocument?.id > 1000 ? 'Nuevo Documento' : 'Editar Documento')}
+          </Typography>
         </DialogTitle>
         
         <DialogContent>
@@ -997,7 +1046,7 @@ const ConfigExpediente = () => {
                   fullWidth
                   type="color"
                   label="Color"
-                  value={currentCategory?.color || '#7f8c8d'}
+                  value={currentCategory?.color || institutionalColors.textSecondary}
                   onChange={(e) => setCurrentCategory({...currentCategory, color: e.target.value})}
                 />
               </Box>
@@ -1016,6 +1065,14 @@ const ConfigExpediente = () => {
                   <Switch
                     checked={currentCategory?.required || false}
                     onChange={(e) => setCurrentCategory({...currentCategory, required: e.target.checked})}
+                    sx={{
+                      '& .MuiSwitch-switchBase.Mui-checked': {
+                        color: institutionalColors.primary,
+                      },
+                      '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                        backgroundColor: institutionalColors.primary,
+                      }
+                    }}
                   />
                 }
                 label="Categoría Obligatoria"
@@ -1107,6 +1164,14 @@ const ConfigExpediente = () => {
                     <Switch
                       checked={currentDocument?.required || false}
                       onChange={(e) => setCurrentDocument({...currentDocument, required: e.target.checked})}
+                      sx={{
+                        '& .MuiSwitch-switchBase.Mui-checked': {
+                          color: institutionalColors.primary,
+                        },
+                        '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                          backgroundColor: institutionalColors.primary,
+                        }
+                      }}
                     />
                   }
                   label="Documento Obligatorio"
@@ -1118,12 +1183,20 @@ const ConfigExpediente = () => {
                       checked={currentDocument?.committeeReview || false}
                       onChange={(e) => setCurrentDocument({...currentDocument, committeeReview: e.target.checked})}
                       color="warning"
+                      sx={{
+                        '& .MuiSwitch-switchBase.Mui-checked': {
+                          color: institutionalColors.warning,
+                        },
+                        '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                          backgroundColor: institutionalColors.warning,
+                        }
+                      }}
                     />
                   }
                   label={
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <PeopleIcon fontSize="small" sx={{ color: '#d35400' }} />
-                      <Typography variant="body2">
+                      <PeopleIcon fontSize="small" sx={{ color: institutionalColors.warning }} />
+                      <Typography variant="body2" sx={{ color: institutionalColors.textPrimary }}>
                         Requiere revisión por comité
                       </Typography>
                     </Box>
@@ -1135,13 +1208,17 @@ const ConfigExpediente = () => {
         </DialogContent>
         
         <DialogActions>
-          <Button onClick={() => setEditDialog(false)}>Cancelar</Button>
+          <Button onClick={() => setEditDialog(false)} sx={{ color: institutionalColors.textSecondary }}>Cancelar</Button>
           <Button 
             onClick={handleSave} 
             variant="contained"
             disabled={editMode === 'category' ? 
               !currentCategory?.name : 
               !currentDocument?.name}
+            sx={{
+              bgcolor: institutionalColors.primary,
+              '&:hover': { bgcolor: institutionalColors.secondary }
+            }}
           >
             Guardar
           </Button>

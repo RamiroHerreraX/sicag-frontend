@@ -56,6 +56,22 @@ import CreateInstanceDialog from "../../components/Instancias/CreateInstanceDial
 import ViewInstanceDialog from "../../components/Instancias/ViewInstanceDialog";
 import EditInstanceDialog from "../../components/Instancias/EditInstanceDialog";
 
+// Colores institucionales
+const institutionalColors = {
+  primary: '#133B6B',      // Azul oscuro principal
+  secondary: '#1a4c7a',    // Azul medio
+  accent: '#e9e9e9',       // Color para acentos (gris claro)
+  background: '#f8f9fa',   // Fondo claro
+  lightBlue: 'rgba(19, 59, 107, 0.08)',  // Azul transparente para hover
+  darkBlue: '#0D2A4D',     // Azul más oscuro
+  textPrimary: '#2c3e50',  // Texto principal
+  textSecondary: '#7f8c8d', // Texto secundario
+  success: '#4caf50',      // Verde para éxito
+  warning: '#ff9800',      // Naranja para advertencias
+  error: '#f44336',        // Rojo para errores
+  info: '#2196f3',         // Azul para información
+};
+
 const SystemInstances = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
@@ -89,7 +105,7 @@ const SystemInstances = () => {
       certifications: 15,
       courses: 8,
       colors: {
-        primary: "#1b5e20",
+        primary: institutionalColors.success,
         secondary: "#4caf50",
         accent: "#8bc34a",
       },
@@ -107,7 +123,7 @@ const SystemInstances = () => {
       certifications: 12,
       courses: 6,
       colors: {
-        primary: "#0d47a1",
+        primary: institutionalColors.primary,
         secondary: "#2196f3",
         accent: "#64b5f6",
       },
@@ -120,7 +136,7 @@ const SystemInstances = () => {
       name: "Programa de Posgrado",
       code: "POS-001",
       description: "Gestión de certificaciones para programas de posgrado",
-      status: "maintenance",
+      status: "active",
       users: 78,
       certifications: 8,
       courses: 4,
@@ -192,7 +208,7 @@ const SystemInstances = () => {
       name: "Programa de Extensión",
       code: "EXT-001",
       description: "Certificaciones para cursos de extensión universitaria",
-      status: "draft",
+      status: "active",
       users: 45,
       certifications: 3,
       courses: 2,
@@ -227,20 +243,20 @@ const SystemInstances = () => {
 
   const statusOptions = [
     { value: "all", label: "Todos los estados" },
-    { value: "active", label: "Activas", color: "#4caf50" },
-    { value: "inactive", label: "Inactivas", color: "#f44336" },
-    { value: "maintenance", label: "En mantenimiento", color: "#ff9800" },
+    { value: "active", label: "Activas", color: institutionalColors.success },
+    { value: "inactive", label: "Inactivas", color: institutionalColors.error },
+    { value: "maintenance", label: "En mantenimiento", color: institutionalColors.warning },
     { value: "draft", label: "Borrador", color: "#9e9e9e" },
   ];
 
   const getStatusColor = (status) => {
     switch (status) {
       case "active":
-        return "#4caf50";
+        return institutionalColors.success;
       case "inactive":
-        return "#f44336";
+        return institutionalColors.error;
       case "maintenance":
-        return "#ff9800";
+        return institutionalColors.warning;
       case "draft":
         return "#9e9e9e";
       default:
@@ -395,7 +411,7 @@ const SystemInstances = () => {
   };
 
   return (
-    <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+    <Box sx={{ height: "100%", display: "flex", flexDirection: "column", bgcolor: institutionalColors.background }}>
       {/* Header */}
       <Box sx={{ mb: 3 }}>
         <Box
@@ -409,11 +425,11 @@ const SystemInstances = () => {
           <Box>
             <Typography
               variant="h5"
-              sx={{ color: "#2c3e50", fontWeight: "bold", mb: 0.5 }}
+              sx={{ color: institutionalColors.primary, fontWeight: "bold", mb: 0.5 }}
             >
               Super Administración - Instancias del Sistema
             </Typography>
-            <Typography variant="body2" sx={{ color: "#7f8c8d" }}>
+            <Typography variant="body2" sx={{ color: institutionalColors.textSecondary }}>
               Gestión de múltiples áreas, programas y entidades independientes
             </Typography>
           </Box>
@@ -424,6 +440,10 @@ const SystemInstances = () => {
               startIcon={<AddIcon />}
               size="small"
               onClick={handleCreateInstance}
+              sx={{
+                bgcolor: institutionalColors.primary,
+                '&:hover': { bgcolor: institutionalColors.secondary }
+              }}
             >
               Nueva Instancia
             </Button>
@@ -431,19 +451,27 @@ const SystemInstances = () => {
         </Box>
 
         {/* Tabs */}
-        <Paper sx={{ mb: 2 }}>
+        <Paper sx={{ mb: 2, border: `1px solid #e5e7eb` }}>
           <Tabs
             value={selectedTab}
             onChange={(e, newValue) => setSelectedTab(newValue)}
             variant="scrollable"
             scrollButtons="auto"
+            sx={{
+              '& .MuiTab-root.Mui-selected': {
+                color: institutionalColors.primary,
+              },
+              '& .MuiTabs-indicator': {
+                backgroundColor: institutionalColors.primary,
+              }
+            }}
           >
             <Tab icon={<DomainIcon />} label="Todas las Instancias" />
           </Tabs>
         </Paper>
 
         {/* Filtros y búsqueda */}
-        <Paper elevation={0} sx={{ p: 2, bgcolor: "#f8f9fa" }}>
+        <Paper elevation={0} sx={{ p: 2, bgcolor: "white", border: `1px solid #e5e7eb` }}>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} md={6}>
               <TextField
@@ -455,7 +483,7 @@ const SystemInstances = () => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon fontSize="small" />
+                      <SearchIcon fontSize="small" sx={{ color: institutionalColors.textSecondary }} />
                     </InputAdornment>
                   ),
                 }}
@@ -464,11 +492,16 @@ const SystemInstances = () => {
 
             <Grid item xs={12} md={4}>
               <FormControl fullWidth size="small">
-                <InputLabel>Estado</InputLabel>
+                <InputLabel sx={{ '&.Mui-focused': { color: institutionalColors.primary } }}>Estado</InputLabel>
                 <Select
                   value={filterStatus}
                   label="Estado"
                   onChange={(e) => setFilterStatus(e.target.value)}
+                  sx={{
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: institutionalColors.primary,
+                    }
+                  }}
                 >
                   {statusOptions.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
@@ -503,6 +536,14 @@ const SystemInstances = () => {
                   setFilterStatus("all");
                   setSelectedRows([]);
                 }}
+                sx={{
+                  borderColor: institutionalColors.primary,
+                  color: institutionalColors.primary,
+                  '&:hover': {
+                    borderColor: institutionalColors.secondary,
+                    bgcolor: institutionalColors.lightBlue,
+                  }
+                }}
               >
                 Limpiar Filtros
               </Button>
@@ -522,20 +563,21 @@ const SystemInstances = () => {
               flex: 1,
               display: "flex",
               flexDirection: "column",
+              border: `1px solid #e5e7eb`,
             }}
           >
             <Toolbar
               sx={{
                 pl: { sm: 2 },
                 pr: { xs: 1, sm: 1 },
-                bgcolor: (theme) => alpha(theme.palette.primary.main, 0.05),
+                bgcolor: alpha(institutionalColors.primary, 0.05),
               }}
             >
               <Box sx={{ flex: "1 1 100%" }}>
-                <Typography variant="subtitle1" fontWeight="bold">
+                <Typography variant="subtitle1" fontWeight="bold" sx={{ color: institutionalColors.textPrimary }}>
                   Instancias del Sistema
                 </Typography>
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                   {filteredInstances.length} instancias encontradas
                 </Typography>
               </Box>
@@ -544,8 +586,7 @@ const SystemInstances = () => {
                 <Stack direction="row" spacing={1}>
                   <Typography
                     variant="body2"
-                    color="primary"
-                    sx={{ display: "flex", alignItems: "center" }}
+                    sx={{ color: institutionalColors.primary, display: "flex", alignItems: "center" }}
                   >
                     {selectedRows.length} seleccionados
                   </Typography>
@@ -553,6 +594,7 @@ const SystemInstances = () => {
                     <IconButton 
                       size="small"
                       onClick={() => handleBulkStatusChange('activate')}
+                      sx={{ color: institutionalColors.primary }}
                     >
                       <EnableIcon />
                     </IconButton>
@@ -561,12 +603,13 @@ const SystemInstances = () => {
                     <IconButton 
                       size="small"
                       onClick={() => handleBulkStatusChange('deactivate')}
+                      sx={{ color: institutionalColors.primary }}
                     >
                       <DisableIcon />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Eliminar seleccionadas">
-                    <IconButton size="small">
+                    <IconButton size="small" sx={{ color: institutionalColors.error }}>
                       <DeleteIcon />
                     </IconButton>
                   </Tooltip>
@@ -589,14 +632,20 @@ const SystemInstances = () => {
                           selectedRows.length === filteredInstances.length
                         }
                         onChange={handleSelectAllClick}
+                        sx={{
+                          color: institutionalColors.primary,
+                          '&.Mui-checked': {
+                            color: institutionalColors.primary,
+                          },
+                        }}
                       />
                     </TableCell>
-                    <TableCell>Instancia</TableCell>
-                    <TableCell>Estado</TableCell>
-                    <TableCell align="center">Usuarios</TableCell>
-                    <TableCell align="center">Certificaciones</TableCell>
-                    <TableCell>Administrador</TableCell>
-                    <TableCell align="center">Acciones</TableCell>
+                    <TableCell sx={{ color: institutionalColors.primary, fontWeight: 'bold' }}>Instancia</TableCell>
+                    <TableCell sx={{ color: institutionalColors.primary, fontWeight: 'bold' }}>Estado</TableCell>
+                    <TableCell align="center" sx={{ color: institutionalColors.primary, fontWeight: 'bold' }}>Usuarios</TableCell>
+                    <TableCell align="center" sx={{ color: institutionalColors.primary, fontWeight: 'bold' }}>Certificaciones</TableCell>
+                    <TableCell sx={{ color: institutionalColors.primary, fontWeight: 'bold' }}>Administrador</TableCell>
+                    <TableCell align="center" sx={{ color: institutionalColors.primary, fontWeight: 'bold' }}>Acciones</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -614,7 +663,15 @@ const SystemInstances = () => {
                           sx={{ cursor: "pointer" }}
                         >
                           <TableCell padding="checkbox">
-                            <Checkbox checked={isItemSelected} />
+                            <Checkbox 
+                              checked={isItemSelected}
+                              sx={{
+                                color: institutionalColors.primary,
+                                '&.Mui-checked': {
+                                  color: institutionalColors.primary,
+                                },
+                              }}
+                            />
                           </TableCell>
 
                           <TableCell>
@@ -637,18 +694,18 @@ const SystemInstances = () => {
                                 {instance.name.charAt(0)}
                               </Avatar>
                               <Box>
-                                <Typography variant="body2" fontWeight="bold">
+                                <Typography variant="body2" fontWeight="bold" sx={{ color: institutionalColors.textPrimary }}>
                                   {instance.name}
                                 </Typography>
                                 <Typography
                                   variant="caption"
-                                  color="text.secondary"
+                                  sx={{ color: institutionalColors.textSecondary }}
                                 >
                                   {instance.code} • {instance.description}
                                 </Typography>
                                 <Typography
                                   variant="caption"
-                                  color="text.secondary"
+                                  sx={{ color: institutionalColors.textSecondary }}
                                   display="block"
                                 >
                                   <CalendarIcon
@@ -656,6 +713,7 @@ const SystemInstances = () => {
                                       fontSize: "0.8rem",
                                       verticalAlign: "middle",
                                       mr: 0.5,
+                                      color: institutionalColors.textSecondary,
                                     }}
                                   />
                                   Creada: {instance.created}
@@ -695,8 +753,8 @@ const SystemInstances = () => {
                                 gap: 1,
                               }}
                             >
-                              <PersonIcon fontSize="small" color="action" />
-                              <Typography variant="body2" fontWeight="bold">
+                              <PersonIcon fontSize="small" sx={{ color: institutionalColors.textSecondary }} />
+                              <Typography variant="body2" fontWeight="bold" sx={{ color: institutionalColors.textPrimary }}>
                                 {instance.users}
                               </Typography>
                             </Box>
@@ -711,8 +769,8 @@ const SystemInstances = () => {
                                 gap: 1,
                               }}
                             >
-                              <BookIcon fontSize="small" color="action" />
-                              <Typography variant="body2" fontWeight="bold">
+                              <BookIcon fontSize="small" sx={{ color: institutionalColors.textSecondary }} />
+                              <Typography variant="body2" fontWeight="bold" sx={{ color: institutionalColors.textPrimary }}>
                                 {instance.certifications}
                               </Typography>
                             </Box>
@@ -731,17 +789,18 @@ const SystemInstances = () => {
                                   width: 28,
                                   height: 28,
                                   fontSize: "0.8rem",
+                                  bgcolor: institutionalColors.primary,
                                 }}
                               >
                                 {instance.admin.charAt(0)}
                               </Avatar>
                               <Box>
-                                <Typography variant="body2">
+                                <Typography variant="body2" sx={{ color: institutionalColors.textPrimary }}>
                                   {instance.admin}
                                 </Typography>
                                 <Typography
                                   variant="caption"
-                                  color="text.secondary"
+                                  sx={{ color: institutionalColors.textSecondary }}
                                 >
                                   {instance.email}
                                 </Typography>
@@ -763,6 +822,7 @@ const SystemInstances = () => {
                                     setSelectedInstance(instance);
                                     setOpenViewDialog(true);
                                   }}
+                                  sx={{ color: institutionalColors.primary }}
                                 >
                                   <VisibilityIcon fontSize="small" />
                                 </IconButton>
@@ -776,6 +836,7 @@ const SystemInstances = () => {
                                     setSelectedInstance(instance);
                                     setOpenEditDialog(true);
                                   }}
+                                  sx={{ color: institutionalColors.primary }}
                                 >
                                   <EditIcon fontSize="small" />
                                 </IconButton>
@@ -789,6 +850,7 @@ const SystemInstances = () => {
                                       e.stopPropagation();
                                       handleStatusChange(instance, 'activate');
                                     }}
+                                    sx={{ color: institutionalColors.success }}
                                   >
                                     <EnableIcon fontSize="small" />
                                   </IconButton>
@@ -801,6 +863,7 @@ const SystemInstances = () => {
                                       e.stopPropagation();
                                       handleStatusChange(instance, 'deactivate');
                                     }}
+                                    sx={{ color: institutionalColors.error }}
                                   >
                                     <DisableIcon fontSize="small" />
                                   </IconButton>
@@ -817,16 +880,16 @@ const SystemInstances = () => {
                       <TableCell colSpan={7} align="center" sx={{ py: 4 }}>
                         <Box sx={{ textAlign: "center" }}>
                           <DomainIcon
-                            sx={{ fontSize: 60, color: "#e0e0e0", mb: 2 }}
+                            sx={{ fontSize: 60, color: institutionalColors.textSecondary, mb: 2 }}
                           />
                           <Typography
                             variant="body1"
-                            color="text.secondary"
+                            sx={{ color: institutionalColors.textSecondary }}
                             gutterBottom
                           >
                             No se encontraron instancias
                           </Typography>
-                          <Typography variant="body2" color="text.secondary">
+                          <Typography variant="body2" sx={{ color: institutionalColors.textSecondary }}>
                             Intenta con otros términos de búsqueda o filtros
                           </Typography>
                         </Box>
@@ -849,6 +912,20 @@ const SystemInstances = () => {
               labelDisplayedRows={({ from, to, count }) =>
                 `${from}-${to} de ${count}`
               }
+              sx={{
+                '& .MuiTablePagination-select': {
+                  color: institutionalColors.textPrimary,
+                },
+                '& .MuiTablePagination-selectLabel': {
+                  color: institutionalColors.textPrimary,
+                },
+                '& .MuiTablePagination-displayedRows': {
+                  color: institutionalColors.textPrimary,
+                },
+                '& .MuiTablePagination-actions button': {
+                  color: institutionalColors.primary,
+                },
+              }}
             />
           </Paper>
         </Box>
@@ -860,10 +937,12 @@ const SystemInstances = () => {
         onClose={() => setOpenStatusDialog(false)}
       >
         <DialogTitle>
-          {statusAction === 'activate' ? 'Activar' : 'Desactivar'} {bulkAction ? 'instancias' : 'instancia'}
+          <Typography sx={{ color: institutionalColors.textPrimary }}>
+            {statusAction === 'activate' ? 'Activar' : 'Desactivar'} {bulkAction ? 'instancias' : 'instancia'}
+          </Typography>
         </DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          <DialogContentText sx={{ color: institutionalColors.textSecondary }}>
             {bulkAction ? (
               `¿Estás seguro de que deseas ${statusAction === 'activate' ? 'activar' : 'desactivar'} las ${selectedRows.length} instancias seleccionadas?`
             ) : (
@@ -872,11 +951,16 @@ const SystemInstances = () => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenStatusDialog(false)}>Cancelar</Button>
+          <Button onClick={() => setOpenStatusDialog(false)} sx={{ color: institutionalColors.textSecondary }}>Cancelar</Button>
           <Button 
             onClick={confirmStatusChange} 
             variant="contained" 
-            color={statusAction === 'activate' ? 'success' : 'error'}
+            sx={{
+              bgcolor: statusAction === 'activate' ? institutionalColors.success : institutionalColors.error,
+              '&:hover': {
+                bgcolor: statusAction === 'activate' ? '#3d8b40' : '#d32f2f',
+              }
+            }}
           >
             Confirmar
           </Button>

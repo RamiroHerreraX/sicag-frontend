@@ -59,6 +59,22 @@ import {
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
+// Colores institucionales
+const institutionalColors = {
+  primary: '#133B6B',      // Azul oscuro principal
+  secondary: '#1a4c7a',    // Azul medio
+  accent: '#e9e9e9',       // Color para acentos (gris claro)
+  background: '#f8f9fa',   // Fondo claro
+  lightBlue: 'rgba(19, 59, 107, 0.08)',  // Azul transparente para hover
+  darkBlue: '#0D2A4D',     // Azul más oscuro
+  textPrimary: '#2c3e50',  // Texto principal
+  textSecondary: '#7f8c8d', // Texto secundario
+  success: '#27ae60',      // Verde para éxito
+  warning: '#f39c12',      // Naranja para advertencias
+  error: '#e74c3c',        // Rojo para errores
+  info: '#3498db',         // Azul para información
+};
+
 const UserManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTab, setSelectedTab] = useState('all');
@@ -118,7 +134,7 @@ const UserManagement = () => {
       compliance: 92,
       certifications: 12,
       pending: 0,
-      color: '#1a237e',
+      color: institutionalColors.primary,
       avatar: 'MG',
       instance: 'instancia-calidad',
       instanceName: 'Instancia de Calidad',
@@ -178,7 +194,7 @@ const UserManagement = () => {
       compliance: 95,
       certifications: 15,
       pending: 0,
-      color: '#1b5e20',
+      color: institutionalColors.success,
       avatar: 'PS',
       instance: 'instancia-administrativa',
       instanceName: 'Instancia Administrativa',
@@ -198,7 +214,7 @@ const UserManagement = () => {
       compliance: 90,
       certifications: 10,
       pending: 1,
-      color: '#1a237e',
+      color: institutionalColors.primary,
       avatar: 'LD',
       instance: 'instancia-recursos-humanos',
       instanceName: 'Instancia de Recursos Humanos',
@@ -278,7 +294,7 @@ const UserManagement = () => {
       compliance: 98,
       certifications: 18,
       pending: 0,
-      color: '#1b5e20',
+      color: institutionalColors.success,
       avatar: 'SM',
       instance: 'instancia-administrativa',
       instanceName: 'Instancia Administrativa',
@@ -334,28 +350,28 @@ const UserManagement = () => {
 
   const getRoleColor = (role) => {
     switch(role) {
-      case 'admin': return '#1b5e20';
-      case 'comite': return '#1a237e';
+      case 'admin': return institutionalColors.success;
+      case 'comite': return institutionalColors.primary;
       case 'agente': return '#526F78';
       case 'profesionista': return '#2e7d32';
       case 'empresario': return '#ed6c02';
-      default: return '#7f8c8d';
+      default: return institutionalColors.textSecondary;
     }
   };
 
   const getInstanceColor = (instanceId) => {
     const colors = {
-      'instancia-administrativa': '#1b5e20',
-      'instancia-ingenieria': '#1565c0',
+      'instancia-administrativa': institutionalColors.success,
+      'instancia-ingenieria': institutionalColors.primary,
       'instancia-finanzas': '#8e24aa',
       'instancia-recursos-humanos': '#ff6f00',
       'instancia-operaciones': '#00838f',
       'instancia-calidad': '#c62828',
       'instancia-comercial': '#6a1b9a',
-      'instancia-legal': '#2e7d32',
+      'instancia-legal': institutionalColors.success,
       'instancia-soporte': '#37474f'
     };
-    return colors[instanceId] || '#7f8c8d';
+    return colors[instanceId] || institutionalColors.textSecondary;
   };
 
   const getInstanceDisplayName = (instanceId) => {
@@ -383,26 +399,28 @@ const UserManagement = () => {
   };
 
   return (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: institutionalColors.background }}>
       {/* Header */}
       <Box sx={{ mb: 3 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
           <Box>
-            <Typography variant="h5" sx={{ color: '#2c3e50', fontWeight: 'bold', mb: 0.5 }}>
+            <Typography variant="h5" sx={{ color: institutionalColors.primary, fontWeight: 'bold', mb: 0.5 }}>
               Gestión de Usuarios
             </Typography>
-            <Typography variant="body2" sx={{ color: '#7f8c8d' }}>
+            <Typography variant="body2" sx={{ color: institutionalColors.textSecondary }}>
               Administre los usuarios del sistema SICAG - {filteredUsers.length} usuarios encontrados
             </Typography>
           </Box>
           
           <Stack direction="row" spacing={1}>
-
             <Button
               variant="contained"
               startIcon={<PersonAddIcon />}
               onClick={() => setOpenDialog(true)}
-              sx={{ bgcolor: '#1b5e20', '&:hover': { bgcolor: '#2e7d32' } }}
+              sx={{ 
+                bgcolor: institutionalColors.primary,
+                '&:hover': { bgcolor: institutionalColors.secondary }
+              }}
             >
               Nuevo Usuario
             </Button>
@@ -410,7 +428,7 @@ const UserManagement = () => {
         </Box>
 
         {/* Filtros rápidos */}
-        <Paper elevation={0} sx={{ p: 2, bgcolor: '#f8f9fa' }}>
+        <Paper elevation={0} sx={{ p: 2, bgcolor: 'white', border: `1px solid #e5e7eb` }}>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} md={4}>
               <TextField
@@ -422,13 +440,13 @@ const UserManagement = () => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon fontSize="small" />
+                      <SearchIcon fontSize="small" sx={{ color: institutionalColors.textSecondary }} />
                     </InputAdornment>
                   ),
                   endAdornment: searchTerm && (
                     <InputAdornment position="end">
                       <IconButton size="small" onClick={() => setSearchTerm('')}>
-                        <CancelIcon fontSize="small" />
+                        <CancelIcon fontSize="small" sx={{ color: institutionalColors.textSecondary }} />
                       </IconButton>
                     </InputAdornment>
                   )
@@ -438,22 +456,27 @@ const UserManagement = () => {
             
             <Grid item xs={12} md={4}>
               <FormControl fullWidth size="small">
-                <InputLabel>Filtrar por Instancia</InputLabel>
+                <InputLabel sx={{ '&.Mui-focused': { color: institutionalColors.primary } }}>Filtrar por Instancia</InputLabel>
                 <Select
                   value={filterInstance}
                   label="Filtrar por Instancia"
                   onChange={(e) => setFilterInstance(e.target.value)}
                   startAdornment={
                     <InputAdornment position="start">
-                      <BusinessIcon fontSize="small" />
+                      <BusinessIcon fontSize="small" sx={{ color: institutionalColors.textSecondary }} />
                     </InputAdornment>
                   }
+                  sx={{
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: institutionalColors.primary,
+                    }
+                  }}
                 >
                   {instances.map(instance => (
                     <MenuItem key={instance.id} value={instance.id}>
                       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                        <Typography variant="body2">{instance.name}</Typography>
-                        <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                        <Typography variant="body2" sx={{ color: institutionalColors.textPrimary }}>{instance.name}</Typography>
+                        <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                           {instance.description}
                         </Typography>
                       </Box>
@@ -470,19 +493,33 @@ const UserManagement = () => {
                   size="small"
                   onClick={clearAllFilters}
                   startIcon={<RefreshIcon />}
+                  sx={{
+                    borderColor: institutionalColors.primary,
+                    color: institutionalColors.primary,
+                    '&:hover': {
+                      borderColor: institutionalColors.secondary,
+                      bgcolor: institutionalColors.lightBlue,
+                    }
+                  }}
                 >
                   Limpiar Filtros
                 </Button>
                 <Chip 
                   label={`Total: ${stats.total}`} 
                   size="small" 
-                  color="primary" 
+                  sx={{
+                    borderColor: institutionalColors.primary,
+                    color: institutionalColors.primary,
+                  }}
                   variant="outlined" 
                 />
                 <Chip 
                   label={`Activos: ${stats.active}`} 
-                  size="small" 
-                  color="success" 
+                  size="small"
+                  sx={{
+                    borderColor: institutionalColors.success,
+                    color: institutionalColors.success,
+                  }}
                   variant="outlined" 
                 />
               </Stack>
@@ -501,7 +538,15 @@ const UserManagement = () => {
           }}
           variant="scrollable"
           scrollButtons="auto"
-          sx={{ minHeight: 48 }}
+          sx={{ 
+            minHeight: 48,
+            '& .MuiTab-root.Mui-selected': {
+              color: institutionalColors.primary,
+            },
+            '& .MuiTabs-indicator': {
+              backgroundColor: institutionalColors.primary,
+            }
+          }}
         >
           {tabs.map((tab) => (
             <Tab 
@@ -524,16 +569,16 @@ const UserManagement = () => {
       {/* Contenido principal */}
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
         {/* Tabla de usuarios */}
-        <Paper elevation={1} sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <Paper elevation={1} sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', border: `1px solid #e5e7eb` }}>
           <TableContainer sx={{ flex: 1 }}>
             <Table stickyHeader size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold', width: '30%' }}>Usuario</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: '20%' }}>Rol</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: '20%' }}>Instancia Asignada</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: '15%' }}>Certificaciones</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', width: '15%' }}>Cumplimiento</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: '30%', color: institutionalColors.primary }}>Usuario</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: '20%', color: institutionalColors.primary }}>Rol</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: '20%', color: institutionalColors.primary }}>Instancia Asignada</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: '15%', color: institutionalColors.primary }}>Certificaciones</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', width: '15%', color: institutionalColors.primary }}>Cumplimiento</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -542,7 +587,7 @@ const UserManagement = () => {
                     key={user.id} 
                     hover
                     sx={{ 
-                      '&:hover': { bgcolor: '#f8f9fa' },
+                      '&:hover': { bgcolor: institutionalColors.lightBlue },
                       opacity: user.status === 'inactive' ? 0.7 : 1
                     }}
                   >
@@ -560,23 +605,28 @@ const UserManagement = () => {
                           {user.avatar}
                         </Avatar>
                         <Box>
-                          <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                          <Typography variant="body2" sx={{ fontWeight: 'bold', color: institutionalColors.textPrimary }}>
                             {user.name}
                             {user.status === 'inactive' && (
                               <Chip 
                                 label="INACTIVO" 
                                 size="small" 
-                                color="error"
-                                sx={{ ml: 1, height: 18, fontSize: '0.65rem' }}
+                                sx={{ 
+                                  ml: 1, 
+                                  height: 18, 
+                                  fontSize: '0.65rem',
+                                  bgcolor: `${institutionalColors.error}20`,
+                                  color: institutionalColors.error
+                                }}
                               />
                             )}
                           </Typography>
-                          <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block' }}>
+                          <Typography variant="caption" sx={{ color: institutionalColors.textSecondary, display: 'block' }}>
                             {user.email}
                           </Typography>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
-                            <PhoneIcon sx={{ fontSize: 12, color: '#7f8c8d' }} />
-                            <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                            <PhoneIcon sx={{ fontSize: 12, color: institutionalColors.textSecondary }} />
+                            <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                               {user.phone}
                             </Typography>
                           </Box>
@@ -595,7 +645,7 @@ const UserManagement = () => {
                           border: `1px solid ${getRoleColor(user.role)}30`
                         }}
                       />
-                      <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', mt: 0.5 }}>
+                      <Typography variant="caption" sx={{ color: institutionalColors.textSecondary, display: 'block', mt: 0.5 }}>
                         {user.region}
                       </Typography>
                     </TableCell>
@@ -609,10 +659,10 @@ const UserManagement = () => {
                           }} 
                         />
                         <Box>
-                          <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                          <Typography variant="body2" sx={{ fontWeight: 'medium', color: institutionalColors.textPrimary }}>
                             {getInstanceDisplayName(user.instance)}
                           </Typography>
-                          <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                          <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                             {user.instanceName.split(' ').slice(2).join(' ') || 'Área asignada'}
                           </Typography>
                         </Box>
@@ -621,15 +671,20 @@ const UserManagement = () => {
                     
                     <TableCell>
                       <Box>
-                        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: institutionalColors.textPrimary }}>
                           {user.certifications}
                         </Typography>
                         {user.pending > 0 && (
                           <Chip 
                             label={`${user.pending} pendientes`}
                             size="small"
-                            color="warning"
-                            sx={{ height: 18, fontSize: '0.65rem', mt: 0.5 }}
+                            sx={{ 
+                              height: 18, 
+                              fontSize: '0.65rem', 
+                              mt: 0.5,
+                              bgcolor: `${institutionalColors.warning}20`,
+                              color: institutionalColors.warning
+                            }}
                           />
                         )}
                       </Box>
@@ -639,7 +694,7 @@ const UserManagement = () => {
                       <Tooltip title={`${user.compliance}% de cumplimiento`}>
                         <Box>
                           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                            <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                            <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                               {user.compliance}%
                             </Typography>
                           </Box>
@@ -651,8 +706,8 @@ const UserManagement = () => {
                               borderRadius: 3,
                               bgcolor: '#f0f0f0',
                               '& .MuiLinearProgress-bar': {
-                                bgcolor: user.compliance >= 90 ? '#27ae60' : 
-                                        user.compliance >= 70 ? '#f39c12' : '#e74c3c'
+                                bgcolor: user.compliance >= 90 ? institutionalColors.success : 
+                                        user.compliance >= 70 ? institutionalColors.warning : institutionalColors.error
                               }
                             }}
                           />
@@ -666,8 +721,8 @@ const UserManagement = () => {
           </TableContainer>
 
           {/* Paginación */}
-          <Box sx={{ p: 2, borderTop: '1px solid #e0e0e0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+          <Box sx={{ p: 2, borderTop: `1px solid #e5e7eb`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', bgcolor: 'white' }}>
+            <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
               Mostrando {((page - 1) * rowsPerPage) + 1} - {Math.min(page * rowsPerPage, filteredUsers.length)} de {filteredUsers.length} usuarios
               {filterInstance !== 'all' && ` en ${instances.find(i => i.id === filterInstance)?.name}`}
             </Typography>
@@ -677,30 +732,39 @@ const UserManagement = () => {
               onChange={(e, value) => setPage(value)}
               size="small"
               color="primary"
+              sx={{
+                '& .MuiPaginationItem-root.Mui-selected': {
+                  bgcolor: institutionalColors.primary,
+                  color: 'white',
+                  '&:hover': {
+                    bgcolor: institutionalColors.secondary,
+                  }
+                }
+              }}
             />
           </Box>
         </Paper>
       </Box>
 
       {/* Estadísticas en footer */}
-      <Paper elevation={0} sx={{ mt: 2, p: 2, bgcolor: '#f8f9fa' }}>
+      <Paper elevation={0} sx={{ mt: 2, p: 2, bgcolor: 'white', border: `1px solid #e5e7eb` }}>
         <Grid container spacing={2}>
           <Grid item xs={6} sm={3} md={2}>
             <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="h6" sx={{ color: '#3498db', fontWeight: 'bold' }}>
+              <Typography variant="h6" sx={{ color: institutionalColors.primary, fontWeight: 'bold' }}>
                 {stats.total}
               </Typography>
-              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+              <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                 Total Usuarios
               </Typography>
             </Box>
           </Grid>
           <Grid item xs={6} sm={3} md={2}>
             <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="h6" sx={{ color: '#27ae60', fontWeight: 'bold' }}>
+              <Typography variant="h6" sx={{ color: institutionalColors.success, fontWeight: 'bold' }}>
                 {stats.active}
               </Typography>
-              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+              <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                 Activos
               </Typography>
             </Box>
@@ -708,7 +772,7 @@ const UserManagement = () => {
           
           {/* Instancias más activas */}
           <Grid item xs={12} sm={6} md={4}>
-            <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
+            <Typography variant="subtitle2" sx={{ color: institutionalColors.textPrimary, mb: 1 }}>
               Instancias con más usuarios
             </Typography>
             <Stack direction="row" spacing={1} flexWrap="wrap">
@@ -736,7 +800,7 @@ const UserManagement = () => {
 
           {/* Total por rol */}
           <Grid item xs={12} sm={6} md={4}>
-            <Typography variant="subtitle2" sx={{ color: '#2c3e50', mb: 1 }}>
+            <Typography variant="subtitle2" sx={{ color: institutionalColors.textPrimary, mb: 1 }}>
               Distribución por rol
             </Typography>
             <Stack direction="row" spacing={1} flexWrap="wrap">
@@ -763,7 +827,9 @@ const UserManagement = () => {
       {/* Dialog para crear/editar usuario */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
         <DialogTitle>
-          {selectedUser?.id ? 'Editar Usuario' : 'Nuevo Usuario'}
+          <Typography variant="h6" sx={{ color: institutionalColors.textPrimary }}>
+            {selectedUser?.id ? 'Editar Usuario' : 'Nuevo Usuario'}
+          </Typography>
         </DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ mt: 1 }}>
@@ -787,11 +853,16 @@ const UserManagement = () => {
               onChange={(e) => setSelectedUser({...selectedUser, phone: e.target.value})}
             />
             <FormControl fullWidth>
-              <InputLabel>Rol</InputLabel>
+              <InputLabel sx={{ '&.Mui-focused': { color: institutionalColors.primary } }}>Rol</InputLabel>
               <Select
                 value={selectedUser?.role || 'agente'}
                 label="Rol"
                 onChange={(e) => setSelectedUser({...selectedUser, role: e.target.value})}
+                sx={{
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: institutionalColors.primary,
+                  }
+                }}
               >
                 <MenuItem value="agente">Agente Aduanal</MenuItem>
                 <MenuItem value="comite">Comité</MenuItem>
@@ -801,16 +872,21 @@ const UserManagement = () => {
               </Select>
             </FormControl>
             <FormControl fullWidth>
-              <InputLabel>Instancia</InputLabel>
+              <InputLabel sx={{ '&.Mui-focused': { color: institutionalColors.primary } }}>Instancia</InputLabel>
               <Select
                 value={selectedUser?.instance || 'instancia-administrativa'}
                 label="Instancia"
                 onChange={(e) => setSelectedUser({...selectedUser, instance: e.target.value})}
                 startAdornment={
                   <InputAdornment position="start">
-                    <BusinessIcon fontSize="small" />
+                    <BusinessIcon fontSize="small" sx={{ color: institutionalColors.textSecondary }} />
                   </InputAdornment>
                 }
+                sx={{
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: institutionalColors.primary,
+                  }
+                }}
               >
                 {instances.filter(i => i.id !== 'all').map(instance => (
                   <MenuItem key={instance.id} value={instance.id}>
@@ -820,11 +896,16 @@ const UserManagement = () => {
               </Select>
             </FormControl>
             <FormControl fullWidth>
-              <InputLabel>Región</InputLabel>
+              <InputLabel sx={{ '&.Mui-focused': { color: institutionalColors.primary } }}>Región</InputLabel>
               <Select
                 value={selectedUser?.region || 'Norte'}
                 label="Región"
                 onChange={(e) => setSelectedUser({...selectedUser, region: e.target.value})}
+                sx={{
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: institutionalColors.primary,
+                  }
+                }}
               >
                 <MenuItem value="Norte">Norte</MenuItem>
                 <MenuItem value="Sur">Sur</MenuItem>
@@ -843,6 +924,14 @@ const UserManagement = () => {
                     ...selectedUser, 
                     status: e.target.checked ? 'active' : 'inactive'
                   })}
+                  sx={{
+                    '& .MuiSwitch-switchBase.Mui-checked': {
+                      color: institutionalColors.primary,
+                    },
+                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                      backgroundColor: institutionalColors.primary,
+                    }
+                  }}
                 />
               }
               label="Usuario activo"
@@ -850,7 +939,7 @@ const UserManagement = () => {
           </Stack>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDialog(false)}>Cancelar</Button>
+          <Button onClick={() => setOpenDialog(false)} sx={{ color: institutionalColors.textSecondary }}>Cancelar</Button>
           <Button 
             variant="contained" 
             onClick={() => {
@@ -880,6 +969,10 @@ const UserManagement = () => {
               }
               setOpenDialog(false);
               setSelectedUser(null);
+            }}
+            sx={{
+              bgcolor: institutionalColors.primary,
+              '&:hover': { bgcolor: institutionalColors.secondary }
             }}
           >
             {selectedUser?.id ? 'Actualizar' : 'Crear'}
