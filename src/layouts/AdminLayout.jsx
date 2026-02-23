@@ -35,7 +35,6 @@ import {
   Menu as MenuIcon,
   Notifications as NotificationsIcon,
   ArrowDropDown as ArrowDropDownIcon,
-  Gavel as ReviewIcon,
   Person as PersonIcon,
   Security as SecurityIcon,
   Description as DescriptionIcon,
@@ -44,35 +43,34 @@ import {
   AccountCircle as AccountCircleIcon,
   Email as EmailIcon,
   LocationOn as LocationIcon,
-  NotificationsActive as AlertsIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 
-// Paleta corporativa actualizada
+// Colores institucionales actualizados para que coincidan con SuperAdminLayout
 const colors = {
-  // Sidebar color
+  // Sidebar color - AHORA AZUL OSCURO #133B6B
   sidebar: {
-    main: '#3A6EA5',
-    dark: '#2D5680',
-    light: '#5289C0',
+    main: '#133B6B', // Azul oscuro principal
+    dark: '#133B6B', // Mismo azul para mantener consistencia
+    light: '#133B6B', // Mismo azul
   },
   // Secondary colors
   secondary: {
-    main: '#00A8A8',
-    light: '#00C2D1',
-    lighter: '#35D0FF'
+    main: '#e9e9e9', // Color de acento gris claro
+    light: '#ffffff',
+    lighter: '#ffffff'
   },
   // Accent colors
   accents: {
-    blue: '#0099FF',
-    purple: '#6C5CE7'
+    blue: '#e9e9e9', // Cambiado a gris claro
+    purple: '#ef4444' // Rojo para notificaciones
   },
   // Status colors
   status: {
-    success: '#00A8A8',
-    warning: '#00C2D1',
-    error: '#0099FF',
-    info: '#6C5CE7'
+    success: '#10b981',
+    warning: '#f59e0b',
+    error: '#ef4444',
+    info: '#3b82f6'
   },
   // Text colors
   text: {
@@ -108,62 +106,55 @@ const AdminLayout = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [profileAnchorEl, setProfileAnchorEl] = useState(null);
 
-  // COLORES
+  // COLORES - AHORA USAN #133B6B
   const sidebarColor = colors.sidebar.main;
   const secondaryColor = colors.secondary.main;
   const accentBlue = colors.accents.blue;
   const accentPurple = colors.accents.purple;
 
-  // MENÚ PRINCIPAL
+  // MENÚ PRINCIPAL - INCLUYE PERFIL
   const menuItems = [
     { 
       text: 'DASHBOARD', 
       icon: <DashboardIcon />, 
       path: '/admin/dashboard',
       description: 'Panel de control general',
-      badge: 0
     },
     { 
       text: 'USUARIOS', 
       icon: <UsersIcon />, 
       path: '/admin/users',
       description: 'Gestión de usuarios y roles',
-      badge: 3
-    },
-    { 
-      text: 'ALERTAS',
-      icon: <AlertsIcon />, 
-      path: '/admin/alerts',
-      description: 'Centro de notificaciones',
-      badge: 8
     },
     { 
       text: 'EXPEDIENTES', 
       icon: <ExpedienteIcon />, 
       path: '/admin/expediente-config',
       description: 'Configuración de expedientes',
-      badge: 0
     },
     { 
       text: 'REPORTES', 
       icon: <ReportsIcon />, 
       path: '/admin/reports',
       description: 'Reportes y estadísticas',
-      badge: 5
     },
     { 
       text: 'CONFIGURACIÓN', 
       icon: <ConfigIcon />, 
       path: '/admin/system-config',
       description: 'Configuración del sistema',
-      badge: 0
     },
     { 
       text: 'AUDITORÍA', 
       icon: <HistoryIcon />, 
       path: '/admin/audit',
       description: 'Registro de auditoría',
-      badge: 0
+    },
+    { 
+      text: 'MI PERFIL', 
+      icon: <AccountCircleIcon />, 
+      path: '/admin/profile',
+      description: 'Información personal y preferencias',
     },
   ];
 
@@ -208,13 +199,10 @@ const AdminLayout = () => {
       return location.pathname.startsWith('/admin/users') && 
              !location.pathname.includes('/review');
     }
-    if (path === '/admin/alerts') {
-      return location.pathname.startsWith('/admin/alerts');
-    }
     return location.pathname.startsWith(path);
   };
 
-  // Contenido del drawer
+  // Contenido del drawer - AHORA CON #133B6B
   const drawerContent = (
     <Box sx={{ 
       display: 'flex', 
@@ -228,7 +216,7 @@ const AdminLayout = () => {
       <Box sx={{ 
         p: open ? 3 : 2,
         borderBottom: `1px solid rgba(255, 255, 255, 0.1)`,
-        bgcolor: colors.sidebar.dark,
+        bgcolor: 'transparent',
         display: 'flex',
         flexDirection: open ? 'row' : 'column',
         alignItems: 'center',
@@ -240,11 +228,11 @@ const AdminLayout = () => {
           sx={{ 
             width: open ? 48 : 40,
             height: open ? 48 : 40,
-            bgcolor: colors.secondary.main,
-            color: colors.text.primary,
+            bgcolor: '#ffffff',
+            color: sidebarColor,
             fontSize: open ? '1.2rem' : '1rem',
             fontWeight: 'bold',
-            border: `3px solid rgba(255, 255, 255, 0.2)`,
+            border: `3px solid rgba(255, 255, 255, 0.3)`,
           }}
         >
           {user?.name?.charAt(0) || 'A'}
@@ -281,7 +269,7 @@ const AdminLayout = () => {
             label="Admin"
             size="small"
             sx={{ 
-              bgcolor: 'rgba(255, 255, 255, 0.15)',
+              bgcolor: 'rgba(255, 255, 255, 0.2)',
               color: colors.text.primary,
               fontWeight: 700,
               fontSize: '0.7rem',
@@ -372,24 +360,7 @@ const AdminLayout = () => {
                         mr: open ? 2 : 0,
                       }}
                     >
-                      {item.badge > 0 ? (
-                        <Badge 
-                          badgeContent={item.badge} 
-                          sx={{
-                            '& .MuiBadge-badge': {
-                              fontSize: '0.6rem',
-                              height: 16,
-                              minWidth: 16,
-                              bgcolor: colors.accents.purple,
-                              color: 'white'
-                            }
-                          }}
-                        >
-                          {item.icon}
-                        </Badge>
-                      ) : (
-                        item.icon
-                      )}
+                      {item.icon}
                     </ListItemIcon>
                     
                     {open && (
@@ -419,22 +390,6 @@ const AdminLayout = () => {
                         }}
                       />
                     )}
-                    
-                    {open && item.badge > 0 && (
-                      <Chip 
-                        label={item.badge}
-                        size="small"
-                        sx={{ 
-                          ml: 'auto',
-                          height: 20,
-                          fontSize: '0.7rem',
-                          fontWeight: 700,
-                          bgcolor: colors.accents.purple,
-                          color: 'white',
-                          flexShrink: 0
-                        }}
-                      />
-                    )}
                   </ListItemButton>
                 </Tooltip>
               </ListItem>
@@ -449,7 +404,7 @@ const AdminLayout = () => {
       <Box sx={{ 
         p: open ? 2 : 1.5,
         borderTop: `1px solid rgba(255, 255, 255, 0.1)`,
-        bgcolor: colors.sidebar.dark,
+        bgcolor: 'transparent',
       }}>
         {open ? (
           <Stack spacing={1.5}>
@@ -485,7 +440,7 @@ const AdminLayout = () => {
                 '&:hover': {
                   borderColor: colors.secondary.main,
                   color: colors.secondary.main,
-                  bgcolor: 'rgba(0, 168, 168, 0.1)',
+                  bgcolor: 'rgba(233, 233, 233, 0.1)',
                 },
               }}
             >
@@ -525,16 +480,16 @@ const AdminLayout = () => {
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: colors.background.light }}>
-      {/* AppBar superior - AHORA CON LOS MISMOS COLORES DEL SIDEBAR */}
+      {/* AppBar superior */}
       <AppBar
         position="fixed"
         elevation={0}
         sx={{
-          bgcolor: sidebarColor, // Mismo color que el sidebar
+          bgcolor: sidebarColor,
           color: colors.text.primary,
           width: '100%',
           zIndex: theme.zIndex.drawer + 1,
-          borderBottom: `1px solid rgba(255, 255, 255, 0.1)`, // Borde blanco translúcido
+          borderBottom: `1px solid rgba(255, 255, 255, 0.1)`,
           boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.15)',
         }}
       >
@@ -577,7 +532,7 @@ const AdminLayout = () => {
               <Box sx={{ 
                 width: 32, 
                 height: 32,
-                bgcolor: colors.secondary.main,
+                bgcolor: '#ffffff',
                 borderRadius: '8px',
                 display: 'flex',
                 alignItems: 'center',
@@ -586,12 +541,12 @@ const AdminLayout = () => {
                 <Typography 
                   variant="subtitle1" 
                   sx={{ 
-                    color: colors.text.primary,
+                    color: sidebarColor,
                     fontWeight: 800,
                     fontSize: '1rem',
                   }}
                 >
-                  S
+                  A
                 </Typography>
               </Box>
               
@@ -612,7 +567,7 @@ const AdminLayout = () => {
                 label="ADMIN"
                 size="small"
                 sx={{ 
-                  bgcolor: colors.secondary.main,
+                  bgcolor: 'rgba(255, 255, 255, 0.2)',
                   color: colors.text.primary,
                   fontWeight: 700,
                   fontSize: '0.7rem',
@@ -629,7 +584,7 @@ const AdminLayout = () => {
               ml: 3,
               px: 2,
               py: 0.5,
-              bgcolor: colors.background.hover, // Fondo hover para el indicador
+              bgcolor: colors.background.hover,
               borderRadius: '6px',
             }}>
               <Typography 
@@ -686,7 +641,7 @@ const AdminLayout = () => {
                 height: 24,
                 alignSelf: 'center',
                 mx: 1,
-                borderColor: 'rgba(255, 255, 255, 0.2)' // Separador blanco translúcido
+                borderColor: 'rgba(255, 255, 255, 0.2)'
               }}
             />
             
@@ -736,8 +691,8 @@ const AdminLayout = () => {
                   sx={{ 
                     width: 36,
                     height: 36,
-                    bgcolor: colors.secondary.main,
-                    color: colors.text.primary,
+                    bgcolor: '#ffffff',
+                    color: sidebarColor,
                     fontSize: '0.9rem',
                     fontWeight: 'bold',
                     border: `2px solid ${colors.secondary.light}`,
@@ -753,7 +708,7 @@ const AdminLayout = () => {
         </Toolbar>
       </AppBar>
 
-      {/* Menú de perfil - Mantiene los colores pero con fondo blanco para mejor legibilidad */}
+      {/* Menú de perfil - CORREGIDO PARA NAVEGAR AL PERFIL */}
       <Menu
         anchorEl={profileAnchorEl}
         open={Boolean(profileAnchorEl)}
@@ -768,14 +723,14 @@ const AdminLayout = () => {
           }
         }}
       >
-        <Box sx={{ p: 2, bgcolor: colors.sidebar.light, borderBottom: `1px solid rgba(255, 255, 255, 0.1)` }}>
+        <Box sx={{ p: 2, bgcolor: sidebarColor, borderBottom: `1px solid rgba(255, 255, 255, 0.1)` }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
             <Avatar 
               sx={{ 
                 width: 48,
                 height: 48,
-                bgcolor: colors.secondary.main,
-                color: colors.text.primary,
+                bgcolor: '#ffffff',
+                color: sidebarColor,
                 fontSize: '1.2rem',
                 fontWeight: 'bold',
               }}
@@ -798,36 +753,39 @@ const AdminLayout = () => {
               size="small"
               icon={<LocationIcon />}
               sx={{ 
-                bgcolor: 'rgba(0, 168, 168, 0.2)',
+                bgcolor: 'rgba(255, 255, 255, 0.2)',
                 color: colors.text.primary,
                 fontWeight: 600,
               }}
             />
             <Chip 
-              label="Super Admin"
+              label="Admin"
               size="small"
               variant="outlined"
               sx={{ 
                 fontWeight: 600,
-                borderColor: colors.accents.purple,
+                borderColor: colors.secondary.main,
                 color: colors.text.primary
               }}
             />
           </Box>
         </Box>
         
+        {/* OPCIÓN DE PERFIL CORREGIDA - AHORA NAVEGA A /admin/profile */}
         <MenuItem 
+          component={Link}
+          to="/admin/profile"
           onClick={handleProfileMenuClose}
           sx={{ py: 1.5, px: 2 }}
         >
           <ListItemIcon>
-            <AccountCircleIcon sx={{ color: colors.secondary.main }} />
+            <AccountCircleIcon sx={{ color: sidebarColor }} />
           </ListItemIcon>
           <ListItemText 
             primary="Mi Perfil"
             secondary="Información personal y preferencias"
-            primaryTypographyProps={{ sx: { color: colors.sidebar.main } }}
-            secondaryTypographyProps={{ sx: { color: 'rgba(58, 110, 165, 0.6)' } }}
+            primaryTypographyProps={{ sx: { color: sidebarColor } }}
+            secondaryTypographyProps={{ sx: { color: 'rgba(19, 59, 107, 0.6)' } }}
           />
         </MenuItem>
         
@@ -838,35 +796,35 @@ const AdminLayout = () => {
           sx={{ py: 1.5, px: 2 }}
         >
           <ListItemIcon>
-            <HelpIcon sx={{ color: colors.accents.blue }} />
+            <HelpIcon sx={{ color: sidebarColor }} />
           </ListItemIcon>
           <ListItemText 
             primary="Ayuda y Soporte"
             secondary="Documentación y contacto"
-            primaryTypographyProps={{ sx: { color: colors.sidebar.main } }}
-            secondaryTypographyProps={{ sx: { color: 'rgba(58, 110, 165, 0.6)' } }}
+            primaryTypographyProps={{ sx: { color: sidebarColor } }}
+            secondaryTypographyProps={{ sx: { color: 'rgba(19, 59, 107, 0.6)' } }}
           />
         </MenuItem>
         
-        <Divider sx={{ borderColor: 'rgba(58, 110, 165, 0.08)' }} />
+        <Divider sx={{ borderColor: 'rgba(19, 59, 107, 0.08)' }} />
         
         <MenuItem 
           onClick={handleLogout}
           sx={{ 
             py: 1.5, 
             px: 2,
-            color: colors.sidebar.main,
+            color: sidebarColor,
             '&:hover': {
-              bgcolor: 'rgba(0, 168, 168, 0.04)',
+              bgcolor: 'rgba(233, 233, 233, 0.04)',
             }
           }}
         >
-          <ListItemIcon sx={{ color: colors.secondary.main }}>
+          <ListItemIcon sx={{ color: '#ef4444' }}>
             <LogoutIcon />
           </ListItemIcon>
           <ListItemText 
             primary="Cerrar Sesión"
-            primaryTypographyProps={{ fontWeight: 600, sx: { color: colors.sidebar.main } }}
+            primaryTypographyProps={{ fontWeight: 600, sx: { color: '#ef4444' } }}
           />
         </MenuItem>
       </Menu>
@@ -887,29 +845,29 @@ const AdminLayout = () => {
       >
         <MenuItem onClick={handleMenuClose}>
           <ListItemIcon>
-            <ConfigIcon sx={{ color: colors.accents.blue }} />
+            <ConfigIcon sx={{ color: sidebarColor }} />
           </ListItemIcon>
           <ListItemText 
             primary="Preferencias"
-            primaryTypographyProps={{ sx: { color: colors.sidebar.main } }}
+            primaryTypographyProps={{ sx: { color: sidebarColor } }}
           />
         </MenuItem>
         <MenuItem onClick={handleMenuClose}>
           <ListItemIcon>
-            <NotificationsIcon sx={{ color: colors.secondary.main }} />
+            <NotificationsIcon sx={{ color: '#e9e9e9' }} />
           </ListItemIcon>
           <ListItemText 
             primary="Notificaciones"
-            primaryTypographyProps={{ sx: { color: colors.sidebar.main } }}
+            primaryTypographyProps={{ sx: { color: sidebarColor } }}
           />
         </MenuItem>
         <MenuItem onClick={handleMenuClose}>
           <ListItemIcon>
-            <EmailIcon sx={{ color: colors.accents.purple }} />
+            <EmailIcon sx={{ color: '#ef4444' }} />
           </ListItemIcon>
           <ListItemText 
             primary="Configuración de correo"
-            primaryTypographyProps={{ sx: { color: colors.sidebar.main } }}
+            primaryTypographyProps={{ sx: { color: sidebarColor } }}
           />
         </MenuItem>
       </Menu>

@@ -63,6 +63,7 @@ import Reports from "./pages/admin/Reports";
 import AuditLog from "./pages/admin/audit/AuditLog";
 import ExpedienteConfig from "./pages/admin/ConfigExpediente";
 import GeneralAlerts from "./pages/admin/GeneralAlerts";
+import AdminProfrofile from './pages/admin/AdminProfile';
 
 // Committee Modules
 import CommitteeReview from "./pages/committee/CommitteeReview";
@@ -236,6 +237,7 @@ function App() {
               <Route path="/admin/reports" element={<Reports />} />
               <Route path="/admin/audit" element={<AuditLog />} />
               <Route path="/admin/alerts" element={<GeneralAlerts/>} />
+              <Route path="/admin/profile" element={<AdminProfrofile/>} />
             </Route>
 
             {/* Redirección por defecto */}

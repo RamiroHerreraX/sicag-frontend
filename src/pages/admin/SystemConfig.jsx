@@ -37,7 +37,16 @@ import {
   Select,
   FormControl,
   InputLabel,
-  FormHelperText
+  FormHelperText,
+  Radio,
+  RadioGroup,
+  FormControlLabel as MuiFormControlLabel,
+  Checkbox,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  Badge
 } from '@mui/material';
 import {
   Save as SaveIcon,
@@ -87,7 +96,8 @@ import {
   Phone as PhoneIcon,
   KeyboardArrowUp as KeyboardArrowUpIcon,
   KeyboardArrowDown as KeyboardArrowDownIcon,
-  Close as CloseIcon
+  Close as CloseIcon,
+  GroupAdd as GroupAddIcon
 } from '@mui/icons-material';
 
 // Paleta corporativa
@@ -135,43 +145,42 @@ const SystemConfig = () => {
   const [newCertificacionDialog, setNewCertificacionDialog] = useState(false);
   const [editCertificacionDialog, setEditCertificacionDialog] = useState(false);
   const [viewCertificacionDialog, setViewCertificacionDialog] = useState(false);
-  
+
   const [newDeclaracionDialog, setNewDeclaracionDialog] = useState(false);
   const [editDeclaracionDialog, setEditDeclaracionDialog] = useState(false);
   const [viewDeclaracionDialog, setViewDeclaracionDialog] = useState(false);
-  
-  const [newRolDialog, setNewRolDialog] = useState(false);
-  const [editRolDialog, setEditRolDialog] = useState(false);
+
   const [viewRolDialog, setViewRolDialog] = useState(false);
-  
+
   const [newRegionDialog, setNewRegionDialog] = useState(false);
   const [editRegionDialog, setEditRegionDialog] = useState(false);
   const [viewRegionDialog, setViewRegionDialog] = useState(false);
-  
+
   const [newComiteDialog, setNewComiteDialog] = useState(false);
   const [editComiteDialog, setEditComiteDialog] = useState(false);
   const [viewComiteDialog, setViewComiteDialog] = useState(false);
-  
+
   const [newAsociacionDialog, setNewAsociacionDialog] = useState(false);
   const [editAsociacionDialog, setEditAsociacionDialog] = useState(false);
   const [viewAsociacionDialog, setViewAsociacionDialog] = useState(false);
-  
+
   const [newNivelDialog, setNewNivelDialog] = useState(false);
   const [editNivelDialog, setEditNivelDialog] = useState(false);
   const [viewNivelDialog, setViewNivelDialog] = useState(false);
-  
-  const [assignMassiveDialog, setAssignMassiveDialog] = useState(false);
+
+  const [assignAdvancedDialog, setAssignAdvancedDialog] = useState(false);
 
   // Estados para el elemento seleccionado
   const [selectedItem, setSelectedItem] = useState(null);
+
+  // Estados para asignación avanzada
+  const [selectedEvaluators, setSelectedEvaluators] = useState([]);
 
   // Estados para los nuevos registros
   const [newCertificacion, setNewCertificacion] = useState({
     nombre_certificacion: '',
     descripcion: '',
     tipo: 'Profesional',
-    horas_acreditadas: '',
-    vigencia_meses: '',
     estatus: 1
   });
 
@@ -269,7 +278,8 @@ const SystemConfig = () => {
       area: 'Certificaciones',
       permiso_aprobar: 1,
       estatus: 1,
-      fecha_ingreso: '2023-01-15'
+      fecha_ingreso: '2023-01-15',
+      carga_trabajo_actual: 0
     },
     {
       id_comite: 2,
@@ -279,7 +289,8 @@ const SystemConfig = () => {
       area: 'Declaraciones',
       permiso_aprobar: 1,
       estatus: 1,
-      fecha_ingreso: '2023-02-20'
+      fecha_ingreso: '2023-02-20',
+      carga_trabajo_actual: 2
     },
     {
       id_comite: 3,
@@ -289,7 +300,19 @@ const SystemConfig = () => {
       area: 'Revisión Técnica',
       permiso_aprobar: 1,
       estatus: 1,
-      fecha_ingreso: '2023-03-10'
+      fecha_ingreso: '2023-03-10',
+      carga_trabajo_actual: 1
+    },
+    {
+      id_comite: 4,
+      id_usuario: 104,
+      nombre_usuario: 'Ana Patricia López',
+      cargo: 'Vocal',
+      area: 'Evaluación Documental',
+      permiso_aprobar: 1,
+      estatus: 1,
+      fecha_ingreso: '2023-04-15',
+      carga_trabajo_actual: 0
     }
   ]);
 
@@ -299,8 +322,6 @@ const SystemConfig = () => {
       nombre_certificacion: 'Certificación en Gestión Aduanera',
       descripcion: 'Certificación para agentes aduanales en gestión y procedimientos aduaneros',
       tipo: 'Profesional',
-      horas_acreditadas: 120,
-      vigencia_meses: 24,
       estatus: 1,
       fecha_creacion: '2023-01-10'
     },
@@ -309,8 +330,6 @@ const SystemConfig = () => {
       nombre_certificacion: 'Certificación en Legislación Fiscal',
       descripcion: 'Capacitación en legislación fiscal y obligaciones tributarias',
       tipo: 'Especialización',
-      horas_acreditadas: 80,
-      vigencia_meses: 18,
       estatus: 1,
       fecha_creacion: '2023-02-15'
     },
@@ -319,8 +338,6 @@ const SystemConfig = () => {
       nombre_certificacion: 'Certificación en Comercio Exterior',
       descripcion: 'Formación en procedimientos de comercio exterior y logística internacional',
       tipo: 'Profesional',
-      horas_acreditadas: 150,
-      vigencia_meses: 36,
       estatus: 1,
       fecha_creacion: '2023-03-20'
     },
@@ -329,8 +346,6 @@ const SystemConfig = () => {
       nombre_certificacion: 'Certificación en Valoración Aduanera',
       descripcion: 'Especialización en valoración de mercancías y aranceles',
       tipo: 'Especialización',
-      horas_acreditadas: 60,
-      vigencia_meses: 12,
       estatus: 1,
       fecha_creacion: '2023-04-05'
     },
@@ -339,8 +354,6 @@ const SystemConfig = () => {
       nombre_certificacion: 'Certificación Básica Aduanal',
       descripcion: 'Certificación inicial para nuevos agentes aduanales',
       tipo: 'Básica',
-      horas_acreditadas: 200,
-      vigencia_meses: 12,
       estatus: 0,
       fecha_creacion: '2023-01-25'
     },
@@ -349,8 +362,6 @@ const SystemConfig = () => {
       nombre_certificacion: 'Certificación en Auditoría Aduanera',
       descripcion: 'Formación en procedimientos de auditoría y fiscalización aduanera',
       tipo: 'Avanzada',
-      horas_acreditadas: 100,
-      vigencia_meses: 24,
       estatus: 1,
       fecha_creacion: '2023-06-12'
     }
@@ -728,6 +739,87 @@ const SystemConfig = () => {
       ],
       evaluador_asignado: null,
       estatus_evaluacion: 'pendiente'
+    },
+    {
+      id_agente: 9,
+      id_usuario: 209,
+      nombre: 'Gabriela Torres',
+      email: 'gabriela@ejemplo.com',
+      region: 'Norte',
+      telefono: '+52 81 9876 5432',
+      documentos_pendientes: 2,
+      fecha_subida: '07/01/2026',
+      documentos: [
+        { tipo: 'Carta de Antecedentes', fecha: '03/01/2026', estado: 'Pendiente' },
+        { tipo: 'Declaración Patrimonial', fecha: '05/01/2026', estado: 'Pendiente' }
+      ],
+      evaluador_asignado: null,
+      estatus_evaluacion: 'pendiente'
+    },
+    {
+      id_agente: 10,
+      id_usuario: 210,
+      nombre: 'Javier Mendoza',
+      email: 'javier@ejemplo.com',
+      region: 'Centro',
+      telefono: '+52 55 4444 3333',
+      documentos_pendientes: 3,
+      fecha_subida: '06/01/2026',
+      documentos: [
+        { tipo: 'Certificación de Estudios', fecha: '02/01/2026', estado: 'Pendiente' },
+        { tipo: 'Constancia de No Delitos Fiscales', fecha: '04/01/2026', estado: 'Pendiente' },
+        { tipo: 'Aviso de Retiro de SAT', fecha: '05/01/2026', estado: 'Pendiente' }
+      ],
+      evaluador_asignado: null,
+      estatus_evaluacion: 'pendiente'
+    },
+    {
+      id_agente: 11,
+      id_usuario: 211,
+      nombre: 'Sofía Ramírez',
+      email: 'sofia@ejemplo.com',
+      region: 'Noroeste',
+      telefono: '+52 664 1234 5678',
+      documentos_pendientes: 1,
+      fecha_subida: '05/01/2026',
+      documentos: [
+        { tipo: 'Declaración Patrimonial', fecha: '02/01/2026', estado: 'Pendiente' }
+      ],
+      evaluador_asignado: null,
+      estatus_evaluacion: 'pendiente'
+    },
+    {
+      id_agente: 12,
+      id_usuario: 212,
+      nombre: 'Miguel Ángel Castro',
+      email: 'miguel@ejemplo.com',
+      region: 'Golfo',
+      telefono: '+52 229 9876 5432',
+      documentos_pendientes: 3,
+      fecha_subida: '04/01/2026',
+      documentos: [
+        { tipo: 'Carta de Antecedentes', fecha: '01/01/2026', estado: 'Pendiente' },
+        { tipo: 'Certificación de Estudios', fecha: '02/01/2026', estado: 'Pendiente' },
+        { tipo: 'Aviso de Retiro de SAT', fecha: '03/01/2026', estado: 'Pendiente' }
+      ],
+      evaluador_asignado: null,
+      estatus_evaluacion: 'pendiente'
+    },
+    {
+      id_agente: 13,
+      id_usuario: 213,
+      nombre: 'Patricia Núñez',
+      email: 'patricia@ejemplo.com',
+      region: 'Centro Occidente',
+      telefono: '+52 477 8765 4321',
+      documentos_pendientes: 2,
+      fecha_subida: '03/01/2026',
+      documentos: [
+        { tipo: 'Declaración Patrimonial', fecha: '30/12/2025', estado: 'Pendiente' },
+        { tipo: 'Constancia de No Delitos Fiscales', fecha: '02/01/2026', estado: 'Pendiente' }
+      ],
+      evaluador_asignado: null,
+      estatus_evaluacion: 'pendiente'
     }
   ]);
 
@@ -751,17 +843,12 @@ const SystemConfig = () => {
   const [filterEstatusAsociaciones, setFilterEstatusAsociaciones] = useState('todos');
   const [filterEstatusAgentes, setFilterEstatusAgentes] = useState('todos');
 
-  // Estados para asignación masiva
-  const [massiveEvaluator, setMassiveEvaluator] = useState('');
-
   // Filtrar certificaciones
   const filteredCertificaciones = certificaciones.filter(cert => {
-    // Filtro por búsqueda
     const matchesSearch = cert.nombre_certificacion.toLowerCase().includes(searchCertificaciones.toLowerCase()) ||
-                          cert.descripcion.toLowerCase().includes(searchCertificaciones.toLowerCase()) ||
-                          cert.tipo.toLowerCase().includes(searchCertificaciones.toLowerCase());
-    
-    // Filtro por estatus
+      cert.descripcion.toLowerCase().includes(searchCertificaciones.toLowerCase()) ||
+      cert.tipo.toLowerCase().includes(searchCertificaciones.toLowerCase());
+
     let matchesEstatus = true;
     if (filterEstatusCertificaciones === 'activos') {
       matchesEstatus = cert.estatus === 1;
@@ -776,16 +863,16 @@ const SystemConfig = () => {
     } else if (filterEstatusCertificaciones === 'avanzada') {
       matchesEstatus = cert.tipo === 'Avanzada';
     }
-    
+
     return matchesSearch && matchesEstatus;
   });
 
   // Filtrar declaraciones
   const filteredDeclaraciones = declaraciones.filter(dec => {
     const matchesSearch = dec.nombre.toLowerCase().includes(searchDeclaraciones.toLowerCase()) ||
-                          dec.articulo.toLowerCase().includes(searchDeclaraciones.toLowerCase()) ||
-                          dec.tipo.toLowerCase().includes(searchDeclaraciones.toLowerCase());
-    
+      dec.articulo.toLowerCase().includes(searchDeclaraciones.toLowerCase()) ||
+      dec.tipo.toLowerCase().includes(searchDeclaraciones.toLowerCase());
+
     let matchesEstatus = true;
     if (filterEstatusDeclaraciones === 'activos') {
       matchesEstatus = dec.estatus === 1;
@@ -800,46 +887,46 @@ const SystemConfig = () => {
     } else if (filterEstatusDeclaraciones === 'complementaria') {
       matchesEstatus = dec.tipo === 'Complementaria';
     }
-    
+
     return matchesSearch && matchesEstatus;
   });
 
   // Filtrar roles
   const filteredRoles = roles.filter(rol => {
     const matchesSearch = rol.nombre.toLowerCase().includes(searchRoles.toLowerCase()) ||
-                          rol.descripcion.toLowerCase().includes(searchRoles.toLowerCase());
-    
+      rol.descripcion.toLowerCase().includes(searchRoles.toLowerCase());
+
     let matchesEstatus = true;
     if (filterEstatusRoles === 'activos') {
       matchesEstatus = rol.estatus === true;
     } else if (filterEstatusRoles === 'inactivos') {
       matchesEstatus = rol.estatus === false;
     }
-    
+
     return matchesSearch && matchesEstatus;
   });
 
   // Filtrar regiones
   const filteredRegiones = regiones.filter(region => {
     const matchesSearch = region.nombre_region.toLowerCase().includes(searchRegiones.toLowerCase()) ||
-                          region.estado.toLowerCase().includes(searchRegiones.toLowerCase());
-    
+      region.estado.toLowerCase().includes(searchRegiones.toLowerCase());
+
     let matchesEstatus = true;
     if (filterEstatusRegiones === 'activos') {
       matchesEstatus = region.estatus === 1;
     } else if (filterEstatusRegiones === 'inactivos') {
       matchesEstatus = region.estatus === 0;
     }
-    
+
     return matchesSearch && matchesEstatus;
   });
 
   // Filtrar comité
   const filteredComite = comite.filter(miembro => {
     const matchesSearch = miembro.nombre_usuario.toLowerCase().includes(searchComite.toLowerCase()) ||
-                          miembro.cargo.toLowerCase().includes(searchComite.toLowerCase()) ||
-                          miembro.area.toLowerCase().includes(searchComite.toLowerCase());
-    
+      miembro.cargo.toLowerCase().includes(searchComite.toLowerCase()) ||
+      miembro.area.toLowerCase().includes(searchComite.toLowerCase());
+
     let matchesEstatus = true;
     if (filterEstatusComite === 'activos') {
       matchesEstatus = miembro.estatus === 1;
@@ -848,15 +935,15 @@ const SystemConfig = () => {
     } else if (filterEstatusComite === 'permiso') {
       matchesEstatus = miembro.permiso_aprobar === 1;
     }
-    
+
     return matchesSearch && matchesEstatus;
   });
 
   // Filtrar niveles de reconocimiento
   const filteredNivelesReconocimiento = nivelesReconocimiento.filter(nivel => {
     const matchesSearch = nivel.nombre_nivel.toLowerCase().includes(searchNivelesReconocimiento.toLowerCase()) ||
-                          nivel.descripcion.toLowerCase().includes(searchNivelesReconocimiento.toLowerCase());
-    
+      nivel.descripcion.toLowerCase().includes(searchNivelesReconocimiento.toLowerCase());
+
     let matchesEstatus = true;
     if (filterEstatusNiveles === 'activos') {
       matchesEstatus = nivel.estatus === 1;
@@ -869,16 +956,16 @@ const SystemConfig = () => {
     } else if (filterEstatusNiveles === 'profesional') {
       matchesEstatus = nivel.nombre_nivel.includes('Profesional');
     }
-    
+
     return matchesSearch && matchesEstatus;
   });
 
   // Filtrar asociaciones
   const filteredAsociaciones = asociaciones.filter(asoc => {
     const matchesSearch = asoc.nombre.toLowerCase().includes(searchAsociaciones.toLowerCase()) ||
-                          asoc.codigo.toLowerCase().includes(searchAsociaciones.toLowerCase()) ||
-                          asoc.region.toLowerCase().includes(searchAsociaciones.toLowerCase());
-    
+      asoc.codigo.toLowerCase().includes(searchAsociaciones.toLowerCase()) ||
+      asoc.region.toLowerCase().includes(searchAsociaciones.toLowerCase());
+
     let matchesEstatus = true;
     if (filterEstatusAsociaciones === 'activas') {
       matchesEstatus = asoc.estatus === 'Activa';
@@ -889,16 +976,16 @@ const SystemConfig = () => {
     } else if (filterEstatusAsociaciones === 'alto') {
       matchesEstatus = asoc.cumplimiento >= 95;
     }
-    
+
     return matchesSearch && matchesEstatus;
   });
 
   // Filtrar agentes pendientes
   const filteredAgentesPendientes = agentesPendientes.filter(agente => {
     const matchesSearch = agente.nombre.toLowerCase().includes(searchAgentesPendientes.toLowerCase()) ||
-                          agente.email.toLowerCase().includes(searchAgentesPendientes.toLowerCase()) ||
-                          agente.region.toLowerCase().includes(searchAgentesPendientes.toLowerCase());
-    
+      agente.email.toLowerCase().includes(searchAgentesPendientes.toLowerCase()) ||
+      agente.region.toLowerCase().includes(searchAgentesPendientes.toLowerCase());
+
     let matchesEstatus = true;
     if (filterEstatusAgentes === 'pendientes') {
       matchesEstatus = agente.estatus_evaluacion === 'pendiente';
@@ -907,7 +994,7 @@ const SystemConfig = () => {
     } else if (filterEstatusAgentes === 'revision') {
       matchesEstatus = agente.estatus_evaluacion === 'en_revision';
     }
-    
+
     return matchesSearch && matchesEstatus;
   });
 
@@ -924,13 +1011,6 @@ const SystemConfig = () => {
       ...config,
       [field]: newValue
     });
-  };
-
-  // Función para manejar estado de roles
-  const handleToggleRoleStatus = (id) => {
-    setRoles(roles.map(rol =>
-      rol.id === id ? { ...rol, estatus: !rol.estatus } : rol
-    ));
   };
 
   // Función para manejar estado de miembros del comité
@@ -1004,11 +1084,18 @@ const SystemConfig = () => {
     setAgentesPendientes(agentesPendientes.map(agente =>
       agente.id_agente === selectedAgent.id_agente
         ? {
-            ...agente,
-            evaluador_asignado: selectedEvaluator,
-            estatus_evaluacion: 'asignado'
-          }
+          ...agente,
+          evaluador_asignado: selectedEvaluator,
+          estatus_evaluacion: 'asignado'
+        }
         : agente
+    ));
+
+    // Actualizar carga de trabajo del evaluador
+    setComite(comite.map(miembro =>
+      miembro.nombre_usuario === selectedEvaluator
+        ? { ...miembro, carga_trabajo_actual: miembro.carga_trabajo_actual + 1 }
+        : miembro
     ));
 
     setAssignDialogOpen(false);
@@ -1018,7 +1105,7 @@ const SystemConfig = () => {
 
   // Funciones para crear nuevos registros
   const handleCreateCertificacion = () => {
-    if (!newCertificacion.nombre_certificacion || !newCertificacion.descripcion || !newCertificacion.horas_acreditadas || !newCertificacion.vigencia_meses) {
+    if (!newCertificacion.nombre_certificacion || !newCertificacion.descripcion) {
       alert('Por favor complete todos los campos obligatorios');
       return;
     }
@@ -1027,9 +1114,7 @@ const SystemConfig = () => {
     const certificacionToAdd = {
       ...newCertificacion,
       id_certificacion: newId,
-      fecha_creacion: new Date().toISOString().split('T')[0],
-      horas_acreditadas: parseInt(newCertificacion.horas_acreditadas),
-      vigencia_meses: parseInt(newCertificacion.vigencia_meses)
+      fecha_creacion: new Date().toISOString().split('T')[0]
     };
 
     setCertificaciones([...certificaciones, certificacionToAdd]);
@@ -1038,8 +1123,6 @@ const SystemConfig = () => {
       nombre_certificacion: '',
       descripcion: '',
       tipo: 'Profesional',
-      horas_acreditadas: '',
-      vigencia_meses: '',
       estatus: 1
     });
   };
@@ -1069,23 +1152,6 @@ const SystemConfig = () => {
     });
   };
 
-  const handleCreateRol = () => {
-    if (!newRol.nombre || !newRol.descripcion) {
-      alert('Por favor complete todos los campos obligatorios');
-      return;
-    }
-
-    const newId = Math.max(...roles.map(r => r.id)) + 1;
-    setRoles([...roles, { ...newRol, id: newId }]);
-    setNewRolDialog(false);
-    setNewRol({
-      nombre: '',
-      descripcion: '',
-      nivel: 3,
-      estatus: true
-    });
-  };
-
   const handleCreateRegion = () => {
     if (!newRegion.nombre_region || !newRegion.estado || !newRegion.pais) {
       alert('Por favor complete todos los campos obligatorios');
@@ -1111,10 +1177,11 @@ const SystemConfig = () => {
 
     const newId = Math.max(...comite.map(c => c.id_comite)) + 1;
     const newIdUsuario = Math.max(...comite.map(c => c.id_usuario)) + 1;
-    setComite([...comite, { 
-      ...newComite, 
+    setComite([...comite, {
+      ...newComite,
       id_comite: newId,
-      id_usuario: newIdUsuario
+      id_usuario: newIdUsuario,
+      carga_trabajo_actual: 0
     }]);
     setNewComiteDialog(false);
     setNewComite({
@@ -1136,8 +1203,8 @@ const SystemConfig = () => {
 
     const newId = Math.max(...asociaciones.map(a => a.id_asociacion)) + 1;
     const newCodigo = `ASOC-${newId.toString().padStart(3, '0')}`;
-    setAsociaciones([...asociaciones, { 
-      ...newAsociacion, 
+    setAsociaciones([...asociaciones, {
+      ...newAsociacion,
       id_asociacion: newId,
       codigo: newCodigo
     }]);
@@ -1191,14 +1258,6 @@ const SystemConfig = () => {
     setSelectedItem(null);
   };
 
-  const handleEditRol = () => {
-    setRoles(roles.map(rol =>
-      rol.id === selectedItem.id ? selectedItem : rol
-    ));
-    setEditRolDialog(false);
-    setSelectedItem(null);
-  };
-
   const handleEditRegion = () => {
     setRegiones(regiones.map(region =>
       region.id_region === selectedItem.id_region ? selectedItem : region
@@ -1231,32 +1290,128 @@ const SystemConfig = () => {
     setSelectedItem(null);
   };
 
-  // Función para asignación masiva
-  const handleMassiveAssignment = () => {
-    if (!massiveEvaluator) {
-      alert('Por favor seleccione un evaluador');
+  // Función para asignación avanzada simplificada
+  const handleOpenAdvancedAssignment = () => {
+    // Resetear estados
+    setSelectedEvaluators([]);
+    setAssignAdvancedDialog(true);
+  };
+
+  const handleToggleEvaluator = (evaluatorName) => {
+    setSelectedEvaluators(prev => {
+      if (prev.includes(evaluatorName)) {
+        return prev.filter(e => e !== evaluatorName);
+      } else {
+        return [...prev, evaluatorName];
+      }
+    });
+  };
+
+  const handleConfirmAdvancedAssignment = () => {
+    if (selectedEvaluators.length === 0) {
+      alert('Por favor seleccione al menos un evaluador');
       return;
     }
 
-    const pendingAgents = agentesPendientes.filter(a => a.estatus_evaluacion === 'pendiente');
-    if (pendingAgents.length === 0) {
+    // Obtener todos los agentes pendientes
+    const agentsToAssign = agentesPendientes.filter(a => a.estatus_evaluacion === 'pendiente');
+
+    if (agentsToAssign.length === 0) {
       alert('No hay agentes pendientes para asignar');
-      setAssignMassiveDialog(false);
       return;
     }
 
-    setAgentesPendientes(agentesPendientes.map(agente =>
-      agente.estatus_evaluacion === 'pendiente'
-        ? {
-            ...agente,
-            evaluador_asignado: massiveEvaluator,
-            estatus_evaluacion: 'asignado'
-          }
-        : agente
-    ));
+    // Distribución equitativa
+    const baseCount = Math.floor(agentsToAssign.length / selectedEvaluators.length);
+    const remainder = agentsToAssign.length % selectedEvaluators.length;
 
-    setAssignMassiveDialog(false);
-    setMassiveEvaluator('');
+    const assignments = selectedEvaluators.map((evaluator, index) => ({
+      evaluator,
+      cantidad: index < remainder ? baseCount + 1 : baseCount
+    }));
+
+    // Crear copia de agentes
+    let agentsCopy = [...agentesPendientes];
+    let agentIndex = 0;
+
+    // Asignar agentes según configuración
+    assignments.forEach(({ evaluator, cantidad }) => {
+      for (let i = 0; i < cantidad; i++) {
+        if (agentIndex < agentsToAssign.length) {
+          const agentId = agentsToAssign[agentIndex].id_agente;
+          agentsCopy = agentsCopy.map(agente =>
+            agente.id_agente === agentId
+              ? {
+                ...agente,
+                evaluador_asignado: evaluator,
+                estatus_evaluacion: 'asignado'
+              }
+              : agente
+          );
+          agentIndex++;
+        }
+      }
+    });
+
+    // Actualizar carga de trabajo de evaluadores
+    const newComite = comite.map(miembro => {
+      const asignacion = assignments.find(a => a.evaluator === miembro.nombre_usuario);
+      if (asignacion) {
+        return {
+          ...miembro,
+          carga_trabajo_actual: miembro.carga_trabajo_actual + asignacion.cantidad
+        };
+      }
+      return miembro;
+    });
+
+    setAgentesPendientes(agentsCopy);
+    setComite(newComite);
+    setAssignAdvancedDialog(false);
+  };
+
+  const evaluadoresDisponibles = filteredComite
+    .filter(miembro => miembro.estatus === 1 && miembro.permiso_aprobar === 1)
+    .map(miembro => miembro.nombre_usuario);
+
+  // Función para resetear filtros
+  const resetFilters = (section) => {
+    switch (section) {
+      case 'certificaciones':
+        setSearchCertificaciones('');
+        setFilterEstatusCertificaciones('todos');
+        break;
+      case 'declaraciones':
+        setSearchDeclaraciones('');
+        setFilterEstatusDeclaraciones('todos');
+        break;
+      case 'roles':
+        setSearchRoles('');
+        setFilterEstatusRoles('todos');
+        break;
+      case 'regiones':
+        setSearchRegiones('');
+        setFilterEstatusRegiones('todos');
+        break;
+      case 'comite':
+        setSearchComite('');
+        setFilterEstatusComite('todos');
+        break;
+      case 'niveles':
+        setSearchNivelesReconocimiento('');
+        setFilterEstatusNiveles('todos');
+        break;
+      case 'asociaciones':
+        setSearchAsociaciones('');
+        setFilterEstatusAsociaciones('todos');
+        break;
+      case 'agentes':
+        setSearchAgentesPendientes('');
+        setFilterEstatusAgentes('todos');
+        break;
+      default:
+        break;
+    }
   };
 
   const tabs = [
@@ -1519,50 +1674,6 @@ const SystemConfig = () => {
       .toUpperCase();
   };
 
-  const evaluadoresDisponibles = filteredComite
-    .filter(miembro => miembro.estatus === 1 && miembro.permiso_aprobar === 1)
-    .map(miembro => miembro.nombre_usuario);
-
-  // Función para resetear filtros
-  const resetFilters = (section) => {
-    switch(section) {
-      case 'certificaciones':
-        setSearchCertificaciones('');
-        setFilterEstatusCertificaciones('todos');
-        break;
-      case 'declaraciones':
-        setSearchDeclaraciones('');
-        setFilterEstatusDeclaraciones('todos');
-        break;
-      case 'roles':
-        setSearchRoles('');
-        setFilterEstatusRoles('todos');
-        break;
-      case 'regiones':
-        setSearchRegiones('');
-        setFilterEstatusRegiones('todos');
-        break;
-      case 'comite':
-        setSearchComite('');
-        setFilterEstatusComite('todos');
-        break;
-      case 'niveles':
-        setSearchNivelesReconocimiento('');
-        setFilterEstatusNiveles('todos');
-        break;
-      case 'asociaciones':
-        setSearchAsociaciones('');
-        setFilterEstatusAsociaciones('todos');
-        break;
-      case 'agentes':
-        setSearchAgentesPendientes('');
-        setFilterEstatusAgentes('todos');
-        break;
-      default:
-        break;
-    }
-  };
-
   return (
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', p: 2, overflow: 'hidden' }}>
       {/* Header */}
@@ -1591,7 +1702,7 @@ const SystemConfig = () => {
         <Alert
           severity="info"
           icon={<WarningIcon />}
-          sx={{ 
+          sx={{
             mb: 2,
             bgcolor: '#e6f0ff',
             color: colors.primary.dark,
@@ -1777,56 +1888,56 @@ const SystemConfig = () => {
                       <Chip
                         label="Todos"
                         variant={filterEstatusCertificaciones === 'todos' ? "filled" : "outlined"}
-                        sx={filterEstatusCertificaciones === 'todos' ? 
-                          { bgcolor: colors.primary.main, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusCertificaciones === 'todos' ?
+                          { bgcolor: colors.primary.main, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.primary.main, color: colors.primary.main, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusCertificaciones('todos')}
                       />
                       <Chip
                         label="Activos"
                         variant={filterEstatusCertificaciones === 'activos' ? "filled" : "outlined"}
-                        sx={filterEstatusCertificaciones === 'activos' ? 
-                          { bgcolor: colors.secondary.main, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusCertificaciones === 'activos' ?
+                          { bgcolor: colors.secondary.main, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.secondary.main, color: colors.secondary.main, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusCertificaciones('activos')}
                       />
                       <Chip
                         label="Inactivos"
                         variant={filterEstatusCertificaciones === 'inactivos' ? "filled" : "outlined"}
-                        sx={filterEstatusCertificaciones === 'inactivos' ? 
-                          { bgcolor: colors.primary.dark, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusCertificaciones === 'inactivos' ?
+                          { bgcolor: colors.primary.dark, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.primary.dark, color: colors.primary.dark, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusCertificaciones('inactivos')}
                       />
                       <Chip
                         label="Profesional"
                         variant={filterEstatusCertificaciones === 'profesional' ? "filled" : "outlined"}
-                        sx={filterEstatusCertificaciones === 'profesional' ? 
-                          { bgcolor: colors.primary.dark, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusCertificaciones === 'profesional' ?
+                          { bgcolor: colors.primary.dark, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.primary.dark, color: colors.primary.dark, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusCertificaciones('profesional')}
                       />
                       <Chip
                         label="Especialización"
                         variant={filterEstatusCertificaciones === 'especializacion' ? "filled" : "outlined"}
-                        sx={filterEstatusCertificaciones === 'especializacion' ? 
-                          { bgcolor: colors.accents.purple, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusCertificaciones === 'especializacion' ?
+                          { bgcolor: colors.accents.purple, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.accents.purple, color: colors.accents.purple, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusCertificaciones('especializacion')}
                       />
                       <Chip
                         label="Básica"
                         variant={filterEstatusCertificaciones === 'basica' ? "filled" : "outlined"}
-                        sx={filterEstatusCertificaciones === 'basica' ? 
-                          { bgcolor: colors.secondary.main, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusCertificaciones === 'basica' ?
+                          { bgcolor: colors.secondary.main, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.secondary.main, color: colors.secondary.main, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusCertificaciones('basica')}
                       />
                       <Chip
                         label="Avanzada"
                         variant={filterEstatusCertificaciones === 'avanzada' ? "filled" : "outlined"}
-                        sx={filterEstatusCertificaciones === 'avanzada' ? 
-                          { bgcolor: colors.accents.blue, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusCertificaciones === 'avanzada' ?
+                          { bgcolor: colors.accents.blue, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.accents.blue, color: colors.accents.blue, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusCertificaciones('avanzada')}
                       />
@@ -1888,23 +1999,21 @@ const SystemConfig = () => {
                       <TableRow>
                         <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '5%' }}>ID</TableCell>
                         <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '25%' }}>Nombre</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '30%' }}>Descripción</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '40%' }}>Descripción</TableCell>
                         <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '12%' }}>Tipo</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '8%' }} align="center">Horas</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '8%' }} align="center">Vigencia</TableCell>
                         <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '8%' }} align="center">Estatus</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '14%' }} align="center">Acciones</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '10%' }} align="center">Acciones</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
                       {filteredCertificaciones.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={8} align="center" sx={{ py: 3 }}>
+                          <TableCell colSpan={6} align="center" sx={{ py: 3 }}>
                             <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                               No se encontraron certificaciones que coincidan con los filtros
                             </Typography>
-                            <Button 
-                              size="small" 
+                            <Button
+                              size="small"
                               onClick={() => resetFilters('certificaciones')}
                               sx={{ mt: 1, color: colors.primary.main }}
                             >
@@ -1958,24 +2067,6 @@ const SystemConfig = () => {
                             </TableCell>
 
                             <TableCell align="center">
-                              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
-                                <AccessTimeIcon sx={{ color: colors.primary.main, fontSize: 16 }} />
-                                <Typography variant="body2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
-                                  {cert.horas_acreditadas}
-                                </Typography>
-                              </Box>
-                            </TableCell>
-
-                            <TableCell align="center">
-                              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
-                                <TimerIcon sx={{ color: colors.accents.purple, fontSize: 16 }} />
-                                <Typography variant="body2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
-                                  {cert.vigencia_meses} m
-                                </Typography>
-                              </Box>
-                            </TableCell>
-
-                            <TableCell align="center">
                               <Chip
                                 label={cert.estatus === 1 ? "ACTIVA" : "INACTIVA"}
                                 size="small"
@@ -2008,7 +2099,7 @@ const SystemConfig = () => {
                                     size="small"
                                     sx={{ color: colors.accents.blue }}
                                     onClick={() => {
-                                      setSelectedItem({...cert});
+                                      setSelectedItem({ ...cert });
                                       setEditCertificacionDialog(true);
                                     }}
                                   >
@@ -2036,8 +2127,8 @@ const SystemConfig = () => {
 
                 {/* Estadísticas de Certificaciones */}
                 <Grid container spacing={2} sx={{ mt: 2 }}>
-                  <Grid item xs={3}>
-                    <Paper 
+                  <Grid item xs={4}>
+                    <Paper
                       sx={{ p: 2, textAlign: 'center', bgcolor: '#e8f0fe', cursor: 'pointer' }}
                       onClick={() => {
                         setFilterEstatusCertificaciones('profesional');
@@ -2052,8 +2143,8 @@ const SystemConfig = () => {
                       </Typography>
                     </Paper>
                   </Grid>
-                  <Grid item xs={3}>
-                    <Paper 
+                  <Grid item xs={4}>
+                    <Paper
                       sx={{ p: 2, textAlign: 'center', bgcolor: '#f0ebff', cursor: 'pointer' }}
                       onClick={() => {
                         setFilterEstatusCertificaciones('especializacion');
@@ -2068,8 +2159,8 @@ const SystemConfig = () => {
                       </Typography>
                     </Paper>
                   </Grid>
-                  <Grid item xs={3}>
-                    <Paper 
+                  <Grid item xs={4}>
+                    <Paper
                       sx={{ p: 2, textAlign: 'center', bgcolor: '#e0f7f7', cursor: 'pointer' }}
                       onClick={() => {
                         setFilterEstatusCertificaciones('activos');
@@ -2081,16 +2172,6 @@ const SystemConfig = () => {
                       </Typography>
                       <Typography variant="caption" sx={{ color: colors.secondary.main }}>
                         Activas
-                      </Typography>
-                    </Paper>
-                  </Grid>
-                  <Grid item xs={3}>
-                    <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e6f0ff' }}>
-                      <Typography variant="h6" sx={{ color: colors.accents.blue, fontWeight: 'bold' }}>
-                        {Math.round(certificaciones.reduce((acc, curr) => acc + curr.horas_acreditadas, 0) / certificaciones.length)}
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: colors.accents.blue }}>
-                        Promedio Horas
                       </Typography>
                     </Paper>
                   </Grid>
@@ -2108,56 +2189,56 @@ const SystemConfig = () => {
                       <Chip
                         label="Todos"
                         variant={filterEstatusDeclaraciones === 'todos' ? "filled" : "outlined"}
-                        sx={filterEstatusDeclaraciones === 'todos' ? 
-                          { bgcolor: colors.primary.main, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusDeclaraciones === 'todos' ?
+                          { bgcolor: colors.primary.main, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.primary.main, color: colors.primary.main, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusDeclaraciones('todos')}
                       />
                       <Chip
                         label="Activos"
                         variant={filterEstatusDeclaraciones === 'activos' ? "filled" : "outlined"}
-                        sx={filterEstatusDeclaraciones === 'activos' ? 
-                          { bgcolor: colors.secondary.main, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusDeclaraciones === 'activos' ?
+                          { bgcolor: colors.secondary.main, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.secondary.main, color: colors.secondary.main, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusDeclaraciones('activos')}
                       />
                       <Chip
                         label="Inactivos"
                         variant={filterEstatusDeclaraciones === 'inactivos' ? "filled" : "outlined"}
-                        sx={filterEstatusDeclaraciones === 'inactivos' ? 
-                          { bgcolor: colors.primary.dark, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusDeclaraciones === 'inactivos' ?
+                          { bgcolor: colors.primary.dark, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.primary.dark, color: colors.primary.dark, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusDeclaraciones('inactivos')}
                       />
                       <Chip
                         label="Obligatorias"
                         variant={filterEstatusDeclaraciones === 'obligatoria' ? "filled" : "outlined"}
-                        sx={filterEstatusDeclaraciones === 'obligatoria' ? 
-                          { bgcolor: colors.primary.dark, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusDeclaraciones === 'obligatoria' ?
+                          { bgcolor: colors.primary.dark, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.primary.dark, color: colors.primary.dark, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusDeclaraciones('obligatoria')}
                       />
                       <Chip
                         label="Anuales"
                         variant={filterEstatusDeclaraciones === 'anual' ? "filled" : "outlined"}
-                        sx={filterEstatusDeclaraciones === 'anual' ? 
-                          { bgcolor: colors.secondary.main, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusDeclaraciones === 'anual' ?
+                          { bgcolor: colors.secondary.main, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.secondary.main, color: colors.secondary.main, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusDeclaraciones('anual')}
                       />
                       <Chip
                         label="Requisitos"
                         variant={filterEstatusDeclaraciones === 'requisito' ? "filled" : "outlined"}
-                        sx={filterEstatusDeclaraciones === 'requisito' ? 
-                          { bgcolor: colors.accents.purple, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusDeclaraciones === 'requisito' ?
+                          { bgcolor: colors.accents.purple, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.accents.purple, color: colors.accents.purple, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusDeclaraciones('requisito')}
                       />
                       <Chip
                         label="Complementarias"
                         variant={filterEstatusDeclaraciones === 'complementaria' ? "filled" : "outlined"}
-                        sx={filterEstatusDeclaraciones === 'complementaria' ? 
-                          { bgcolor: colors.accents.blue, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusDeclaraciones === 'complementaria' ?
+                          { bgcolor: colors.accents.blue, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.accents.blue, color: colors.accents.blue, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusDeclaraciones('complementaria')}
                       />
@@ -2233,8 +2314,8 @@ const SystemConfig = () => {
                             <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                               No se encontraron declaraciones que coincidan con los filtros
                             </Typography>
-                            <Button 
-                              size="small" 
+                            <Button
+                              size="small"
                               onClick={() => resetFilters('declaraciones')}
                               sx={{ mt: 1, color: colors.primary.main }}
                             >
@@ -2336,7 +2417,7 @@ const SystemConfig = () => {
                                     size="small"
                                     sx={{ color: colors.accents.blue }}
                                     onClick={() => {
-                                      setSelectedItem({...declaracion});
+                                      setSelectedItem({ ...declaracion });
                                       setEditDeclaracionDialog(true);
                                     }}
                                   >
@@ -2367,58 +2448,19 @@ const SystemConfig = () => {
             {/* Roles */}
             {activeTab === 2 && (
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                {/* Filtros, búsqueda y estadísticas */}
+                {/* Header informativo */}
+                <Alert severity="info" sx={{ mb: 2 }}>
+                  Los roles del sistema son configurables únicamente por el Super Administrador.
+                  Como Administrador, usted puede consultar los roles disponibles y asignarlos
+                  a los usuarios del sistema.
+                </Alert>
+
+                {/* Filtros y búsqueda (solo para consulta) */}
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                      <Chip
-                        label="Todos"
-                        variant={filterEstatusRoles === 'todos' ? "filled" : "outlined"}
-                        sx={filterEstatusRoles === 'todos' ? 
-                          { bgcolor: colors.primary.main, color: 'white', cursor: 'pointer' } : 
-                          { borderColor: colors.primary.main, color: colors.primary.main, cursor: 'pointer' }}
-                        onClick={() => setFilterEstatusRoles('todos')}
-                      />
-                      <Chip
-                        label="Activos"
-                        variant={filterEstatusRoles === 'activos' ? "filled" : "outlined"}
-                        sx={filterEstatusRoles === 'activos' ? 
-                          { bgcolor: colors.secondary.main, color: 'white', cursor: 'pointer' } : 
-                          { borderColor: colors.secondary.main, color: colors.secondary.main, cursor: 'pointer' }}
-                        onClick={() => setFilterEstatusRoles('activos')}
-                      />
-                      <Chip
-                        label="Inactivos"
-                        variant={filterEstatusRoles === 'inactivos' ? "filled" : "outlined"}
-                        sx={filterEstatusRoles === 'inactivos' ? 
-                          { bgcolor: colors.primary.dark, color: 'white', cursor: 'pointer' } : 
-                          { borderColor: colors.primary.dark, color: colors.primary.dark, cursor: 'pointer' }}
-                        onClick={() => setFilterEstatusRoles('inactivos')}
-                      />
-                      {(searchRoles || filterEstatusRoles !== 'todos') && (
-                        <Chip
-                          label="Limpiar filtros"
-                          variant="outlined"
-                          icon={<CloseIcon />}
-                          onClick={() => resetFilters('roles')}
-                          sx={{ borderColor: colors.primary.main, color: colors.primary.main }}
-                        />
-                      )}
-                    </Box>
-
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                      <Typography variant="body2" sx={{ color: colors.text.secondary }}>
-                        Mostrando: {filteredRoles.length} de {roles.length} roles
-                      </Typography>
-                      <Button
-                        variant="contained"
-                        startIcon={<AddIcon />}
-                        onClick={() => setNewRolDialog(true)}
-                        sx={{ bgcolor: colors.primary.main, '&:hover': { bgcolor: colors.primary.dark } }}
-                      >
-                        Nuevo Rol
-                      </Button>
-                    </Box>
+                    <Typography variant="body2" sx={{ color: colors.text.secondary }}>
+                      Mostrando: {filteredRoles.length} de {roles.length} roles
+                    </Typography>
                   </Box>
 
                   {/* Campo de búsqueda */}
@@ -2446,7 +2488,7 @@ const SystemConfig = () => {
                   />
                 </Box>
 
-                {/* Tabla de Roles */}
+                {/* Tabla de Roles - SOLO VISUALIZACIÓN Y ASIGNACIÓN */}
                 <TableContainer sx={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: 1 }}>
                   <Table stickyHeader size="small">
                     <TableHead>
@@ -2456,7 +2498,6 @@ const SystemConfig = () => {
                         <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '40%' }}>Descripción</TableCell>
                         <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '10%' }} align="center">Nivel</TableCell>
                         <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '10%' }} align="center">Estatus</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '15%' }} align="center">Acciones</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -2466,13 +2507,6 @@ const SystemConfig = () => {
                             <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                               No se encontraron roles que coincidan con los filtros
                             </Typography>
-                            <Button 
-                              size="small" 
-                              onClick={() => resetFilters('roles')}
-                              sx={{ mt: 1, color: colors.primary.main }}
-                            >
-                              Limpiar filtros
-                            </Button>
                           </TableCell>
                         </TableRow>
                       ) : (
@@ -2541,46 +2575,6 @@ const SystemConfig = () => {
                                 }}
                               />
                             </TableCell>
-
-                            <TableCell align="center">
-                              <Stack direction="row" spacing={0.5} justifyContent="center">
-                                <Tooltip title="Ver detalles">
-                                  <IconButton
-                                    size="small"
-                                    sx={{ color: colors.primary.main }}
-                                    onClick={() => {
-                                      setSelectedItem(rol);
-                                      setViewRolDialog(true);
-                                    }}
-                                  >
-                                    <VisibilityIcon fontSize="small" />
-                                  </IconButton>
-                                </Tooltip>
-
-                                <Tooltip title="Editar rol">
-                                  <IconButton
-                                    size="small"
-                                    sx={{ color: colors.accents.blue }}
-                                    onClick={() => {
-                                      setSelectedItem({...rol});
-                                      setEditRolDialog(true);
-                                    }}
-                                  >
-                                    <EditIcon fontSize="small" />
-                                  </IconButton>
-                                </Tooltip>
-
-                                <Tooltip title={rol.estatus ? 'Desactivar' : 'Activar'}>
-                                  <IconButton
-                                    size="small"
-                                    onClick={() => handleToggleRoleStatus(rol.id)}
-                                    sx={{ color: rol.estatus ? colors.primary.dark : colors.secondary.main }}
-                                  >
-                                    {rol.estatus ? <BlockIcon fontSize="small" /> : <CheckCircleIcon fontSize="small" />}
-                                  </IconButton>
-                                </Tooltip>
-                              </Stack>
-                            </TableCell>
                           </TableRow>
                         ))
                       )}
@@ -2600,24 +2594,24 @@ const SystemConfig = () => {
                       <Chip
                         label="Todos"
                         variant={filterEstatusRegiones === 'todos' ? "filled" : "outlined"}
-                        sx={filterEstatusRegiones === 'todos' ? 
-                          { bgcolor: colors.primary.main, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusRegiones === 'todos' ?
+                          { bgcolor: colors.primary.main, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.primary.main, color: colors.primary.main, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusRegiones('todos')}
                       />
                       <Chip
                         label="Activas"
                         variant={filterEstatusRegiones === 'activos' ? "filled" : "outlined"}
-                        sx={filterEstatusRegiones === 'activos' ? 
-                          { bgcolor: colors.secondary.main, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusRegiones === 'activos' ?
+                          { bgcolor: colors.secondary.main, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.secondary.main, color: colors.secondary.main, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusRegiones('activos')}
                       />
                       <Chip
                         label="Inactivas"
                         variant={filterEstatusRegiones === 'inactivos' ? "filled" : "outlined"}
-                        sx={filterEstatusRegiones === 'inactivos' ? 
-                          { bgcolor: colors.primary.dark, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusRegiones === 'inactivos' ?
+                          { bgcolor: colors.primary.dark, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.primary.dark, color: colors.primary.dark, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusRegiones('inactivos')}
                       />
@@ -2692,8 +2686,8 @@ const SystemConfig = () => {
                             <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                               No se encontraron regiones que coincidan con los filtros
                             </Typography>
-                            <Button 
-                              size="small" 
+                            <Button
+                              size="small"
                               onClick={() => resetFilters('regiones')}
                               sx={{ mt: 1, color: colors.primary.main }}
                             >
@@ -2777,7 +2771,7 @@ const SystemConfig = () => {
                                     size="small"
                                     sx={{ color: colors.accents.blue }}
                                     onClick={() => {
-                                      setSelectedItem({...region});
+                                      setSelectedItem({ ...region });
                                       setEditRegionDialog(true);
                                     }}
                                   >
@@ -2815,32 +2809,32 @@ const SystemConfig = () => {
                       <Chip
                         label="Todos"
                         variant={filterEstatusComite === 'todos' ? "filled" : "outlined"}
-                        sx={filterEstatusComite === 'todos' ? 
-                          { bgcolor: colors.primary.main, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusComite === 'todos' ?
+                          { bgcolor: colors.primary.main, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.primary.main, color: colors.primary.main, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusComite('todos')}
                       />
                       <Chip
                         label="Activos"
                         variant={filterEstatusComite === 'activos' ? "filled" : "outlined"}
-                        sx={filterEstatusComite === 'activos' ? 
-                          { bgcolor: colors.secondary.main, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusComite === 'activos' ?
+                          { bgcolor: colors.secondary.main, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.secondary.main, color: colors.secondary.main, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusComite('activos')}
                       />
                       <Chip
                         label="Inactivos"
                         variant={filterEstatusComite === 'inactivos' ? "filled" : "outlined"}
-                        sx={filterEstatusComite === 'inactivos' ? 
-                          { bgcolor: colors.primary.dark, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusComite === 'inactivos' ?
+                          { bgcolor: colors.primary.dark, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.primary.dark, color: colors.primary.dark, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusComite('inactivos')}
                       />
                       <Chip
                         label="Con Permiso Aprobar"
                         variant={filterEstatusComite === 'permiso' ? "filled" : "outlined"}
-                        sx={filterEstatusComite === 'permiso' ? 
-                          { bgcolor: colors.accents.blue, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusComite === 'permiso' ?
+                          { bgcolor: colors.accents.blue, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.accents.blue, color: colors.accents.blue, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusComite('permiso')}
                       />
@@ -2904,6 +2898,7 @@ const SystemConfig = () => {
                         <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '20%' }}>Usuario</TableCell>
                         <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '15%' }}>Cargo</TableCell>
                         <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '20%' }}>Área</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '10%' }} align="center">Carga Actual</TableCell>
                         <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '10%' }} align="center">Permiso Aprobar</TableCell>
                         <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '10%' }} align="center">Estatus</TableCell>
                         <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, width: '20%' }} align="center">Acciones</TableCell>
@@ -2912,12 +2907,12 @@ const SystemConfig = () => {
                     <TableBody>
                       {filteredComite.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={7} align="center" sx={{ py: 3 }}>
+                          <TableCell colSpan={8} align="center" sx={{ py: 3 }}>
                             <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                               No se encontraron miembros que coincidan con los filtros
                             </Typography>
-                            <Button 
-                              size="small" 
+                            <Button
+                              size="small"
                               onClick={() => resetFilters('comite')}
                               sx={{ mt: 1, color: colors.primary.main }}
                             >
@@ -2983,6 +2978,16 @@ const SystemConfig = () => {
                             </TableCell>
 
                             <TableCell align="center">
+                              <Badge
+                                badgeContent={miembro.carga_trabajo_actual}
+                                color={miembro.carga_trabajo_actual > 10 ? "error" : miembro.carga_trabajo_actual > 5 ? "warning" : "success"}
+                                sx={{ '& .MuiBadge-badge': { fontSize: '0.7rem', height: 16, minWidth: 16 } }}
+                              >
+                                <AssignmentIndIcon sx={{ color: colors.primary.main }} />
+                              </Badge>
+                            </TableCell>
+
+                            <TableCell align="center">
                               <Chip
                                 label={miembro.permiso_aprobar === 1 ? "SI" : "NO"}
                                 size="small"
@@ -3029,7 +3034,7 @@ const SystemConfig = () => {
                                     size="small"
                                     sx={{ color: colors.accents.blue }}
                                     onClick={() => {
-                                      setSelectedItem({...miembro});
+                                      setSelectedItem({ ...miembro });
                                       setEditComiteDialog(true);
                                     }}
                                   >
@@ -3067,40 +3072,40 @@ const SystemConfig = () => {
                       <Chip
                         label="Todos"
                         variant={filterEstatusAsociaciones === 'todos' ? "filled" : "outlined"}
-                        sx={filterEstatusAsociaciones === 'todos' ? 
-                          { bgcolor: colors.primary.main, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusAsociaciones === 'todos' ?
+                          { bgcolor: colors.primary.main, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.primary.main, color: colors.primary.main, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusAsociaciones('todos')}
                       />
                       <Chip
                         label="Activas"
                         variant={filterEstatusAsociaciones === 'activas' ? "filled" : "outlined"}
-                        sx={filterEstatusAsociaciones === 'activas' ? 
-                          { bgcolor: colors.secondary.main, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusAsociaciones === 'activas' ?
+                          { bgcolor: colors.secondary.main, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.secondary.main, color: colors.secondary.main, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusAsociaciones('activas')}
                       />
                       <Chip
                         label="Suspendidas"
                         variant={filterEstatusAsociaciones === 'suspendidas' ? "filled" : "outlined"}
-                        sx={filterEstatusAsociaciones === 'suspendidas' ? 
-                          { bgcolor: colors.primary.dark, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusAsociaciones === 'suspendidas' ?
+                          { bgcolor: colors.primary.dark, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.primary.dark, color: colors.primary.dark, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusAsociaciones('suspendidas')}
                       />
                       <Chip
                         label="En Revisión"
                         variant={filterEstatusAsociaciones === 'revision' ? "filled" : "outlined"}
-                        sx={filterEstatusAsociaciones === 'revision' ? 
-                          { bgcolor: colors.accents.blue, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusAsociaciones === 'revision' ?
+                          { bgcolor: colors.accents.blue, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.accents.blue, color: colors.accents.blue, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusAsociaciones('revision')}
                       />
                       <Chip
                         label="Alto Cumplimiento"
                         variant={filterEstatusAsociaciones === 'alto' ? "filled" : "outlined"}
-                        sx={filterEstatusAsociaciones === 'alto' ? 
-                          { bgcolor: colors.secondary.main, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusAsociaciones === 'alto' ?
+                          { bgcolor: colors.secondary.main, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.secondary.main, color: colors.secondary.main, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusAsociaciones('alto')}
                       />
@@ -3178,8 +3183,8 @@ const SystemConfig = () => {
                             <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                               No se encontraron asociaciones que coincidan con los filtros
                             </Typography>
-                            <Button 
-                              size="small" 
+                            <Button
+                              size="small"
                               onClick={() => resetFilters('asociaciones')}
                               sx={{ mt: 1, color: colors.primary.main }}
                             >
@@ -3332,7 +3337,7 @@ const SystemConfig = () => {
                                     size="small"
                                     sx={{ color: colors.accents.blue }}
                                     onClick={() => {
-                                      setSelectedItem({...asociacion});
+                                      setSelectedItem({ ...asociacion });
                                       setEditAsociacionDialog(true);
                                     }}
                                   >
@@ -3375,32 +3380,32 @@ const SystemConfig = () => {
                       <Chip
                         label="Todos"
                         variant={filterEstatusAgentes === 'todos' ? "filled" : "outlined"}
-                        sx={filterEstatusAgentes === 'todos' ? 
-                          { bgcolor: colors.primary.main, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusAgentes === 'todos' ?
+                          { bgcolor: colors.primary.main, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.primary.main, color: colors.primary.main, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusAgentes('todos')}
                       />
                       <Chip
                         label="Pendientes"
                         variant={filterEstatusAgentes === 'pendientes' ? "filled" : "outlined"}
-                        sx={filterEstatusAgentes === 'pendientes' ? 
-                          { bgcolor: colors.primary.dark, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusAgentes === 'pendientes' ?
+                          { bgcolor: colors.primary.dark, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.primary.dark, color: colors.primary.dark, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusAgentes('pendientes')}
                       />
                       <Chip
                         label="Asignados"
                         variant={filterEstatusAgentes === 'asignados' ? "filled" : "outlined"}
-                        sx={filterEstatusAgentes === 'asignados' ? 
-                          { bgcolor: colors.accents.blue, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusAgentes === 'asignados' ?
+                          { bgcolor: colors.accents.blue, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.accents.blue, color: colors.accents.blue, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusAgentes('asignados')}
                       />
                       <Chip
                         label="En Revisión"
                         variant={filterEstatusAgentes === 'revision' ? "filled" : "outlined"}
-                        sx={filterEstatusAgentes === 'revision' ? 
-                          { bgcolor: colors.secondary.main, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusAgentes === 'revision' ?
+                          { bgcolor: colors.secondary.main, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.secondary.main, color: colors.secondary.main, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusAgentes('revision')}
                       />
@@ -3419,20 +3424,15 @@ const SystemConfig = () => {
                       <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                         Mostrando: {filteredAgentesPendientes.length} de {agentesPendientes.length} agentes
                       </Typography>
+
+                      {/* Único botón para asignación masiva */}
                       <Button
                         variant="contained"
-                        startIcon={<AssignmentTurnedInIcon />}
-                        onClick={() => {
-                          const pendingAgents = agentesPendientes.filter(a => a.estatus_evaluacion === 'pendiente');
-                          if (pendingAgents.length === 0) {
-                            alert('No hay agentes pendientes para asignar');
-                            return;
-                          }
-                          setAssignMassiveDialog(true);
-                        }}
+                        startIcon={<GroupAddIcon />}
+                        onClick={handleOpenAdvancedAssignment}
                         sx={{ bgcolor: colors.primary.main, '&:hover': { bgcolor: colors.primary.dark } }}
                       >
-                        Asignar Masivamente
+                        Asignación Masiva
                       </Button>
                     </Box>
                   </Box>
@@ -3462,7 +3462,7 @@ const SystemConfig = () => {
                   />
                 </Box>
 
-                {/* Tabla de Agentes */}
+                {/* Tabla de Agentes Pendientes */}
                 <TableContainer sx={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: 1 }}>
                   <Table stickyHeader size="small">
                     <TableHead>
@@ -3484,8 +3484,8 @@ const SystemConfig = () => {
                             <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                               No se encontraron agentes que coincidan con los filtros
                             </Typography>
-                            <Button 
-                              size="small" 
+                            <Button
+                              size="small"
                               onClick={() => resetFilters('agentes')}
                               sx={{ mt: 1, color: colors.primary.main }}
                             >
@@ -3626,7 +3626,7 @@ const SystemConfig = () => {
                                   <IconButton
                                     size="small"
                                     onClick={() => handleAssignEvaluator(agente.id_agente)}
-                                    sx={{ 
+                                    sx={{
                                       color: agente.evaluador_asignado ? colors.accents.blue : colors.secondary.main,
                                       bgcolor: agente.evaluador_asignado ? '#e6f0ff' : '#e0f7f7',
                                       '&:hover': {
@@ -3658,48 +3658,48 @@ const SystemConfig = () => {
                       <Chip
                         label="Todos"
                         variant={filterEstatusNiveles === 'todos' ? "filled" : "outlined"}
-                        sx={filterEstatusNiveles === 'todos' ? 
-                          { bgcolor: colors.primary.main, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusNiveles === 'todos' ?
+                          { bgcolor: colors.primary.main, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.primary.main, color: colors.primary.main, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusNiveles('todos')}
                       />
                       <Chip
                         label="Activos"
                         variant={filterEstatusNiveles === 'activos' ? "filled" : "outlined"}
-                        sx={filterEstatusNiveles === 'activos' ? 
-                          { bgcolor: colors.secondary.main, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusNiveles === 'activos' ?
+                          { bgcolor: colors.secondary.main, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.secondary.main, color: colors.secondary.main, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusNiveles('activos')}
                       />
                       <Chip
                         label="Inactivos"
                         variant={filterEstatusNiveles === 'inactivos' ? "filled" : "outlined"}
-                        sx={filterEstatusNiveles === 'inactivos' ? 
-                          { bgcolor: colors.primary.dark, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusNiveles === 'inactivos' ?
+                          { bgcolor: colors.primary.dark, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.primary.dark, color: colors.primary.dark, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusNiveles('inactivos')}
                       />
                       <Chip
                         label="Gremial"
                         variant={filterEstatusNiveles === 'gremial' ? "filled" : "outlined"}
-                        sx={filterEstatusNiveles === 'gremial' ? 
-                          { bgcolor: colors.primary.main, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusNiveles === 'gremial' ?
+                          { bgcolor: colors.primary.main, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.primary.main, color: colors.primary.main, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusNiveles('gremial')}
                       />
                       <Chip
                         label="Académico"
                         variant={filterEstatusNiveles === 'academico' ? "filled" : "outlined"}
-                        sx={filterEstatusNiveles === 'academico' ? 
-                          { bgcolor: colors.accents.purple, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusNiveles === 'academico' ?
+                          { bgcolor: colors.accents.purple, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.accents.purple, color: colors.accents.purple, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusNiveles('academico')}
                       />
                       <Chip
                         label="Profesional"
                         variant={filterEstatusNiveles === 'profesional' ? "filled" : "outlined"}
-                        sx={filterEstatusNiveles === 'profesional' ? 
-                          { bgcolor: colors.secondary.main, color: 'white', cursor: 'pointer' } : 
+                        sx={filterEstatusNiveles === 'profesional' ?
+                          { bgcolor: colors.secondary.main, color: 'white', cursor: 'pointer' } :
                           { borderColor: colors.secondary.main, color: colors.secondary.main, cursor: 'pointer' }}
                         onClick={() => setFilterEstatusNiveles('profesional')}
                       />
@@ -3773,8 +3773,8 @@ const SystemConfig = () => {
                             <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                               No se encontraron niveles que coincidan con los filtros
                             </Typography>
-                            <Button 
-                              size="small" 
+                            <Button
+                              size="small"
                               onClick={() => resetFilters('niveles')}
                               sx={{ mt: 1, color: colors.primary.main }}
                             >
@@ -3859,7 +3859,7 @@ const SystemConfig = () => {
                                     size="small"
                                     sx={{ color: colors.accents.blue }}
                                     onClick={() => {
-                                      setSelectedItem({...nivel});
+                                      setSelectedItem({ ...nivel });
                                       setEditNivelDialog(true);
                                     }}
                                   >
@@ -4089,7 +4089,7 @@ const SystemConfig = () => {
         </Paper>
       </Box>
 
-      {/* Diálogos de creación (se mantienen igual que en la versión anterior) */}
+      {/* Diálogos de creación */}
       {/* Diálogo Nueva Certificación */}
       <Dialog open={newCertificacionDialog} onClose={() => setNewCertificacionDialog(false)} maxWidth="md" fullWidth>
         <DialogTitle>
@@ -4155,38 +4155,14 @@ const SystemConfig = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                label="Horas Acreditadas"
-                type="number"
-                value={newCertificacion.horas_acreditadas}
-                onChange={(e) => setNewCertificacion({ ...newCertificacion, horas_acreditadas: e.target.value })}
-                required
-                size="small"
-                InputProps={{ inputProps: { min: 0 } }}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                label="Vigencia (meses)"
-                type="number"
-                value={newCertificacion.vigencia_meses}
-                onChange={(e) => setNewCertificacion({ ...newCertificacion, vigencia_meses: e.target.value })}
-                required
-                size="small"
-                InputProps={{ inputProps: { min: 1 } }}
-              />
-            </Grid>
           </Grid>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setNewCertificacionDialog(false)} sx={{ color: colors.text.secondary }}>
             Cancelar
           </Button>
-          <Button 
-            onClick={handleCreateCertificacion} 
+          <Button
+            onClick={handleCreateCertificacion}
             variant="contained"
             sx={{ bgcolor: colors.primary.main, '&:hover': { bgcolor: colors.primary.dark } }}
           >
@@ -4261,28 +4237,6 @@ const SystemConfig = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  label="Horas Acreditadas"
-                  type="number"
-                  value={selectedItem.horas_acreditadas}
-                  onChange={(e) => setSelectedItem({ ...selectedItem, horas_acreditadas: parseInt(e.target.value) })}
-                  required
-                  size="small"
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  label="Vigencia (meses)"
-                  type="number"
-                  value={selectedItem.vigencia_meses}
-                  onChange={(e) => setSelectedItem({ ...selectedItem, vigencia_meses: parseInt(e.target.value) })}
-                  required
-                  size="small"
-                />
-              </Grid>
             </Grid>
           )}
         </DialogContent>
@@ -4290,8 +4244,8 @@ const SystemConfig = () => {
           <Button onClick={() => setEditCertificacionDialog(false)} sx={{ color: colors.text.secondary }}>
             Cancelar
           </Button>
-          <Button 
-            onClick={handleEditCertificacion} 
+          <Button
+            onClick={handleEditCertificacion}
             variant="contained"
             sx={{ bgcolor: colors.accents.blue, '&:hover': { bgcolor: colors.primary.main } }}
           >
@@ -4359,24 +4313,6 @@ const SystemConfig = () => {
                 </Grid>
 
                 <Grid item xs={4}>
-                  <Typography variant="subtitle2" sx={{ color: colors.text.secondary }}>Horas:</Typography>
-                </Grid>
-                <Grid item xs={8}>
-                  <Typography variant="body2" sx={{ color: colors.primary.dark }}>
-                    {selectedItem.horas_acreditadas} horas
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={4}>
-                  <Typography variant="subtitle2" sx={{ color: colors.text.secondary }}>Vigencia:</Typography>
-                </Grid>
-                <Grid item xs={8}>
-                  <Typography variant="body2" sx={{ color: colors.primary.dark }}>
-                    {selectedItem.vigencia_meses} meses
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={4}>
                   <Typography variant="subtitle2" sx={{ color: colors.text.secondary }}>Estatus:</Typography>
                 </Grid>
                 <Grid item xs={8}>
@@ -4409,10 +4345,7 @@ const SystemConfig = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Diálogos similares para las demás secciones (Declaraciones, Roles, Regiones, Comité, Asociaciones, Niveles) */}
-      {/* Nota: Por razones de espacio, no incluyo todos los diálogos aquí, pero siguen el mismo patrón */}
-
-      {/* Diálogo para asignar evaluador */}
+      {/* Diálogo para asignar evaluador individual */}
       <Dialog open={assignDialogOpen} onClose={() => setAssignDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -4426,7 +4359,7 @@ const SystemConfig = () => {
               <Typography variant="body2" sx={{ color: colors.primary.dark, mb: 2 }}>
                 Seleccione un evaluador para el agente:
               </Typography>
-              
+
               <Box sx={{ mb: 3, p: 2, bgcolor: '#f8f9fa', borderRadius: 1 }}>
                 <Typography variant="subtitle2" sx={{ color: colors.primary.dark, mb: 1 }}>
                   Agente Seleccionado:
@@ -4472,8 +4405,8 @@ const SystemConfig = () => {
           <Button onClick={() => setAssignDialogOpen(false)} sx={{ color: colors.text.secondary }}>
             Cancelar
           </Button>
-          <Button 
-            onClick={handleConfirmAssignment} 
+          <Button
+            onClick={handleConfirmAssignment}
             variant="contained"
             disabled={!selectedEvaluator}
             sx={{ bgcolor: colors.primary.main, '&:hover': { bgcolor: colors.primary.dark } }}
@@ -4483,64 +4416,133 @@ const SystemConfig = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Diálogo para asignación masiva */}
-      <Dialog open={assignMassiveDialog} onClose={() => setAssignMassiveDialog(false)} maxWidth="sm" fullWidth>
+      {/* Diálogo para asignación avanzada simplificada */}
+      <Dialog open={assignAdvancedDialog} onClose={() => setAssignAdvancedDialog(false)} maxWidth="md" fullWidth>
         <DialogTitle>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <AssignmentTurnedInIcon sx={{ color: colors.primary.main }} />
-            <Typography variant="h6" sx={{ color: colors.primary.dark }}>Asignación Masiva de Evaluadores</Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <GroupAddIcon sx={{ color: colors.primary.main }} />
+              <Typography variant="h6" sx={{ color: colors.primary.dark }}>Asignación Masiva de Evaluadores</Typography>
+            </Box>
+            <IconButton onClick={() => setAssignAdvancedDialog(false)} size="small">
+              <CloseIcon />
+            </IconButton>
           </Box>
         </DialogTitle>
-        <DialogContent>
-          <Box sx={{ mt: 2 }}>
-            <Typography variant="body2" sx={{ color: colors.primary.dark, mb: 2 }}>
-              Seleccione un evaluador para asignar a todos los agentes pendientes:
-            </Typography>
+        <DialogContent dividers>
+          <Grid container spacing={3}>
+            {/* Información de agentes a asignar */}
+            <Grid item xs={12}>
+              <Paper sx={{ p: 2, bgcolor: '#e8f0fe' }}>
+                <Typography variant="subtitle2" sx={{ color: colors.primary.dark, fontWeight: 'bold', mb: 1 }}>
+                  Agentes a asignar
+                </Typography>
+                <Typography variant="h4" sx={{ color: colors.primary.main, fontWeight: 'bold' }}>
+                  {agentesPendientes.filter(a => a.estatus_evaluacion === 'pendiente').length}
+                </Typography>
+                <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+                  agentes pendientes de asignación
+                </Typography>
+              </Paper>
+            </Grid>
 
-            <Box sx={{ mb: 3, p: 2, bgcolor: '#f8f9fa', borderRadius: 1 }}>
-              <Typography variant="subtitle2" sx={{ color: colors.primary.dark, mb: 1 }}>
-                Resumen:
+            {/* Selección de evaluadores */}
+            <Grid item xs={12}>
+              <Typography variant="subtitle2" sx={{ color: colors.primary.dark, fontWeight: 'bold', mb: 2 }}>
+                Seleccionar Evaluadores
               </Typography>
-              <Typography variant="body2" sx={{ color: colors.primary.dark }}>
-                Agentes pendientes: {agentesPendientes.filter(a => a.estatus_evaluacion === 'pendiente').length}
-              </Typography>
-              <Typography variant="body2" sx={{ color: colors.primary.dark }}>
-                Documentos totales: {agentesPendientes.filter(a => a.estatus_evaluacion === 'pendiente').reduce((acc, curr) => acc + curr.documentos_pendientes, 0)}
-              </Typography>
-            </Box>
+              <Grid container spacing={1}>
+                {evaluadoresDisponibles.map((evaluador) => {
+                  const miembro = comite.find(m => m.nombre_usuario === evaluador);
+                  return (
+                    <Grid item xs={12} sm={6} key={evaluador}>
+                      <Paper
+                        variant="outlined"
+                        sx={{
+                          p: 1.5,
+                          cursor: 'pointer',
+                          bgcolor: selectedEvaluators.includes(evaluador) ? '#e8f0fe' : 'white',
+                          borderColor: selectedEvaluators.includes(evaluador) ? colors.primary.main : '#e0e0e0',
+                          '&:hover': { bgcolor: '#f5f5f5' }
+                        }}
+                        onClick={() => handleToggleEvaluator(evaluador)}
+                      >
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Checkbox
+                            checked={selectedEvaluators.includes(evaluador)}
+                            size="small"
+                            sx={{ p: 0 }}
+                          />
+                          <PersonIcon sx={{ color: colors.primary.main, fontSize: 18 }} />
+                          <Box>
+                            <Typography variant="body2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
+                              {evaluador}
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+                              Carga actual: {miembro?.carga_trabajo_actual || 0} agentes
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </Paper>
+                    </Grid>
+                  );
+                })}
+              </Grid>
+            </Grid>
 
-            <FormControl fullWidth sx={{ mt: 2 }}>
-              <InputLabel id="massive-evaluator-select-label" sx={{ color: colors.primary.main }}>Seleccionar Evaluador</InputLabel>
-              <Select
-                labelId="massive-evaluator-select-label"
-                value={massiveEvaluator}
-                label="Seleccionar Evaluador"
-                onChange={(e) => setMassiveEvaluator(e.target.value)}
-                required
-              >
-                <MenuItem value="">
-                  <em>Seleccionar evaluador...</em>
-                </MenuItem>
-                {evaluadoresDisponibles.map((evaluador, index) => (
-                  <MenuItem key={index} value={evaluador}>
-                    {evaluador}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
+            {/* Resumen de asignación */}
+            {selectedEvaluators.length > 0 && (
+              <Grid item xs={12}>
+                <Divider sx={{ my: 2 }} />
+                <Paper sx={{ p: 2, bgcolor: '#f8f9fa' }}>
+                  <Typography variant="subtitle2" sx={{ color: colors.primary.dark, fontWeight: 'bold', mb: 1 }}>
+                    Distribución Equitativa
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: colors.primary.dark, mb: 2 }}>
+                    Los agentes se distribuirán equitativamente entre los evaluadores seleccionados.
+                  </Typography>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box>
+                      <Typography variant="body2" sx={{ color: colors.primary.dark }}>
+                        Agentes a asignar: {agentesPendientes.filter(a => a.estatus_evaluacion === 'pendiente').length}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: colors.primary.dark }}>
+                        Evaluadores seleccionados: {selectedEvaluators.length}
+                      </Typography>
+                    </Box>
+                    <Chip
+                      label="Ver distribución"
+                      color="primary"
+                      size="small"
+                      onClick={() => {
+                        const totalAgents = agentesPendientes.filter(a => a.estatus_evaluacion === 'pendiente').length;
+                        const base = Math.floor(totalAgents / selectedEvaluators.length);
+                        const resto = totalAgents % selectedEvaluators.length;
+
+                        let preview = "Distribución propuesta:\n\n";
+                        selectedEvaluators.forEach((evaluador, i) => {
+                          preview += `${evaluador}: ${i < resto ? base + 1 : base} agentes\n`;
+                        });
+                        alert(preview);
+                      }}
+                    />
+                  </Box>
+                </Paper>
+              </Grid>
+            )}
+          </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setAssignMassiveDialog(false)} sx={{ color: colors.text.secondary }}>
+          <Button onClick={() => setAssignAdvancedDialog(false)} sx={{ color: colors.text.secondary }}>
             Cancelar
           </Button>
-          <Button 
-            onClick={handleMassiveAssignment} 
+          <Button
+            onClick={handleConfirmAdvancedAssignment}
             variant="contained"
-            disabled={!massiveEvaluator}
+            disabled={selectedEvaluators.length === 0}
             sx={{ bgcolor: colors.primary.main, '&:hover': { bgcolor: colors.primary.dark } }}
           >
-            Asignar a Todos
+            Confirmar Asignación Masiva
           </Button>
         </DialogActions>
       </Dialog>
