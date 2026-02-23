@@ -66,7 +66,7 @@ import {
   TrendingUp as TrendingUpIcon,
   Shield as ShieldIcon,
 } from "@mui/icons-material";
-
+import Imagen2 from "../../assets/Imagen_2.png";
 
 // Paleta de colores mejorada - más luminosa en secciones intermedias
 const colors = {
@@ -966,18 +966,18 @@ const Inicio = () => {
                       },
                     }}
                   >
- <Box
-  component="img"
-  src="/assets/Imagen_2.png"
-  alt="Ventanilla Única"
-  sx={{
-    width: '100%',
-    maxWidth: { xs: 280, sm: 320, md: 380 },
-    height: 'auto',
-    objectFit: 'contain',
-    borderRadius: '20px',
-  }}
-/>
+                    <Box
+                      component="img"
+                      src={Imagen2}
+                      alt="Ventanilla Única"
+                      sx={{
+                        width: "100%",
+                        maxWidth: { xs: 280, sm: 320, md: 380 },
+                        height: "auto",
+                        objectFit: "contain",
+                        borderRadius: "20px",
+                      }}
+                    />
 
                     {/* Capa de brillo adicional */}
                     <Box
