@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import {
   Box,
   Grid,
@@ -47,7 +49,10 @@ import {
   Phone as PhoneIcon,
   AccountBalance as AccountBalanceIcon,
   LocationOn as LocationIcon,
-  ContactPhone as ContactPhoneIcon
+  ContactPhone as ContactPhoneIcon,
+  Download as DownloadIcon,
+  PictureAsPdf as PdfIcon,
+  Close as CloseIcon
 } from '@mui/icons-material';
 
 // Paleta corporativa del UserManagement
@@ -83,7 +88,9 @@ const Profile = () => {
   const [editMode, setEditMode] = useState(false);
   const [addDialog, setAddDialog] = useState(false);
   const [aduanaDialog, setAduanaDialog] = useState(false);
+  const [certificadoDialog, setCertificadoDialog] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [newAduana, setNewAduana] = useState({
     nombre: '',
     tipo: 'Secundaria',
@@ -120,7 +127,7 @@ const Profile = () => {
   ]);
 
   const [profile, setProfile] = useState({
-    nombre: 'Luis Rodríguez',
+    nombre: 'Luis Rodríguez López',
     email: 'luis.rodriguez@ejemplo.com',
     telefono: '+52 55 1234 5678',
     rol: 'Agente Aduanal',
@@ -227,6 +234,82 @@ const Profile = () => {
     setActiveTab(newValue);
   };
 
+const handleDownloadCertificate = async () => {
+  try {
+    setIsDownloading(true);
+    
+    const certificadoElement = document.getElementById('certificado-contenido');
+    
+    if (!certificadoElement) return;
+
+    // Guardar estilos originales de los recuadros de fechas
+    const fechaRecuadros = certificadoElement.querySelectorAll('.fecha-recuadro');
+    const originalWidths = [];
+    fechaRecuadros.forEach((recuadro, index) => {
+      originalWidths[index] = recuadro.style.width;
+      // Forzar ancho fijo antes de capturar
+      recuadro.style.width = '180px';
+      recuadro.style.minWidth = '180px';
+      recuadro.style.maxWidth = '180px';
+    });
+
+    // Pequeña pausa para que se apliquen los estilos
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    const canvas = await html2canvas(certificadoElement, {
+      scale: 3,
+      backgroundColor: '#f5efe6',
+      logging: false,
+      allowTaint: false,
+      useCORS: true,
+      windowWidth: certificadoElement.scrollWidth,
+      windowHeight: certificadoElement.scrollHeight,
+      onclone: (clonedDoc) => {
+        // En el clon también forzar el ancho fijo
+        const clonedRecuadros = clonedDoc.querySelectorAll('.fecha-recuadro');
+        clonedRecuadros.forEach(recuadro => {
+          recuadro.style.width = '180px';
+          recuadro.style.minWidth = '180px';
+          recuadro.style.maxWidth = '180px';
+        });
+        
+        const clonedElement = clonedDoc.getElementById('certificado-contenido');
+        if (clonedElement) {
+          clonedElement.style.backgroundColor = '#f5efe6';
+        }
+      }
+    });
+
+    // Restaurar estilos originales
+    fechaRecuadros.forEach((recuadro, index) => {
+      recuadro.style.width = originalWidths[index];
+      recuadro.style.minWidth = '';
+      recuadro.style.maxWidth = '';
+    });
+
+    // Generar PDF
+    const imgData = canvas.toDataURL('image/png');
+    const imgWidth = 210;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+
+    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, undefined, 'SLOW');
+    pdf.save(`Certificado_SICAG_${profile.nombre.replace(/\s+/g, '_')}.pdf`);
+    
+    setIsDownloading(false);
+
+  } catch (error) {
+    console.error('Error al generar PDF:', error);
+    alert('Hubo un error al generar el PDF. Por favor intenta de nuevo.');
+    setIsDownloading(false);
+  }
+};
+
   return (
     <Box>
       {/* Header */}
@@ -236,7 +319,7 @@ const Profile = () => {
         </Typography>
       </Box>
 
-      {/* ===== FILA SUPERIOR: CUATRO APARTADOS CON NUEVO ORDEN Y ANCHO ===== */}
+      {/* ===== FILA SUPERIOR ===== */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         {/* 1. Foto de Perfil */}
         <Grid item xs={12} md={3}>
@@ -316,10 +399,7 @@ const Profile = () => {
               />
 
               {/* Sección de información */}
-              <Box sx={{ 
-                width: '100%',
-                mb: 2
-              }}>
+              <Box sx={{ width: '100%', mb: 2 }}>
                 {/* Nivel */}
                 <Box sx={{ 
                   mb: 2,
@@ -328,7 +408,6 @@ const Profile = () => {
                   bgcolor: `${colors.primary.main}10`,
                   borderLeft: `4px solid ${colors.primary.main}`
                 }}>
-                  
                   <Typography variant="body1" sx={{ 
                     color: colors.text.primary, 
                     fontWeight: '700',
@@ -336,7 +415,6 @@ const Profile = () => {
                     lineHeight: 1.2
                   }}>
                     {profile.nivel}
-                    
                   </Typography>
                   <Typography variant="body1" sx={{ 
                     color: colors.text.primary, 
@@ -348,6 +426,24 @@ const Profile = () => {
                   </Typography>
                 </Box>
 
+                {/* Botón Ver Certificado */}
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  startIcon={<PdfIcon />}
+                  onClick={() => setCertificadoDialog(true)}
+                  sx={{
+                    mb: 2,
+                    borderColor: colors.primary.main,
+                    color: colors.primary.main,
+                    '&:hover': {
+                      borderColor: colors.primary.dark,
+                      backgroundColor: `${colors.primary.main}10`
+                    }
+                  }}
+                >
+                  Ver Certificado
+                </Button>
                 
                 {/* Región */}
                 <Box sx={{ 
@@ -356,7 +452,6 @@ const Profile = () => {
                   bgcolor: `${colors.accents.purple}10`,
                   borderLeft: `4px solid ${colors.accents.purple}`
                 }}>
-                 
                   <Typography variant="body1" sx={{ 
                     color: colors.text.primary, 
                     fontWeight: '700',
@@ -367,18 +462,6 @@ const Profile = () => {
                   </Typography>
                 </Box>
               </Box>
-
-              {/* Fecha de registro */}
-              <Typography variant="body2" sx={{ 
-                color: colors.text.secondary,
-                fontWeight: '500',
-                fontSize: '0.85rem',
-                mt: 2,
-                pt: 2,
-                borderTop: `1px solid ${colors.primary.main}20`
-              }}>
-                Miembro desde: <span style={{ fontWeight: '600', color: colors.text.primary }}>{profile.fechaRegistro}</span>
-              </Typography>
             </CardContent>
           </Card>
         </Grid>
@@ -527,7 +610,7 @@ const Profile = () => {
                               fontSize: '1rem'
                             }} />
                             <Typography variant="caption" fontWeight="bold" sx={{ fontSize: '0.75rem', color: colors.text.primary }}>
-                              {aduana.nombre.length > 22 ? `${aduana.nombre.substring(0, 22)}...` : aduana.nombre}
+                              {aduana.nombre}
                             </Typography>
                           </Box>
                           <Typography variant="caption" sx={{ color: colors.text.secondary, fontSize: '0.65rem', display: 'block', pl: 2 }}>
@@ -578,50 +661,13 @@ const Profile = () => {
                       </Box>
                     </Paper>
                   ))}
-                  
-                  {aduanaList.length === 0 && (
-                    <Box sx={{ 
-                      textAlign: 'center', 
-                      py: 3,
-                      color: colors.text.secondary
-                    }}>
-                      <LocationCityIcon sx={{ fontSize: 32, mb: 1, opacity: 0.3 }} />
-                      <Typography variant="body2" sx={{ mb: 1, fontSize: '0.8rem', color: colors.text.primary }}>
-                        No hay aduanas registradas
-                      </Typography>
-                      <Button 
-                        variant="outlined" 
-                        size="small"
-                        startIcon={<AddCircleIcon />}
-                        onClick={() => setAduanaDialog(true)}
-                        sx={{ 
-                          fontSize: '0.7rem',
-                          color: colors.primary.main,
-                          borderColor: colors.primary.main
-                        }}
-                      >
-                        Agregar primera aduana
-                      </Button>
-                    </Box>
-                  )}
                 </Stack>
-                
-                <Typography variant="caption" sx={{ 
-                  mt: 2, 
-                  display: 'block',
-                  fontStyle: 'italic',
-                  fontSize: '0.65rem',
-                  textAlign: 'center',
-                  color: colors.text.secondary
-                }}>
-                  Límite: 4 aduanas (1 principal + 3 secundarias)
-                </Typography>
               </Box>
             </CardContent>
           </Card>
         </Grid>
 
-        {/* 4. Preferencias y Comunicación MEJORADA */}
+        {/* 4. Preferencias y Comunicación */}
         <Grid item xs={12} md={2.8}>
           <Card sx={{ height: '100%' }}>
             <CardContent sx={{ height: '100%', p: 2, display: 'flex', flexDirection: 'column' }}>
@@ -659,17 +705,6 @@ const Profile = () => {
                           size="small" 
                           checked={preferences.notificacionesEmail}
                           onChange={handlePreferenceChange('notificacionesEmail')}
-                          sx={{
-                            '& .MuiSwitch-switchBase.Mui-checked': {
-                              color: colors.secondary.main,
-                              '&:hover': {
-                                backgroundColor: `${colors.secondary.main}20`,
-                              },
-                            },
-                            '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                              backgroundColor: colors.secondary.main,
-                            },
-                          }}
                         />
                       }
                       label={<Typography variant="caption" sx={{ color: colors.text.primary }}>Email</Typography>}
@@ -681,17 +716,6 @@ const Profile = () => {
                           size="small" 
                           checked={preferences.notificacionesSMS}
                           onChange={handlePreferenceChange('notificacionesSMS')}
-                          sx={{
-                            '& .MuiSwitch-switchBase.Mui-checked': {
-                              color: colors.secondary.main,
-                              '&:hover': {
-                                backgroundColor: `${colors.secondary.main}20`,
-                              },
-                            },
-                            '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                              backgroundColor: colors.secondary.main,
-                            },
-                          }}
                         />
                       }
                       label={<Typography variant="caption" sx={{ color: colors.text.primary }}>SMS</Typography>}
@@ -765,7 +789,7 @@ const Profile = () => {
                   </Button>
                 </Paper>
 
-                {/* NUEVO: Configuración General */}
+                {/* Configuración General */}
                 <Paper elevation={0} sx={{ 
                   p: 1.2,
                   borderRadius: 0.8,
@@ -800,7 +824,7 @@ const Profile = () => {
         </Grid>
       </Grid>
 
-      {/* ===== DATOS GENERALES CON MEJOR ESTRUCTURA ===== */}
+      {/* ===== DATOS GENERALES ===== */}
       <Card sx={{ mb: 4 }}>
         <CardContent>
           {/* Header con Tabs */}
@@ -919,7 +943,6 @@ const Profile = () => {
           {/* Contenido de Tabs */}
           {activeTab === 0 && (
             <Grid container spacing={3}>
-              {/* Datos Personales - Izquierda */}
               <Grid item xs={12} md={6}>
                 <Paper elevation={0} sx={{ 
                   p: 3, 
@@ -950,7 +973,6 @@ const Profile = () => {
                         disabled={!editMode}
                         size="small"
                         sx={{ mb: 2 }}
-                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
                     </Grid>
                     
@@ -963,7 +985,6 @@ const Profile = () => {
                         disabled={!editMode}
                         size="small"
                         sx={{ mb: 2 }}
-                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
                     </Grid>
                     
@@ -976,7 +997,6 @@ const Profile = () => {
                         disabled={!editMode}
                         size="small"
                         sx={{ mb: 2 }}
-                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
                     </Grid>
                     
@@ -989,7 +1009,7 @@ const Profile = () => {
                         onChange={handleInputChange('fechaNacimiento')}
                         disabled={!editMode}
                         size="small"
-                        InputLabelProps={{ shrink: true, sx: { color: colors.text.primary } }}
+                        InputLabelProps={{ shrink: true }}
                         sx={{ mb: 2 }}
                       />
                     </Grid>
@@ -1003,7 +1023,6 @@ const Profile = () => {
                         disabled={!editMode}
                         size="small"
                         sx={{ mb: 2 }}
-                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
                     </Grid>
                     
@@ -1016,7 +1035,6 @@ const Profile = () => {
                         disabled={!editMode}
                         size="small"
                         sx={{ mb: 2 }}
-                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
                     </Grid>
                     
@@ -1030,7 +1048,6 @@ const Profile = () => {
                         disabled={!editMode}
                         size="small"
                         sx={{ mb: 2 }}
-                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       >
                         <MenuItem value="Soltero">Soltero</MenuItem>
                         <MenuItem value="Casado">Casado</MenuItem>
@@ -1042,14 +1059,11 @@ const Profile = () => {
                   </Grid>
                 </Paper>
               </Grid>
-
-              
             </Grid>
           )}
 
           {activeTab === 1 && (
             <Grid container spacing={3}>
-              {/* Contacto Principal */}
               <Grid item xs={12} md={6}>
                 <Paper elevation={0} sx={{ 
                   p: 3, 
@@ -1080,10 +1094,6 @@ const Profile = () => {
                         disabled={!editMode}
                         size="small"
                         sx={{ mb: 2 }}
-                        InputProps={{
-                          startAdornment: <PhoneIcon sx={{ mr: 1, color: colors.primary.main, fontSize: '1rem' }} />
-                        }}
-                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
                     </Grid>
                     
@@ -1096,10 +1106,6 @@ const Profile = () => {
                         disabled={!editMode}
                         size="small"
                         sx={{ mb: 2 }}
-                        InputProps={{
-                          startAdornment: <PhoneIcon sx={{ mr: 1, color: colors.accents.purple, fontSize: '1rem' }} />
-                        }}
-                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
                     </Grid>
                     
@@ -1113,10 +1119,6 @@ const Profile = () => {
                         disabled={!editMode}
                         size="small"
                         sx={{ mb: 2 }}
-                        InputProps={{
-                          startAdornment: <EmailIcon sx={{ mr: 1, color: colors.status.error, fontSize: '1rem' }} />
-                        }}
-                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
                     </Grid>
                     
@@ -1130,17 +1132,12 @@ const Profile = () => {
                         disabled={!editMode}
                         size="small"
                         sx={{ mb: 2 }}
-                        InputProps={{
-                          startAdornment: <EmailIcon sx={{ mr: 1, color: colors.status.warning, fontSize: '1rem' }} />
-                        }}
-                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
                     </Grid>
                   </Grid>
                 </Paper>
               </Grid>
 
-              {/* Ubicación y Acceso */}
               <Grid item xs={12} md={6}>
                 <Paper elevation={0} sx={{ 
                   p: 3, 
@@ -1170,10 +1167,6 @@ const Profile = () => {
                         disabled
                         size="small"
                         sx={{ mb: 2 }}
-                        InputProps={{
-                          startAdornment: <HistoryIcon sx={{ mr: 1, color: colors.accents.purple, fontSize: '1rem' }} />
-                        }}
-                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
                     </Grid>
                     
@@ -1185,10 +1178,6 @@ const Profile = () => {
                         disabled
                         size="small"
                         sx={{ mb: 2 }}
-                        InputProps={{
-                          startAdornment: <ScheduleIcon sx={{ mr: 1, color: colors.status.success, fontSize: '1rem' }} />
-                        }}
-                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
                     </Grid>
                     
@@ -1215,7 +1204,6 @@ const Profile = () => {
 
           {activeTab === 2 && (
             <Grid container spacing={3}>
-              {/* Información Fiscal */}
               <Grid item xs={12}>
                 <Paper elevation={0} sx={{ 
                   p: 3, 
@@ -1247,7 +1235,6 @@ const Profile = () => {
                         multiline
                         rows={3}
                         sx={{ mb: 2 }}
-                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
                     </Grid>
                     
@@ -1262,33 +1249,7 @@ const Profile = () => {
                         multiline
                         rows={3}
                         sx={{ mb: 2 }}
-                        InputLabelProps={{ sx: { color: colors.text.primary } }}
                       />
-                    </Grid>
-                    
-                    <Grid item xs={12}>
-                      <Box sx={{ 
-                        p: 2,
-                        borderRadius: 1,
-                        bgcolor: `${colors.accents.purple}10`,
-                        mt: 2
-                      }}>
-                        <Typography variant="subtitle2" fontWeight="bold" sx={{ color: colors.text.primary, mb: 0.5 }}>
-                          Información de Identificación Fiscal
-                        </Typography>
-                        <Grid container spacing={2}>
-                          <Grid item xs={12} sm={6}>
-                            <Typography variant="body2" sx={{ color: colors.text.secondary }}>
-                              <strong>RFC:</strong> {formData.rfc}
-                            </Typography>
-                          </Grid>
-                          <Grid item xs={12} sm={6}>
-                            <Typography variant="body2" sx={{ color: colors.text.secondary }}>
-                              <strong>CURP:</strong> {formData.curp}
-                            </Typography>
-                          </Grid>
-                        </Grid>
-                      </Box>
                     </Grid>
                   </Grid>
                 </Paper>
@@ -1314,12 +1275,10 @@ const Profile = () => {
               value={newAduana.nombre}
               onChange={handleAduanaChange('nombre')}
               required
-              helperText="Ej: Aduana de Querétaro, Aduana de Ciudad de México"
-              InputLabelProps={{ sx: { color: colors.text.primary } }}
             />
             
             <FormControl fullWidth>
-              <InputLabel sx={{ color: colors.text.primary }}>Tipo de Aduana</InputLabel>
+              <InputLabel>Tipo de Aduana</InputLabel>
               <Select
                 value={newAduana.tipo}
                 onChange={handleAduanaChange('tipo')}
@@ -1336,8 +1295,6 @@ const Profile = () => {
               value={newAduana.numeroRegistro}
               onChange={handleAduanaChange('numeroRegistro')}
               required
-              helperText="Número oficial de registro en la aduana"
-              InputLabelProps={{ sx: { color: colors.text.primary } }}
             />
             
             <TextField
@@ -1346,8 +1303,7 @@ const Profile = () => {
               fullWidth
               value={newAduana.fechaRegistro}
               onChange={handleAduanaChange('fechaRegistro')}
-              InputLabelProps={{ shrink: true, sx: { color: colors.text.primary } }}
-              helperText="Fecha en que se registró en esta aduana"
+              InputLabelProps={{ shrink: true }}
             />
           </Stack>
         </DialogContent>
@@ -1360,6 +1316,611 @@ const Profile = () => {
             sx={{ bgcolor: colors.primary.main, '&:hover': { bgcolor: colors.primary.dark } }}
           >
             Agregar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Diálogo del Certificado */}
+      <Dialog 
+        open={certificadoDialog} 
+        onClose={() => setCertificadoDialog(false)}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 2,
+            background: '#f5efe6',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
+          }
+        }}
+      >
+        <DialogTitle sx={{ 
+          borderBottom: `2px solid ${colors.primary.dark}40`,
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          bgcolor: colors.primary.dark,
+          color: 'white',
+          py: 2
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ 
+              width: 40, 
+              height: 40, 
+              bgcolor: 'white',
+              borderRadius: '4px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: 'bold',
+              color: colors.primary.dark,
+              fontSize: '1.2rem'
+            }}>
+              S
+            </Box>
+            <Typography variant="h5" sx={{ fontWeight: 'bold', letterSpacing: 1 }}>
+              SICAG
+            </Typography>
+            <Typography variant="body2" sx={{ ml: 1, opacity: 0.9 }}>
+              Sistema Integral de Consultoría y Asesoría Gremial
+            </Typography>
+          </Box>
+          <IconButton onClick={() => setCertificadoDialog(false)} sx={{ color: 'white' }}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        
+        <DialogContent dividers sx={{ borderColor: `${colors.primary.dark}30` }}>
+          {/* Contenido del Certificado */}
+          <Box 
+            id="certificado-contenido" 
+            sx={{ 
+              p: 4,
+              position: 'relative',
+              backgroundColor: '#f5efe6',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 20,
+                left: 20,
+                right: 20,
+                bottom: 20,
+                border: `2px solid ${colors.primary.dark}15`,
+                borderRadius: 1,
+                pointerEvents: 'none'
+              }
+            }}
+          >
+            {/* Escudo/Emblema decorativo */}
+            <Box sx={{ 
+              position: 'absolute',
+              top: 60,
+              left: 60,
+              opacity: 0.1,
+              fontSize: '8rem',
+              transform: 'rotate(-15deg)',
+              color: colors.primary.dark,
+              fontFamily: 'serif'
+            }}>
+              ⚓
+            </Box>
+
+            {/* Título Principal */}
+            <Typography variant="h3" align="center" sx={{ 
+              color: colors.primary.dark,
+              fontWeight: 'bold',
+              mb: 1,
+              fontSize: '2.2rem',
+              letterSpacing: 2,
+              textTransform: 'uppercase',
+              borderBottom: `3px double ${colors.primary.main}`,
+              pb: 2,
+              mx: 'auto',
+              maxWidth: '80%',
+              position: 'relative',
+              zIndex: 1
+            }}>
+              C E R T I F I C A D O
+            </Typography>
+
+            <Typography variant="h5" align="center" sx={{ 
+              color: colors.primary.light,
+              mb: 4,
+              fontWeight: 400,
+              fontStyle: 'italic'
+            }}>
+              de Nivel Gremial
+            </Typography>
+
+            {/* Sello de agua SICAG */}
+            <Typography variant="h2" align="center" sx={{ 
+              position: 'absolute',
+              top: '40%',
+              left: '50%',
+              transform: 'translate(-50%, -50%) rotate(-30deg)',
+              fontSize: '6rem',
+              opacity: 0.03,
+              color: colors.primary.dark,
+              fontWeight: 'bold',
+              whiteSpace: 'nowrap',
+              pointerEvents: 'none',
+              zIndex: 0
+            }}>
+              SICAG
+            </Typography>
+
+            {/* Otorgado a */}
+            <Box sx={{ position: 'relative', zIndex: 1, mb: 4 }}>
+              <Typography variant="body1" align="center" sx={{ 
+                fontSize: '1.1rem',
+                color: colors.text.primary,
+                mb: 1,
+                textTransform: 'uppercase',
+                letterSpacing: 2
+              }}>
+                OTORGADO A:
+              </Typography>
+              
+              <Typography variant="h3" align="center" sx={{ 
+                color: colors.primary.dark,
+                fontWeight: 'bold',
+                mb: 1,
+                fontSize: '2.5rem',
+                borderBottom: `2px dotted ${colors.primary.main}`,
+                borderTop: `2px dotted ${colors.primary.main}`,
+                py: 2,
+                mx: 'auto',
+                maxWidth: 'fit-content',
+                px: 4
+              }}>
+                {profile.nombre}
+              </Typography>
+
+              <Typography variant="h5" align="center" sx={{ 
+                color: colors.secondary.main,
+                fontWeight: '500',
+                textTransform: 'uppercase'
+              }}>
+                Agente Aduanal
+              </Typography>
+            </Box>
+
+            {/* Nivel */}
+            <Box sx={{ 
+              bgcolor: `${colors.primary.main}08`,
+              border: `2px solid ${colors.primary.main}`,
+              borderRadius: 2,
+              p: 3,
+              mb: 4,
+              position: 'relative',
+              zIndex: 1,
+              boxShadow: `0 4px 12px ${colors.primary.main}20`
+            }}>
+              <Typography variant="h4" align="center" sx={{ 
+                color: colors.primary.dark,
+                fontWeight: 'bold',
+                textTransform: 'uppercase'
+              }}>
+                Nivel II - Sistema Gremial Intermedio
+              </Typography>
+            </Box>
+
+   {/* Requisitos cumplidos - VERSIÓN CON FLEXBOX FORZADO */}
+<Box 
+  sx={{ 
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 3,
+    mb: 4,
+    position: 'relative',
+    zIndex: 1,
+    width: '100%'
+  }}
+>
+  {/* Bloque FORMACIÓN ESPECIALIZADA */}
+  <Box sx={{ flex: 1, width: '50%' }}>
+    <Paper sx={{ 
+      p: 2.5, 
+      bgcolor: 'white',
+      borderLeft: `6px solid ${colors.primary.main}`,
+      boxShadow: `0 2px 8px ${colors.primary.main}15`,
+      height: '100%'
+    }}>
+      <Typography variant="h6" sx={{ 
+        color: colors.primary.dark,
+        fontWeight: 'bold',
+        mb: 2,
+        borderBottom: `1px solid ${colors.primary.main}30`,
+        pb: 1
+      }}>
+        FORMACIÓN ESPECIALIZADA
+      </Typography>
+      
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+        <Box sx={{ 
+          width: 20, 
+          height: 20, 
+          borderRadius: '50%', 
+          bgcolor: colors.status.success,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+          fontSize: '0.8rem',
+          fontWeight: 'bold'
+        }}>
+          ✓
+        </Box>
+        <Typography variant="body1">
+          <strong>Formación Ética y Cumplimiento:</strong> 20 horas
+        </Typography>
+      </Box>
+      
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box sx={{ 
+          width: 20, 
+          height: 20, 
+          borderRadius: '50%', 
+          bgcolor: colors.status.success,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+          fontSize: '0.8rem',
+          fontWeight: 'bold'
+        }}>
+          ✓
+        </Box>
+        <Typography variant="body1">
+          <strong>Actualización Técnica Aduanera:</strong> 80 horas
+        </Typography>
+      </Box>
+    </Paper>
+  </Box>
+
+  {/* Bloque CERTIFICACIONES */}
+  <Box sx={{ flex: 1, width: '50%' }}>
+    <Paper sx={{ 
+      p: 2.5, 
+      bgcolor: 'white',
+      borderLeft: `6px solid ${colors.secondary.main}`,
+      boxShadow: `0 2px 8px ${colors.secondary.main}15`,
+      height: '100%'
+    }}>
+      <Typography variant="h6" sx={{ 
+        color: colors.primary.dark,
+        fontWeight: 'bold',
+        mb: 2,
+        borderBottom: `1px solid ${colors.primary.main}30`,
+        pb: 1
+      }}>
+        CERTIFICACIONES
+      </Typography>
+      
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+        <Box sx={{ 
+          width: 20, 
+          height: 20, 
+          borderRadius: '50%', 
+          bgcolor: colors.status.success,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+          fontSize: '0.8rem',
+          fontWeight: 'bold'
+        }}>
+          ✓
+        </Box>
+        <Typography variant="body1">
+          <strong>Sistema de Seguridad de Cadena de Suministros:</strong>
+        </Typography>
+      </Box>
+      <Chip 
+        label="APROBADO" 
+        size="small"
+        sx={{ 
+          ml: 3,
+          bgcolor: colors.status.success,
+          color: 'white',
+          fontWeight: 'bold'
+        }} 
+      />
+    </Paper>
+  </Box>
+</Box>
+
+            {/* Fechas y Vigencia */}
+            <Box sx={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              gap: 3, 
+              mb: 4, 
+              position: 'relative', 
+              zIndex: 1,
+              flexWrap: 'wrap'
+            }}>
+              <Paper sx={{ 
+                p: 2, 
+                textAlign: 'center', 
+                bgcolor: 'white',
+                border: `1px solid ${colors.primary.main}30`,
+                minWidth: 180
+              }}>
+                <Typography variant="body2" sx={{ color: colors.text.secondary, textTransform: 'uppercase' }}>
+                  Fecha de Emisión
+                </Typography>
+                <Typography variant="h6" sx={{ color: colors.primary.dark, fontWeight: 'bold' }}>
+                  15 de Enero de 2024
+                </Typography>
+              </Paper>
+              
+              <Paper sx={{ 
+                p: 2, 
+                textAlign: 'center', 
+                bgcolor: 'white',
+                border: `1px solid ${colors.primary.main}30`,
+                minWidth: 180
+              }}>
+                <Typography variant="body2" sx={{ color: colors.text.secondary, textTransform: 'uppercase' }}>
+                  Vigencia del Nivel
+                </Typography>
+                <Typography variant="h6" sx={{ color: colors.status.warning, fontWeight: 'bold' }}>
+                  255 días
+                </Typography>
+              </Paper>
+
+              <Paper sx={{ 
+                p: 2, 
+                textAlign: 'center', 
+                bgcolor: 'white',
+                border: `1px solid ${colors.primary.main}30`,
+                minWidth: 180
+              }}>
+                <Typography variant="body2" sx={{ color: colors.text.secondary, textTransform: 'uppercase' }}>
+                  Vence el
+                </Typography>
+                <Typography variant="h6" sx={{ color: colors.status.error, fontWeight: 'bold' }}>
+                  15 de Octubre de 2024
+                </Typography>
+              </Paper>
+            </Box>
+
+            {/* Firmas */}
+            <Box sx={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              gap: 8, 
+              mt: 4, 
+              mb: 4, 
+              position: 'relative', 
+              zIndex: 1,
+              flexWrap: 'wrap'
+            }}>
+              <Box sx={{ textAlign: 'center', minWidth: 250 }}>
+                <Box sx={{ 
+                  borderBottom: `2px solid ${colors.primary.dark}`,
+                  mb: 1,
+                  pt: 2
+                }}>
+                  <Typography variant="body1" sx={{ 
+                    color: colors.primary.dark,
+                    fontWeight: 'bold',
+                    fontFamily: 'cursive',
+                    fontSize: '1.3rem',
+                    lineHeight: 1.2
+                  }}>
+                    Dr. Juan Carlos Mendoza
+                  </Typography>
+                </Box>
+                <Typography variant="body2" sx={{ color: colors.text.secondary, fontWeight: 500 }}>
+                  Presidente del Comité de Certificaciones
+                </Typography>
+              </Box>
+              
+              <Box sx={{ textAlign: 'center', minWidth: 250 }}>
+                <Box sx={{ 
+                  borderBottom: `2px solid ${colors.primary.dark}`,
+                  mb: 1,
+                  pt: 2
+                }}>
+                  <Typography variant="body1" sx={{ 
+                    color: colors.primary.dark,
+                    fontWeight: 'bold',
+                    fontFamily: 'cursive',
+                    fontSize: '1.3rem',
+                    lineHeight: 1.2
+                  }}>
+                    Lic. María Fernanda López
+                  </Typography>
+                </Box>
+                <Typography variant="body2" sx={{ color: colors.text.secondary, fontWeight: 500 }}>
+                  Secretario Técnico
+                </Typography>
+              </Box>
+            </Box>
+
+            {/* Sello oficial SICAG y Código QR */}
+            <Box sx={{ 
+              mt: 4,
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              position: 'relative',
+              zIndex: 1
+            }}>
+              {/* Sello SICAG */}
+              <Box sx={{ 
+                display: 'flex',
+                alignItems: 'center',
+                gap: 2
+              }}>
+                <Box sx={{ 
+                  position: 'relative',
+                  width: 100,
+                  height: 100
+                }}>
+                  <Box sx={{
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: '50%',
+                    border: `3px solid ${colors.primary.dark}`,
+                    opacity: 0.3
+                  }} />
+                  
+                  <Box sx={{
+                    position: 'absolute',
+                    top: '10%',
+                    left: '10%',
+                    width: '80%',
+                    height: '80%',
+                    borderRadius: '50%',
+                    border: `2px solid ${colors.primary.main}`,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: `${colors.primary.main}05`
+                  }}>
+                    <Typography variant="body2" sx={{ 
+                      color: colors.primary.dark,
+                      fontWeight: 'bold',
+                      fontSize: '0.8rem',
+                      lineHeight: 1.2,
+                      textAlign: 'center'
+                    }}>
+                      SICAG
+                    </Typography>
+                    <Typography variant="caption" sx={{ 
+                      color: colors.primary.dark,
+                      fontSize: '0.6rem',
+                      textAlign: 'center'
+                    }}>
+                      CERTIFICA
+                    </Typography>
+                  </Box>
+                  
+                  <Typography sx={{
+                    position: 'absolute',
+                    bottom: '15%',
+                    right: '15%',
+                    color: colors.primary.dark,
+                    fontSize: '1rem',
+                    transform: 'rotate(15deg)'
+                  }}>
+                    ✦
+                  </Typography>
+                </Box>
+                
+                <Box>
+                  <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', fontWeight: 'bold' }}>
+                    Folio: SICAG-CERT-2024-00123
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
+                    Válido en todo el territorio nacional
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: colors.primary.main, display: 'block', mt: 0.5 }}>
+                    Autenticado electrónicamente
+                  </Typography>
+                </Box>
+              </Box>
+              
+              {/* Código QR */}
+              <Box sx={{ textAlign: 'center' }}>
+                <Box sx={{ 
+                  width: 80,
+                  height: 80,
+                  bgcolor: 'white',
+                  border: `2px solid ${colors.primary.dark}`,
+                  borderRadius: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px', p: 1 }}>
+                    {[...Array(49)].map((_, i) => (
+                      <Box key={i} sx={{
+                        width: 6,
+                        height: 6,
+                        bgcolor: Math.random() > 0.5 ? colors.primary.dark : 'transparent',
+                        border: Math.random() > 0.8 ? `1px solid ${colors.primary.dark}30` : 'none'
+                      }} />
+                    ))}
+                  </Box>
+                  <Box sx={{ position: 'absolute', top: 5, left: 5, width: 15, height: 15, border: `2px solid ${colors.primary.dark}`, borderRight: 'none', borderBottom: 'none' }} />
+                  <Box sx={{ position: 'absolute', top: 5, right: 5, width: 15, height: 15, border: `2px solid ${colors.primary.dark}`, borderLeft: 'none', borderBottom: 'none' }} />
+                  <Box sx={{ position: 'absolute', bottom: 5, left: 5, width: 15, height: 15, border: `2px solid ${colors.primary.dark}`, borderRight: 'none', borderTop: 'none' }} />
+                </Box>
+                <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mt: 0.5 }}>
+                  Escanear para verificar
+                </Typography>
+              </Box>
+            </Box>
+
+            {/* Leyenda inferior */}
+            <Typography variant="caption" align="center" sx={{ 
+              display: 'block',
+              mt: 3,
+              pt: 2,
+              borderTop: `1px solid ${colors.primary.main}30`,
+              color: colors.text.secondary,
+              fontStyle: 'italic',
+              position: 'relative',
+              zIndex: 1
+            }}>
+              Este certificado es propiedad de SICAG - Sistema Integral de Consultoría y Asesoría Gremial.
+              Cualquier reproducción no autorizada viola los derechos de la institución.
+            </Typography>
+          </Box>
+        </DialogContent>
+
+        <DialogActions sx={{ 
+          p: 3, 
+          justifyContent: 'center', 
+          gap: 2,
+          bgcolor: colors.primary.dark,
+          borderTop: `2px solid ${colors.secondary.main}`
+        }}>
+          <Button
+            variant="contained"
+            startIcon={<DownloadIcon />}
+            onClick={handleDownloadCertificate}
+            disabled={isDownloading}
+            sx={{
+              bgcolor: colors.secondary.main,
+              color: colors.primary.dark,
+              fontWeight: 'bold',
+              '&:hover': { 
+                bgcolor: colors.secondary.light,
+              },
+              '&:disabled': {
+                bgcolor: `${colors.secondary.main}50`,
+                color: colors.primary.dark
+              },
+              px: 4,
+              py: 1
+            }}
+          >
+            {isDownloading ? 'GENERANDO PDF...' : 'DESCARGAR CERTIFICADO'}
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => setCertificadoDialog(false)}
+            sx={{
+              borderColor: 'white',
+              color: 'white',
+              '&:hover': { 
+                borderColor: colors.secondary.main,
+                backgroundColor: 'rgba(255,255,255,0.1)'
+              },
+              px: 4
+            }}
+          >
+            CERRAR
           </Button>
         </DialogActions>
       </Dialog>
