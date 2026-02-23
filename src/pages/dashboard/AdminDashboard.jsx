@@ -473,19 +473,6 @@ const AdminDashboard = () => {
                 <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                   Mostrando 4 de 18 certificaciones
                 </Typography>
-                <Button 
-                  size="small"
-                  startIcon={<DownloadIcon />}
-                  sx={{ 
-                    fontSize: '0.75rem',
-                    color: colors.primary.main,
-                    '&:hover': {
-                      backgroundColor: '#e8f0fe'
-                    }
-                  }}
-                >
-                  Reporte completo
-                </Button>
               </Box>
             </CardContent>
           </Card>
