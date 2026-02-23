@@ -93,20 +93,6 @@ const CommitteeLayout = () => {
       badge: 0,
     },
     {
-      text: "ALERTAS",
-      icon: <NotificationsIcon />,
-      path: "/association/alerts",
-      description: "Alertas y notificaciones",
-      badge: 0,
-    },
-    {
-      text: "PERFIL",
-      icon: <PersonIcon />,
-      path: "/association/profile",
-      description: "Mi perfil y configuración",
-      badge: 0,
-    },
-    {
       text: "AUDITORÍA",
       icon: <HistoryIcon />,
       path: "/association/audit",
@@ -626,7 +612,7 @@ const CommitteeLayout = () => {
               <IconButton
                 color="inherit"
                 component={Link}
-                to="/committee/alerts"
+                to="/association/alerts"
                 sx={{
                   color: "white",
                   position: "relative",

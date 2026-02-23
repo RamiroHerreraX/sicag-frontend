@@ -38,23 +38,22 @@ import {
   AccountCircle as AccountCircleIcon,
   LocationOn as LocationIcon,
   Layers as LayersIcon,
- 
 } from "@mui/icons-material";
 import { useAuth } from "../context/AuthContext";
 import { roleThemes, layoutConstants } from "../theme";
 
 // Colores institucionales para Super Admin (azules)
 const institutionalColors = {
-  primary: '#133B6B',      // Azul oscuro principal
-  secondary: '#133B6B',    // Azul medio
-  accent: '#e9e9e9',       // Color para acentos
-  notification: '#ef4444', // Rojo para notificaciones
-  light: 'rgba(13, 42, 77, 0.08)',  // Versión transparente del primary
-  lightAccent: 'rgba(14, 15, 15, 0.1)', // Versión transparente del accent
-  drawerBg: '#133B6B',     // Fondo del drawer unificado en azul oscuro
-  background: '#133B6B',   // Fondo unificado para AppBar y Drawer
-  textWhite: '#ffffff',    // Texto blanco
-  textWhiteSecondary: 'rgba(255, 255, 255, 0.7)', // Texto blanco secundario
+  primary: "#133B6B", // Azul oscuro principal
+  secondary: "#133B6B", // Azul medio
+  accent: "#e9e9e9", // Color para acentos
+  notification: "#ef4444", // Rojo para notificaciones
+  light: "rgba(13, 42, 77, 0.08)", // Versión transparente del primary
+  lightAccent: "rgba(14, 15, 15, 0.1)", // Versión transparente del accent
+  drawerBg: "#133B6B", // Fondo del drawer unificado en azul oscuro
+  background: "#133B6B", // Fondo unificado para AppBar y Drawer
+  textWhite: "#ffffff", // Texto blanco
+  textWhiteSecondary: "rgba(255, 255, 255, 0.7)", // Texto blanco secundario
 };
 
 const SuperAdminLayout = () => {
@@ -323,7 +322,9 @@ const SuperAdminLayout = () => {
                     <ListItemIcon
                       sx={{
                         minWidth: open ? 40 : "auto",
-                        color: isActive ? accentColor : "rgba(255, 255, 255, 0.8)",
+                        color: isActive
+                          ? accentColor
+                          : "rgba(255, 255, 255, 0.8)",
                         justifyContent: "center",
                         mr: open ? 2 : 0,
                       }}
@@ -618,6 +619,8 @@ const SuperAdminLayout = () => {
             <Tooltip title="Alertas globales">
               <IconButton
                 color="inherit"
+                component={Link}
+                to="/supera/alerts"
                 sx={{
                   color: "white",
                   position: "relative",
@@ -816,7 +819,12 @@ const SuperAdminLayout = () => {
           </Stack>
         </Box>
 
-        <MenuItem onClick={handleProfileMenuClose} sx={{ py: 1.5, px: 2 }}>
+        <MenuItem
+          component={Link}
+          to="/supera/profile"
+          onClick={handleProfileMenuClose}
+          sx={{ py: 1.5, px: 2 }}
+        >
           <ListItemIcon sx={{ color: primaryColor }}>
             <AccountCircleIcon />
           </ListItemIcon>
