@@ -44,6 +44,7 @@ import {
   AccountCircle as AccountCircleIcon,
   Email as EmailIcon,
   LocationOn as LocationIcon,
+  NotificationsActive as AlertsIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 
@@ -130,6 +131,13 @@ const AdminLayout = () => {
       badge: 3
     },
     { 
+      text: 'ALERTAS',
+      icon: <AlertsIcon />, 
+      path: '/admin/alerts',
+      description: 'Centro de notificaciones',
+      badge: 8
+    },
+    { 
       text: 'EXPEDIENTES', 
       icon: <ExpedienteIcon />, 
       path: '/admin/expediente-config',
@@ -188,6 +196,10 @@ const AdminLayout = () => {
     setProfileAnchorEl(null);
   };
 
+  const handleAlertsClick = () => {
+    navigate('/admin/alerts');
+  };
+
   const isActivePath = (path) => {
     if (path === '/admin/dashboard') {
       return location.pathname === '/admin/dashboard';
@@ -195,6 +207,9 @@ const AdminLayout = () => {
     if (path === '/admin/users') {
       return location.pathname.startsWith('/admin/users') && 
              !location.pathname.includes('/review');
+    }
+    if (path === '/admin/alerts') {
+      return location.pathname.startsWith('/admin/alerts');
     }
     return location.pathname.startsWith(path);
   };
@@ -633,9 +648,10 @@ const AdminLayout = () => {
           {/* Lado derecho */}
           <Stack direction="row" spacing={1} alignItems="center">
             {/* Botón de notificaciones */}
-            <Tooltip title="Alertas y notificaciones">
+            <Tooltip title="Ver todas las alertas">
               <IconButton
                 color="inherit"
+                onClick={handleAlertsClick}
                 sx={{ 
                   color: colors.text.secondary,
                   position: 'relative',
@@ -922,6 +938,7 @@ const AdminLayout = () => {
             '& .MuiDrawer-paper': {
               width: layoutConfig.drawerWidth,
               boxSizing: 'border-box',
+              bgcolor: sidebarColor,
             },
           }}
         >
@@ -937,6 +954,7 @@ const AdminLayout = () => {
               width: open ? layoutConfig.drawerWidth : layoutConfig.collapsedDrawerWidth,
               boxSizing: 'border-box',
               borderRight: `1px solid rgba(255, 255, 255, 0.1)`,
+              bgcolor: sidebarColor,
               transition: theme.transitions.create('width', {
                 easing: theme.transitions.easing.sharp,
                 duration: theme.transitions.duration.standard,

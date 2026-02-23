@@ -1,3 +1,4 @@
+// src/pages/admin/UserReview.jsx
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
@@ -38,12 +39,38 @@ import {
   Security as SecurityIcon
 } from '@mui/icons-material';
 
+// Paleta corporativa
+const colors = {
+  primary: {
+    dark: '#0D2A4D',
+    main: '#133B6B',
+    light: '#3A6EA5'
+  },
+  secondary: {
+    main: '#00A8A8',
+    light: '#00C2D1',
+    lighter: '#35D0FF'
+  },
+  accents: {
+    blue: '#0099FF',
+    purple: '#6C5CE7'
+  },
+  status: {
+    success: '#00A8A8',
+    warning: '#F39C12',
+    error: '#E74C3C',
+    info: '#3A6EA5'
+  },
+  text: {
+    primary: '#0D2A4D',
+    secondary: '#3A6EA5',
+    light: '#6C5CE7'
+  }
+};
+
 const UserReview = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [reviewDialog, setReviewDialog] = useState(false);
-  const [reviewAction, setReviewAction] = useState('');
-  const [reviewComments, setReviewComments] = useState('');
 
   // Datos mock del usuario
   const user = {
@@ -76,21 +103,19 @@ const UserReview = () => {
     ]
   };
 
-  const handleReviewAction = (action) => {
-    setReviewAction(action);
-    setReviewDialog(true);
-  };
-
-  const confirmReview = () => {
-    // Simular envío de revisión
-    setTimeout(() => {
-      setReviewDialog(false);
-      alert(`Usuario ${reviewAction === 'approve' ? 'APROBADO' : 'RECHAZADO'} exitosamente`);
-      navigate('/admin/users');
-    }, 1000);
-  };
-
   const getStatusColor = (status) => {
+    switch(status) {
+      case 'APROBADO': return colors.status.success;
+      case 'PENDIENTE': return colors.status.warning;
+      case 'RECHAZADO': return colors.status.error;
+      case 'VIGENTE': return colors.status.success;
+      case 'POR VENCER': return colors.status.warning;
+      case 'EN REVISIÓN': return colors.status.info;
+      default: return colors.text.secondary;
+    }
+  };
+
+  const getStatusVariant = (status) => {
     switch(status) {
       case 'APROBADO': return 'success';
       case 'PENDIENTE': return 'warning';
@@ -103,70 +128,75 @@ const UserReview = () => {
   };
 
   const getComplianceColor = (rate) => {
-    if (rate >= 90) return '#27ae60';
-    if (rate >= 70) return '#f39c12';
-    return '#e74c3c';
+    if (rate >= 90) return colors.status.success;
+    if (rate >= 70) return colors.status.warning;
+    return colors.status.error;
   };
 
   return (
-    <Box>
+    <Box sx={{ 
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      p: 2.5,
+      backgroundColor: '#f5f7fa'
+    }}>
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Box>
           <Button
             startIcon={<ArrowBackIcon />}
             onClick={() => navigate('/admin/users')}
-            sx={{ mb: 1 }}
+            sx={{ 
+              mb: 1,
+              color: colors.primary.main,
+              '&:hover': {
+                bgcolor: 'rgba(19, 59, 107, 0.08)'
+              }
+            }}
           >
             Volver
           </Button>
-          <Typography variant="h4" sx={{ color: '#2c3e50', fontWeight: 'bold' }}>
+          <Typography variant="h4" sx={{ color: colors.primary.dark, fontWeight: 'bold' }}>
             Revisión de Usuario
           </Typography>
-          <Typography variant="body1" sx={{ color: '#7f8c8d' }}>
+          <Typography variant="body1" sx={{ color: colors.text.secondary }}>
             Análisis completo del usuario: {user.name}
           </Typography>
         </Box>
         
-        <Stack direction="row" spacing={2}>
-          <Button
-            variant="outlined"
-            color="error"
-            startIcon={<CancelIcon />}
-            onClick={() => handleReviewAction('reject')}
-          >
-            Rechazar Usuario
-          </Button>
-          <Button
-            variant="contained"
-            color="success"
-            startIcon={<CheckCircleIcon />}
-            onClick={() => handleReviewAction('approve')}
-          >
-            Aprobar Usuario
-          </Button>
-        </Stack>
+        <Chip 
+          label={user.status}
+          size="medium"
+          sx={{ 
+            bgcolor: `${getStatusColor(user.status)}15`,
+            color: getStatusColor(user.status),
+            fontWeight: 'bold',
+            fontSize: '0.9rem',
+            p: 1.5
+          }}
+        />
       </Box>
 
       <Grid container spacing={3}>
         {/* Columna izquierda - Información del usuario */}
         <Grid item xs={12} md={8}>
           {/* Información básica */}
-          <Card sx={{ mb: 3 }}>
+          <Card sx={{ mb: 3, borderRadius: '8px' }}>
             <CardContent>
-              <Typography variant="h6" sx={{ color: '#2c3e50', mb: 3, fontWeight: 'bold' }}>
+              <Typography variant="h6" sx={{ color: colors.text.primary, mb: 3, fontWeight: 'bold' }}>
                 Información del Usuario
               </Typography>
 
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={6}>
                   <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-                    <PersonIcon sx={{ color: '#7f8c8d' }} />
+                    <PersonIcon sx={{ color: colors.primary.main }} />
                     <Box>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                         Nombre Completo
                       </Typography>
-                      <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                      <Typography variant="body1" sx={{ fontWeight: 'bold', color: colors.text.primary }}>
                         {user.name}
                       </Typography>
                     </Box>
@@ -175,12 +205,12 @@ const UserReview = () => {
 
                 <Grid item xs={12} sm={6}>
                   <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-                    <BusinessIcon sx={{ color: '#7f8c8d' }} />
+                    <BusinessIcon sx={{ color: colors.primary.main }} />
                     <Box>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                         Email
                       </Typography>
-                      <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                      <Typography variant="body1" sx={{ fontWeight: 'bold', color: colors.text.primary }}>
                         {user.email}
                       </Typography>
                     </Box>
@@ -189,15 +219,19 @@ const UserReview = () => {
 
                 <Grid item xs={12} sm={6}>
                   <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-                    <SecurityIcon sx={{ color: '#7f8c8d' }} />
+                    <SecurityIcon sx={{ color: colors.primary.main }} />
                     <Box>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                         Rol
                       </Typography>
                       <Chip 
                         label={user.role}
-                        color="primary"
                         size="small"
+                        sx={{ 
+                          bgcolor: colors.primary.main,
+                          color: 'white',
+                          fontWeight: 'bold'
+                        }}
                       />
                     </Box>
                   </Stack>
@@ -205,12 +239,12 @@ const UserReview = () => {
 
                 <Grid item xs={12} sm={6}>
                   <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-                    <EventIcon sx={{ color: '#7f8c8d' }} />
+                    <EventIcon sx={{ color: colors.primary.main }} />
                     <Box>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                         Fecha de Registro
                       </Typography>
-                      <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                      <Typography variant="body1" sx={{ fontWeight: 'bold', color: colors.text.primary }}>
                         {user.registrationDate}
                       </Typography>
                     </Box>
@@ -223,31 +257,46 @@ const UserReview = () => {
               {/* Estadísticas */}
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={4}>
-                  <Paper sx={{ p: 2, textAlign: 'center' }}>
-                    <Typography variant="h4" sx={{ color: '#3498db', fontWeight: 'bold', mb: 1 }}>
+                  <Paper sx={{ 
+                    p: 2, 
+                    textAlign: 'center',
+                    border: `1px solid ${colors.primary.light}`,
+                    borderRadius: '8px'
+                  }}>
+                    <Typography variant="h4" sx={{ color: colors.primary.main, fontWeight: 'bold', mb: 1 }}>
                       {user.certifications}
                     </Typography>
-                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                    <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                       Certificaciones
                     </Typography>
                   </Paper>
                 </Grid>
                 <Grid item xs={12} sm={4}>
-                  <Paper sx={{ p: 2, textAlign: 'center' }}>
-                    <Typography variant="h4" sx={{ color: '#f39c12', fontWeight: 'bold', mb: 1 }}>
+                  <Paper sx={{ 
+                    p: 2, 
+                    textAlign: 'center',
+                    border: `1px solid ${colors.status.warning}`,
+                    borderRadius: '8px'
+                  }}>
+                    <Typography variant="h4" sx={{ color: colors.status.warning, fontWeight: 'bold', mb: 1 }}>
                       {user.pendingReviews}
                     </Typography>
-                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                    <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                       Pendientes
                     </Typography>
                   </Paper>
                 </Grid>
                 <Grid item xs={12} sm={4}>
-                  <Paper sx={{ p: 2, textAlign: 'center' }}>
+                  <Paper sx={{ 
+                    p: 2, 
+                    textAlign: 'center',
+                    border: `1px solid ${getComplianceColor(user.complianceRate)}`,
+                    borderRadius: '8px'
+                  }}>
                     <Typography variant="h4" sx={{ color: getComplianceColor(user.complianceRate), fontWeight: 'bold', mb: 1 }}>
                       {user.complianceRate}%
                     </Typography>
-                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                    <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                       Cumplimiento
                     </Typography>
                   </Paper>
@@ -257,9 +306,9 @@ const UserReview = () => {
           </Card>
 
           {/* Certificaciones */}
-          <Card sx={{ mb: 3 }}>
+          <Card sx={{ mb: 3, borderRadius: '8px' }}>
             <CardContent>
-              <Typography variant="h6" sx={{ color: '#2c3e50', mb: 3, fontWeight: 'bold' }}>
+              <Typography variant="h6" sx={{ color: colors.text.primary, mb: 3, fontWeight: 'bold' }}>
                 Certificaciones del Usuario
               </Typography>
 
@@ -267,26 +316,34 @@ const UserReview = () => {
                 <Table size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell sx={{ fontWeight: 'bold', color: '#2c3e50' }}>Tipo</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', color: '#2c3e50' }}>Estatus</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', color: '#2c3e50' }}>Vencimiento</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', color: '#2c3e50' }}>Acciones</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', color: colors.text.primary }}>Tipo</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', color: colors.text.primary }}>Estatus</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', color: colors.text.primary }}>Vencimiento</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', color: colors.text.primary }}>Acciones</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {user.certificationsList.map((cert) => (
                       <TableRow key={cert.id} hover>
-                        <TableCell>{cert.type}</TableCell>
+                        <TableCell sx={{ color: colors.text.primary }}>{cert.type}</TableCell>
                         <TableCell>
                           <Chip 
                             label={cert.status}
-                            color={getStatusColor(cert.status)}
+                            color={getStatusVariant(cert.status)}
                             size="small"
                           />
                         </TableCell>
-                        <TableCell>{cert.expiration}</TableCell>
+                        <TableCell sx={{ color: colors.text.secondary }}>{cert.expiration}</TableCell>
                         <TableCell>
-                          <IconButton size="small">
+                          <IconButton 
+                            size="small"
+                            sx={{ 
+                              color: colors.primary.main,
+                              '&:hover': {
+                                bgcolor: 'rgba(19, 59, 107, 0.08)'
+                              }
+                            }}
+                          >
                             <VisibilityIcon fontSize="small" />
                           </IconButton>
                         </TableCell>
@@ -302,29 +359,36 @@ const UserReview = () => {
         {/* Columna derecha - Documentos y actividad */}
         <Grid item xs={12} md={4}>
           {/* Documentos */}
-          <Card sx={{ mb: 3 }}>
+          <Card sx={{ mb: 3, borderRadius: '8px' }}>
             <CardContent>
-              <Typography variant="h6" sx={{ color: '#2c3e50', mb: 3, fontWeight: 'bold' }}>
+              <Typography variant="h6" sx={{ color: colors.text.primary, mb: 3, fontWeight: 'bold' }}>
                 Documentación Verificada
               </Typography>
 
               <Stack spacing={2}>
                 {user.documents.map((doc) => (
-                  <Paper key={doc.id} variant="outlined" sx={{ p: 2 }}>
+                  <Paper key={doc.id} variant="outlined" sx={{ 
+                    p: 2,
+                    borderColor: colors.primary.light,
+                    '&:hover': {
+                      borderColor: colors.primary.main,
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                    }
+                  }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <DescriptionIcon sx={{ mr: 1, color: '#7f8c8d' }} />
-                        <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                        <DescriptionIcon sx={{ mr: 1, color: colors.primary.main }} />
+                        <Typography variant="body2" sx={{ fontWeight: 'medium', color: colors.text.primary }}>
                           {doc.name}
                         </Typography>
                       </Box>
                       <Chip 
                         label={doc.status}
-                        color={getStatusColor(doc.status)}
+                        color={getStatusVariant(doc.status)}
                         size="small"
                       />
                     </Box>
-                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                    <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                       Verificado: {doc.date}
                     </Typography>
                   </Paper>
@@ -334,19 +398,24 @@ const UserReview = () => {
           </Card>
 
           {/* Actividad reciente */}
-          <Card sx={{ mb: 3 }}>
+          <Card sx={{ mb: 3, borderRadius: '8px' }}>
             <CardContent>
-              <Typography variant="h6" sx={{ color: '#2c3e50', mb: 3, fontWeight: 'bold' }}>
+              <Typography variant="h6" sx={{ color: colors.text.primary, mb: 3, fontWeight: 'bold' }}>
                 Actividad Reciente
               </Typography>
 
               <Stack spacing={2}>
                 {user.activityLog.map((activity) => (
-                  <Box key={activity.id} sx={{ p: 2, bgcolor: '#f8f9fa', borderRadius: 1 }}>
-                    <Typography variant="body2" sx={{ color: '#2c3e50', mb: 0.5 }}>
+                  <Box key={activity.id} sx={{ 
+                    p: 2, 
+                    bgcolor: 'rgba(19, 59, 107, 0.04)', 
+                    borderRadius: 1,
+                    borderLeft: `3px solid ${colors.primary.main}`
+                  }}>
+                    <Typography variant="body2" sx={{ color: colors.text.primary, mb: 0.5 }}>
                       {activity.action}
                     </Typography>
-                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                    <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                       {activity.date}
                     </Typography>
                   </Box>
@@ -356,9 +425,9 @@ const UserReview = () => {
           </Card>
 
           {/* Indicador de cumplimiento */}
-          <Card>
+          <Card sx={{ borderRadius: '8px' }}>
             <CardContent>
-              <Typography variant="h6" sx={{ color: '#2c3e50', mb: 3, fontWeight: 'bold' }}>
+              <Typography variant="h6" sx={{ color: colors.text.primary, mb: 3, fontWeight: 'bold' }}>
                 Nivel de Cumplimiento
               </Typography>
 
@@ -384,7 +453,11 @@ const UserReview = () => {
                 />
               </Box>
 
-              <Typography variant="body2" sx={{ color: '#7f8c8d', textAlign: 'center' }}>
+              <Typography variant="body2" sx={{ 
+                color: colors.text.secondary, 
+                textAlign: 'center',
+                fontWeight: 'bold'
+              }}>
                 {user.complianceRate >= 90 ? 'Alto Cumplimiento' : 
                  user.complianceRate >= 70 ? 'Cumplimiento Medio' : 'Cumplimiento Bajo'}
               </Typography>
@@ -392,38 +465,6 @@ const UserReview = () => {
           </Card>
         </Grid>
       </Grid>
-
-      {/* Diálogo de revisión */}
-      <Dialog open={reviewDialog} onClose={() => setReviewDialog(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>
-          {reviewAction === 'approve' ? 'Aprobar Usuario' : 'Rechazar Usuario'}
-        </DialogTitle>
-        <DialogContent>
-          <Typography sx={{ mb: 3 }}>
-            ¿Está seguro de {reviewAction === 'approve' ? 'aprobar' : 'rechazar'} al usuario {user.name}?
-          </Typography>
-          
-          <TextField
-            fullWidth
-            multiline
-            rows={4}
-            label="Comentarios / Observaciones"
-            placeholder="Ingrese los motivos de la decisión..."
-            value={reviewComments}
-            onChange={(e) => setReviewComments(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setReviewDialog(false)}>Cancelar</Button>
-          <Button 
-            onClick={confirmReview} 
-            variant="contained"
-            color={reviewAction === 'approve' ? 'success' : 'error'}
-          >
-            Confirmar
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   );
 };
