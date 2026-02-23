@@ -336,10 +336,10 @@ const handleDownloadCertificate = async () => {
     md={4} 
     sx={{ 
       flexBasis: {
-        md: '40%'
+        md: '35%'
       },
       maxWidth: {
-        md: '40%'
+        md: '35%'
       }
     }}
   >
