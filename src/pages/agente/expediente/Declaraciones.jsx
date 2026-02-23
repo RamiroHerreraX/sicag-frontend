@@ -1166,17 +1166,7 @@ const DeclaracionesCumplimientoAduanero = () => {
         </Box>
         
         <Stack direction="row" spacing={2}>
-          <Button
-            variant="outlined"
-            startIcon={<DownloadIcon />}
-            sx={{ 
-              textTransform: 'none',
-              color: colors.primary.main,
-              borderColor: colors.primary.main
-            }}
-          >
-            Exportar Mi Declaración
-          </Button>
+          
           <Button
             variant="contained"
             startIcon={<VerifiedUserIcon />}

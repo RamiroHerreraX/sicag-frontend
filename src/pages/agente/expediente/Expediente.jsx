@@ -2081,17 +2081,7 @@ const renderDocumentacionOficial = (section) => {
         </Box>
         
         <Stack direction="row" spacing={2}>
-          <Button
-            variant="outlined"
-            startIcon={<DownloadIcon />}
-            sx={{ 
-              textTransform: 'none',
-              color: colors.primary.main,
-              borderColor: colors.primary.main
-            }}
-          >
-            Exportar Expediente
-          </Button>
+          
         </Stack>
       </Box>
 

@@ -1292,112 +1292,224 @@ const CertPreviewModal = () => (
   </Box>
 </Box>
 
-      {/* Filtros */}
-      <Paper elevation={0} sx={{ p: 2, mb: 3, bgcolor: '#f8f9fa' }}>
-        <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} md={2.5}>
-            <TextField
-              fullWidth
-              size="small"
-              placeholder="Buscar en auditoría..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon fontSize="small" sx={{ color: colors.primary.main }} />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-          
-          <Grid item xs={12} md={2.5}>
-            <FormControl fullWidth size="small">
-              <InputLabel sx={{ color: colors.text.primary }}>Tipo de Acción</InputLabel>
-              <Select
-                value={filterType}
-                label="Tipo de Acción"
-                onChange={(e) => setFilterType(e.target.value)}
-              >
-                {actionTypes.map(type => (
-                  <MenuItem key={type.value} value={type.value}>{type.label}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-          
-          <Grid item xs={12} md={2.5}>
-            <FormControl fullWidth size="small">
-              <InputLabel sx={{ color: colors.text.primary }}>Entidad</InputLabel>
-              <Select
-                value={filterEntity}
-                label="Entidad"
-                onChange={(e) => setFilterEntity(e.target.value)}
-              >
-                {entities.map(entity => (
-                  <MenuItem key={entity.value} value={entity.value}>{entity.label}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-          
-          <Grid item xs={12} md={2.5}>
-            <FormControl fullWidth size="small">
-              <InputLabel sx={{ color: colors.text.primary }}>Estado</InputLabel>
-              <Select
-                value={filterStatus}
-                label="Estado"
-                onChange={(e) => setFilterStatus(e.target.value)}
-              >
-                {statusFilter.map(status => (
-                  <MenuItem key={status.value} value={status.value}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      {status.value !== 'all' && statusConfig[status.value]?.icon}
-                      {status.label}
-                    </Box>
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-          
-          <Grid item xs={12} md={2}>
-            <Stack direction="row" spacing={1}>
-              <Button
-                fullWidth
-                variant="outlined"
-                size="small"
-                onClick={() => {
-                  setSearchTerm('');
-                  setFilterType('all');
-                  setFilterEntity('all');
-                  setFilterStatus('all');
-                  setPage(1);
-                }}
-                sx={{
-                  color: colors.primary.main,
-                  borderColor: colors.primary.main
-                }}
-              >
-                Limpiar
-              </Button>
-              <Button
-                fullWidth
-                variant="contained"
-                size="small"
-                startIcon={<DownloadIcon />}
-                sx={{
-                  bgcolor: colors.primary.main,
-                  '&:hover': { bgcolor: colors.primary.dark }
-                }}
-              >
-                Exportar
-              </Button>
-            </Stack>
-          </Grid>
-        </Grid>
-      </Paper>
+      {/* Filtros - Versión más ancha con CSS */}
+<Paper 
+  elevation={0} 
+  sx={{ 
+    p: 3, 
+    mb: 4, 
+    bgcolor: '#f8f9fa',
+    width: '100%',
+    borderRadius: 2
+  }}
+>
+  <Grid 
+    container 
+    spacing={2} 
+    alignItems="center"
+    sx={{
+      width: '100%',
+      mx: 0,
+    }}
+  >
+    {/* Buscador - 25% */}
+    <Grid 
+      item 
+      xs={12} 
+      md={3}
+      sx={{
+        flexBasis: {
+          md: '25%'
+        },
+        maxWidth: {
+          md: '25%'
+        }
+      }}
+    >
+      <TextField
+        fullWidth
+        size="small"
+        placeholder="Buscar en auditoría..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon fontSize="small" sx={{ color: colors.primary.main }} />
+            </InputAdornment>
+          ),
+        }}
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            borderRadius: 1.5,
+            backgroundColor: 'white',
+            '&:hover': {
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: colors.primary.main,
+              }
+            }
+          }
+        }}
+      />
+    </Grid>
+    
+    {/* Tipo de Acción - 22% */}
+    <Grid 
+      item 
+      xs={12} 
+      md={2.5}
+      sx={{
+        flexBasis: {
+          md: '18%'
+        },
+        maxWidth: {
+          md: '18%'
+        }
+      }}
+    >
+      <FormControl fullWidth size="small">
+        <InputLabel sx={{ color: colors.text.primary }}>Tipo de Acción</InputLabel>
+        <Select
+          value={filterType}
+          label="Tipo de Acción"
+          onChange={(e) => setFilterType(e.target.value)}
+          sx={{
+            backgroundColor: 'white',
+            borderRadius: 1.5,
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: colors.primary.main,
+            }
+          }}
+        >
+          {actionTypes.map(type => (
+            <MenuItem key={type.value} value={type.value}>{type.label}</MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </Grid>
+    
+    {/* Entidad - 22% */}
+    <Grid 
+      item 
+      xs={12} 
+      md={2.5}
+      sx={{
+        flexBasis: {
+          md: '18%'
+        },
+        maxWidth: {
+          md: '18%'
+        }
+      }}
+    >
+      <FormControl fullWidth size="small">
+        <InputLabel sx={{ color: colors.text.primary }}>Entidad</InputLabel>
+        <Select
+          value={filterEntity}
+          label="Entidad"
+          onChange={(e) => setFilterEntity(e.target.value)}
+          sx={{
+            backgroundColor: 'white',
+            borderRadius: 1.5,
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: colors.primary.main,
+            }
+          }}
+        >
+          {entities.map(entity => (
+            <MenuItem key={entity.value} value={entity.value}>{entity.label}</MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </Grid>
+    
+    {/* Estado - 18% */}
+    <Grid 
+      item 
+      xs={12} 
+      md={2}
+      sx={{
+        flexBasis: {
+          md: '18%'
+        },
+        maxWidth: {
+          md: '18%'
+        }
+      }}
+    >
+      <FormControl fullWidth size="small">
+        <InputLabel sx={{ color: colors.text.primary }}>Estado</InputLabel>
+        <Select
+          value={filterStatus}
+          label="Estado"
+          onChange={(e) => setFilterStatus(e.target.value)}
+          sx={{
+            backgroundColor: 'white',
+            borderRadius: 1.5,
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: colors.primary.main,
+            }
+          }}
+        >
+          {statusFilter.map(status => (
+            <MenuItem key={status.value} value={status.value}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                {status.value !== 'all' && statusConfig[status.value]?.icon}
+                {status.label}
+              </Box>
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </Grid>
+    
+    {/* Botones - 13% */}
+    <Grid 
+      item 
+      xs={12} 
+      md={1.8}
+      sx={{
+        flexBasis: {
+          md: '13%'
+        },
+        maxWidth: {
+          md: '13%'
+        }
+      }}
+    >
+      <Stack direction="row" spacing={1}>
+        <Button
+          fullWidth
+          variant="outlined"
+          size="medium"
+          onClick={() => {
+            setSearchTerm('');
+            setFilterType('all');
+            setFilterEntity('all');
+            setFilterStatus('all');
+            setPage(1);
+          }}
+          sx={{
+            color: colors.primary.main,
+            borderColor: colors.primary.main,
+            borderRadius: 1.5,
+            py: 0.8,
+            fontWeight: 600,
+            fontSize: '0.85rem',
+            textTransform: 'none',
+            backgroundColor: 'white',
+            '&:hover': {
+              borderColor: colors.primary.dark,
+              backgroundColor: `${colors.primary.main}10`,
+            }
+          }}
+        >
+          Limpiar
+        </Button>
+      </Stack>
+    </Grid>
+  </Grid>
+</Paper>
 
       {/* Tabla de auditoría */}
       <Paper elevation={1} sx={{ mb: 3 }}>
