@@ -115,6 +115,7 @@ function App() {
 
             <Route path="/inicio" element={<PaginaRedireccion />} />
             <Route path="/legal" element={<PaginaLegalCompleta />} />
+            <Route path="/sitemap" element={<SiteMap />} />
 
             {/* Rutas para USUARIO AGENTE */}
             <Route
@@ -147,7 +148,6 @@ function App() {
               <Route path="/declaraciones" element={<Declaraciones />} />
               <Route path="/expediente" element={<Expediente />} />
               <Route path="/profile" element={<Profile />} />
-              <Route path="/sitemap" element={<SiteMap />} />
               <Route path="/audit-agent" element={<AuditAgent />} />
               <Route path="/notificaciones" element={<Notificaciones />} />
             </Route>

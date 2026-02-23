@@ -1763,6 +1763,7 @@ const Inicio = () => {
                   { nombre: "Términos y condiciones", ruta: "/legal?tab=0" },
                   { nombre: "Aviso de privacidad", ruta: "/legal?tab=1" },
                   { nombre: "Política de cookies", ruta: "/legal?tab=2" },
+                  { nombre: "Mapa del sitio ", ruta: "/sitemap" },
                 ].map((item, idx) => (
                   <Button
                     key={item.nombre}
