@@ -43,6 +43,11 @@ import {
   Phone as PhoneIcon,
   LocationOn as LocationIcon,
   History as HistoryIcon,
+  AssignmentInd as AssignmentIndIcon,
+  HowToVote as HowToVoteIcon,
+  Folder as FolderIcon,
+  Description as DescriptionIcon,
+  Receipt as ReceiptIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { roleThemes, layoutConstants } from '../theme';
@@ -109,14 +114,44 @@ const CommitteeLayout = () => {
       path: '/committee/profile',
       description: 'Mi perfil y configuración',
       badge: 0
-    },
+    },/*
     { 
       text: 'AUDITORÍA', 
       icon: <HistoryIcon />, 
       path: '/committee/audit',
       description: 'Historial de revisiones',
       badge: 0
-    },
+    },*/ /*
+    { 
+    text: 'ASIGNAR', 
+    icon: <AssignmentIndIcon />, 
+    path: '/committee/assignments',
+    description: 'Asignar revisiones (Solo Secretario)',
+    badge: 5,
+    highlight: user?.subRole === 'secretario',
+  },*/ /*
+  { 
+    text: 'VOTAR', 
+    icon: <HowToVoteIcon />, 
+    path: '/committee/voting',
+    description: 'Votación colegiada',
+    badge: 3,
+    highlight: ['presidente', 'vocal'].includes(user?.subRole),
+  },*/
+  { 
+    text: 'REPOSITORIO', 
+    icon: <FolderIcon />, 
+    path: '/committee/repository',
+    description: 'Documentos internos',
+    badge: 0,
+  },
+  { 
+    text: 'MINUTAS', 
+    icon: <DescriptionIcon />, 
+    path: '/committee/minutes',
+    description: 'Actas y minutas',
+    badge: 0,
+  },
   ];
 
   const handleDrawerToggle = () => {

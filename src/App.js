@@ -71,6 +71,10 @@ import CertificationReview from "./pages/committee/CertificationReview";
 import DocumentReview from "./pages/committee/DocumentReview";
 import CommitteeAlerts from "./pages/committee/CommitteeAlerts";
 import CommitteeProfile from "./pages/committee/CommitteeProfile";
+import CommitteeAssignments from './pages/committee/CommitteeAssignments';
+import CollegiateVoting from './pages/committee/CollegiateVoting';
+import CommitteeRepository from './pages/committee/CommitteeRepository';
+import CommitteeMinutes from './pages/committee/CommitteeMinutes';
 /*import CommitteeAssignments from './pages/committee/CommitteeAssignments';
 import CommitteeMetrics from './pages/committee/CommitteeMetrics';*/
 
@@ -154,30 +158,26 @@ function App() {
             </Route>
 
             {/* Rutas para COMITÉ */}
-            <Route
-              path="/committee"
-              element={
-                <ProtectedRoute allowedRoles={["comite"]}>
-                  <CommitteeLayout />
-                </ProtectedRoute>
-              }
-            >
-              <Route index element={<Navigate to="dashboard" />} />
-              <Route path="dashboard" element={<CommitteeDashboard />} />
-              <Route path="review" element={<CommitteeReview />} />{" "}
-              {/* Lista de revisiones */}
-              <Route path="review/:id" element={<CertificationReview />} />{" "}
-              {/* Revisión específica */}
-              <Route
-                path="document/:certId/:docId"
-                element={<DocumentReview />}
-              />{" "}
-              {/* Visor documento */}
-              <Route path="alerts" element={<CommitteeAlerts />} />
-              {/*<Route path="assignments" element={<CommitteeAssignments />} />
-              <Route path="metrics" element={<CommitteeMetrics />} />*/}
-              <Route path="profile" element={<CommitteeProfile />} />
-            </Route>
+<Route
+  path="/committee"
+  element={
+    <ProtectedRoute allowedRoles={["comite"]}>
+      <CommitteeLayout />
+    </ProtectedRoute>
+  }
+>
+  <Route index element={<Navigate to="dashboard" />} />
+  <Route path="dashboard" element={<CommitteeDashboard />} />
+  <Route path="review" element={<CommitteeReview />} />
+  <Route path="review/:id" element={<CertificationReview />} />
+  <Route path="document/:certId/:docId" element={<DocumentReview />} />
+  <Route path="alerts" element={<CommitteeAlerts />} />
+  <Route path="assignments" element={<CommitteeAssignments />} />
+  <Route path="voting" element={<CollegiateVoting />} />
+  <Route path="repository" element={<CommitteeRepository />} />
+  <Route path="minutes" element={<CommitteeMinutes />} />
+  <Route path="profile" element={<CommitteeProfile />} />
+</Route>
 
             {/* Rutas para ASOCIACIÓN */}
             <Route
