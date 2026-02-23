@@ -326,18 +326,7 @@ const AgentAlerts = () => {
           
           <Stack direction="row" spacing={1}>
             
-            <Button
-              variant="outlined"
-              size="small"
-              startIcon={<SettingsIcon />}
-              onClick={() => setShowSettings(true)}
-              sx={{
-                color: colors.primary.main,
-                borderColor: colors.primary.main
-              }}
-            >
-              Configurar
-            </Button>
+           
           </Stack>
         </Box>
 

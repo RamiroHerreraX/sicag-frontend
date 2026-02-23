@@ -1456,56 +1456,72 @@ const handleGuardarDocumentoCumplimiento = () => {
     );
   };
 
-  // Función para renderizar Documentación Oficial
-  const renderDocumentacionOficial = (section) => {
-    const completedDocs = section.items.filter(item => item.status === 'completo').length;
-    const totalDocs = section.items.length;
-    const estadoValidacion = obtenerEstadoValidacion(section.id);
-    
-    return (
-      <Accordion 
-        key={section.id}
-        expanded={expanded === section.id}
-        onChange={handleAccordionChange(section.id)}
+ // Función para renderizar Documentación Oficial (AHORA ESTANDARIZADA)
+const renderDocumentacionOficial = (section) => {
+  const completedDocs = section.items.filter(item => item.status === 'completo').length;
+  const totalDocs = section.items.length;
+  const completionPercentage = totalDocs > 0 ? (completedDocs / totalDocs) * 100 : 0;
+  const estadoValidacion = obtenerEstadoValidacion(section.id);
+  
+  return (
+    <Accordion 
+      key={section.id}
+      expanded={expanded === section.id}
+      onChange={handleAccordionChange(section.id)}
+      sx={{ 
+        mb: 2,
+        border: '2px solid',
+        borderColor: completionPercentage === 100 ? colors.status.success : colors.status.warning,
+        borderRadius: '8px !important',
+        boxShadow: `0 2px 12px ${completionPercentage === 100 ? colors.status.success + '20' : colors.status.warning + '20'}`,
+        '&:before': { display: 'none' }
+      }}
+    >
+      <AccordionSummary 
+        expandIcon={<ExpandMoreIcon />}
         sx={{ 
-          mb: 2,
-          border: '2px solid',
-          borderColor: colors.accents.purple,
-          borderRadius: '8px !important',
-          boxShadow: `0 2px 12px ${colors.accents.purple}20`,
-          '&:before': { display: 'none' }
+          backgroundColor: expanded === section.id ? '#f8f9fa' : 'white',
+          borderRadius: '8px',
+          minHeight: '70px',
+          transition: 'all 0.2s'
         }}
       >
-        <AccordionSummary 
-          expandIcon={<ExpandMoreIcon />}
-          sx={{ 
-            backgroundColor: expanded === section.id ? '#f3e5f5' : 'white',
-            borderRadius: '8px',
-            minHeight: '70px'
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
-            <Box sx={{ 
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: 40,
-              height: 40,
-              borderRadius: '50%',
-              backgroundColor: '#f3e5f5',
-              color: colors.accents.purple
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
+          <Box sx={{ 
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 40,
+            height: 40,
+            borderRadius: '50%',
+            backgroundColor: completionPercentage === 100 ? '#e8f5e9' : '#fff3e0',
+            color: completionPercentage === 100 ? colors.status.success : colors.status.warning
+          }}>
+            {section.icon}
+          </Box>
+          
+          <Box sx={{ flexGrow: 1 }}>
+            <Typography sx={{ 
+              fontWeight: '700', 
+              color: colors.text.primary,
+              fontSize: '1rem',
+              mb: 0.5
             }}>
-              {section.icon}
-            </Box>
-            
-            <Box sx={{ flexGrow: 1 }}>
-              <Typography sx={{ 
-                fontWeight: '700', 
-                color: colors.text.primary,
-                fontSize: '1rem',
-                mb: 0.5
+              {section.title}
+            </Typography>
+          </Box>
+          
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ textAlign: 'center', minWidth: '60px' }}>
+              <Typography variant="h6" sx={{ 
+                color: completionPercentage === 100 ? colors.status.success : colors.status.warning,
+                fontWeight: 'bold',
+                fontSize: '1.1rem'
               }}>
-                {section.title}
+                {Math.round(completionPercentage)}%
+              </Typography>
+              <Typography variant="caption" sx={{ color: colors.text.secondary, fontSize: '0.7rem' }}>
+                Completado
               </Typography>
             </Box>
             
@@ -1513,7 +1529,7 @@ const handleGuardarDocumentoCumplimiento = () => {
               <Chip 
                 label={`${completedDocs}/${totalDocs}`}
                 size="small"
-                color={completedDocs === totalDocs ? "success" : "warning"}
+                color={completionPercentage === 100 ? "success" : "warning"}
                 sx={{ 
                   height: '24px',
                   fontSize: '0.75rem',
@@ -1529,169 +1545,198 @@ const handleGuardarDocumentoCumplimiento = () => {
                   sx={{ height: '24px' }}
                 />
               )}
-              <LinearProgress 
-                variant="determinate" 
-                value={(completedDocs / totalDocs) * 100}
-                sx={{ 
-                  width: '60px',
-                  height: '6px',
-                  borderRadius: '3px',
-                  backgroundColor: `${colors.primary.main}15`,
-                  '& .MuiLinearProgress-bar': {
-                    backgroundColor: colors.accents.purple
-                  }
-                }}
-              />
             </Box>
           </Box>
-        </AccordionSummary>
-        <AccordionDetails sx={{ pt: 3, pb: 3 }}>
-          {/* Estado de validación si ya fue enviado */}
-          {estadoValidacion.enviado && (
-            <Alert 
-              severity="info" 
-              sx={{ mb: 3, backgroundColor: '#f3e5f5' }}
-              icon={<VerifiedIcon />}
+        </Box>
+      </AccordionSummary>
+      <AccordionDetails sx={{ pt: 3, pb: 3 }}>
+        {/* Estado de validación si ya fue enviado */}
+        {estadoValidacion.enviado && (
+          <Alert 
+            severity="info" 
+            sx={{ mb: 3, backgroundColor: '#f8f9fa' }}
+            icon={<VerifiedIcon />}
+          >
+            <Typography variant="body2">
+              <strong>Documentos enviados a revisión por el comité</strong>
+            </Typography>
+            <Typography variant="body2" sx={{ mt: 0.5 }}>
+              Los documentos de esta sección se enviaron el {estadoValidacion.fechaEnvio}
+            </Typography>
+          </Alert>
+        )}
+        
+        <Typography variant="body2" sx={{ color: colors.text.secondary, mb: 3, lineHeight: 1.6 }}>
+          Documentación oficial requerida para el expediente. Verifique y actualice cada documento según corresponda.
+        </Typography>
+        
+        <List dense sx={{ py: 0, mb: 3 }}>
+          {section.items.map((doc, index) => (
+            <ListItem 
+              key={index}
+              sx={{ 
+                py: 2,
+                px: 2,
+                mb: 1,
+                borderRadius: 1,
+                backgroundColor: '#fff',
+                border: `1px solid ${colors.primary.main}20`,
+                '&:hover': {
+                  backgroundColor: '#f8f9fa',
+                  borderColor: colors.primary.main
+                }
+              }}
+              secondaryAction={
+                <Stack direction="row" spacing={1}>
+                  <IconButton 
+                    size="small" 
+                    sx={{ 
+                      color: colors.primary.main,
+                      backgroundColor: `${colors.primary.main}15`,
+                      '&:hover': { backgroundColor: `${colors.primary.main}25` }
+                    }}
+                  >
+                    <VisibilityIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton 
+                    size="small" 
+                    sx={{ 
+                      color: colors.status.success,
+                      backgroundColor: '#e8f5e9',
+                      '&:hover': { backgroundColor: '#c8e6c9' }
+                    }}
+                  >
+                    <DownloadIcon fontSize="small" />
+                  </IconButton>
+                  {editMode && (
+                    <IconButton 
+                      size="small" 
+                      sx={{ 
+                        color: colors.status.error,
+                        backgroundColor: '#ffebee',
+                        '&:hover': { backgroundColor: '#ffcdd2' }
+                      }}
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  )}
+                </Stack>
+              }
             >
-              <Typography variant="body2">
-                <strong>Documentos enviados a revisión por el comité</strong>
+              <ListItemIcon sx={{ minWidth: 44 }}>
+                {doc.status === 'completo' ? (
+                  <CheckCircleIcon sx={{ 
+                    color: colors.status.success, 
+                    fontSize: '1.5rem',
+                    backgroundColor: '#e8f5e9',
+                    borderRadius: '50%',
+                    p: 0.5
+                  }} />
+                ) : (
+                  <WarningIcon sx={{ 
+                    color: colors.status.warning, 
+                    fontSize: '1.5rem',
+                    backgroundColor: '#fff3e0',
+                    borderRadius: '50%',
+                    p: 0.5
+                  }} />
+                )}
+              </ListItemIcon>
+              <ListItemText 
+                primary={doc.name}
+                primaryTypographyProps={{
+                  color: doc.status === 'completo' ? colors.text.primary : colors.text.secondary,
+                  fontWeight: doc.status === 'completo' ? '600' : '500',
+                  fontSize: '0.95rem',
+                  lineHeight: 1.4
+                }}
+              />
+            </ListItem>
+          ))}
+        </List>
+        
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          p: 2,
+          backgroundColor: '#f8f9fa',
+          borderRadius: 2,
+          border: `1px solid ${colors.primary.main}20`
+        }}>
+          <Typography variant="body2" sx={{ color: colors.text.secondary }}>
+            {section.items.length} documentos en esta sección
+          </Typography>
+          <Button
+            startIcon={<AddIcon />}
+            size="small"
+            variant="outlined"
+            disabled={!seccionesConBotonAgregar.includes(section.id) && !editMode}
+            onClick={() => {
+              if (seccionesConBotonAgregar.includes(section.id)) {
+                handleOpenAddDialog(section.id);
+              }
+            }}
+            sx={{ 
+              fontSize: '0.85rem', 
+              textTransform: 'none',
+              px: 3,
+              color: colors.primary.main,
+              borderColor: colors.primary.main,
+              opacity: seccionesConBotonAgregar.includes(section.id) ? 1 : (editMode ? 1 : 0.5)
+            }}
+          >
+            Agregar Documento
+          </Button>
+        </Box>
+        
+        {/* Botón de validación */}
+        <Box sx={{ 
+          mt: 3, 
+          p: 2.5, 
+          backgroundColor: '#f8f9fa', 
+          borderRadius: 2,
+          border: `1px solid ${colors.primary.main}20`
+        }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Box>
+              <Typography variant="body1" sx={{ fontWeight: '600', color: colors.text.primary, mb: 0.5 }}>
+                Validación de Documentos
               </Typography>
-              <Typography variant="body2" sx={{ mt: 0.5 }}>
-                Los documentos de esta sección se enviaron el {estadoValidacion.fechaEnvio}
+              <Typography variant="body2" sx={{ color: colors.text.secondary }}>
+                Una vez completados los documentos, envíelos para revisión por el comité
+              </Typography>
+            </Box>
+            
+            <Button
+              variant="contained"
+              startIcon={<SendIcon />}
+              onClick={() => handleAbrirValidacionDialog(section.id, section.title)}
+              disabled={estadoValidacion.enviado || completedDocs < totalDocs}
+              sx={{ 
+                textTransform: 'none',
+                px: 3,
+                py: 1,
+                bgcolor: colors.primary.main,
+                '&:hover': { bgcolor: colors.primary.dark }
+              }}
+            >
+              {estadoValidacion.enviado ? 'Enviado para Revisión' : 'Enviar para Validación'}
+            </Button>
+          </Box>
+          
+          {completedDocs < totalDocs && !estadoValidacion.enviado && (
+            <Alert severity="warning" sx={{ mt: 2, py: 1 }}>
+              <Typography variant="body2">
+                Complete todos los documentos ({completedDocs}/{totalDocs}) antes de enviar para validación
               </Typography>
             </Alert>
           )}
-          
-          <Typography variant="body2" sx={{ color: colors.text.secondary, mb: 3, lineHeight: 1.6 }}>
-            Documentación oficial requerida para el expediente. Verifique y actualice cada documento según corresponda.
-          </Typography>
-          
-          <Grid container spacing={2}>
-            {section.items.map((doc, index) => (
-              <Grid item xs={12} md={6} key={index}>
-                <Paper 
-                  variant="outlined" 
-                  sx={{ 
-                    p: 2.5, 
-                    borderRadius: 2,
-                    border: `2px solid ${colors.primary.main}20`,
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    transition: 'all 0.2s',
-                    '&:hover': {
-                      borderColor: colors.accents.purple,
-                      boxShadow: `0 4px 12px ${colors.accents.purple}20`
-                    }
-                  }}
-                >
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                    <Typography variant="subtitle1" sx={{ 
-                      fontWeight: '600',
-                      color: colors.text.primary,
-                      fontSize: '0.95rem',
-                      lineHeight: 1.3,
-                      flex: 1
-                    }}>
-                      {doc.name}
-                    </Typography>
-                    <Box sx={{ ml: 1 }}>
-                      {doc.status === 'completo' ? (
-                        <CheckCircleIcon sx={{ color: colors.status.success, fontSize: '1.5rem' }} />
-                      ) : (
-                        <WarningIcon sx={{ color: colors.status.warning, fontSize: '1.5rem' }} />
-                      )}
-                    </Box>
-                  </Box>
-                  
-                  <Box sx={{ flexGrow: 1 }} />
-                  
-                  <Stack direction="row" spacing={1.5} sx={{ mt: 2 }}>
-                    <Button
-                      fullWidth
-                      size="small"
-                      startIcon={<VisibilityIcon />}
-                      variant="outlined"
-                      onClick={handleSeeCertification}
-                      sx={{ 
-                        fontSize: '0.8rem', 
-                        py: 1,
-                        textTransform: 'none',
-                        color: colors.primary.main,
-                        borderColor: colors.primary.main
-                      }}
-                    >
-                      VER DOCUMENTO
-                    </Button>
-                    <Button
-                      fullWidth
-                      size="small"
-                      startIcon={<CloudUploadIcon />}
-                      variant="contained"
-                      onClick={handleUploadCertification}
-                      sx={{ 
-                        fontSize: '0.8rem', 
-                        py: 1,
-                        textTransform: 'none',
-                        bgcolor: colors.secondary.main,
-                        '&:hover': { bgcolor: colors.secondary.light }
-                      }}
-                    >
-                      ACTUALIZAR
-                    </Button>
-                  </Stack>
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
-          
-          {/* Botón de validación */}
-          <Box sx={{ 
-            mt: 3, 
-            p: 2.5, 
-            backgroundColor: '#f8f9fa', 
-            borderRadius: 2,
-            border: `1px solid ${colors.primary.main}20`
-          }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Box>
-                <Typography variant="body1" sx={{ fontWeight: '600', color: colors.text.primary, mb: 0.5 }}>
-                  Validación de Documentos
-                </Typography>
-                <Typography variant="body2" sx={{ color: colors.text.secondary }}>
-                  Una vez completados los documentos, envíelos para revisión por el comité
-                </Typography>
-              </Box>
-              
-              <Button
-                variant="contained"
-                startIcon={<SendIcon />}
-                onClick={() => handleAbrirValidacionDialog(section.id, section.title)}
-                disabled={estadoValidacion.enviado || completedDocs < totalDocs}
-                sx={{ 
-                  textTransform: 'none',
-                  px: 3,
-                  py: 1,
-                  bgcolor: colors.primary.main,
-                  '&:hover': { bgcolor: colors.primary.dark }
-                }}
-              >
-                {estadoValidacion.enviado ? 'Enviado para Revisión' : 'Enviar para Validación'}
-              </Button>
-            </Box>
-            
-            {completedDocs < totalDocs && !estadoValidacion.enviado && (
-              <Alert severity="warning" sx={{ mt: 2, py: 1 }}>
-                <Typography variant="body2">
-                  Complete todos los documentos antes de enviar para validación
-                </Typography>
-              </Alert>
-            )}
-          </Box>
-        </AccordionDetails>
-      </Accordion>
-    );
-  };
+        </Box>
+      </AccordionDetails>
+    </Accordion>
+  );
+};
 
   // Función para renderizar secciones normales
   const renderSeccionNormal = (section) => {
