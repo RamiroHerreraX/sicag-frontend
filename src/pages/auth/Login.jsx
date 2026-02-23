@@ -1,3 +1,4 @@
+// src/pages/auth/Login.jsx
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
@@ -9,10 +10,20 @@ import {
   Button,
   Alert,
   Stack,
-  Card,
-  CardContent,
+  InputAdornment,
+  IconButton,
+  CircularProgress,
+  Divider,
+  Avatar,
 } from "@mui/material";
-import { Lock as LockIcon, Email as EmailIcon } from "@mui/icons-material";
+import {
+  Lock as LockIcon,
+  Email as EmailIcon,
+  Visibility as VisibilityIcon,
+  VisibilityOff as VisibilityOffIcon,
+  Login as LoginIcon,
+  Security as SecurityIcon,
+} from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
 
 const Login = () => {
@@ -20,26 +31,51 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setEmailError("");
+    setPasswordError("");
+
+    // Validaciones
+    let isValid = true;
+
+    if (!email) {
+      setEmailError("El email es obligatorio");
+      isValid = false;
+    } else if (!validateEmail(email)) {
+      setEmailError("Formato de email inválido");
+      isValid = false;
+    }
+
+    if (!password) {
+      setPasswordError("La contraseña es obligatoria");
+      isValid = false;
+    }
+
+    if (!isValid) return;
+
     setLoading(true);
 
-    try {
-      if (!email || !password) {
-        throw new Error("Por favor complete todos los campos");
-      }
-
-      // Simular login según tipo de usuario
-      setTimeout(() => {
+    // Simular login
+    setTimeout(() => {
+      try {
         const userData = login({ email, password });
 
         switch (userData.role) {
-          case "supera": // 🔥 NUEVO
+          case "supera":
             navigate("/supera/dashboard");
             break;
           case "comite":
@@ -54,212 +90,224 @@ const Login = () => {
           default:
             navigate("/dashboard");
         }
-      }, 1000);
-    } catch (err) {
-      setError(err.message);
-      setLoading(false);
-    }
+      } catch (err) {
+        setError("Credenciales inválidas");
+      } finally {
+        setLoading(false);
+      }
+    }, 1000);
   };
 
   const handleDemoLogin = (role) => {
-    let demoEmail = "";
-    switch (role) {
-      case "agente":
-        demoEmail = "agente@demo.com";
-        break;
-      case "comite":
-        demoEmail = "comite@demo.com";
-        break;
-      case "admin":
-        demoEmail = "admin@demo.com";
-        break;
-      case "asociacion":
-        demoEmail = "asociacion@demo.com";
-        break;
-      case "supera":
-        demoEmail = "supera@demo.com";
-        break;
+    const demos = {
+      supera: { email: "supera@vugaa.com", label: "Super Admin" },
+      admin: { email: "admin@caaarem.com", label: "Admin" },
+      comite: { email: "comite@caaarem.com", label: "Comité" },
+      asociacion: { email: "asociacion@caaarem.com", label: "Asociación" },
+      agente: { email: "agente@caaarem.com", label: "Agente" },
+    };
+
+    if (demos[role]) {
+      setEmail(demos[role].email);
+      setPassword("demo123");
     }
-
-    setEmail(demoEmail);
-    setPassword("demo123");
-
-    setTimeout(() => {
-      const userData = login({ email: demoEmail, password: "demo123" });
-
-      switch (role) {
-        case "supera":
-          navigate("/supera/dashboard");
-          break;
-        case "comite":
-          navigate("/committee/dashboard");
-          break;
-        case "admin":
-          navigate("/admin/dashboard");
-          break;
-        case "asociacion":
-          navigate("/association/dashboard");
-          break;
-        default:
-          navigate("/dashboard");
-      }
-    }, 500);
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 8 }}>
-      <Box sx={{ textAlign: "center", mb: 4 }}>
-        <Typography
-          variant="h2"
-          sx={{ color: "#2c3e50", fontWeight: "bold", mb: 1 }}
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "linear-gradient(135deg, #0D2A4D 0%, #133B6B 50%, #1E4A7A 100%)",
+        py: 4,
+      }}
+    >
+      <Container maxWidth="sm">
+        <Paper
+          elevation={6}
+          sx={{
+            borderRadius: 4,
+            overflow: "hidden",
+            backdropFilter: "blur(10px)",
+            bgcolor: "rgba(255, 255, 255, 0.95)",
+          }}
         >
-          SICAG
-        </Typography>
-        <Typography variant="h6" sx={{ color: "#7f8c8d" }}>
-          LUIS RODRIGUEZ
-        </Typography>
-        <Typography variant="body1" sx={{ color: "#7f8c8d", mt: 2 }}>
-          Sistema Integral de Consultoría y Asesoría Gremial
-        </Typography>
-      </Box>
-
-      <Paper elevation={3} sx={{ p: 4 }}>
-        <Typography
-          variant="h5"
-          align="center"
-          gutterBottom
-          sx={{ color: "#2c3e50", mb: 3 }}
-        >
-          Iniciar Sesión
-        </Typography>
-        <Typography
-          variant="body2"
-          align="center"
-          sx={{ color: "#7f8c8d", mb: 3 }}
-        >
-          Ingresa tus credenciales para acceder al sistema
-        </Typography>
-
-        {error && (
-          <Alert severity="error" sx={{ mb: 3 }}>
-            {error}
-          </Alert>
-        )}
-
-        <Box component="form" onSubmit={handleSubmit}>
-          <Stack spacing={3}>
-            <TextField
-              fullWidth
-              label="Email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              InputProps={{
-                startAdornment: <EmailIcon sx={{ mr: 1, color: "#7f8c8d" }} />,
+          {/* Header con gradiente institucional */}
+          <Box
+            sx={{
+              bgcolor: "#133B6B",
+              p: 4,
+              textAlign: "center",
+              background: "linear-gradient(135deg, #0D2A4D 0%, #133B6B 100%)",
+            }}
+          >
+            <Avatar
+              sx={{
+                width: 90,
+                height: 90,
+                mx: "auto",
+                mb: 2,
+                bgcolor: "#00C2D1",
+                color: "#0D2A4D",
+                fontWeight: "bold",
+                fontSize: "2rem",
+                boxShadow: "0 4px 15px rgba(0,194,209,0.3)",
               }}
-            />
-
-            <TextField
-              fullWidth
-              label="Contraseña"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              InputProps={{
-                startAdornment: <LockIcon sx={{ mr: 1, color: "#7f8c8d" }} />,
-              }}
-            />
-
-            <Button
-              type="submit"
-              variant="contained"
-              size="large"
-              fullWidth
-              disabled={loading}
-              sx={{ py: 1.5 }}
             >
-              {loading ? "Iniciando sesión..." : "Iniciar sesión"}
-            </Button>
-          </Stack>
-        </Box>
+              V
+            </Avatar>
+            <Typography
+              variant="h3"
+              sx={{ color: "white", fontWeight: 700, letterSpacing: 1, mb: 1 }}
+            >
+              VUGAA
+            </Typography>
+            <Typography variant="subtitle1" sx={{ color: "rgba(255,255,255,0.85)", fontWeight: 300 }}>
+              Ventanilla Única de Gestión de Agentes Aduanales
+            </Typography>
+          </Box>
 
-        <Box sx={{ mt: 3, textAlign: "center" }}>
-          <Link
-            to="/forgot-password"
-            style={{ textDecoration: "none", color: "#3498db" }}
-          >
-            ¿Olvidaste tu contraseña?
-          </Link>
-        </Box>
+          <Box sx={{ p: 4 }}>
+            {error && (
+              <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
+                {error}
+              </Alert>
+            )}
 
-        {/* Demo Login Buttons */}
-        <Box sx={{ mt: 4 }}>
-          <Typography
-            variant="subtitle2"
-            align="center"
-            sx={{ color: "#7f8c8d", mb: 2 }}
-          >
-            Acceso rápido para demostración:
-          </Typography>
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={2}
-            justifyContent="center"
-          >
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => handleDemoLogin("agente")}
-              size="small"
-            >
-              Acceso Agente
-            </Button>
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={() => handleDemoLogin("comite")}
-              size="small"
-            >
-              Acceso Comité
-            </Button>
-            <Button
-              variant="outlined"
-              color="success"
-              onClick={() => handleDemoLogin("admin")}
-              size="small"
-            >
-              Acceso Admin
-            </Button>
+            <Box component="form" onSubmit={handleSubmit}>
+              <Stack spacing={3}>
+                {/* Email */}
+                <TextField
+                  fullWidth
+                  label="Correo electrónico"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  error={!!emailError}
+                  helperText={emailError}
+                  required
+                  variant="outlined"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <EmailIcon sx={{ color: "#64748b" }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      "&:hover fieldset": {
+                        borderColor: "#00C2D1",
+                      },
+                    },
+                  }}
+                />
 
-            <Button
-              variant="outlined"
-              color="info"
-              onClick={() => handleDemoLogin("asociacion")}
-              size="small"
-            >
-              Acceso Asociación Aduanal
-            </Button>
-            
-            <Button
-              variant="outlined"
-              color="warning"
-              onClick={() => handleDemoLogin("supera")}
-              size="small"
-            >
-              Acceso Supera
-            </Button>
-          </Stack>
-        </Box>
-      </Paper>
+                {/* Password */}
+                <TextField
+                  fullWidth
+                  label="Contraseña"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  error={!!passwordError}
+                  helperText={passwordError}
+                  required
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <LockIcon sx={{ color: "#64748b" }} />
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() => setShowPassword(!showPassword)}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
 
-      <Box sx={{ mt: 3, textAlign: "center" }}>
-        <Typography variant="caption" sx={{ color: "#7f8c8d" }}>
-          © 2024 SICAG. Todos los derechos reservados.
-        </Typography>
-      </Box>
-    </Container>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  size="large"
+                  fullWidth
+                  disabled={loading}
+                  startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <LoginIcon />}
+                  sx={{
+                    py: 1.5,
+                    bgcolor: "#133B6B",
+                    "&:hover": {
+                      bgcolor: "#0D2A4D",
+                    },
+                    textTransform: "none",
+                    fontSize: "1.1rem",
+                    fontWeight: 500,
+                  }}
+                >
+                  {loading ? "Iniciando sesión..." : "Ingresar al sistema"}
+                </Button>
+              </Stack>
+            </Box>
+
+            <Box sx={{ mt: 2, textAlign: "center" }}>
+              <Link
+                to="/forgot-password"
+                style={{
+                  textDecoration: "none",
+                  color: "#00C2D1",
+                  fontWeight: 500,
+                }}
+              >
+                ¿Olvidaste tu contraseña?
+              </Link>
+            </Box>
+
+            <Divider sx={{ my: 3 }}>
+              <Typography variant="caption" sx={{ color: "#94a3b8", px: 2 }}>
+                DEMO
+              </Typography>
+            </Divider>
+
+            {/* Demo Login Buttons */}
+            <Stack direction="row" spacing={1} justifyContent="center" flexWrap="wrap" useFlexGap>
+              {[
+                { role: "supera", label: "Super", color: "#6C5CE7" },
+                { role: "admin", label: "Admin", color: "#133B6B" },
+                { role: "comite", label: "Comité", color: "#00C2D1" },
+                { role: "asociacion", label: "Asociación", color: "#00A8A8" },
+                { role: "agente", label: "Agente", color: "#35D0FF" },
+              ].map((item) => (
+                <Button
+                  key={item.role}
+                  variant="outlined"
+                  size="small"
+                  onClick={() => handleDemoLogin(item.role)}
+                  sx={{
+                    textTransform: "capitalize",
+                    borderColor: item.color,
+                    color: item.color,
+                    "&:hover": {
+                      borderColor: item.color,
+                      bgcolor: `${item.color}10`,
+                    },
+                  }}
+                >
+                  {item.label}
+                </Button>
+              ))}
+            </Stack>
+          </Box>
+        </Paper>
+      </Container>
+    </Box>
   );
 };
 

@@ -25,7 +25,6 @@ import {
   FormControl,
   InputLabel,
   Select,
-  // NUEVOS COMPONENTES
   Tooltip,
   Avatar,
   Badge,
@@ -49,7 +48,6 @@ import {
   CheckCircle as CheckCircleIcon,
   Warning as WarningIcon,
   Error as ErrorIcon,
-  // NUEVOS ICONOS
   Speed as SpeedIcon,
   Timer as TimerIcon,
   Assignment as AssignmentIcon,
@@ -74,8 +72,8 @@ const CommitteeDashboard = () => {
   const [filterRegion, setFilterRegion] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterPriority, setFilterPriority] = useState('all');
-  const [activeView, setActiveView] = useState('grid'); // 'grid' o 'list'
-  const [sortBy, setSortBy] = useState('priority'); // 'priority', 'date', 'days'
+  const [activeView, setActiveView] = useState('grid');
+  const [sortBy, setSortBy] = useState('priority');
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(false);
 
@@ -88,11 +86,11 @@ const CommitteeDashboard = () => {
       region: 'Norte', 
       uploadDate: '15/01/2026',
       daysPending: 2,
-      dueDate: '17/01/2026', // Más cercano
+      dueDate: '17/01/2026',
       status: 'PENDIENTE', 
       priority: 'ALTA',
       documents: { total: 5, completed: 4, pending: 1 },
-      reviewTime: '2.3 días', // Tiempo promedio de revisión
+      reviewTime: '2.3 días',
       category: 'Regulatoria',
       lastAction: 'Asignado a Comité',
       assignedTo: 'María González',
@@ -139,7 +137,7 @@ const CommitteeDashboard = () => {
       region: 'Metropolitana', 
       uploadDate: '12/01/2026',
       daysPending: 5,
-      dueDate: '18/01/2026', // Urgente
+      dueDate: '18/01/2026',
       status: 'REQUIERE INFO', 
       priority: 'ALTA',
       documents: { total: 2, completed: 1, pending: 1 },
@@ -172,7 +170,7 @@ const CommitteeDashboard = () => {
   const calculateStats = () => {
     const today = new Date();
     const urgentThreshold = new Date();
-    urgentThreshold.setDate(today.getDate() + 3); // 3 días para urgente
+    urgentThreshold.setDate(today.getDate() + 3);
     
     return {
       total: certifications.length,
@@ -181,7 +179,8 @@ const CommitteeDashboard = () => {
       requiresInfo: certifications.filter(c => c.status === 'REQUIERE INFO').length,
       highPriority: certifications.filter(c => c.priority === 'ALTA').length,
       urgent: certifications.filter(c => {
-        const dueDate = new Date(c.dueDate.split('/').reverse().join('-'));
+        const [day, month, year] = c.dueDate.split('/');
+        const dueDate = new Date(`${year}-${month}-${day}`);
         return dueDate <= urgentThreshold;
       }).length,
       assignedToMe: certifications.filter(c => c.assignedTo === 'María González').length,
@@ -194,7 +193,6 @@ const CommitteeDashboard = () => {
 
   const stats = calculateStats();
 
-  // Filtros disponibles
   const types = ['PATENTE ADUANAL', 'OPINIÓN SAT', 'CÉDULA PROFESIONAL', 'PODER NOTARIAL', 'CONSTANCIA FISCAL'];
   const regions = ['Norte', 'Centro', 'Sur', 'Metropolitana', 'Occidente'];
   const statuses = ['PENDIENTE', 'EN REVISIÓN', 'REQUIERE INFO', 'APROBADA', 'RECHAZADA'];
@@ -250,7 +248,6 @@ const CommitteeDashboard = () => {
     return matchesSearch && matchesType && matchesRegion && matchesStatus && matchesPriority;
   });
 
-  // Ordenar certificaciones
   const sortedCertifications = [...filteredCertifications].sort((a, b) => {
     switch(sortBy) {
       case 'priority':
@@ -259,8 +256,9 @@ const CommitteeDashboard = () => {
       case 'days':
         return a.daysPending - b.daysPending;
       case 'date':
-        return new Date(b.uploadDate.split('/').reverse().join('-')) - 
-               new Date(a.uploadDate.split('/').reverse().join('-'));
+        const [aDay, aMonth, aYear] = a.uploadDate.split('/');
+        const [bDay, bMonth, bYear] = b.uploadDate.split('/');
+        return new Date(`${bYear}-${bMonth}-${bDay}`) - new Date(`${aYear}-${aMonth}-${aDay}`);
       default:
         return 0;
     }
@@ -399,7 +397,7 @@ const CommitteeDashboard = () => {
             
             <Grid item xs={12} md={2}>
               <Stack direction="row" spacing={1}>
-                <Tooltip title="Vista avanzada">
+                <Tooltip title="Filtros avanzados">
                   <IconButton 
                     size="small"
                     onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
@@ -626,8 +624,10 @@ const CommitteeDashboard = () => {
                           hover
                           sx={{ 
                             '&:hover': { bgcolor: '#f8f9fa' },
-                            borderLeft: `4px solid ${cert.color}`
+                            borderLeft: `4px solid ${cert.color}`,
+                            cursor: 'pointer'
                           }}
+                          onClick={() => window.location.href = `/committee/review/${cert.id}`}
                         >
                           <TableCell>
                             <Box>
@@ -747,6 +747,7 @@ const CommitteeDashboard = () => {
                                   variant="contained"
                                   size="small"
                                   startIcon={<GavelIcon />}
+                                  onClick={(e) => e.stopPropagation()}
                                   sx={{ 
                                     bgcolor: '#1a237e',
                                     '&:hover': { bgcolor: '#283593' },
@@ -758,7 +759,7 @@ const CommitteeDashboard = () => {
                                 </Button>
                               </Tooltip>
                               <Tooltip title="Más opciones">
-                                <IconButton size="small">
+                                <IconButton size="small" onClick={(e) => e.stopPropagation()}>
                                   <MoreVertIcon fontSize="small" />
                                 </IconButton>
                               </Tooltip>
@@ -959,8 +960,6 @@ const CommitteeDashboard = () => {
                   fullWidth
                   variant="outlined"
                   startIcon={<BarChartIcon />}
-                  component={Link}
-                  to="/committee/metrics"
                   sx={{ justifyContent: 'flex-start' }}
                 >
                   Ver métricas completas
