@@ -26,8 +26,6 @@ import {
 } from "@mui/material";
 import {
   Download as DownloadIcon,
-  Print as PrintIcon,
-  Email as EmailIcon,
   Refresh as RefreshIcon,
   FilterList as FilterIcon,
   Assessment as AssessmentIcon,
@@ -60,24 +58,36 @@ import {
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import html2canvas from "html2canvas";
+
 // Colores institucionales
 const institutionalColors = {
-  primary: '#133B6B',      // Azul oscuro principal
-  secondary: '#1a4c7a',    // Azul medio
-  accent: '#e9e9e9',       // Color para acentos (gris claro)
-  background: '#f4f6f8',   // Fondo claro
-  lightBlue: 'rgba(19, 59, 107, 0.08)',  // Azul transparente para hover
-  darkBlue: '#0D2A4D',     // Azul más oscuro
-  textPrimary: '#2c3e50',  // Texto principal
-  textSecondary: '#7f8c8d', // Texto secundario
-  success: '#27ae60',      // Verde para éxito
-  warning: '#f39c12',      // Naranja para advertencias
-  error: '#e74c3c',        // Rojo para errores
-  info: '#3498db',         // Azul para información
+  primary: "#133B6B", // Azul oscuro principal
+  primaryLight: "#1e4f8a", // Azul más claro
+  secondary: "#1a4c7a", // Azul medio
+  accent: "#e9e9e9", // Color para acentos (gris claro)
+  background: "#f4f6f8", // Fondo claro
+  lightBlue: "rgba(19, 59, 107, 0.08)", // Azul transparente para hover
+  darkBlue: "#0D2A4D", // Azul más oscuro
+  textPrimary: "#2c3e50", // Texto principal
+  textSecondary: "#7f8c8d", // Texto secundario
+  success: "#27ae60", // Verde para éxito
+  successLight: "#d4edda", // Verde claro para fondos
+  warning: "#f39c12", // Naranja para advertencias
+  warningLight: "#fff3cd", // Naranja claro para fondos
+  error: "#e74c3c", // Rojo para errores
+  errorLight: "#f8d7da", // Rojo claro para fondos
+  info: "#3498db", // Azul para información
+  infoLight: "#d1ecf1", // Azul claro para fondos
+  gray100: "#f8f9fa",
+  gray200: "#e9ecef",
+  gray300: "#dee2e6",
+  gray400: "#ced4da",
+  gray500: "#adb5bd",
+  gray600: "#6c757d",
+  gray700: "#495057",
+  gray800: "#343a40",
+  gray900: "#212529",
 };
-
-// Importar componentes de Recharts
-
 
 const InstanceReports = () => {
   const [reportType, setReportType] = useState("performance");
@@ -250,60 +260,6 @@ const InstanceReports = () => {
     },
   ];
 
-  const handleDownloadPDF = async () => {
-    const doc = new jsPDF("p", "mm", "a4");
-
-    // Título
-    doc.setFontSize(18);
-    doc.text("Reporte de Instancias", 14, 15);
-
-    doc.setFontSize(11);
-    doc.text(`Tipo: ${reportType}`, 14, 25);
-    doc.text(`Periodo: ${dateRange}`, 14, 32);
-    doc.text(`Instancia: ${instanceFilter}`, 14, 39);
-
-    // KPIs
-    doc.setFontSize(14);
-    doc.text("Resumen:", 14, 50);
-
-    doc.setFontSize(11);
-    doc.text(`Instancias: ${stats.totalInstances}`, 14, 58);
-    doc.text(`Usuarios: ${stats.totalUsers}`, 14, 65);
-    doc.text(`Expedientes: ${stats.totalExpedientes}`, 14, 72);
-
-    // Tabla
-    const tableColumn = [
-      "Instancia",
-      "Código",
-      "Usuarios",
-      "Activos",
-      "Expedientes",
-      "Nuevos",
-      "Uptime",
-      "Estado",
-      "Crecimiento",
-    ];
-
-    const tableRows = filteredData.map((row) => [
-      row.name,
-      row.code,
-      row.users,
-      row.activeUsers,
-      row.expedientes,
-      row.nuevosExpedientes,
-      `${row.uptime}%`,
-      row.status,
-      row.crecimiento,
-    ]);
-
-    autoTable(doc, {
-      startY: 80,
-      head: [tableColumn],
-      body: tableRows,
-    });
-
-    doc.save("reporte_instancias.pdf");
-  };
   // Filtrar datos según selección
   const filteredData = useMemo(() => {
     if (instanceFilter === "all") {
@@ -396,32 +352,6 @@ const InstanceReports = () => {
     }));
   }, [filteredData]);
 
-  // Datos para alertas
-  const alertasData = useMemo(() => {
-    if (instanceFilter === "all") {
-      return [
-        { tipo: "Uptime crítico", cantidad: 1, color: institutionalColors.error },
-        { tipo: "Expedientes duplicados", cantidad: 2, color: institutionalColors.warning },
-        { tipo: "Actualizaciones pendientes", cantidad: 4, color: "#9b59b6" },
-        { tipo: "Seguridad", cantidad: 2, color: institutionalColors.info },
-      ];
-    }
-    const instance = filteredData[0];
-    if (instance) {
-      return [
-        {
-          tipo: "Uptime crítico",
-          cantidad: instance.uptime < 99.5 ? 1 : 0,
-          color: institutionalColors.error,
-        },
-        { tipo: "Expedientes duplicados", cantidad: 1, color: institutionalColors.warning },
-        { tipo: "Actualizaciones pendientes", cantidad: 2, color: "#9b59b6" },
-        { tipo: "Seguridad", cantidad: 1, color: institutionalColors.info },
-      ].filter((alert) => alert.cantidad > 0);
-    }
-    return [];
-  }, [filteredData, instanceFilter]);
-
   const getStatusColor = (status) => {
     switch (status) {
       case "excelente":
@@ -475,6 +405,401 @@ const InstanceReports = () => {
     setShowBarChart(!showBarChart);
   };
 
+  const handleDownloadPDF = async () => {
+    const doc = new jsPDF("p", "mm", "a4");
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 20;
+    
+    // Función para agregar pie de página
+    const addFooter = (pageNum) => {
+      const footerY = pageHeight - 10;
+      doc.setDrawColor(200, 200, 200);
+      doc.setLineWidth(0.1);
+      doc.line(margin, footerY - 5, pageWidth - margin, footerY - 5);
+      
+      doc.setTextColor(100, 100, 100);
+      doc.setFontSize(8);
+      doc.text(`Fecha: ${new Date().toLocaleDateString()}`, margin, footerY);
+      doc.text(`Página ${pageNum}`, pageWidth - margin, footerY, { align: "right" });
+    };
+
+    let pageNum = 1;
+
+    // ========== PORTADA ==========
+    // Fondo de la portada
+    doc.setFillColor(institutionalColors.primary);
+    doc.rect(0, 0, pageWidth, pageHeight, 'F');
+
+    // Logo o ícono (simulado con texto)
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(40);
+    doc.setFont("helvetica", "bold");
+    doc.text("SGI", pageWidth / 2, 100, { align: "center" });
+    
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "normal");
+    doc.text("Sistema de Gestión de Instancias", pageWidth / 2, 120, { align: "center" });
+
+    // Título del reporte
+    doc.setFontSize(32);
+    doc.setFont("helvetica", "bold");
+    doc.text("REPORTE DE", pageWidth / 2, 180, { align: "center" });
+    doc.text("INSTANCIAS", pageWidth / 2, 210, { align: "center" });
+
+    // Línea decorativa
+    doc.setDrawColor(255, 255, 255);
+    doc.setLineWidth(1);
+    doc.line(pageWidth / 2 - 50, 195, pageWidth / 2 + 50, 195);
+
+    // Metadatos del reporte
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    const reportTypeLabel = reportTypes.find(t => t.value === reportType)?.label || reportType;
+    const dateRangeLabel = dateRanges.find(r => r.value === dateRange)?.label || dateRange;
+    const instanceLabel = instanceFilters.find(i => i.value === instanceFilter)?.label || instanceFilter;
+    
+    doc.text(`Tipo: ${reportTypeLabel}`, pageWidth / 2, 250, { align: "center" });
+    doc.text(`Período: ${dateRangeLabel}`, pageWidth / 2, 260, { align: "center" });
+    doc.text(`Instancia: ${instanceLabel}`, pageWidth / 2, 270, { align: "center" });
+
+    // Fecha de generación
+    doc.setFontSize(10);
+    doc.text(`Generado el: ${new Date().toLocaleString()}`, pageWidth / 2, 290, { align: "center" });
+
+    addFooter(pageNum);
+    pageNum++;
+
+    // ========== PÁGINA 2: RESUMEN EJECUTIVO ==========
+    doc.addPage();
+    let yPos = 25;
+    
+    // Encabezado de página
+    doc.setFillColor(institutionalColors.primary);
+    doc.rect(0, 0, pageWidth, 10, 'F');
+    
+    doc.setTextColor(institutionalColors.primary);
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text("RESUMEN EJECUTIVO", margin, yPos);
+    yPos += 5;
+    
+    doc.setDrawColor(institutionalColors.primary);
+    doc.setLineWidth(0.5);
+    doc.line(margin, yPos, pageWidth - margin, yPos);
+    yPos += 10;
+
+    // Información del reporte en formato tarjeta
+    doc.setFillColor(245, 245, 245);
+    doc.roundedRect(margin, yPos, pageWidth - margin * 2, 25, 3, 3, 'F');
+    
+    doc.setTextColor(institutionalColors.primary);
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    
+    const colWidth = (pageWidth - margin * 2) / 3;
+    doc.text("TIPO DE REPORTE", margin + 5, yPos + 7);
+    doc.text("PERIODO", margin + colWidth + 5, yPos + 7);
+    doc.text("INSTANCIA", margin + colWidth * 2 + 5, yPos + 7);
+    
+    doc.setTextColor(60, 60, 60);
+    doc.setFont("helvetica", "normal");
+    doc.text(reportTypeLabel, margin + 5, yPos + 15);
+    doc.text(dateRangeLabel, margin + colWidth + 5, yPos + 15);
+    doc.text(instanceLabel, margin + colWidth * 2 + 5, yPos + 15);
+    
+    yPos += 40;
+
+    // Tarjetas de KPI en grid
+    const kpiWidth = (pageWidth - margin * 2 - 15) / 3;
+    const kpiData = [
+      { label: "Instancias", value: stats.totalInstances, icon: "🏢", color: institutionalColors.primary },
+      { label: "Usuarios", value: stats.totalUsers, icon: "👥", color: institutionalColors.success },
+      { label: "Expedientes", value: stats.totalExpedientes, icon: "📄", color: institutionalColors.warning },
+    ];
+
+    kpiData.forEach((kpi, index) => {
+      const xPos = margin + index * (kpiWidth + 5);
+      
+      doc.setFillColor(250, 250, 250);
+      doc.roundedRect(xPos, yPos, kpiWidth, 35, 3, 3, 'F');
+      
+      doc.setFillColor(kpi.color);
+      doc.roundedRect(xPos, yPos, kpiWidth, 4, 2, 2, 'F');
+      
+      doc.setTextColor(80, 80, 80);
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.text(kpi.icon + " " + kpi.label, xPos + 5, yPos + 12);
+      
+      doc.setTextColor(kpi.color);
+      doc.setFontSize(18);
+      doc.setFont("helvetica", "bold");
+      doc.text(kpi.value.toString(), xPos + 5, yPos + 28);
+    });
+
+    yPos += 50;
+
+    // Segunda fila de KPI
+    const kpiData2 = [
+      { label: "Usuarios Activos", value: stats.activeUsers, icon: "✅", color: institutionalColors.info },
+      { label: "Nuevos Expedientes", value: stats.nuevosExpedientes, icon: "🆕", color: institutionalColors.secondary },
+      { label: "Uptime Promedio", value: stats.avgUptime + "%", icon: "⚡", color: institutionalColors.primary },
+    ];
+
+    kpiData2.forEach((kpi, index) => {
+      const xPos = margin + index * (kpiWidth + 5);
+      
+      doc.setFillColor(250, 250, 250);
+      doc.roundedRect(xPos, yPos, kpiWidth, 35, 3, 3, 'F');
+      
+      doc.setFillColor(kpi.color);
+      doc.roundedRect(xPos, yPos, kpiWidth, 4, 2, 2, 'F');
+      
+      doc.setTextColor(80, 80, 80);
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.text(kpi.icon + " " + kpi.label, xPos + 5, yPos + 12);
+      
+      doc.setTextColor(kpi.color);
+      doc.setFontSize(18);
+      doc.setFont("helvetica", "bold");
+      doc.text(kpi.value.toString(), xPos + 5, yPos + 28);
+    });
+
+    addFooter(pageNum);
+    pageNum++;
+
+    // ========== PÁGINA 3: TABLA DE INSTANCIAS ==========
+    doc.addPage();
+    yPos = 25;
+    
+    // Encabezado de página
+    doc.setFillColor(institutionalColors.primary);
+    doc.rect(0, 0, pageWidth, 10, 'F');
+    
+    doc.setTextColor(institutionalColors.primary);
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text("DETALLE DE INSTANCIAS", margin, yPos);
+    yPos += 5;
+    
+    doc.setDrawColor(institutionalColors.primary);
+    doc.setLineWidth(0.5);
+    doc.line(margin, yPos, pageWidth - margin, yPos);
+    yPos += 10;
+
+    // Configuración de la tabla
+    const tableColumn = [
+      "Instancia",
+      "Código",
+      "Usuarios",
+      "Activos",
+      "Expedientes",
+      "Uptime",
+      "Estado",
+    ];
+
+    const tableRows = filteredData.map((row) => [
+      row.name,
+      row.code,
+      row.users.toString(),
+      row.activeUsers.toString(),
+      row.expedientes.toString(),
+      `${row.uptime}%`,
+      row.status,
+    ]);
+
+    autoTable(doc, {
+      startY: yPos,
+      head: [tableColumn],
+      body: tableRows,
+      theme: 'grid',
+      styles: {
+        fontSize: 9,
+        cellPadding: 3,
+        lineColor: [200, 200, 200],
+        lineWidth: 0.1,
+      },
+      headStyles: {
+        fillColor: institutionalColors.primary,
+        textColor: [255, 255, 255],
+        fontStyle: 'bold',
+        halign: 'center',
+      },
+      columnStyles: {
+        0: { cellWidth: 30 },
+        1: { cellWidth: 25 },
+        2: { cellWidth: 20, halign: 'right' },
+        3: { cellWidth: 20, halign: 'right' },
+        4: { cellWidth: 25, halign: 'right' },
+        5: { cellWidth: 20, halign: 'right' },
+        6: { cellWidth: 25, halign: 'center' },
+      },
+      alternateRowStyles: {
+        fillColor: [245, 245, 245],
+      },
+      margin: { left: margin, right: margin },
+      didDrawPage: (data) => {
+        addFooter(pageNum);
+      }
+    });
+
+    pageNum++;
+
+    // ========== PÁGINA 4: GRÁFICAS ==========
+    doc.addPage();
+    yPos = 25;
+    
+    // Encabezado de página
+    doc.setFillColor(institutionalColors.primary);
+    doc.rect(0, 0, pageWidth, 10, 'F');
+    
+    doc.setTextColor(institutionalColors.primary);
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text("ANÁLISIS GRÁFICO", margin, yPos);
+    yPos += 5;
+    
+    doc.setDrawColor(institutionalColors.primary);
+    doc.setLineWidth(0.5);
+    doc.line(margin, yPos, pageWidth - margin, yPos);
+    yPos += 15;
+
+    // Función para capturar elemento del DOM y agregarlo al PDF
+    const captureChart = async (elementId, x, y, width, height) => {
+      const element = document.getElementById(elementId);
+      if (element) {
+        try {
+          const canvas = await html2canvas(element, {
+            scale: 2,
+            backgroundColor: '#ffffff',
+            logging: false,
+            allowTaint: true,
+            useCORS: true
+          });
+          
+          const imgData = canvas.toDataURL('image/png');
+          doc.addImage(imgData, 'PNG', x, y, width, height);
+          return true;
+        } catch (error) {
+          console.error('Error capturando gráfica:', error);
+          return false;
+        }
+      }
+      return false;
+    };
+
+    const chartWidth = (pageWidth - margin * 2 - 10) / 2;
+    const chartHeight = 70;
+
+    // Línea de tendencia
+    doc.setTextColor(institutionalColors.primary);
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text(getTrendTitle(), margin, yPos);
+    
+    await captureChart('line-chart-container', margin, yPos + 5, pageWidth - margin * 2, chartHeight);
+    yPos += chartHeight + 20;
+
+    // Gráficas de pastel y barras en la misma fila
+    doc.text("Distribución de Expedientes", margin, yPos);
+    doc.text("Usuarios Activos por Instancia", margin + chartWidth + 15, yPos);
+    
+    await captureChart('pie-chart-container', margin, yPos + 5, chartWidth, chartHeight);
+    await captureChart('bar-chart-container', margin + chartWidth + 15, yPos + 5, chartWidth, chartHeight);
+
+    addFooter(pageNum);
+    pageNum++;
+
+    // ========== PÁGINA 5: CONCLUSIONES ==========
+    doc.addPage();
+    yPos = 25;
+    
+    // Encabezado de página
+    doc.setFillColor(institutionalColors.primary);
+    doc.rect(0, 0, pageWidth, 10, 'F');
+    
+    doc.setTextColor(institutionalColors.primary);
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text("CONCLUSIONES", margin, yPos);
+    yPos += 5;
+    
+    doc.setDrawColor(institutionalColors.primary);
+    doc.setLineWidth(0.5);
+    doc.line(margin, yPos, pageWidth - margin, yPos);
+    yPos += 15;
+
+    // Resumen y conclusiones
+    doc.setTextColor(60, 60, 60);
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
+
+    const conclusions = [
+      `• Se analizaron un total de ${stats.totalInstances} instancias con ${stats.totalUsers} usuarios registrados.`,
+      `• El uptime promedio del sistema es del ${stats.avgUptime}%, indicando una alta disponibilidad.`,
+      `• Se gestionan ${stats.totalExpedientes} expedientes en total, con ${stats.nuevosExpedientes} nuevos en el período.`,
+      `• La tasa de usuarios activos es del ${Math.round((stats.activeUsers / stats.totalUsers) * 100)}% del total.`,
+      `• La instancia con mejor rendimiento es ${filteredData.reduce((best, current) => 
+        (current.uptime > best.uptime ? current : best)).name}.`,
+    ];
+
+    conclusions.forEach(conclusion => {
+      doc.text(conclusion, margin, yPos);
+      yPos += 8;
+    });
+
+    yPos += 10;
+
+    // Recomendaciones
+    doc.setTextColor(institutionalColors.primary);
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text("RECOMENDACIONES", margin, yPos);
+    yPos += 5;
+    
+    doc.setDrawColor(institutionalColors.primary);
+    doc.setLineWidth(0.2);
+    doc.line(margin, yPos, pageWidth - margin, yPos);
+    yPos += 10;
+
+    doc.setTextColor(60, 60, 60);
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
+
+    const recommendations = [
+      "• Implementar monitoreo adicional para instancias con uptime inferior al 99.5%",
+      "• Realizar capacitación para aumentar la tasa de usuarios activos",
+      "• Optimizar el proceso de creación de expedientes para reducir tiempos de respuesta",
+      "• Establecer alertas tempranas para prevenir caídas del sistema",
+    ];
+
+    recommendations.forEach(rec => {
+      doc.text(rec, margin, yPos);
+      yPos += 8;
+    });
+
+    // Agregar sello de aprobación
+    yPos = pageHeight - 40;
+    doc.setDrawColor(200, 200, 200);
+    doc.setLineWidth(0.2);
+    doc.line(margin, yPos, pageWidth - margin, yPos);
+    
+    doc.setTextColor(100, 100, 100);
+    doc.setFontSize(9);
+    doc.text("Aprobado por:", margin, yPos + 8);
+    doc.text("Dirección de Sistemas", margin, yPos + 15);
+    
+    doc.text("Fecha de aprobación:", pageWidth - margin - 60, yPos + 8);
+    doc.text(new Date().toLocaleDateString(), pageWidth - margin - 60, yPos + 15);
+
+    addFooter(pageNum);
+
+    // Guardar el PDF
+    doc.save(`reporte_instancias_${new Date().toISOString().split('T')[0]}.pdf`);
+  };
+
   return (
     <Box
       sx={{
@@ -498,7 +823,10 @@ const InstanceReports = () => {
             >
               Reportes de Instancias
             </Typography>
-            <Typography variant="body2" sx={{ color: institutionalColors.textSecondary }}>
+            <Typography
+              variant="body2"
+              sx={{ color: institutionalColors.textSecondary }}
+            >
               {instanceFilter === "all"
                 ? "Información estadística de todas las instancias"
                 : `Información detallada de ${instanceFilter}`}
@@ -517,7 +845,7 @@ const InstanceReports = () => {
                 onClick={handleDownloadPDF}
                 sx={{
                   bgcolor: institutionalColors.primary,
-                  '&:hover': { bgcolor: institutionalColors.secondary }
+                  "&:hover": { bgcolor: institutionalColors.secondary },
                 }}
               >
                 Exportar PDF
@@ -528,19 +856,26 @@ const InstanceReports = () => {
       </Paper>
 
       {/* FILTROS */}
-      <Paper elevation={0} sx={{ p: 2, mb: 3, borderRadius: 2, border: `1px solid #e5e7eb` }}>
+      <Paper
+        elevation={0}
+        sx={{ p: 2, mb: 3, borderRadius: 2, border: `1px solid #e5e7eb` }}
+      >
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6} md={3}>
             <FormControl fullWidth size="small">
-              <InputLabel sx={{ '&.Mui-focused': { color: institutionalColors.primary } }}>Tipo de Reporte</InputLabel>
+              <InputLabel
+                sx={{ "&.Mui-focused": { color: institutionalColors.primary } }}
+              >
+                Tipo de Reporte
+              </InputLabel>
               <Select
                 value={reportType}
                 label="Tipo de Reporte"
                 onChange={(e) => setReportType(e.target.value)}
                 sx={{
-                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                     borderColor: institutionalColors.primary,
-                  }
+                  },
                 }}
               >
                 {reportTypes.map((type) => (
@@ -556,15 +891,19 @@ const InstanceReports = () => {
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <FormControl fullWidth size="small">
-              <InputLabel sx={{ '&.Mui-focused': { color: institutionalColors.primary } }}>Periodo</InputLabel>
+              <InputLabel
+                sx={{ "&.Mui-focused": { color: institutionalColors.primary } }}
+              >
+                Periodo
+              </InputLabel>
               <Select
                 value={dateRange}
                 label="Periodo"
                 onChange={(e) => setDateRange(e.target.value)}
                 sx={{
-                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                     borderColor: institutionalColors.primary,
-                  }
+                  },
                 }}
               >
                 {dateRanges.map((range) => (
@@ -577,15 +916,19 @@ const InstanceReports = () => {
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <FormControl fullWidth size="small">
-              <InputLabel sx={{ '&.Mui-focused': { color: institutionalColors.primary } }}>Instancia</InputLabel>
+              <InputLabel
+                sx={{ "&.Mui-focused": { color: institutionalColors.primary } }}
+              >
+                Instancia
+              </InputLabel>
               <Select
                 value={instanceFilter}
                 label="Instancia"
                 onChange={(e) => setInstanceFilter(e.target.value)}
                 sx={{
-                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                     borderColor: institutionalColors.primary,
-                  }
+                  },
                 }}
               >
                 {instanceFilters.map((filter) => (
@@ -605,7 +948,7 @@ const InstanceReports = () => {
                 onClick={handleGenerateReport}
                 sx={{
                   bgcolor: institutionalColors.primary,
-                  '&:hover': { bgcolor: institutionalColors.secondary }
+                  "&:hover": { bgcolor: institutionalColors.secondary },
                 }}
               >
                 Generar
@@ -617,6 +960,7 @@ const InstanceReports = () => {
           </Grid>
         </Grid>
       </Paper>
+      
       {/* KPI CARDS */}
       <Grid
         container
@@ -632,16 +976,26 @@ const InstanceReports = () => {
             <CardContent>
               <Stack direction="row" justifyContent="space-between">
                 <Box>
-                  <Typography variant="caption" color={institutionalColors.textSecondary}>
+                  <Typography
+                    variant="caption"
+                    color={institutionalColors.textSecondary}
+                  >
                     Instancias
                   </Typography>
-
-                  <Typography variant="h4" fontWeight="bold" sx={{ color: institutionalColors.textPrimary }}>
+                  <Typography
+                    variant="h4"
+                    fontWeight="bold"
+                    sx={{ color: institutionalColors.textPrimary }}
+                  >
                     {stats.totalInstances}
                   </Typography>
                 </Box>
-
-                <DomainIcon sx={{ fontSize: 40, color: `${institutionalColors.primary}33` }} />
+                <DomainIcon
+                  sx={{
+                    fontSize: 40,
+                    color: `${institutionalColors.primary}33`,
+                  }}
+                />
               </Stack>
             </CardContent>
           </Card>
@@ -652,16 +1006,26 @@ const InstanceReports = () => {
             <CardContent>
               <Stack direction="row" justifyContent="space-between">
                 <Box>
-                  <Typography variant="caption" color={institutionalColors.textSecondary}>
+                  <Typography
+                    variant="caption"
+                    color={institutionalColors.textSecondary}
+                  >
                     Usuarios
                   </Typography>
-
-                  <Typography variant="h4" fontWeight="bold" sx={{ color: institutionalColors.textPrimary }}>
+                  <Typography
+                    variant="h4"
+                    fontWeight="bold"
+                    sx={{ color: institutionalColors.textPrimary }}
+                  >
                     {stats.totalUsers}
                   </Typography>
                 </Box>
-
-                <GroupIcon sx={{ fontSize: 40, color: `${institutionalColors.success}33` }} />
+                <GroupIcon
+                  sx={{
+                    fontSize: 40,
+                    color: `${institutionalColors.success}33`,
+                  }}
+                />
               </Stack>
             </CardContent>
           </Card>
@@ -672,53 +1036,140 @@ const InstanceReports = () => {
             <CardContent>
               <Stack direction="row" justifyContent="space-between">
                 <Box>
-                  <Typography variant="caption" color={institutionalColors.textSecondary}>
+                  <Typography
+                    variant="caption"
+                    color={institutionalColors.textSecondary}
+                  >
                     Expedientes
                   </Typography>
-
-                  <Typography variant="h4" fontWeight="bold" sx={{ color: institutionalColors.textPrimary }}>
+                  <Typography
+                    variant="h4"
+                    fontWeight="bold"
+                    sx={{ color: institutionalColors.textPrimary }}
+                  >
                     {stats.totalExpedientes}
                   </Typography>
                 </Box>
-
-                <StorageIcon sx={{ fontSize: 40, color: `${institutionalColors.warning}33` }} />
+                <StorageIcon
+                  sx={{
+                    fontSize: 40,
+                    color: `${institutionalColors.warning}33`,
+                  }}
+                />
               </Stack>
             </CardContent>
           </Card>
         </Grid>
       </Grid>
-      <br />
 
-      {/* TABLA DE INSTANCIAS - OCUPA TODO EL ANCHO */}
-      <Paper sx={{ p: 2, borderRadius: 2, overflow: "hidden", mb: 3, border: `1px solid #e5e7eb` }}>
-        <Typography variant="h6" fontWeight="600" mb={2} sx={{ color: institutionalColors.primary }}>
+      {/* TABLA DE INSTANCIAS */}
+      <Paper
+        sx={{
+          p: 2,
+          borderRadius: 2,
+          overflow: "hidden",
+          mb: 3,
+          border: `1px solid #e5e7eb`,
+        }}
+      >
+        <Typography
+          variant="h6"
+          fontWeight="600"
+          mb={2}
+          sx={{ color: institutionalColors.primary }}
+        >
           Detalle de Instancias
         </Typography>
         <TableContainer>
           <Table stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell sx={{ color: institutionalColors.primary }}><strong>Instancia</strong></TableCell>
-                <TableCell sx={{ color: institutionalColors.primary }}><strong>Código</strong></TableCell>
-                <TableCell align="right" sx={{ color: institutionalColors.primary }}><strong>Usuarios</strong></TableCell>
-                <TableCell align="right" sx={{ color: institutionalColors.primary }}><strong>Activos</strong></TableCell>
-                <TableCell align="right" sx={{ color: institutionalColors.primary }}><strong>Expedientes</strong></TableCell>
-                <TableCell align="right" sx={{ color: institutionalColors.primary }}><strong>Nuevos</strong></TableCell>
-                <TableCell align="right" sx={{ color: institutionalColors.primary }}><strong>Uptime</strong></TableCell>
-                <TableCell sx={{ color: institutionalColors.primary }}><strong>Estado</strong></TableCell>
-                <TableCell align="right" sx={{ color: institutionalColors.primary }}><strong>Crecimiento</strong></TableCell>
+                <TableCell sx={{ color: institutionalColors.primary }}>
+                  <strong>Instancia</strong>
+                </TableCell>
+                <TableCell sx={{ color: institutionalColors.primary }}>
+                  <strong>Código</strong>
+                </TableCell>
+                <TableCell
+                  align="right"
+                  sx={{ color: institutionalColors.primary }}
+                >
+                  <strong>Usuarios</strong>
+                </TableCell>
+                <TableCell
+                  align="right"
+                  sx={{ color: institutionalColors.primary }}
+                >
+                  <strong>Activos</strong>
+                </TableCell>
+                <TableCell
+                  align="right"
+                  sx={{ color: institutionalColors.primary }}
+                >
+                  <strong>Expedientes</strong>
+                </TableCell>
+                <TableCell
+                  align="right"
+                  sx={{ color: institutionalColors.primary }}
+                >
+                  <strong>Nuevos</strong>
+                </TableCell>
+                <TableCell
+                  align="right"
+                  sx={{ color: institutionalColors.primary }}
+                >
+                  <strong>Uptime</strong>
+                </TableCell>
+                <TableCell sx={{ color: institutionalColors.primary }}>
+                  <strong>Estado</strong>
+                </TableCell>
+                <TableCell
+                  align="right"
+                  sx={{ color: institutionalColors.primary }}
+                >
+                  <strong>Crecimiento</strong>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {filteredData.map((row) => (
                 <TableRow key={row.name} hover>
-                  <TableCell sx={{ color: institutionalColors.textPrimary }}>{row.name}</TableCell>
-                  <TableCell sx={{ color: institutionalColors.textSecondary }}>{row.code}</TableCell>
-                  <TableCell align="right" sx={{ color: institutionalColors.textPrimary }}>{row.users}</TableCell>
-                  <TableCell align="right" sx={{ color: institutionalColors.textPrimary }}>{row.activeUsers}</TableCell>
-                  <TableCell align="right" sx={{ color: institutionalColors.textPrimary }}>{row.expedientes}</TableCell>
-                  <TableCell align="right" sx={{ color: institutionalColors.textPrimary }}>{row.nuevosExpedientes}</TableCell>
-                  <TableCell align="right" sx={{ color: institutionalColors.textPrimary }}>{row.uptime}%</TableCell>
+                  <TableCell sx={{ color: institutionalColors.textPrimary }}>
+                    {row.name}
+                  </TableCell>
+                  <TableCell sx={{ color: institutionalColors.textSecondary }}>
+                    {row.code}
+                  </TableCell>
+                  <TableCell
+                    align="right"
+                    sx={{ color: institutionalColors.textPrimary }}
+                  >
+                    {row.users}
+                  </TableCell>
+                  <TableCell
+                    align="right"
+                    sx={{ color: institutionalColors.textPrimary }}
+                  >
+                    {row.activeUsers}
+                  </TableCell>
+                  <TableCell
+                    align="right"
+                    sx={{ color: institutionalColors.textPrimary }}
+                  >
+                    {row.expedientes}
+                  </TableCell>
+                  <TableCell
+                    align="right"
+                    sx={{ color: institutionalColors.textPrimary }}
+                  >
+                    {row.nuevosExpedientes}
+                  </TableCell>
+                  <TableCell
+                    align="right"
+                    sx={{ color: institutionalColors.textPrimary }}
+                  >
+                    {row.uptime}%
+                  </TableCell>
                   <TableCell>
                     <Chip
                       label={row.status}
@@ -736,7 +1187,7 @@ const InstanceReports = () => {
                       sx={{
                         color: row.crecimiento.includes("+")
                           ? institutionalColors.success
-                          : institutionalColors.error
+                          : institutionalColors.error,
                       }}
                     >
                       {row.crecimiento}
@@ -749,7 +1200,7 @@ const InstanceReports = () => {
         </TableContainer>
       </Paper>
 
-      {/* SECCIÓN DE GRÁFICAS CON COLLAPSIBLES INDIVIDUALES */}
+      {/* SECCIÓN DE GRÁFICAS CON IDs PARA EL PDF */}
       <Paper
         sx={{
           p: 2,
@@ -759,11 +1210,15 @@ const InstanceReports = () => {
           border: `1px solid #e5e7eb`,
         }}
       >
-        <Typography variant="h6" fontWeight="600" sx={{ mb: 2, color: institutionalColors.primary }}>
+        <Typography
+          variant="h6"
+          fontWeight="600"
+          sx={{ mb: 2, color: institutionalColors.primary }}
+        >
           Visualización de Datos
         </Typography>
 
-        {/* LINE CHART */}
+        {/* LINE CHART con ID */}
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 2, borderRadius: 3, border: `1px solid #e5e7eb` }}>
             <Stack
@@ -772,19 +1227,31 @@ const InstanceReports = () => {
               alignItems="center"
               sx={{ mb: 2 }}
             >
-              <Typography variant="subtitle1" fontWeight="600" sx={{ color: institutionalColors.textPrimary }}>
+              <Typography
+                variant="subtitle1"
+                fontWeight="600"
+                sx={{ color: institutionalColors.textPrimary }}
+              >
                 <ShowChartIcon
-                  sx={{ mr: 1, verticalAlign: "middle", color: institutionalColors.primary }}
+                  sx={{
+                    mr: 1,
+                    verticalAlign: "middle",
+                    color: institutionalColors.primary,
+                  }}
                 />
                 {getTrendTitle()}
               </Typography>
-              <IconButton onClick={toggleLineChart} size="small" sx={{ color: institutionalColors.primary }}>
+              <IconButton
+                onClick={toggleLineChart}
+                size="small"
+                sx={{ color: institutionalColors.primary }}
+              >
                 {showLineChart ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </IconButton>
             </Stack>
             <Divider sx={{ mb: 2 }} />
             <Collapse in={showLineChart} timeout="auto" unmountOnExit>
-              <Box sx={{ height: 330 }}>
+              <Box id="line-chart-container" sx={{ height: 330 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart
                     data={filteredTrendData}
@@ -832,7 +1299,8 @@ const InstanceReports = () => {
           </Paper>
         </Grid>
         <br />
-        {/* PIE CHART */}
+        
+        {/* PIE CHART con ID */}
         <Grid item xs={12} md={3}>
           <Paper sx={{ p: 2, borderRadius: 3, border: `1px solid #e5e7eb` }}>
             <Stack
@@ -841,19 +1309,31 @@ const InstanceReports = () => {
               alignItems="center"
               sx={{ mb: 2 }}
             >
-              <Typography variant="subtitle1" fontWeight="600" sx={{ color: institutionalColors.textPrimary }}>
+              <Typography
+                variant="subtitle1"
+                fontWeight="600"
+                sx={{ color: institutionalColors.textPrimary }}
+              >
                 <PieChartIcon
-                  sx={{ mr: 1, verticalAlign: "middle", color: institutionalColors.primary }}
+                  sx={{
+                    mr: 1,
+                    verticalAlign: "middle",
+                    color: institutionalColors.primary,
+                  }}
                 />
                 Distribución de Expedientes
               </Typography>
-              <IconButton onClick={togglePieChart} size="small" sx={{ color: institutionalColors.primary }}>
+              <IconButton
+                onClick={togglePieChart}
+                size="small"
+                sx={{ color: institutionalColors.primary }}
+              >
                 {showPieChart ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </IconButton>
             </Stack>
             <Divider sx={{ mb: 2 }} />
             <Collapse in={showPieChart} timeout="auto" unmountOnExit>
-              <Box sx={{ height: 330 }}>
+              <Box id="pie-chart-container" sx={{ height: 330 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -878,7 +1358,8 @@ const InstanceReports = () => {
           </Paper>
         </Grid>
         <br />
-        {/* BAR CHART */}
+        
+        {/* BAR CHART con ID */}
         <Grid item xs={12} md={3}>
           <Paper sx={{ p: 2, borderRadius: 3, border: `1px solid #e5e7eb` }}>
             <Stack
@@ -887,19 +1368,31 @@ const InstanceReports = () => {
               alignItems="center"
               sx={{ mb: 2 }}
             >
-              <Typography variant="subtitle1" fontWeight="600" sx={{ color: institutionalColors.textPrimary }}>
+              <Typography
+                variant="subtitle1"
+                fontWeight="600"
+                sx={{ color: institutionalColors.textPrimary }}
+              >
                 <BarChartIcon
-                  sx={{ mr: 1, verticalAlign: "middle", color: institutionalColors.primary }}
+                  sx={{
+                    mr: 1,
+                    verticalAlign: "middle",
+                    color: institutionalColors.primary,
+                  }}
                 />
                 Usuarios Activos
               </Typography>
-              <IconButton onClick={toggleBarChart} size="small" sx={{ color: institutionalColors.primary }}>
+              <IconButton
+                onClick={toggleBarChart}
+                size="small"
+                sx={{ color: institutionalColors.primary }}
+              >
                 {showBarChart ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </IconButton>
             </Stack>
             <Divider sx={{ mb: 2 }} />
             <Collapse in={showBarChart} timeout="auto" unmountOnExit>
-              <Box sx={{ height: 330 }}>
+              <Box id="bar-chart-container" sx={{ height: 330 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={usersChartData}
@@ -922,8 +1415,6 @@ const InstanceReports = () => {
           </Paper>
         </Grid>
       </Paper>
-
-      {/* ALERTAS (solo visible cuando hay) */}
     </Box>
   );
 };

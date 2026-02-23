@@ -22,7 +22,6 @@ import {
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
   Login as LoginIcon,
-  Security as SecurityIcon,
 } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
 
