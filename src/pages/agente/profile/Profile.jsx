@@ -320,509 +320,428 @@ const handleDownloadCertificate = async () => {
       </Box>
 
       {/* ===== FILA SUPERIOR ===== */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        {/* 1. Foto de Perfil */}
-        <Grid item xs={12} md={3}>
-          <Card sx={{ 
-            height: '100%',
-            borderRadius: 2,
-            boxShadow: `0 4px 12px ${colors.primary.main}15`,
-            border: `1px solid ${colors.primary.main}20`,
-            background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
+<Grid 
+  container 
+  spacing={3} 
+  sx={{ 
+    mb: 4,
+    width: '100%',
+    mx: 0
+  }}
+>
+  {/* 1. Foto de Perfil - 40% */}
+  <Grid 
+    item 
+    xs={12} 
+    md={4} 
+    sx={{ 
+      flexBasis: {
+        md: '40%'
+      },
+      maxWidth: {
+        md: '40%'
+      }
+    }}
+  >
+    <Card sx={{ 
+      height: '100%',
+      borderRadius: 2,
+      boxShadow: `0 4px 12px ${colors.primary.main}15`,
+      border: `1px solid ${colors.primary.main}20`,
+      background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
+    }}>
+      <CardContent sx={{ 
+        textAlign: 'center', 
+        height: '100%', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        justifyContent: 'center',
+        py: 3,
+        px: 2
+      }}>
+        {/* Avatar */}
+        <Box sx={{ position: 'relative', display: 'inline-block', mb: 2 }}>
+          <Avatar sx={{ 
+            width: 120, 
+            height: 120, 
+            fontSize: '2.8rem', 
+            bgcolor: colors.primary.main,
+            margin: '0 auto',
+            border: `4px solid ${colors.primary.main}20`,
+            boxShadow: `0 4px 12px ${colors.primary.main}30`
           }}>
-            <CardContent sx={{ 
-              textAlign: 'center', 
-              height: '100%', 
-              display: 'flex', 
-              flexDirection: 'column', 
-              justifyContent: 'center',
-              py: 3,
-              px: 2
+            LR
+          </Avatar>
+          {editMode && (
+            <IconButton
+              sx={{
+                position: 'absolute',
+                bottom: 0,
+                right: 'calc(50% - 60px)',
+                bgcolor: 'white',
+                border: '2px solid #fff',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                '&:hover': { bgcolor: '#f5f5f5' }
+              }}
+              size="small"
+            >
+              <CameraIcon fontSize="small" />
+            </IconButton>
+          )}
+        </Box>
+
+        {/* Nombre */}
+        <Typography variant="h6" fontWeight="bold" sx={{ 
+          mt: 2,
+          color: colors.text.primary,
+          fontSize: '1.25rem',
+          letterSpacing: '0.3px',
+          textShadow: '0 1px 2px rgba(0,0,0,0.05)'
+        }}>
+          {profile.nombre}
+        </Typography>
+
+        {/* Rol */}
+        <Chip 
+          label={profile.rol} 
+          size="medium" 
+          sx={{ 
+            mt: 1.5, 
+            mb: 2, 
+            fontWeight: '600',
+            fontSize: '0.85rem',
+            height: '28px',
+            borderRadius: '16px',
+            boxShadow: `0 2px 4px ${colors.primary.main}30`,
+            bgcolor: colors.primary.main,
+            color: 'white'
+          }} 
+        />
+
+        {/* Sección de información */}
+        <Box sx={{ width: '100%', mb: 2 }}>
+          {/* Nivel */}
+          <Box sx={{ 
+            mb: 2,
+            p: 1.5,
+            borderRadius: '10px',
+            bgcolor: `${colors.primary.main}10`,
+            borderLeft: `4px solid ${colors.primary.main}`
+          }}>
+            <Typography variant="body1" sx={{ 
+              color: colors.text.primary, 
+              fontWeight: '700',
+              fontSize: '1.1rem',
+              lineHeight: 1.2
             }}>
-              {/* Avatar */}
-              <Box sx={{ position: 'relative', display: 'inline-block', mb: 2 }}>
-                <Avatar sx={{ 
-                  width: 120, 
-                  height: 120, 
-                  fontSize: '2.8rem', 
-                  bgcolor: colors.primary.main,
-                  margin: '0 auto',
-                  border: `4px solid ${colors.primary.main}20`,
-                  boxShadow: `0 4px 12px ${colors.primary.main}30`
-                }}>
-                  LR
-                </Avatar>
-                {editMode && (
-                  <IconButton
-                    sx={{
-                      position: 'absolute',
-                      bottom: 0,
-                      right: 'calc(50% - 60px)',
-                      bgcolor: 'white',
-                      border: '2px solid #fff',
-                      boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-                      '&:hover': { bgcolor: '#f5f5f5' }
-                    }}
-                    size="small"
-                  >
-                    <CameraIcon fontSize="small" />
-                  </IconButton>
-                )}
-              </Box>
+              {profile.nivel}
+            </Typography>
+            <Typography variant="body1" sx={{ 
+              color: colors.text.primary, 
+              fontWeight: '600',
+              fontSize: '0.95rem',
+              lineHeight: 1.3
+            }}>
+              {profile.des_Nivel}
+            </Typography>
+          </Box>
 
-              {/* Nombre */}
-              <Typography variant="h6" fontWeight="bold" sx={{ 
-                mt: 2,
-                color: colors.text.primary,
-                fontSize: '1.25rem',
-                letterSpacing: '0.3px',
-                textShadow: '0 1px 2px rgba(0,0,0,0.05)'
-              }}>
-                {profile.nombre}
-              </Typography>
+          {/* Botón Ver Certificado */}
+          <Button
+            fullWidth
+            variant="outlined"
+            startIcon={<PdfIcon />}
+            onClick={() => setCertificadoDialog(true)}
+            sx={{
+              mb: 2,
+              borderColor: colors.primary.main,
+              color: colors.primary.main,
+              '&:hover': {
+                borderColor: colors.primary.dark,
+                backgroundColor: `${colors.primary.main}10`
+              }
+            }}
+          >
+            Ver Certificado
+          </Button>
+          
+          {/* Región */}
+          <Box sx={{ 
+            p: 1.5,
+            borderRadius: '10px',
+            bgcolor: `${colors.accents.purple}10`,
+            borderLeft: `4px solid ${colors.accents.purple}`
+          }}>
+            <Typography variant="body1" sx={{ 
+              color: colors.text.primary, 
+              fontWeight: '700',
+              fontSize: '1.1rem',
+              lineHeight: 1.2
+            }}>
+              Región {profile.region}
+            </Typography>
+          </Box>
+        </Box>
+      </CardContent>
+    </Card>
+  </Grid>
 
-              {/* Rol */}
-              <Chip 
-                label={profile.rol} 
-                size="medium" 
+  {/* 2. MIS ADUANAS - 35% (centro) */}
+  <Grid 
+    item 
+    xs={12} 
+    md={4} 
+    sx={{ 
+      flexBasis: {
+        md: '35%'
+      },
+      maxWidth: {
+        md: '35%'
+      }
+    }}
+  >
+    <Card sx={{ height: '100%' }}>
+      <CardContent sx={{ height: '100%', p: 2, display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          mb: 2.5
+        }}>
+          <Typography variant="h6" sx={{ 
+            fontWeight: 'bold', 
+            color: colors.text.primary,
+            fontSize: '1rem'
+          }}>
+            Mis Aduanas
+          </Typography>
+          <Button 
+            variant="contained" 
+            size="small"
+            startIcon={<AddCircleIcon />}
+            onClick={() => setAduanaDialog(true)}
+            disabled={aduanaList.length >= 4}
+            sx={{ 
+              fontSize: '0.7rem',
+              fontWeight: 'bold',
+              height: '28px',
+              minWidth: '75px',
+              p: '2px 10px',
+              bgcolor: colors.primary.main,
+              '&:hover': { bgcolor: colors.primary.dark }
+            }}
+          >
+            Agregar
+          </Button>
+        </Box>
+
+        <Box sx={{ 
+          flex: 1,
+          p: 1.5,
+          borderRadius: 1,
+          bgcolor: `${colors.primary.main}10`,
+          border: `1px solid ${colors.primary.main}30`,
+          overflow: 'auto',
+          maxHeight: '340px'
+        }}>
+          <Stack spacing={1.5}>
+            {aduanaList.map((aduana) => (
+              <Paper 
+                key={aduana.id}
+                elevation={0}
                 sx={{ 
-                  mt: 1.5, 
-                  mb: 2, 
-                  fontWeight: '600',
-                  fontSize: '0.85rem',
-                  height: '28px',
-                  borderRadius: '16px',
-                  boxShadow: `0 2px 4px ${colors.primary.main}30`,
-                  bgcolor: colors.primary.main,
-                  color: 'white'
-                }} 
-              />
-
-              {/* Sección de información */}
-              <Box sx={{ width: '100%', mb: 2 }}>
-                {/* Nivel */}
-                <Box sx={{ 
-                  mb: 2,
-                  p: 1.5,
-                  borderRadius: '10px',
-                  bgcolor: `${colors.primary.main}10`,
-                  borderLeft: `4px solid ${colors.primary.main}`
-                }}>
-                  <Typography variant="body1" sx={{ 
-                    color: colors.text.primary, 
-                    fontWeight: '700',
-                    fontSize: '1.1rem',
-                    lineHeight: 1.2
-                  }}>
-                    {profile.nivel}
-                  </Typography>
-                  <Typography variant="body1" sx={{ 
-                    color: colors.text.primary, 
-                    fontWeight: '600',
-                    fontSize: '0.95rem',
-                    lineHeight: 1.3
-                  }}>
-                    {profile.des_Nivel}
-                  </Typography>
-                </Box>
-
-                {/* Botón Ver Certificado */}
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  startIcon={<PdfIcon />}
-                  onClick={() => setCertificadoDialog(true)}
-                  sx={{
-                    mb: 2,
-                    borderColor: colors.primary.main,
-                    color: colors.primary.main,
-                    '&:hover': {
-                      borderColor: colors.primary.dark,
-                      backgroundColor: `${colors.primary.main}10`
-                    }
-                  }}
-                >
-                  Ver Certificado
-                </Button>
-                
-                {/* Región */}
-                <Box sx={{ 
-                  p: 1.5,
-                  borderRadius: '10px',
-                  bgcolor: `${colors.accents.purple}10`,
-                  borderLeft: `4px solid ${colors.accents.purple}`
-                }}>
-                  <Typography variant="body1" sx={{ 
-                    color: colors.text.primary, 
-                    fontWeight: '700',
-                    fontSize: '1.1rem',
-                    lineHeight: 1.2
-                  }}>
-                    Region {profile.region}
-                  </Typography>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {/* 2. Mi Actividad */}
-        <Grid item xs={12} md={3}>
-          <Card sx={{ height: '100%' }}>
-            <CardContent>
-              <Typography variant="h6" sx={{ 
-                mb: 3, 
-                fontWeight: 'bold', 
-                color: colors.text.primary,
-                textAlign: 'center'
-              }}>
-                Mi Actividad
-              </Typography>
-
-              <Stack spacing={3}>
-                <Box sx={{ 
-                  textAlign: 'center',
                   p: 1.5,
                   borderRadius: 1,
-                  bgcolor: '#f8f9fa'
-                }}>
-                  <Typography variant="body2" sx={{ color: colors.text.secondary, mb: 0.5 }}>
-                    Certificaciones Activas
-                  </Typography>
-                  <Typography variant="h3" fontWeight="bold" sx={{ color: colors.text.primary }}>
-                    8
-                  </Typography>
-                </Box>
-                
-                <Box sx={{ 
-                  textAlign: 'center',
-                  p: 1.5,
-                  borderRadius: 1,
-                  bgcolor: `${colors.status.warning}15`
-                }}>
-                  <Typography variant="body2" sx={{ color: colors.text.secondary, mb: 0.5 }}>
-                    En Revisión
-                  </Typography>
-                  <Typography variant="h3" sx={{ color: colors.status.warning, fontWeight: 'bold' }}>
-                    2
-                  </Typography>
-                </Box>
-                
-                <Box sx={{ 
-                  textAlign: 'center',
-                  p: 1.5,
-                  borderRadius: 1,
-                  bgcolor: `${colors.status.error}15`
-                }}>
-                  <Typography variant="body2" sx={{ color: colors.text.secondary, mb: 0.5 }}>
-                    Por Vencer (30 días)
-                  </Typography>
-                  <Typography variant="h3" sx={{ color: colors.status.error, fontWeight: 'bold' }}>
-                    1
-                  </Typography>
-                </Box>
-                
-                <Box sx={{ 
-                  pt: 2, 
-                  mt: 2,
-                  borderTop: `1px solid ${colors.primary.main}20`,
-                  textAlign: 'center'
-                }}>
-                  <Typography variant="body2" sx={{ color: colors.text.secondary, mb: 0.5 }}>
-                    Último Acceso
-                  </Typography>
-                  <Typography variant="body1" sx={{ 
-                    fontWeight: 'medium',
-                    color: colors.text.primary
-                  }}>
-                    {profile.ultimoAcceso}
-                  </Typography>
-                </Box>
-              </Stack>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {/* 3. MIS ADUANAS */}
-        <Grid item xs={12} md={3.2}>
-          <Card sx={{ height: '100%' }}>
-            <CardContent sx={{ height: '100%', p: 2 }}>
-              <Box sx={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center', 
-                mb: 2.5
-              }}>
-                <Typography variant="h6" sx={{ 
-                  fontWeight: 'bold', 
-                  color: colors.text.primary,
-                  fontSize: '1rem'
-                }}>
-                  Mis Aduanas
-                </Typography>
-                <Button 
-                  variant="contained" 
-                  size="small"
-                  startIcon={<AddCircleIcon />}
-                  onClick={() => setAduanaDialog(true)}
-                  disabled={aduanaList.length >= 4}
-                  sx={{ 
-                    fontSize: '0.7rem',
-                    fontWeight: 'bold',
-                    height: '28px',
-                    minWidth: '75px',
-                    p: '2px 10px',
-                    bgcolor: colors.primary.main,
-                    '&:hover': { bgcolor: colors.primary.dark }
-                  }}
-                >
-                  Agregar
-                </Button>
-              </Box>
-
-              <Box sx={{ 
-                height: 'calc(100% - 60px)',
-                p: 1.5,
-                borderRadius: 1,
-                bgcolor: `${colors.primary.main}10`,
-                border: `1px solid ${colors.primary.main}30`,
-                overflow: 'auto'
-              }}>
-                <Stack spacing={1}>
-                  {aduanaList.map((aduana) => (
-                    <Paper 
-                      key={aduana.id}
-                      elevation={0}
-                      sx={{ 
-                        p: 1,
-                        borderRadius: 0.8,
-                        border: `1px solid ${colors.primary.main}20`,
-                        bgcolor: aduana.tipo === 'Principal' ? `${colors.status.warning}15` : 'white',
-                        borderLeft: `3px solid ${aduana.tipo === 'Principal' ? colors.status.warning : colors.primary.main}`
-                      }}
-                    >
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <Box sx={{ flex: 1 }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
-                            <LocationCityIcon sx={{ 
-                              mr: 1, 
-                              color: aduana.tipo === 'Principal' ? colors.status.warning : colors.primary.main,
-                              fontSize: '1rem'
-                            }} />
-                            <Typography variant="caption" fontWeight="bold" sx={{ fontSize: '0.75rem', color: colors.text.primary }}>
-                              {aduana.nombre}
-                            </Typography>
-                          </Box>
-                          <Typography variant="caption" sx={{ color: colors.text.secondary, fontSize: '0.65rem', display: 'block', pl: 2 }}>
-                            <strong>Registro:</strong> {aduana.numeroRegistro}
-                          </Typography>
-                          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pl: 2, mt: 0.5 }}>
-                            <Typography variant="caption" sx={{ color: colors.text.secondary, fontSize: '0.65rem' }}>
-                              <strong>Fecha:</strong> {aduana.fechaRegistro}
-                            </Typography>
-                            {aduana.tipo === 'Principal' && (
-                              <Chip
-                                label="Principal"
-                                size="small"
-                                sx={{ 
-                                  height: 18, 
-                                  fontSize: '0.6rem',
-                                  bgcolor: colors.status.warning,
-                                  color: 'white'
-                                }}
-                              />
-                            )}
-                          </Box>
-                        </Box>
-                        
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, ml: 1 }}>
-                          <Tooltip title={aduana.tipo === 'Principal' ? "Aduana principal" : "Establecer como principal"}>
-                            <IconButton 
-                              size="small" 
-                              onClick={() => handleSetPrincipal(aduana.id)}
-                              disabled={aduana.tipo === 'Principal'}
-                              sx={{ 
-                                color: aduana.tipo === 'Principal' ? colors.status.warning : colors.text.secondary,
-                                p: 0.25
-                              }}
-                            >
-                              {aduana.tipo === 'Principal' ? <StarIcon fontSize="small" /> : <StarBorderIcon fontSize="small" />}
-                            </IconButton>
-                          </Tooltip>
-                          
-                          <IconButton 
-                            size="small" 
-                            onClick={() => handleDeleteAduana(aduana.id)}
-                            sx={{ color: colors.status.error, p: 0.25 }}
-                          >
-                            <DeleteIcon fontSize="small" />
-                          </IconButton>
-                        </Box>
+                  border: `1px solid ${colors.primary.main}20`,
+                  bgcolor: aduana.tipo === 'Principal' ? `${colors.status.warning}15` : 'white',
+                  borderLeft: `4px solid ${aduana.tipo === 'Principal' ? colors.status.warning : colors.primary.main}`,
+                  transition: 'all 0.2s',
+                  '&:hover': {
+                    boxShadow: `0 2px 8px ${colors.primary.main}20`,
+                    transform: 'translateY(-1px)'
+                  }
+                }}
+              >
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <Box sx={{ flex: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <LocationCityIcon sx={{ 
+                        mr: 1, 
+                        color: aduana.tipo === 'Principal' ? colors.status.warning : colors.primary.main,
+                        fontSize: '1.1rem'
+                      }} />
+                      <Typography variant="body2" fontWeight="bold" sx={{ fontSize: '0.9rem', color: colors.text.primary }}>
+                        {aduana.nombre}
+                      </Typography>
+                    </Box>
+                    
+                    <Grid container spacing={1} sx={{ pl: 2 }}>
+                      <Grid item xs={6}>
+                        <Typography variant="caption" sx={{ color: colors.text.secondary, fontSize: '0.7rem', display: 'block' }}>
+                          <strong>Registro:</strong>
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: colors.text.primary, fontSize: '0.75rem', fontWeight: '500', display: 'block' }}>
+                          {aduana.numeroRegistro}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography variant="caption" sx={{ color: colors.text.secondary, fontSize: '0.7rem', display: 'block' }}>
+                          <strong>Fecha:</strong>
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: colors.text.primary, fontSize: '0.75rem', fontWeight: '500', display: 'block' }}>
+                          {aduana.fechaRegistro}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                    
+                    {aduana.tipo === 'Principal' && (
+                      <Box sx={{ mt: 1, pl: 2 }}>
+                        <Chip
+                          label="Principal"
+                          size="small"
+                          sx={{ 
+                            height: 20, 
+                            fontSize: '0.65rem',
+                            bgcolor: colors.status.warning,
+                            color: 'white',
+                            fontWeight: 'bold'
+                          }}
+                        />
                       </Box>
-                    </Paper>
-                  ))}
-                </Stack>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
+                    )}
+                  </Box>
+                  
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                    <Tooltip title={aduana.tipo === 'Principal' ? "Aduana principal" : "Establecer como principal"}>
+                      <IconButton 
+                        size="small" 
+                        onClick={() => handleSetPrincipal(aduana.id)}
+                        disabled={aduana.tipo === 'Principal'}
+                        sx={{ 
+                          color: aduana.tipo === 'Principal' ? colors.status.warning : colors.text.secondary,
+                          p: 0.5,
+                          bgcolor: aduana.tipo === 'Principal' ? `${colors.status.warning}10` : 'transparent',
+                          '&:hover': { bgcolor: aduana.tipo === 'Principal' ? `${colors.status.warning}20` : `${colors.primary.main}10` }
+                        }}
+                      >
+                        {aduana.tipo === 'Principal' ? <StarIcon fontSize="small" /> : <StarBorderIcon fontSize="small" />}
+                      </IconButton>
+                    </Tooltip>
+                    
+                    <Tooltip title="Eliminar">
+                      <IconButton 
+                        size="small" 
+                        onClick={() => handleDeleteAduana(aduana.id)}
+                        sx={{ 
+                          color: colors.status.error,
+                          p: 0.5,
+                          '&:hover': { bgcolor: `${colors.status.error}10` }
+                        }}
+                      >
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                </Box>
+              </Paper>
+            ))}
+          </Stack>
+        </Box>
+      </CardContent>
+    </Card>
+  </Grid>
 
-        {/* 4. Preferencias y Comunicación */}
-        <Grid item xs={12} md={2.8}>
-          <Card sx={{ height: '100%' }}>
-            <CardContent sx={{ height: '100%', p: 2, display: 'flex', flexDirection: 'column' }}>
-              <Typography variant="h6" sx={{ 
-                mb: 2, 
-                fontWeight: 'bold', 
-                color: colors.text.primary,
-                fontSize: '0.95rem'
-              }}>
-                Preferencias y Comunicación
-              </Typography>
+  {/* 3. Mi Actividad - REDUCIDO a 25% (derecha) */}
+  <Grid 
+    item 
+    xs={12} 
+    md={4} 
+    sx={{ 
+      flexBasis: {
+        md: '25%'
+      },
+      maxWidth: {
+        md: '25%'
+      }
+    }}
+  >
+    <Card sx={{ height: '100%' }}>
+      <CardContent>
+        <Typography variant="h6" sx={{ 
+          mb: 2,
+          fontWeight: 'bold', 
+          color: colors.text.primary,
+          textAlign: 'center',
+          fontSize: '1rem'
+        }}>
+          Mi Actividad
+        </Typography>
 
-              <Stack spacing={2} sx={{ flex: 1 }}>
-                {/* Notificaciones */}
-                <Paper elevation={0} sx={{ 
-                  p: 1.2,
-                  borderRadius: 0.8,
-                  border: `1px solid ${colors.primary.main}20`,
-                  bgcolor: '#f8f9fa'
-                }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                    <NotificationsIcon sx={{ 
-                      mr: 1, 
-                      color: colors.primary.main,
-                      fontSize: '1.3rem'
-                    }} />
-                    <Typography fontWeight="bold" variant="body2" sx={{ fontSize: '0.8rem', color: colors.text.primary }}>
-                      Notificaciones
-                    </Typography>
-                  </Box>
-                  <Box sx={{ pl: 3.5 }}>
-                    <FormControlLabel
-                      control={
-                        <Switch 
-                          size="small" 
-                          checked={preferences.notificacionesEmail}
-                          onChange={handlePreferenceChange('notificacionesEmail')}
-                        />
-                      }
-                      label={<Typography variant="caption" sx={{ color: colors.text.primary }}>Email</Typography>}
-                      sx={{ mb: 0.5 }}
-                    />
-                    <FormControlLabel
-                      control={
-                        <Switch 
-                          size="small" 
-                          checked={preferences.notificacionesSMS}
-                          onChange={handlePreferenceChange('notificacionesSMS')}
-                        />
-                      }
-                      label={<Typography variant="caption" sx={{ color: colors.text.primary }}>SMS</Typography>}
-                    />
-                  </Box>
-                </Paper>
-
-                {/* Seguridad */}
-                <Paper elevation={0} sx={{ 
-                  p: 1.2,
-                  borderRadius: 0.8,
-                  border: `1px solid ${colors.primary.main}20`,
-                  bgcolor: '#f8f9fa'
-                }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
-                    <SecurityIcon sx={{ 
-                      mr: 1, 
-                      color: colors.status.error,
-                      fontSize: '1.3rem'
-                    }} />
-                    <Typography fontWeight="bold" variant="body2" sx={{ fontSize: '0.8rem', color: colors.text.primary }}>
-                      Seguridad
-                    </Typography>
-                  </Box>
-                  <Button 
-                    variant="outlined" 
-                    size="small"
-                    fullWidth
-                    sx={{ 
-                      mt: 1,
-                      fontSize: '0.7rem',
-                      height: '26px',
-                      color: colors.primary.main,
-                      borderColor: colors.primary.main
-                    }}
-                  >
-                    Cambiar Contraseña
-                  </Button>
-                </Paper>
-
-                {/* Historial */}
-                <Paper elevation={0} sx={{ 
-                  p: 1.2,
-                  borderRadius: 0.8,
-                  border: `1px solid ${colors.primary.main}20`,
-                  bgcolor: '#f8f9fa'
-                }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
-                    <HistoryIcon sx={{ 
-                      mr: 1, 
-                      color: colors.accents.purple,
-                      fontSize: '1.3rem'
-                    }} />
-                    <Typography fontWeight="bold" variant="body2" sx={{ fontSize: '0.8rem', color: colors.text.primary }}>
-                      Historial
-                    </Typography>
-                  </Box>
-                  <Button 
-                    variant="outlined" 
-                    size="small"
-                    fullWidth
-                    sx={{ 
-                      mt: 1,
-                      fontSize: '0.7rem',
-                      height: '26px',
-                      color: colors.primary.main,
-                      borderColor: colors.primary.main
-                    }}
-                  >
-                    Ver Actividad
-                  </Button>
-                </Paper>
-
-                {/* Configuración General */}
-                <Paper elevation={0} sx={{ 
-                  p: 1.2,
-                  borderRadius: 0.8,
-                  border: `1px solid ${colors.primary.main}20`,
-                  bgcolor: '#f8f9fa',
-                  mt: 'auto'
-                }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
-                    <LanguageIcon sx={{ 
-                      mr: 1, 
-                      color: colors.status.success,
-                      fontSize: '1.3rem'
-                    }} />
-                    <Typography fontWeight="bold" variant="body2" sx={{ fontSize: '0.8rem', color: colors.text.primary }}>
-                      Configuración
-                    </Typography>
-                  </Box>
-                  <Box sx={{ pl: 3.5 }}>
-                    <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mb: 0.5 }}>
-                      <ScheduleIcon sx={{ fontSize: '0.7rem', mr: 0.5, verticalAlign: 'middle' }} />
-                      Zona: {preferences.zonaHoraria}
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
-                      <VisibilityIcon sx={{ fontSize: '0.7rem', mr: 0.5, verticalAlign: 'middle' }} />
-                      Tema: {preferences.tema === 'claro' ? 'Claro' : 'Oscuro'}
-                    </Typography>
-                  </Box>
-                </Paper>
-              </Stack>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+        <Stack spacing={2}>
+          <Box sx={{ 
+            textAlign: 'center',
+            p: 1.2,
+            borderRadius: 1,
+            bgcolor: '#f8f9fa'
+          }}>
+            <Typography variant="body2" sx={{ color: colors.text.secondary, mb: 0.5, fontSize: '0.8rem' }}>
+              Certificaciones Activas
+            </Typography>
+            <Typography variant="h4" fontWeight="bold" sx={{ color: colors.text.primary, fontSize: '2rem' }}>
+              8
+            </Typography>
+          </Box>
+          
+          <Box sx={{ 
+            textAlign: 'center',
+            p: 1.2,
+            borderRadius: 1,
+            bgcolor: `${colors.status.warning}15`
+          }}>
+            <Typography variant="body2" sx={{ color: colors.text.secondary, mb: 0.5, fontSize: '0.8rem' }}>
+              En Revisión
+            </Typography>
+            <Typography variant="h4" sx={{ color: colors.status.warning, fontWeight: 'bold', fontSize: '2rem' }}>
+              2
+            </Typography>
+          </Box>
+          
+          <Box sx={{ 
+            textAlign: 'center',
+            p: 1.2,
+            borderRadius: 1,
+            bgcolor: `${colors.status.error}15`
+          }}>
+            <Typography variant="body2" sx={{ color: colors.text.secondary, mb: 0.5, fontSize: '0.8rem' }}>
+              Por Vencer (30 días)
+            </Typography>
+            <Typography variant="h4" sx={{ color: colors.status.error, fontWeight: 'bold', fontSize: '2rem' }}>
+              1
+            </Typography>
+          </Box>
+          
+          <Box sx={{ 
+            pt: 1.2, 
+            mt: 1.2,
+            borderTop: `1px solid ${colors.primary.main}20`,
+            textAlign: 'center'
+          }}>
+            <Typography variant="body2" sx={{ color: colors.text.secondary, mb: 0.5, fontSize: '0.8rem' }}>
+              Último Acceso
+            </Typography>
+            <Typography variant="body2" sx={{ 
+              fontWeight: 'medium',
+              color: colors.text.primary,
+              fontSize: '0.9rem'
+            }}>
+              {profile.ultimoAcceso}
+            </Typography>
+          </Box>
+        </Stack>
+      </CardContent>
+    </Card>
+  </Grid>
+</Grid>
 
       {/* ===== DATOS GENERALES ===== */}
       <Card sx={{ mb: 4 }}>

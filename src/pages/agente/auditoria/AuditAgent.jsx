@@ -1224,73 +1224,73 @@ const CertPreviewModal = () => (
 
   const renderAuditView = () => (
     <>
-      {/* Estadísticas */}
-      <Grid container spacing={2} sx={{ mb: 3 }}>
-        <Grid item xs={6} sm={4} md={2.4}>
-          <Card sx={{ borderLeft: `4px solid ${colors.primary.main}` }}>
-            <CardContent sx={{ p: 2, textAlign: 'center' }}>
-              <Typography variant="h4" sx={{ color: colors.primary.main, fontWeight: 'bold', mb: 0.5 }}>
-                {stats.total}
-              </Typography>
-              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                Total de Eventos
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        
-        <Grid item xs={6} sm={4} md={2.4}>
-          <Card sx={{ borderLeft: `4px solid ${colors.status.success}` }}>
-            <CardContent sx={{ p: 2, textAlign: 'center' }}>
-              <Typography variant="h4" sx={{ color: colors.status.success, fontWeight: 'bold', mb: 0.5 }}>
-                {stats.byStatus.aceptados}
-              </Typography>
-              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                Aceptados
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        
-        <Grid item xs={6} sm={4} md={2.4}>
-          <Card sx={{ borderLeft: `4px solid ${colors.status.warning}` }}>
-            <CardContent sx={{ p: 2, textAlign: 'center' }}>
-              <Typography variant="h4" sx={{ color: colors.status.warning, fontWeight: 'bold', mb: 0.5 }}>
-                {stats.byStatus.enRevision}
-              </Typography>
-              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                En Revisión
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        
-        <Grid item xs={6} sm={4} md={2.4}>
-          <Card sx={{ borderLeft: `4px solid ${colors.status.warning}` }}>
-            <CardContent sx={{ p: 2, textAlign: 'center' }}>
-              <Typography variant="h4" sx={{ color: colors.status.warning, fontWeight: 'bold', mb: 0.5 }}>
-                {stats.byStatus.desactualizado}
-              </Typography>
-              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                Desactualizados
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        
-        <Grid item xs={6} sm={4} md={2.4}>
-          <Card sx={{ borderLeft: `4px solid ${colors.status.error}` }}>
-            <CardContent sx={{ p: 2, textAlign: 'center' }}>
-              <Typography variant="h4" sx={{ color: colors.status.error, fontWeight: 'bold', mb: 0.5 }}>
-                {stats.byStatus.rechazado}
-              </Typography>
-              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                Rechazados
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+      {/* Estadísticas - Versión con CSS Grid */}
+<Box sx={{ width: '100%', mb: 3 }}>
+  <Box sx={{ 
+    display: 'grid',
+    gridTemplateColumns: {
+      xs: '1fr 1fr',
+      sm: 'repeat(3, 1fr)',
+      md: 'repeat(5, 1fr)'
+    },
+    gap: 1.5
+  }}>
+    <Card sx={{ borderLeft: `4px solid ${colors.primary.main}` }}>
+      <CardContent sx={{ p: 2, textAlign: 'center' }}>
+        <Typography variant="h4" sx={{ color: colors.primary.main, fontWeight: 'bold', mb: 0.5 }}>
+          {stats.total}
+        </Typography>
+        <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+          Total de Eventos
+        </Typography>
+      </CardContent>
+    </Card>
+    
+    <Card sx={{ borderLeft: `4px solid ${colors.status.success}` }}>
+      <CardContent sx={{ p: 2, textAlign: 'center' }}>
+        <Typography variant="h4" sx={{ color: colors.status.success, fontWeight: 'bold', mb: 0.5 }}>
+          {stats.byStatus.aceptados}
+        </Typography>
+        <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+          Aceptados
+        </Typography>
+      </CardContent>
+    </Card>
+    
+    <Card sx={{ borderLeft: `4px solid ${colors.status.warning}` }}>
+      <CardContent sx={{ p: 2, textAlign: 'center' }}>
+        <Typography variant="h4" sx={{ color: colors.status.warning, fontWeight: 'bold', mb: 0.5 }}>
+          {stats.byStatus.enRevision}
+        </Typography>
+        <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+          En Revisión
+        </Typography>
+      </CardContent>
+    </Card>
+    
+    <Card sx={{ borderLeft: `4px solid ${colors.status.warning}` }}>
+      <CardContent sx={{ p: 2, textAlign: 'center' }}>
+        <Typography variant="h4" sx={{ color: colors.status.warning, fontWeight: 'bold', mb: 0.5 }}>
+          {stats.byStatus.desactualizado}
+        </Typography>
+        <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+          Desactualizados
+        </Typography>
+      </CardContent>
+    </Card>
+    
+    <Card sx={{ borderLeft: `4px solid ${colors.status.error}` }}>
+      <CardContent sx={{ p: 2, textAlign: 'center' }}>
+        <Typography variant="h4" sx={{ color: colors.status.error, fontWeight: 'bold', mb: 0.5 }}>
+          {stats.byStatus.rechazado}
+        </Typography>
+        <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+          Rechazados
+        </Typography>
+      </CardContent>
+    </Card>
+  </Box>
+</Box>
 
       {/* Filtros */}
       <Paper elevation={0} sx={{ p: 2, mb: 3, bgcolor: '#f8f9fa' }}>
