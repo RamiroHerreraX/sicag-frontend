@@ -126,7 +126,6 @@ function App() {
                 </ProtectedRoute>
               }
             >
-              <Route path="/" element={<Navigate to="/dashboard" />} />
               <Route path="/dashboard" element={<UserDashboard />} />
               <Route path="/certifications" element={<Certifications />} />
               <Route
@@ -240,7 +239,7 @@ function App() {
             </Route>
 
             {/* Redirección por defecto */}
-            <Route path="/" element={<Navigate to="/dashboard" />} />
+            <Route path="/" element={<Navigate to="/inicio" />} />
 
             {/* Ruta 404 */}
             <Route
