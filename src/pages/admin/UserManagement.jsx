@@ -40,7 +40,8 @@ import {
   Snackbar,
   FormLabel,
   Radio,
-  RadioGroup
+  RadioGroup,
+  Divider
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -62,7 +63,9 @@ import {
   PersonAdd as PersonAddIcon,
   Close as CloseIcon,
   PictureAsPdf as PdfIcon,
-  TableChart as ExcelIcon
+  TableChart as ExcelIcon,
+  SwapHoriz as SwapHorizIcon,
+  Info as InfoIcon
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
@@ -104,6 +107,7 @@ const UserManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTab, setSelectedTab] = useState('all');
   const [openDialog, setOpenDialog] = useState(false);
+  const [openRoleDialog, setOpenRoleDialog] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [page, setPage] = useState(1);
   const [dialogMode, setDialogMode] = useState('add'); // 'add' o 'edit'
@@ -222,6 +226,15 @@ const UserManagement = () => {
     },
   ]);
 
+  // Roles disponibles (esto debería venir de SystemConfig o de una API)
+  const availableRoles = [
+    { value: 'admin', label: 'Administrador', color: colors.primary.dark },
+    { value: 'comite', label: 'Comité', color: colors.accents.purple },
+    { value: 'agente', label: 'Agente Aduanal', color: colors.primary.main },
+    { value: 'profesionista', label: 'Profesionista', color: colors.accents.blue },
+    { value: 'empresario', label: 'Empresario', color: colors.secondary.main }
+  ];
+
   // Estadísticas
   const stats = {
     total: users.length,
@@ -276,6 +289,31 @@ const UserManagement = () => {
     setDialogMode('edit');
     setSelectedUser({ ...user });
     setOpenDialog(true);
+  };
+
+  const handleChangeRole = (user) => {
+    setSelectedUser({ ...user });
+    setOpenRoleDialog(true);
+  };
+
+  const handleSaveRole = () => {
+    if (!selectedUser?.role) return;
+
+    setUsers(users.map(user => 
+      user.id === selectedUser.id ? { 
+        ...selectedUser,
+        roleName: getRoleName(selectedUser.role),
+        color: getRoleColor(selectedUser.role)
+      } : user
+    ));
+
+    setSnackbar({
+      open: true,
+      message: `Rol de ${selectedUser.name} actualizado a ${getRoleName(selectedUser.role)} exitosamente`,
+      severity: 'success'
+    });
+
+    setOpenRoleDialog(false);
   };
 
   const handleSaveUser = () => {
@@ -857,6 +895,22 @@ const UserManagement = () => {
                           </IconButton>
                         </Tooltip>
                         
+                        <Tooltip title="Cambiar rol del usuario">
+                          <IconButton 
+                            size="small"
+                            onClick={() => handleChangeRole(user)}
+                            sx={{ 
+                              color: colors.accents.purple,
+                              bgcolor: '#f0ebff',
+                              '&:hover': {
+                                bgcolor: '#e0d6ff'
+                              }
+                            }}
+                          >
+                            <SwapHorizIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                        
                         <Tooltip title="Editar usuario">
                           <IconButton 
                             size="small"
@@ -976,6 +1030,156 @@ const UserManagement = () => {
         </Grid>
       </Paper>
 
+      {/* Diálogo para cambiar rol */}
+      <Dialog open={openRoleDialog} onClose={() => setOpenRoleDialog(false)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ 
+          bgcolor: colors.accents.purple, 
+          color: 'white',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <SwapHorizIcon />
+            <Typography variant="h6">Cambiar Rol de Usuario</Typography>
+          </Box>
+          <IconButton onClick={() => setOpenRoleDialog(false)} sx={{ color: 'white' }}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        
+        <DialogContent sx={{ mt: 2 }}>
+          {selectedUser && (
+            <>
+              <Box sx={{ mb: 3, p: 2, bgcolor: '#f8f9fa', borderRadius: 1 }}>
+                <Typography variant="subtitle2" sx={{ color: colors.primary.dark, mb: 1 }}>
+                  Usuario Seleccionado:
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                  <Avatar 
+                    sx={{ 
+                      width: 48, 
+                      height: 48, 
+                      bgcolor: getRoleColor(selectedUser.role),
+                      fontSize: '1rem',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    {selectedUser.avatar}
+                  </Avatar>
+                  <Box>
+                    <Typography variant="body1" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
+                      {selectedUser.name}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
+                      {selectedUser.email}
+                    </Typography>
+                    <Chip 
+                      label={`Rol actual: ${selectedUser.roleName}`}
+                      size="small"
+                      sx={{ 
+                        mt: 0.5,
+                        bgcolor: `${getRoleColor(selectedUser.role)}15`,
+                        color: getRoleColor(selectedUser.role),
+                        fontSize: '0.7rem',
+                        height: 20
+                      }}
+                    />
+                  </Box>
+                </Box>
+              </Box>
+
+              <Divider sx={{ my: 2 }} />
+
+              <Alert severity="info" icon={<InfoIcon />} sx={{ mb: 3 }}>
+                Seleccione el nuevo rol que desea asignar al usuario. El cambio afectará sus permisos y accesos en el sistema.
+              </Alert>
+
+              <FormControl fullWidth>
+                <InputLabel id="change-role-label">Nuevo Rol</InputLabel>
+                <Select
+                  labelId="change-role-label"
+                  value={selectedUser.role}
+                  label="Nuevo Rol"
+                  onChange={(e) => setSelectedUser({ 
+                    ...selectedUser, 
+                    role: e.target.value,
+                    roleName: getRoleName(e.target.value)
+                  })}
+                >
+                  {availableRoles.map((role) => (
+                    <MenuItem key={role.value} value={role.value}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
+                        <Box 
+                          sx={{ 
+                            width: 12, 
+                            height: 12, 
+                            borderRadius: '50%', 
+                            bgcolor: role.color,
+                            mr: 1
+                          }} 
+                        />
+                        <Typography sx={{ flex: 1 }}>{role.label}</Typography>
+                        {selectedUser.role === role.value && (
+                          <Chip 
+                            label="Actual" 
+                            size="small" 
+                            sx={{ 
+                              bgcolor: colors.secondary.main,
+                              color: 'white',
+                              height: 20,
+                              fontSize: '0.65rem'
+                            }} 
+                          />
+                        )}
+                      </Box>
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <Box sx={{ mt: 3 }}>
+                <Typography variant="caption" sx={{ color: colors.text.secondary, fontWeight: 'bold' }}>
+                  Implicaciones del cambio de rol:
+                </Typography>
+                <Box sx={{ mt: 1, pl: 2 }}>
+                  <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
+                    • Los permisos del usuario se actualizarán automáticamente
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
+                    • El acceso a módulos específicos cambiará según el nuevo rol
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
+                    • Se notificará al usuario del cambio por correo electrónico
+                  </Typography>
+                </Box>
+              </Box>
+            </>
+          )}
+        </DialogContent>
+        
+        <DialogActions sx={{ p: 2, borderTop: `1px solid ${colors.primary.light}` }}>
+          <Button 
+            onClick={() => setOpenRoleDialog(false)}
+            variant="outlined"
+            sx={{
+              borderColor: colors.primary.main,
+              color: colors.primary.main,
+              '&:hover': { borderColor: colors.primary.dark, bgcolor: 'rgba(19, 59, 107, 0.08)' }
+            }}
+          >
+            Cancelar
+          </Button>
+          <Button 
+            onClick={handleSaveRole}
+            variant="contained"
+            sx={{ bgcolor: colors.accents.purple, '&:hover': { bgcolor: colors.primary.dark } }}
+          >
+            Confirmar Cambio de Rol
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       {/* Diálogo de usuario (Agregar/Editar) */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
         <DialogTitle sx={{ 
@@ -1032,11 +1236,14 @@ const UserManagement = () => {
                     roleName: getRoleName(e.target.value)
                   })}
                 >
-                  <MenuItem value="admin">Administrador</MenuItem>
-                  <MenuItem value="comite">Comité</MenuItem>
-                  <MenuItem value="agente">Agente Aduanal</MenuItem>
-                  <MenuItem value="profesionista">Profesionista</MenuItem>
-                  <MenuItem value="empresario">Empresario</MenuItem>
+                  {availableRoles.map((role) => (
+                    <MenuItem key={role.value} value={role.value}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: role.color }} />
+                        {role.label}
+                      </Box>
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Grid>
