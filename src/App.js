@@ -62,6 +62,7 @@ import SystemConfig from "./pages/admin/SystemConfig";
 import Reports from "./pages/admin/Reports";
 import AuditLog from "./pages/admin/audit/AuditLog";
 import ExpedienteConfig from "./pages/admin/ConfigExpediente";
+import GeneralAlerts from "./pages/admin/GeneralAlerts";
 
 // Committee Modules
 import CommitteeReview from "./pages/committee/CommitteeReview";
@@ -80,7 +81,7 @@ import AssociationProfile from "./pages/association/AssociationProfile"; // NUEV
 import ExpedienteAssociation from "./pages/association/ExpedienteAsociados";
 import AssociationAuditLog from "./pages/association/AssociationAuditLog";
 
-// Association SuperAdministrador 
+//  SuperAdministrador 
 import SuperASystemInstances from './pages/superadmin/SuperASystemInstances';
 import SuperAAdminDashboard from "./pages/superadmin/SuperAAdminDashboard";
 import SuperAUserManagement from "./pages/superadmin/SuperAUserManagement";
@@ -88,6 +89,9 @@ import SuperASystemConfig from "./pages/superadmin/SuperASystemConfig";
 import SuperAAuditLog from "./pages/superadmin/SuperAAuditLog";
 import SuperAExpedienteConfig from "./pages/superadmin/SuperAConfigExpediente";
 import SuperAReports from "./pages/superadmin/SuperAReports";
+import SuperAProfile from "./pages/superadmin/SuperAProfile";
+import SuperAAlerts from "./pages/superadmin/SuperAAlerts";
+
 // Mapa del sitio
 import SiteMap from "./pages/sitemap/SiteMap";
 
@@ -209,6 +213,8 @@ function App() {
               <Route path="expediente-config"element={<SuperAExpedienteConfig />}/>
               <Route path="reports" element={<SuperAReports />} />
               <Route path="audit" element={<SuperAAuditLog />} />
+              <Route path="profile" element={<SuperAProfile />} />
+               <Route path="alerts" element={<SuperAAlerts />} />
             </Route>
 
 
@@ -230,6 +236,7 @@ function App() {
               />
               <Route path="/admin/reports" element={<Reports />} />
               <Route path="/admin/audit" element={<AuditLog />} />
+              <Route path="/admin/alerts" element={<GeneralAlerts/>} />
             </Route>
 
             {/* Redirección por defecto */}

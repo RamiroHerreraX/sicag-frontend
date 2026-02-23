@@ -28,32 +28,33 @@ import {
 import {
   Dashboard as DashboardIcon,
   People as UsersIcon,
-  Settings as ConfigIcon,
   Folder as ExpedienteIcon,
   Assessment as ReportsIcon,
   Logout as LogoutIcon,
   Menu as MenuIcon,
   Notifications as NotificationsIcon,
   ArrowDropDown as ArrowDropDownIcon,
-  Person as PersonIcon,
-  Security as SecurityIcon,
-  Description as DescriptionIcon,
   History as HistoryIcon,
-  Help as HelpIcon,
   AccountCircle as AccountCircleIcon,
-  Email as EmailIcon,
   LocationOn as LocationIcon,
-  Domain as DomainIcon,
   Layers as LayersIcon,
-  DataObject as DataObjectIcon,
-  Hub as HubIcon,
-  Cloud as CloudIcon,
-  Backup as BackupIcon,
-  CorporateFare as CorporateFareIcon,
-  Apartment as ApartmentIcon,
 } from "@mui/icons-material";
 import { useAuth } from "../context/AuthContext";
 import { roleThemes, layoutConstants } from "../theme";
+
+// Colores institucionales para Super Admin (azules)
+const institutionalColors = {
+  primary: "#133B6B", // Azul oscuro principal
+  secondary: "#133B6B", // Azul medio
+  accent: "#e9e9e9", // Color para acentos
+  notification: "#ef4444", // Rojo para notificaciones
+  light: "rgba(13, 42, 77, 0.08)", // Versión transparente del primary
+  lightAccent: "rgba(14, 15, 15, 0.1)", // Versión transparente del accent
+  drawerBg: "#133B6B", // Fondo del drawer unificado en azul oscuro
+  background: "#133B6B", // Fondo unificado para AppBar y Drawer
+  textWhite: "#ffffff", // Texto blanco
+  textWhiteSecondary: "rgba(255, 255, 255, 0.7)", // Texto blanco secundario
+};
 
 const SuperAdminLayout = () => {
   const { user, logout } = useAuth();
@@ -66,21 +67,12 @@ const SuperAdminLayout = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [profileAnchorEl, setProfileAnchorEl] = useState(null);
 
-  // COLORES AZULES PROFESIONALES (reemplazando el morado)
-  const superAdminTheme = roleThemes.superadmin || {
-    primary: "#1976d2", // Azul primario profesional
-    secondary: "#2196f3",
-    sidebar: "#f8fafc",
-    active: "#1565c0",
-    text: "#1e293b",
-    icon: "#1976d2",
-  };
-
-  const primaryColor = superAdminTheme.primary;
-  const sidebarColor = superAdminTheme.sidebar;
-  const activeColor = superAdminTheme.active;
-  const textColor = superAdminTheme.text;
-  const iconColor = superAdminTheme.icon;
+  // COLORES AZULES PROFESIONALES - Usando institucionales
+  const primaryColor = institutionalColors.primary;
+  const secondaryColor = institutionalColors.secondary;
+  const accentColor = institutionalColors.accent;
+  const notificationColor = institutionalColors.notification;
+  const background = institutionalColors.background;
 
   // MENÚ PRINCIPAL para Super Administrador - Solo acceso multi-sistema
   const menuItems = [
@@ -89,14 +81,14 @@ const SuperAdminLayout = () => {
       icon: <DashboardIcon />,
       path: "/supera/dashboard",
       description: "Panel de control multi-sistema",
-      badge: 0,
+      // badge: 0,  // Eliminado
     },
     {
       text: "INSTANCIAS",
       icon: <LayersIcon />,
       path: "/supera/instancias",
       description: "Gestión de áreas y sistemas",
-      badge: 2, // Instancias nuevas
+      // badge: 2,  // Eliminado
       highlight: true,
     },
     {
@@ -104,28 +96,28 @@ const SuperAdminLayout = () => {
       icon: <UsersIcon />,
       path: "/supera/users",
       description: "Gestión de usuarios y roles",
-      badge: 3, // Usuarios pendientes de revisión
+      // badge: 3,  // Eliminado
     },
     {
       text: "EXPEDIENTES",
       icon: <ExpedienteIcon />,
       path: "/supera/expediente-config",
       description: "Configuración de expedientes",
-      badge: 0,
+      // badge: 0,  // Eliminado
     },
     {
       text: "REPORTES",
       icon: <ReportsIcon />,
       path: "/supera/reports",
       description: "Reportes y estadísticas",
-      badge: 5, // Reportes nuevos
+      // badge: 5,  // Eliminado
     },
     {
       text: "AUDITORÍA",
       icon: <HistoryIcon />,
       path: "/supera/audit",
       description: "Registro de todas las instancias",
-      badge: 0,
+      // badge: 0,  // Eliminado
     },
   ];
 
@@ -142,14 +134,6 @@ const SuperAdminLayout = () => {
     navigate("/login");
   };
 
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
   const handleProfileMenuOpen = (event) => {
     setProfileAnchorEl(event.currentTarget);
   };
@@ -163,25 +147,23 @@ const SuperAdminLayout = () => {
     return location.pathname.startsWith(path);
   };
 
-  // Contenido del drawer mejorado para Super Admin
+  // Contenido del drawer unificado en azul para Super Admin
   const drawerContent = (
     <Box
       sx={{
         display: "flex",
         flexDirection: "column",
         height: "100%",
-        bgcolor: "#ffffff",
-        boxShadow: "0px 4px 20px rgba(25, 118, 210, 0.1)",
-        borderRight: "1px solid rgba(25, 118, 210, 0.08)",
-        background: "linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)",
+        bgcolor: background,
+        borderRight: "1px solid rgba(255, 255, 255, 0.1)",
       }}
     >
-      {/* Header del Drawer */}
+      {/* Header del Drawer - Unificado en azul */}
       <Box
         sx={{
           p: open ? 3 : 2,
-          borderBottom: "1px solid rgba(25, 118, 210, 0.08)",
-          bgcolor: "#f8fafc",
+          borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+          bgcolor: "transparent",
           display: "flex",
           flexDirection: open ? "row" : "column",
           alignItems: "center",
@@ -194,10 +176,11 @@ const SuperAdminLayout = () => {
           sx={{
             width: open ? 48 : 40,
             height: open ? 48 : 40,
-            bgcolor: primaryColor,
+            bgcolor: "white",
+            color: primaryColor,
             fontSize: open ? "1.2rem" : "1rem",
             fontWeight: "bold",
-            border: "3px solid rgba(25, 118, 210, 0.2)",
+            border: "3px solid rgba(255, 255, 255, 0.3)",
           }}
         >
           SA
@@ -209,9 +192,10 @@ const SuperAdminLayout = () => {
               variant="subtitle1"
               sx={{
                 fontWeight: 800,
-                color: primaryColor,
+                color: "white",
                 lineHeight: 1.2,
                 fontSize: "1rem",
+                textShadow: "0 2px 4px rgba(0,0,0,0.2)",
               }}
             >
               {user?.name?.split(" ")[0] || "Supera"}
@@ -219,7 +203,7 @@ const SuperAdminLayout = () => {
             <Typography
               variant="caption"
               sx={{
-                color: "#1565c0",
+                color: "rgba(255, 255, 255, 0.9)",
                 display: "block",
                 fontWeight: 600,
                 fontSize: "0.75rem",
@@ -235,18 +219,18 @@ const SuperAdminLayout = () => {
             label="SUPERA"
             size="small"
             sx={{
-              bgcolor: "rgba(25, 118, 210, 0.15)",
-              color: primaryColor,
+              bgcolor: "rgba(255, 255, 255, 0.2)",
+              color: "white",
               fontWeight: 800,
               fontSize: "0.7rem",
               height: 22,
-              border: "1px solid rgba(25, 118, 210, 0.3)",
+              border: "1px solid rgba(255, 255, 255, 0.3)",
             }}
           />
         )}
       </Box>
 
-      {/* Menú Principal */}
+      {/* Menú Principal - Con elementos en blanco sobre azul */}
       <Box
         sx={{
           flex: 1,
@@ -261,14 +245,14 @@ const SuperAdminLayout = () => {
           sx={{
             px: 2,
             py: 1,
-            color: primaryColor,
+            color: "rgba(255, 255, 255, 0.7)",
             fontWeight: 800,
             fontSize: "0.7rem",
             letterSpacing: "1px",
             textTransform: "uppercase",
             opacity: open ? 1 : 0,
             transition: "opacity 0.2s",
-            bgcolor: "rgba(25, 118, 210, 0.05)",
+            bgcolor: "rgba(255, 255, 255, 0.1)",
             borderRadius: "4px",
             mt: 1,
           }}
@@ -305,60 +289,48 @@ const SuperAdminLayout = () => {
                       px: open ? 2 : 1.5,
                       py: 1.5,
                       mx: open ? 0 : 0.5,
-                      borderLeft: isHighlight ? "3px solid #1976d2" : "none",
+                      borderLeft: isHighlight ? "3px solid white" : "none",
                       background: isHighlight
-                        ? "linear-gradient(90deg, rgba(25, 118, 210, 0.05) 0%, rgba(25, 118, 210, 0.02) 100%)"
+                        ? "rgba(255, 255, 255, 0.05)"
                         : "transparent",
                       "&.Mui-selected": {
-                        bgcolor: "rgba(25, 118, 210, 0.1)",
-                        borderLeft: `3px solid ${primaryColor}`,
-                        boxShadow: "0 2px 8px rgba(25, 118, 210, 0.1)",
+                        bgcolor: "rgba(255, 255, 255, 0.15)",
+                        borderLeft: `3px solid ${accentColor}`,
+                        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
                         "&:hover": {
-                          bgcolor: "rgba(25, 118, 210, 0.15)",
+                          bgcolor: "rgba(255, 255, 255, 0.2)",
                         },
                         "& .MuiListItemIcon-root": {
-                          color: primaryColor,
+                          color: accentColor,
                         },
-                        "& .MuiTypography-root": {
-                          color: primaryColor,
+                        "& .MuiListItemText-primary": {
+                          color: "white",
                           fontWeight: 700,
+                        },
+                        "& .MuiListItemText-secondary": {
+                          color: "rgba(255, 255, 255, 0.7)",
                         },
                       },
                       "&:hover": {
-                        bgcolor: "rgba(25, 118, 210, 0.05)",
+                        bgcolor: "rgba(255, 255, 255, 0.1)",
                         transform: "translateX(3px)",
                         transition: "all 0.2s",
-                        boxShadow: "0 2px 4px rgba(25, 118, 210, 0.1)",
+                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
                       },
                     }}
                   >
                     <ListItemIcon
                       sx={{
                         minWidth: open ? 40 : "auto",
-                        color: isActive ? primaryColor : "#1565c0",
+                        color: isActive
+                          ? accentColor
+                          : "rgba(255, 255, 255, 0.8)",
                         justifyContent: "center",
                         mr: open ? 2 : 0,
                       }}
                     >
-                      {item.badge > 0 ? (
-                        <Badge
-                          badgeContent={item.badge}
-                          color="primary"
-                          size="small"
-                          sx={{
-                            "& .MuiBadge-badge": {
-                              fontSize: "0.6rem",
-                              height: 16,
-                              minWidth: 16,
-                              bgcolor: primaryColor,
-                            },
-                          }}
-                        >
-                          {item.icon}
-                        </Badge>
-                      ) : (
-                        item.icon
-                      )}
+                      {/* Eliminado el Badge, mostramos solo el ícono */}
+                      {item.icon}
                     </ListItemIcon>
 
                     {open && (
@@ -369,34 +341,21 @@ const SuperAdminLayout = () => {
                           sx: {
                             fontSize: "0.85rem",
                             fontWeight: isActive ? 700 : 600,
-                            color: isActive ? primaryColor : "#0d47a1",
+                            color: "white",
                             letterSpacing: "0.1px",
                           },
                         }}
                         secondaryTypographyProps={{
                           sx: {
                             fontSize: "0.75rem",
-                            color: isActive ? "#1e293b" : "#64b5f6",
+                            color: "rgba(255, 255, 255, 0.6)",
                             mt: 0.25,
                           },
                         }}
                       />
                     )}
 
-                    {open && item.badge > 0 && (
-                      <Chip
-                        label={item.badge}
-                        size="small"
-                        sx={{
-                          ml: "auto",
-                          height: 20,
-                          fontSize: "0.7rem",
-                          fontWeight: 700,
-                          bgcolor: primaryColor,
-                          color: "white",
-                        }}
-                      />
-                    )}
+                    {/* Eliminado el Chip de badge al final */}
                   </ListItemButton>
                 </Tooltip>
               </ListItem>
@@ -406,15 +365,14 @@ const SuperAdminLayout = () => {
 
         {/* Espacio adicional para separación */}
         <Box sx={{ flex: 1 }} />
-
       </Box>
 
-      {/* Footer del Drawer */}
+      {/* Footer del Drawer - Unificado en azul */}
       <Box
         sx={{
           p: open ? 2 : 1.5,
-          borderTop: "1px solid rgba(25, 118, 210, 0.08)",
-          bgcolor: "#f8fafc",
+          borderTop: "1px solid rgba(255, 255, 255, 0.1)",
+          bgcolor: "transparent",
         }}
       >
         {open ? (
@@ -423,7 +381,7 @@ const SuperAdminLayout = () => {
               <Typography
                 variant="caption"
                 sx={{
-                  color: "#1565c0",
+                  color: "rgba(255, 255, 255, 0.8)",
                   fontSize: "0.7rem",
                   fontWeight: 600,
                   display: "block",
@@ -434,7 +392,7 @@ const SuperAdminLayout = () => {
               <Typography
                 variant="caption"
                 sx={{
-                  color: "#64b5f6",
+                  color: "rgba(255, 255, 255, 0.6)",
                   fontSize: "0.65rem",
                   display: "block",
                 }}
@@ -444,31 +402,32 @@ const SuperAdminLayout = () => {
               <Chip
                 label="5 instancias activas"
                 size="small"
-                variant="outlined"
                 sx={{
                   mt: 1,
                   fontSize: "0.65rem",
-                  borderColor: "rgba(25, 118, 210, 0.3)",
-                  color: "#1565c0",
+                  bgcolor: "rgba(255, 255, 255, 0.15)",
+                  color: "white",
+                  border: "1px solid rgba(255, 255, 255, 0.3)",
                 }}
               />
             </Box>
 
             <Button
               fullWidth
-              variant="contained"
+              variant="outlined"
               startIcon={<LogoutIcon />}
               onClick={handleLogout}
               sx={{
-                bgcolor: primaryColor,
+                borderColor: "rgba(255, 255, 255, 0.3)",
+                color: "white",
                 fontWeight: 700,
                 fontSize: "0.85rem",
                 py: 1,
                 borderRadius: "8px",
-                boxShadow: "0 2px 8px rgba(25, 118, 210, 0.3)",
                 "&:hover": {
-                  bgcolor: "#1565c0",
-                  boxShadow: "0 4px 12px rgba(25, 118, 210, 0.4)",
+                  borderColor: "white",
+                  color: "white",
+                  bgcolor: "rgba(255, 255, 255, 0.1)",
                 },
               }}
             >
@@ -489,11 +448,11 @@ const SuperAdminLayout = () => {
                 onClick={handleLogout}
                 size="small"
                 sx={{
-                  color: primaryColor,
-                  bgcolor: "rgba(25, 118, 210, 0.1)",
+                  color: "white",
+                  bgcolor: "rgba(255, 255, 255, 0.1)",
                   "&:hover": {
                     color: "white",
-                    bgcolor: primaryColor,
+                    bgcolor: "rgba(255, 255, 255, 0.2)",
                   },
                 }}
               >
@@ -504,7 +463,7 @@ const SuperAdminLayout = () => {
             <Typography
               variant="caption"
               sx={{
-                color: "#64b5f6",
+                color: "rgba(255, 255, 255, 0.7)",
                 fontSize: "0.6rem",
                 fontWeight: 600,
               }}
@@ -519,18 +478,17 @@ const SuperAdminLayout = () => {
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#f8fafc" }}>
-      {/* AppBar superior - Super Admin */}
+      {/* AppBar superior - MISMO COLOR AZUL que el Drawer */}
       <AppBar
         position="fixed"
         elevation={0}
         sx={{
-          bgcolor: "white",
-          color: primaryColor,
+          bgcolor: background,
+          color: "white",
           width: "100%",
           zIndex: theme.zIndex.drawer + 1,
-          borderBottom: "1px solid rgba(25, 118, 210, 0.08)",
-          boxShadow: "0px 2px 10px rgba(25, 118, 210, 0.05)",
-          background: "linear-gradient(90deg, #ffffff 0%, #f8fafc 100%)",
+          borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+          boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.2)",
         }}
       >
         <Toolbar
@@ -556,9 +514,9 @@ const SuperAdminLayout = () => {
               }
               edge="start"
               sx={{
-                color: primaryColor,
+                color: "white",
                 "&:hover": {
-                  bgcolor: "rgba(25, 118, 210, 0.1)",
+                  bgcolor: "rgba(255, 255, 255, 0.1)",
                 },
               }}
             >
@@ -580,18 +538,18 @@ const SuperAdminLayout = () => {
                 sx={{
                   width: 36,
                   height: 36,
-                  bgcolor: primaryColor,
+                  bgcolor: "white",
                   borderRadius: "10px",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  boxShadow: "0 2px 8px rgba(25, 118, 210, 0.3)",
+                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
                 }}
               >
                 <Typography
                   variant="subtitle1"
                   sx={{
-                    color: "white",
+                    color: primaryColor,
                     fontWeight: 900,
                     fontSize: "1.2rem",
                   }}
@@ -605,9 +563,10 @@ const SuperAdminLayout = () => {
                 noWrap
                 sx={{
                   fontWeight: 800,
-                  color: primaryColor,
+                  color: "white",
                   fontSize: "1.4rem",
                   display: { xs: "none", sm: "block" },
+                  textShadow: "0 2px 4px rgba(0,0,0,0.2)",
                 }}
               >
                 SICAG
@@ -617,13 +576,13 @@ const SuperAdminLayout = () => {
                 label="SUPERA"
                 size="small"
                 sx={{
-                  bgcolor: "rgba(25, 118, 210, 0.15)",
-                  color: primaryColor,
+                  bgcolor: "rgba(255, 255, 255, 0.2)",
+                  color: "white",
                   fontWeight: 800,
                   fontSize: "0.7rem",
                   height: 24,
                   display: { xs: "none", md: "flex" },
-                  border: "1px solid rgba(25, 118, 210, 0.3)",
+                  border: "1px solid rgba(255, 255, 255, 0.3)",
                 }}
               />
             </Box>
@@ -636,7 +595,7 @@ const SuperAdminLayout = () => {
                 ml: 3,
                 px: 2,
                 py: 0.5,
-                bgcolor: "rgba(25, 118, 210, 0.08)",
+                bgcolor: "rgba(255, 255, 255, 0.15)",
                 borderRadius: "8px",
               }}
             >
@@ -644,7 +603,7 @@ const SuperAdminLayout = () => {
                 variant="caption"
                 sx={{
                   fontWeight: 700,
-                  color: primaryColor,
+                  color: "white",
                   fontSize: "0.8rem",
                 }}
               >
@@ -656,28 +615,28 @@ const SuperAdminLayout = () => {
 
           {/* Lado derecho */}
           <Stack direction="row" spacing={1} alignItems="center">
-            {/* Botón de notificaciones globales */}
+            {/* Botón de notificaciones globales - AHORA EN ROJO */}
             <Tooltip title="Alertas globales">
               <IconButton
                 color="inherit"
+                component={Link}
+                to="/supera/alerts"
                 sx={{
-                  color: primaryColor,
+                  color: "white",
                   position: "relative",
                   "&:hover": {
-                    color: "#1565c0",
-                    bgcolor: "rgba(25, 118, 210, 0.1)",
+                    bgcolor: "rgba(255, 255, 255, 0.1)",
                   },
                 }}
               >
                 <Badge
                   badgeContent={12}
-                  color="primary"
+                  color="error"
                   sx={{
                     "& .MuiBadge-badge": {
                       fontSize: "0.6rem",
                       height: 18,
                       minWidth: 18,
-                      bgcolor: primaryColor,
                     },
                   }}
                 >
@@ -694,7 +653,7 @@ const SuperAdminLayout = () => {
                 height: 24,
                 alignSelf: "center",
                 mx: 1,
-                borderColor: "rgba(25, 118, 210, 0.2)",
+                borderColor: "rgba(255, 255, 255, 0.2)",
               }}
             />
 
@@ -708,9 +667,8 @@ const SuperAdminLayout = () => {
                   p: 1,
                   borderRadius: "8px",
                   cursor: "pointer",
-                  bgcolor: "rgba(25, 118, 210, 0.05)",
                   "&:hover": {
-                    bgcolor: "rgba(25, 118, 210, 0.1)",
+                    bgcolor: "rgba(255, 255, 255, 0.1)",
                   },
                 }}
                 onClick={handleProfileMenuOpen}
@@ -726,7 +684,7 @@ const SuperAdminLayout = () => {
                     noWrap
                     sx={{
                       fontWeight: 700,
-                      color: primaryColor,
+                      color: "white",
                       fontSize: "0.9rem",
                       lineHeight: 1.2,
                     }}
@@ -737,7 +695,7 @@ const SuperAdminLayout = () => {
                     variant="caption"
                     noWrap
                     sx={{
-                      color: "#1565c0",
+                      color: "rgba(255, 255, 255, 0.8)",
                       fontSize: "0.75rem",
                       fontWeight: 600,
                     }}
@@ -750,17 +708,18 @@ const SuperAdminLayout = () => {
                   sx={{
                     width: 40,
                     height: 40,
-                    bgcolor: primaryColor,
+                    bgcolor: "white",
+                    color: primaryColor,
                     fontSize: "1rem",
                     fontWeight: "bold",
-                    border: "2px solid rgba(25, 118, 210, 0.3)",
-                    boxShadow: "0 2px 4px rgba(25, 118, 210, 0.2)",
+                    border: "2px solid rgba(255, 255, 255, 0.3)",
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
                   }}
                 >
                   {user?.name?.charAt(0) || "S"}
                 </Avatar>
 
-                <ArrowDropDownIcon sx={{ color: primaryColor, fontSize: 20 }} />
+                <ArrowDropDownIcon sx={{ color: "white", fontSize: 20 }} />
               </Box>
             </Tooltip>
           </Stack>
@@ -779,15 +738,15 @@ const SuperAdminLayout = () => {
             minWidth: 300,
             borderRadius: "12px",
             overflow: "hidden",
-            border: "1px solid rgba(25, 118, 210, 0.1)",
+            border: "1px solid rgba(13, 42, 77, 0.1)",
           },
         }}
       >
         <Box
           sx={{
             p: 2,
-            bgcolor: "#f8fafc",
-            borderBottom: "1px solid rgba(25, 118, 210, 0.08)",
+            background: `linear-gradient(135deg, ${institutionalColors.primary} 0%, ${institutionalColors.secondary} 100%)`,
+            borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
@@ -795,10 +754,11 @@ const SuperAdminLayout = () => {
               sx={{
                 width: 56,
                 height: 56,
-                bgcolor: primaryColor,
+                bgcolor: "white",
+                color: primaryColor,
                 fontSize: "1.4rem",
                 fontWeight: "bold",
-                border: "3px solid rgba(25, 118, 210, 0.2)",
+                border: "3px solid rgba(255, 255, 255, 0.3)",
               }}
             >
               {user?.name?.charAt(0) || "S"}
@@ -808,14 +768,14 @@ const SuperAdminLayout = () => {
                 variant="h6"
                 sx={{
                   fontWeight: 800,
-                  color: primaryColor,
+                  color: "white",
                 }}
               >
                 {user?.name || "Super Administrador"}
               </Typography>
               <Typography
                 variant="caption"
-                sx={{ color: "#1565c0", fontWeight: 600 }}
+                sx={{ color: "rgba(255, 255, 255, 0.9)", fontWeight: 600 }}
               >
                 Acceso Multi-Sistema
               </Typography>
@@ -828,25 +788,30 @@ const SuperAdminLayout = () => {
               size="small"
               icon={<LocationIcon />}
               sx={{
-                bgcolor: "rgba(25, 118, 210, 0.1)",
-                color: primaryColor,
+                bgcolor: "rgba(255, 255, 255, 0.2)",
+                color: "white",
                 fontWeight: 700,
                 mb: 0.5,
+                "& .MuiChip-icon": { color: "white" },
               }}
             />
             <Chip
               label="Supera"
               size="small"
-              color="primary"
-              variant="outlined"
-              sx={{ fontWeight: 700, mb: 0.5 }}
+              sx={{
+                bgcolor: "rgba(255, 255, 255, 0.2)",
+                color: "white",
+                fontWeight: 700,
+                mb: 0.5,
+                border: "1px solid rgba(255, 255, 255, 0.3)",
+              }}
             />
             <Chip
               label="5 instancias"
               size="small"
               sx={{
-                bgcolor: "rgba(25, 118, 210, 0.1)",
-                color: primaryColor,
+                bgcolor: "rgba(255, 255, 255, 0.2)",
+                color: "white",
                 fontWeight: 700,
                 mb: 0.5,
               }}
@@ -854,7 +819,12 @@ const SuperAdminLayout = () => {
           </Stack>
         </Box>
 
-        <MenuItem onClick={handleProfileMenuClose} sx={{ py: 1.5, px: 2 }}>
+        <MenuItem
+          component={Link}
+          to="/supera/profile"
+          onClick={handleProfileMenuClose}
+          sx={{ py: 1.5, px: 2 }}
+        >
           <ListItemIcon sx={{ color: primaryColor }}>
             <AccountCircleIcon />
           </ListItemIcon>
@@ -880,19 +850,19 @@ const SuperAdminLayout = () => {
             primaryTypographyProps={{ fontWeight: 600 }}
           />
         </MenuItem>
-        <Divider sx={{ borderColor: "rgba(25, 118, 210, 0.1)" }} />
+        <Divider sx={{ borderColor: "rgba(13, 42, 77, 0.1)" }} />
         <MenuItem
           onClick={handleLogout}
           sx={{
             py: 1.5,
             px: 2,
-            color: "#d32f2f",
+            color: "#dc2626",
             "&:hover": {
-              bgcolor: "rgba(211, 47, 47, 0.04)",
+              bgcolor: "rgba(220, 38, 38, 0.04)",
             },
           }}
         >
-          <ListItemIcon sx={{ color: "#d32f2f" }}>
+          <ListItemIcon sx={{ color: "#dc2626" }}>
             <LogoutIcon />
           </ListItemIcon>
           <ListItemText
@@ -902,7 +872,7 @@ const SuperAdminLayout = () => {
         </MenuItem>
       </Menu>
 
-      {/* Drawer (Barra lateral) */}
+      {/* Drawer (Barra lateral) - MISMO COLOR AZUL que el AppBar */}
       <Box
         component="nav"
         sx={{
@@ -928,6 +898,7 @@ const SuperAdminLayout = () => {
             "& .MuiDrawer-paper": {
               width: layoutConstants.drawerWidth,
               boxSizing: "border-box",
+              bgcolor: background,
             },
           }}
         >
@@ -944,7 +915,8 @@ const SuperAdminLayout = () => {
                 ? layoutConstants.drawerWidth
                 : layoutConstants.collapsedDrawerWidth,
               boxSizing: "border-box",
-              borderRight: "1px solid rgba(25, 118, 210, 0.08)",
+              borderRight: "1px solid rgba(255, 255, 255, 0.1)",
+              bgcolor: background,
               transition: theme.transitions.create("width", {
                 easing: theme.transitions.easing.sharp,
                 duration: theme.transitions.duration.standard,
@@ -977,8 +949,6 @@ const SuperAdminLayout = () => {
           }),
           bgcolor: "#f8fafc",
           minHeight: "calc(100vh - 64px)",
-          background:
-            "radial-gradient(circle at 50% 0%, rgba(25, 118, 210, 0.03) 0%, transparent 50%)",
         }}
       >
         <Outlet />

@@ -65,9 +65,25 @@ import {
   TableChart as TableChartIcon,
   TextSnippet as TextSnippetIcon,
 } from "@mui/icons-material";
+import ActivityDetailModal from "../../components/audit/ActivityDetailModal";
+
+// Colores institucionales
+const institutionalColors = {
+  primary: '#133B6B',      // Azul oscuro principal
+  secondary: '#1a4c7a',    // Azul medio
+  accent: '#e9e9e9',       // Color para acentos (gris claro)
+  background: '#f8f9fa',   // Fondo claro
+  lightBlue: 'rgba(19, 59, 107, 0.08)',  // Azul transparente para hover
+  darkBlue: '#0D2A4D',     // Azul más oscuro
+  textPrimary: '#2c3e50',  // Texto principal
+  textSecondary: '#7f8c8d', // Texto secundario
+  success: '#27ae60',      // Verde para éxito
+  warning: '#f39c12',      // Naranja para advertencias
+  error: '#e74c3c',        // Rojo para errores
+  info: '#3498db',         // Azul para información
+};
 
 // Importar el componente del modal
-import ActivityDetailModal from "../../components/audit/ActivityDetailModal";
 
 const AuditLog = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -401,24 +417,24 @@ const AuditLog = () => {
   const getSeverityColor = (severity) => {
     switch (severity) {
       case "success":
-        return "#27ae60";
+        return institutionalColors.success;
       case "info":
-        return "#3498db";
+        return institutionalColors.info;
       case "warning":
-        return "#f39c12";
+        return institutionalColors.warning;
       case "error":
-        return "#e74c3c";
+        return institutionalColors.error;
       default:
-        return "#7f8c8d";
+        return institutionalColors.textSecondary;
     }
   };
 
   const getRoleColor = (role) => {
     switch (role) {
       case "admin":
-        return "#1b5e20";
+        return institutionalColors.success;
       case "comite":
-        return "#1a237e";
+        return institutionalColors.primary;
       case "agente":
         return "#526F78";
       case "profesionista":
@@ -426,23 +442,23 @@ const AuditLog = () => {
       case "empresario":
         return "#ed6c02";
       default:
-        return "#7f8c8d";
+        return institutionalColors.textSecondary;
     }
   };
 
   const getInstanceColor = (instanceId) => {
     const colors = {
-      "instancia-administrativa": "#1b5e20",
-      "instancia-ingenieria": "#1565c0",
+      "instancia-administrativa": institutionalColors.success,
+      "instancia-ingenieria": institutionalColors.primary,
       "instancia-finanzas": "#8e24aa",
       "instancia-recursos-humanos": "#ff6f00",
       "instancia-operaciones": "#00838f",
       "instancia-calidad": "#c62828",
       "instancia-comercial": "#6a1b9a",
-      "instancia-legal": "#2e7d32",
+      "instancia-legal": institutionalColors.success,
       "instancia-soporte": "#37474f",
     };
-    return colors[instanceId] || "#7f8c8d";
+    return colors[instanceId] || institutionalColors.textSecondary;
   };
 
   // Función para actualizar los datos
@@ -653,7 +669,7 @@ const AuditLog = () => {
   };
 
   return (
-    <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+    <Box sx={{ height: "100%", display: "flex", flexDirection: "column", bgcolor: institutionalColors.background }}>
       {/* Header */}
       <Box sx={{ mb: 3 }}>
         <Box
@@ -667,11 +683,11 @@ const AuditLog = () => {
           <Box>
             <Typography
               variant="h5"
-              sx={{ color: "#2c3e50", fontWeight: "bold", mb: 0.5 }}
+              sx={{ color: institutionalColors.primary, fontWeight: "bold", mb: 0.5 }}
             >
               Auditoría y Trazabilidad
             </Typography>
-            <Typography variant="body2" sx={{ color: "#7f8c8d" }}>
+            <Typography variant="body2" sx={{ color: institutionalColors.textSecondary }}>
               Registro completo de todas las acciones realizadas en el sistema
               por instancia
             </Typography>
@@ -685,6 +701,14 @@ const AuditLog = () => {
               onClick={handleDownloadClick}
               aria-controls="download-menu"
               aria-haspopup="true"
+              sx={{
+                borderColor: institutionalColors.primary,
+                color: institutionalColors.primary,
+                '&:hover': {
+                  borderColor: institutionalColors.secondary,
+                  bgcolor: institutionalColors.lightBlue,
+                }
+              }}
             >
               Exportar Logs
             </Button>
@@ -696,19 +720,19 @@ const AuditLog = () => {
             >
               <MenuItem onClick={() => handleExportOptionClick("csv")}>
                 <ListItemIcon>
-                  <TableChartIcon fontSize="small" />
+                  <TableChartIcon fontSize="small" sx={{ color: institutionalColors.primary }} />
                 </ListItemIcon>
                 <ListItemText primary="CSV (Excel)" />
               </MenuItem>
               <MenuItem onClick={() => handleExportOptionClick("json")}>
                 <ListItemIcon>
-                  <FileDownloadIcon fontSize="small" />
+                  <FileDownloadIcon fontSize="small" sx={{ color: institutionalColors.primary }} />
                 </ListItemIcon>
                 <ListItemText primary="JSON" />
               </MenuItem>
               <MenuItem onClick={() => handleExportOptionClick("txt")}>
                 <ListItemIcon>
-                  <TextSnippetIcon fontSize="small" />
+                  <TextSnippetIcon fontSize="small" sx={{ color: institutionalColors.primary }} />
                 </ListItemIcon>
                 <ListItemText primary="TXT" />
               </MenuItem>
@@ -720,6 +744,10 @@ const AuditLog = () => {
               size="small"
               onClick={handleRefresh}
               disabled={loading}
+              sx={{
+                bgcolor: institutionalColors.primary,
+                '&:hover': { bgcolor: institutionalColors.secondary }
+              }}
             >
               {loading ? "Actualizando..." : "Actualizar"}
             </Button>
@@ -730,38 +758,38 @@ const AuditLog = () => {
         <Dialog open={exportDialogOpen} onClose={handleExportDialogClose}>
           <DialogTitle>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <FileDownloadIcon />
-              <Typography variant="h6">Exportar Logs</Typography>
+              <FileDownloadIcon sx={{ color: institutionalColors.primary }} />
+              <Typography variant="h6" sx={{ color: institutionalColors.textPrimary }}>Exportar Logs</Typography>
             </Box>
           </DialogTitle>
           <DialogContent>
             <Box sx={{ mt: 2 }}>
               <FormControl component="fieldset" sx={{ mb: 3 }}>
-                <FormLabel component="legend">Formato de exportación</FormLabel>
+                <FormLabel component="legend" sx={{ color: institutionalColors.textPrimary }}>Formato de exportación</FormLabel>
                 <RadioGroup
                   value={exportFormat}
                   onChange={(e) => setExportFormat(e.target.value)}
                 >
                   <FormControlLabel
                     value="csv"
-                    control={<Radio />}
+                    control={<Radio sx={{ color: institutionalColors.primary, '&.Mui-checked': { color: institutionalColors.primary } }} />}
                     label="CSV (Compatible con Excel)"
                   />
                   <FormControlLabel
                     value="json"
-                    control={<Radio />}
+                    control={<Radio sx={{ color: institutionalColors.primary, '&.Mui-checked': { color: institutionalColors.primary } }} />}
                     label="JSON (Formato estructurado)"
                   />
                   <FormControlLabel
                     value="txt"
-                    control={<Radio />}
+                    control={<Radio sx={{ color: institutionalColors.primary, '&.Mui-checked': { color: institutionalColors.primary } }} />}
                     label="TXT (Texto plano)"
                   />
                 </RadioGroup>
               </FormControl>
 
               <FormControl component="fieldset">
-                <FormLabel component="legend">
+                <FormLabel component="legend" sx={{ color: institutionalColors.textPrimary }}>
                   Alcance de la exportación
                 </FormLabel>
                 <RadioGroup
@@ -770,12 +798,12 @@ const AuditLog = () => {
                 >
                   <FormControlLabel
                     value="filtered"
-                    control={<Radio />}
+                    control={<Radio sx={{ color: institutionalColors.primary, '&.Mui-checked': { color: institutionalColors.primary } }} />}
                     label={`Solo filtrados (${filteredLogs.length} registros)`}
                   />
                   <FormControlLabel
                     value="all"
-                    control={<Radio />}
+                    control={<Radio sx={{ color: institutionalColors.primary, '&.Mui-checked': { color: institutionalColors.primary } }} />}
                     label={`Todos los logs (${auditLogs.length} registros)`}
                   />
                 </RadioGroup>
@@ -783,11 +811,15 @@ const AuditLog = () => {
             </Box>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleExportDialogClose}>Cancelar</Button>
+            <Button onClick={handleExportDialogClose} sx={{ color: institutionalColors.textPrimary }}>Cancelar</Button>
             <Button
               onClick={handleExportConfirm}
               variant="contained"
               startIcon={<DownloadIcon />}
+              sx={{
+                bgcolor: institutionalColors.primary,
+                '&:hover': { bgcolor: institutionalColors.secondary }
+              }}
             >
               Exportar
             </Button>
@@ -795,7 +827,7 @@ const AuditLog = () => {
         </Dialog>
 
         {/* Filtros */}
-        <Paper elevation={0} sx={{ p: 2, bgcolor: "#f8f9fa" }}>
+        <Paper elevation={0} sx={{ p: 2, bgcolor: "white", border: `1px solid #e5e7eb` }}>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} md={3}>
               <TextField
@@ -807,7 +839,7 @@ const AuditLog = () => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon fontSize="small" />
+                      <SearchIcon fontSize="small" sx={{ color: institutionalColors.textSecondary }} />
                     </InputAdornment>
                   ),
                 }}
@@ -816,11 +848,16 @@ const AuditLog = () => {
 
             <Grid item xs={12} md={2.5}>
               <FormControl fullWidth size="small">
-                <InputLabel>Tipo de Acción</InputLabel>
+                <InputLabel sx={{ '&.Mui-focused': { color: institutionalColors.primary } }}>Tipo de Acción</InputLabel>
                 <Select
                   value={filterType}
                   label="Tipo de Acción"
                   onChange={(e) => setFilterType(e.target.value)}
+                  sx={{
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: institutionalColors.primary,
+                    }
+                  }}
                 >
                   {actionTypes.map((type) => (
                     <MenuItem key={type.value} value={type.value}>
@@ -833,11 +870,16 @@ const AuditLog = () => {
 
             <Grid item xs={12} md={2.5}>
               <FormControl fullWidth size="small">
-                <InputLabel>Tipo de Usuario</InputLabel>
+                <InputLabel sx={{ '&.Mui-focused': { color: institutionalColors.primary } }}>Tipo de Usuario</InputLabel>
                 <Select
                   value={filterUser}
                   label="Tipo de Usuario"
                   onChange={(e) => setFilterUser(e.target.value)}
+                  sx={{
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: institutionalColors.primary,
+                    }
+                  }}
                 >
                   {users.map((user) => (
                     <MenuItem key={user.value} value={user.value}>
@@ -851,22 +893,27 @@ const AuditLog = () => {
             {/* Nuevo filtro por instancia */}
             <Grid item xs={12} md={3}>
               <FormControl fullWidth size="small">
-                <InputLabel>Instancia</InputLabel>
+                <InputLabel sx={{ '&.Mui-focused': { color: institutionalColors.primary } }}>Instancia</InputLabel>
                 <Select
                   value={filterInstance}
                   label="Instancia"
                   onChange={(e) => setFilterInstance(e.target.value)}
                   startAdornment={
                     <InputAdornment position="start">
-                      <BusinessIcon fontSize="small" />
+                      <BusinessIcon fontSize="small" sx={{ color: institutionalColors.textSecondary }} />
                     </InputAdornment>
                   }
+                  sx={{
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: institutionalColors.primary,
+                    }
+                  }}
                 >
                   {instances.map((instance) => (
                     <MenuItem key={instance.id} value={instance.id}>
                       <Box sx={{ display: "flex", flexDirection: "column" }}>
-                        <Typography variant="body2">{instance.name}</Typography>
-                        <Typography variant="caption" sx={{ color: "#7f8c8d" }}>
+                        <Typography variant="body2" sx={{ color: institutionalColors.textPrimary }}>{instance.name}</Typography>
+                        <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                           {instance.description}
                         </Typography>
                       </Box>
@@ -882,7 +929,15 @@ const AuditLog = () => {
                 variant="outlined"
                 size="small"
                 onClick={clearAllFilters}
-                sx={{ height: "40px" }}
+                sx={{ 
+                  height: "40px",
+                  borderColor: institutionalColors.primary,
+                  color: institutionalColors.primary,
+                  '&:hover': {
+                    borderColor: institutionalColors.secondary,
+                    bgcolor: institutionalColors.lightBlue,
+                  }
+                }}
               >
                 Limpiar
               </Button>
@@ -900,20 +955,22 @@ const AuditLog = () => {
             display: "flex",
             flexDirection: "column",
             overflow: "hidden",
+            border: `1px solid #e5e7eb`,
           }}
         >
           <Box
             sx={{
               p: 2,
-              borderBottom: "1px solid #e0e0e0",
+              borderBottom: `1px solid #e5e7eb`,
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
+              bgcolor: "white",
             }}
           >
             <Typography
               variant="subtitle1"
-              sx={{ fontWeight: "bold", color: "#2c3e50" }}
+              sx={{ fontWeight: "bold", color: institutionalColors.textPrimary }}
             >
               Registro de Auditoría - {filteredLogs.length} eventos encontrados
             </Typography>
@@ -926,21 +983,31 @@ const AuditLog = () => {
                     "Instancia"
                   }
                   size="small"
-                  color="primary"
+                  sx={{
+                    bgcolor: institutionalColors.lightBlue,
+                    color: institutionalColors.primary,
+                  }}
                   onDelete={() => setFilterInstance("all")}
-                  deleteIcon={<ArrowBackIcon />}
+                  deleteIcon={<ArrowBackIcon sx={{ color: institutionalColors.primary }} />}
                 />
               )}
               <Chip
                 label={`${stats.today} eventos hoy`}
                 size="small"
-                color="primary"
+                sx={{
+                  bgcolor: institutionalColors.lightBlue,
+                  color: institutionalColors.primary,
+                }}
                 variant="outlined"
               />
               <Chip
                 label={`${paginatedLogs.length} mostrados`}
                 size="small"
                 variant="outlined"
+                sx={{
+                  borderColor: institutionalColors.textSecondary,
+                  color: institutionalColors.textSecondary,
+                }}
               />
             </Stack>
           </Box>
@@ -950,26 +1017,26 @@ const AuditLog = () => {
             <Table stickyHeader>
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: "bold", width: "13%" }}>
+                  <TableCell sx={{ fontWeight: "bold", width: "13%", color: institutionalColors.primary }}>
                     Fecha y Hora
                   </TableCell>
-                  <TableCell sx={{ fontWeight: "bold", width: "18%" }}>
+                  <TableCell sx={{ fontWeight: "bold", width: "18%", color: institutionalColors.primary }}>
                     Usuario
                   </TableCell>
-                  <TableCell sx={{ fontWeight: "bold", width: "18%" }}>
+                  <TableCell sx={{ fontWeight: "bold", width: "18%", color: institutionalColors.primary }}>
                     Acción
                   </TableCell>
-                  <TableCell sx={{ fontWeight: "bold", width: "15%" }}>
+                  <TableCell sx={{ fontWeight: "bold", width: "15%", color: institutionalColors.primary }}>
                     Instancia
                   </TableCell>
-                  <TableCell sx={{ fontWeight: "bold", width: "15%" }}>
+                  <TableCell sx={{ fontWeight: "bold", width: "15%", color: institutionalColors.primary }}>
                     Entidad
                   </TableCell>
-                  <TableCell sx={{ fontWeight: "bold", width: "25%" }}>
+                  <TableCell sx={{ fontWeight: "bold", width: "25%", color: institutionalColors.primary }}>
                     Detalles
                   </TableCell>
                   <TableCell
-                    sx={{ fontWeight: "bold", width: "3%" }}
+                    sx={{ fontWeight: "bold", width: "3%", color: institutionalColors.primary }}
                   ></TableCell>
                 </TableRow>
               </TableHead>
@@ -979,7 +1046,7 @@ const AuditLog = () => {
                     key={log.id}
                     hover
                     sx={{
-                      "&:hover": { bgcolor: "#f8f9fa" },
+                      "&:hover": { bgcolor: institutionalColors.lightBlue },
                       borderLeft: `3px solid ${getSeverityColor(log.severity)}`,
                     }}
                   >
@@ -987,11 +1054,11 @@ const AuditLog = () => {
                       <Box>
                         <Typography
                           variant="body2"
-                          sx={{ fontWeight: "bold", color: "#2c3e50" }}
+                          sx={{ fontWeight: "bold", color: institutionalColors.textPrimary }}
                         >
                           {log.timestamp.split(" ")[0]}
                         </Typography>
-                        <Typography variant="caption" sx={{ color: "#7f8c8d" }}>
+                        <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                           {log.timestamp.split(" ")[1]}
                         </Typography>
                       </Box>
@@ -1015,7 +1082,7 @@ const AuditLog = () => {
                         <Box>
                           <Typography
                             variant="body2"
-                            sx={{ fontWeight: "medium" }}
+                            sx={{ fontWeight: "medium", color: institutionalColors.textPrimary }}
                           >
                             {log.user.name}
                           </Typography>
@@ -1043,7 +1110,7 @@ const AuditLog = () => {
                         <Box>
                           <Typography
                             variant="body2"
-                            sx={{ fontWeight: "medium" }}
+                            sx={{ fontWeight: "medium", color: institutionalColors.textPrimary }}
                           >
                             {log.actionName}
                           </Typography>
@@ -1074,13 +1141,13 @@ const AuditLog = () => {
                         <Box>
                           <Typography
                             variant="body2"
-                            sx={{ fontWeight: "medium" }}
+                            sx={{ fontWeight: "medium", color: institutionalColors.textPrimary }}
                           >
                             {log.instanceName.split(" ")[0]}
                           </Typography>
                           <Typography
                             variant="caption"
-                            sx={{ color: "#7f8c8d" }}
+                            sx={{ color: institutionalColors.textSecondary }}
                           >
                             {log.instanceName.split(" ").slice(1).join(" ")}
                           </Typography>
@@ -1092,11 +1159,11 @@ const AuditLog = () => {
                       <Box>
                         <Typography
                           variant="body2"
-                          sx={{ fontWeight: "medium" }}
+                          sx={{ fontWeight: "medium", color: institutionalColors.textPrimary }}
                         >
                           {log.entity}
                         </Typography>
-                        <Typography variant="caption" sx={{ color: "#7f8c8d" }}>
+                        <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
                           ID: {log.entityId}
                         </Typography>
                       </Box>
@@ -1104,7 +1171,7 @@ const AuditLog = () => {
 
                     <TableCell>
                       <Box>
-                        <Typography variant="body2" sx={{ color: "#5a6c7d" }}>
+                        <Typography variant="body2" sx={{ color: institutionalColors.textSecondary }}>
                           {log.details}
                         </Typography>
                         <Box
@@ -1117,7 +1184,7 @@ const AuditLog = () => {
                         >
                           <Typography
                             variant="caption"
-                            sx={{ color: "#7f8c8d" }}
+                            sx={{ color: institutionalColors.textSecondary }}
                           >
                             IP: {log.ip}
                           </Typography>
@@ -1130,6 +1197,7 @@ const AuditLog = () => {
                         <IconButton
                           size="small"
                           onClick={() => handleOpenModal(log)}
+                          sx={{ color: institutionalColors.primary }}
                         >
                           <VisibilityIcon fontSize="small" />
                         </IconButton>
@@ -1145,13 +1213,14 @@ const AuditLog = () => {
           <Box
             sx={{
               p: 2,
-              borderTop: "1px solid #e0e0e0",
+              borderTop: `1px solid #e5e7eb`,
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
+              bgcolor: "white",
             }}
           >
-            <Typography variant="caption" sx={{ color: "#7f8c8d" }}>
+            <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
               Mostrando {(page - 1) * rowsPerPage + 1} -{" "}
               {Math.min(page * rowsPerPage, filteredLogs.length)} de{" "}
               {filteredLogs.length} eventos
@@ -1164,6 +1233,15 @@ const AuditLog = () => {
               onChange={(e, value) => setPage(value)}
               size="small"
               color="primary"
+              sx={{
+                '& .MuiPaginationItem-root.Mui-selected': {
+                  bgcolor: institutionalColors.primary,
+                  color: 'white',
+                  '&:hover': {
+                    bgcolor: institutionalColors.secondary,
+                  }
+                }
+              }}
             />
           </Box>
         </Paper>

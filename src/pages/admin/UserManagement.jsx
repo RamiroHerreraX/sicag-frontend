@@ -32,7 +32,15 @@ import {
   LinearProgress,
   Tabs,
   Tab,
-  Pagination
+  Pagination,
+  FormControl,
+  InputLabel,
+  Select,
+  Alert,
+  Snackbar,
+  FormLabel,
+  Radio,
+  RadioGroup
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -51,9 +59,17 @@ import {
   Refresh as RefreshIcon,
   Download as DownloadIcon,
   Group as GroupIcon,
-  PersonAdd as PersonAddIcon
+  PersonAdd as PersonAddIcon,
+  Close as CloseIcon,
+  PictureAsPdf as PdfIcon,
+  TableChart as ExcelIcon
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
+
+// Librerías para exportación
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 // Paleta corporativa
 const colors = {
@@ -90,7 +106,15 @@ const UserManagement = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [page, setPage] = useState(1);
+  const [dialogMode, setDialogMode] = useState('add'); // 'add' o 'edit'
   const rowsPerPage = 10;
+
+  // Estados para exportación
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [exportFormat, setExportFormat] = useState('excel');
+  const [exportScope, setExportScope] = useState('filtered');
+  const [exportLoading, setExportLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
   // Datos mock mejorados
   const [users, setUsers] = useState([
@@ -235,19 +259,71 @@ const UserManagement = () => {
   );
 
   const handleAddUser = () => {
+    setDialogMode('add');
     setSelectedUser({
       name: '',
       email: '',
       role: 'agente',
       region: 'Norte',
-      status: 'active'
+      status: 'active',
+      phone: '',
+      roleName: 'Agente Aduanal'
     });
     setOpenDialog(true);
   };
 
   const handleEditUser = (user) => {
+    setDialogMode('edit');
     setSelectedUser({ ...user });
     setOpenDialog(true);
+  };
+
+  const handleSaveUser = () => {
+    if (!selectedUser.name || !selectedUser.email) {
+      setSnackbar({
+        open: true,
+        message: 'Por favor complete los campos obligatorios',
+        severity: 'error'
+      });
+      return;
+    }
+
+    if (dialogMode === 'add') {
+      // Crear nuevo usuario
+      const newUser = {
+        ...selectedUser,
+        id: Math.max(...users.map(u => u.id), 0) + 1,
+        registrationDate: new Date().toLocaleDateString('es-MX'),
+        lastAccess: 'Nunca',
+        certifications: 0,
+        pending: 0,
+        compliance: 0,
+        avatar: selectedUser.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase(),
+        color: getRoleColor(selectedUser.role)
+      };
+      setUsers([...users, newUser]);
+      setSnackbar({
+        open: true,
+        message: 'Usuario creado exitosamente',
+        severity: 'success'
+      });
+    } else {
+      // Actualizar usuario existente
+      setUsers(users.map(user => 
+        user.id === selectedUser.id ? { 
+          ...selectedUser,
+          roleName: getRoleName(selectedUser.role),
+          color: getRoleColor(selectedUser.role),
+          avatar: selectedUser.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
+        } : user
+      ));
+      setSnackbar({
+        open: true,
+        message: 'Usuario actualizado exitosamente',
+        severity: 'success'
+      });
+    }
+    setOpenDialog(false);
   };
 
   const handleToggleStatus = (id) => {
@@ -257,11 +333,21 @@ const UserManagement = () => {
         status: user.status === 'active' ? 'inactive' : 'active' 
       } : user
     ));
+    setSnackbar({
+      open: true,
+      message: 'Estado del usuario actualizado',
+      severity: 'success'
+    });
   };
 
   const handleDeleteUser = (id) => {
     if (window.confirm('¿Está seguro de eliminar este usuario?')) {
       setUsers(users.filter(user => user.id !== id));
+      setSnackbar({
+        open: true,
+        message: 'Usuario eliminado exitosamente',
+        severity: 'success'
+      });
     }
   };
 
@@ -276,6 +362,28 @@ const UserManagement = () => {
     }
   };
 
+  const getRoleName = (role) => {
+    switch(role) {
+      case 'admin': return 'Administrador';
+      case 'comite': return 'Comité';
+      case 'agente': return 'Agente Aduanal';
+      case 'profesionista': return 'Profesionista';
+      case 'empresario': return 'Empresario';
+      default: return role;
+    }
+  };
+
+  const getRoleText = (role) => {
+    switch(role) {
+      case 'admin': return 'Administrador';
+      case 'comite': return 'Comité';
+      case 'agente': return 'Agente';
+      case 'profesionista': return 'Profesionista';
+      case 'empresario': return 'Empresario';
+      default: return role;
+    }
+  };
+
   const tabs = [
     { value: 'all', label: `Todos (${stats.total})`, icon: <GroupIcon /> },
     { value: 'active', label: `Activos (${stats.active})`, icon: <CheckCircleIcon /> },
@@ -286,6 +394,160 @@ const UserManagement = () => {
     { value: 'empresario', label: `Empresarios (${stats.byRole.empresario})`, icon: <SecurityIcon /> },
     { value: 'admin', label: `Admins (${stats.byRole.admin})`, icon: <SecurityIcon /> },
   ];
+
+  // Handlers para exportación
+  const handleExportClick = () => {
+    setExportDialogOpen(true);
+  };
+
+  const handleExportDialogClose = () => {
+    setExportDialogOpen(false);
+  };
+
+  const handleExport = async () => {
+    setExportLoading(true);
+    
+    try {
+      const dataToExport = exportScope === 'all' ? users : filteredUsers;
+      
+      // Preparar datos para exportación
+      const exportData = dataToExport.map(user => ({
+        'Nombre': user.name,
+        'Email': user.email,
+        'Rol': getRoleText(user.role),
+        'Rol Específico': user.roleName,
+        'Región': user.region,
+        'Estado': user.status === 'active' ? 'Activo' : 'Inactivo',
+        'Teléfono': user.phone,
+        'Fecha Registro': user.registrationDate,
+        'Último Acceso': user.lastAccess,
+        'Certificaciones': user.certifications,
+        'Pendientes': user.pending,
+        'Cumplimiento %': user.compliance
+      }));
+
+      if (exportFormat === 'excel') {
+        exportToExcel(exportData);
+      } else {
+        exportToPDF(exportData, dataToExport);
+      }
+
+      setSnackbar({
+        open: true,
+        message: `Usuarios exportados exitosamente a ${exportFormat === 'excel' ? 'Excel' : 'PDF'}`,
+        severity: 'success'
+      });
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: 'Error al exportar usuarios',
+        severity: 'error'
+      });
+    } finally {
+      setExportLoading(false);
+      setExportDialogOpen(false);
+    }
+  };
+
+  const exportToExcel = (data) => {
+    const ws = XLSX.utils.json_to_sheet(data);
+    
+    const colWidths = [
+      { wch: 20 }, { wch: 30 }, { wch: 15 }, { wch: 20 },
+      { wch: 15 }, { wch: 10 }, { wch: 15 }, { wch: 12 },
+      { wch: 15 }, { wch: 12 }, { wch: 10 }, { wch: 12 }
+    ];
+    ws['!cols'] = colWidths;
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Usuarios');
+
+    const summaryData = [
+      ['Resumen de Usuarios'],
+      [''],
+      ['Total de Usuarios', stats.total],
+      ['Usuarios Activos', stats.active],
+      ['Usuarios Inactivos', stats.inactive],
+      [''],
+      ['Por Rol:'],
+      ['Administradores', stats.byRole.admin],
+      ['Comité', stats.byRole.comite],
+      ['Agentes', stats.byRole.agente],
+      ['Profesionistas', stats.byRole.profesionista],
+      ['Empresarios', stats.byRole.empresario],
+      [''],
+      ['Fecha de Exportación:', new Date().toLocaleString()],
+      ['Filtros Aplicados:', selectedTab !== 'all' ? `Vista: ${selectedTab}` : 'Todos', searchTerm ? `Búsqueda: ${searchTerm}` : '']
+    ];
+
+    const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
+    XLSX.utils.book_append_sheet(wb, wsSummary, 'Resumen');
+
+    const fileName = `usuarios_${new Date().toISOString().split('T')[0]}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+  };
+
+  const exportToPDF = (data, originalData) => {
+    const doc = new jsPDF();
+    
+    doc.setFontSize(18);
+    doc.setTextColor(19, 59, 107);
+    doc.text('Reporte de Usuarios', 14, 22);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Fecha de exportación: ${new Date().toLocaleString()}`, 14, 30);
+    
+    doc.setFontSize(12);
+    doc.setTextColor(13, 42, 77);
+    doc.text('Resumen', 14, 40);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(60, 60, 60);
+    doc.text(`Total de Usuarios: ${stats.total}`, 20, 48);
+    doc.text(`Usuarios Activos: ${stats.active}`, 20, 55);
+    doc.text(`Usuarios Inactivos: ${stats.inactive}`, 20, 62);
+    
+    if (selectedTab !== 'all' || searchTerm) {
+      doc.text('Filtros aplicados:', 20, 72);
+      if (selectedTab !== 'all') {
+        doc.text(`- Vista: ${selectedTab}`, 25, 79);
+      }
+      if (searchTerm) {
+        doc.text(`- Búsqueda: ${searchTerm}`, 25, 86);
+      }
+    }
+
+    const tableData = data.map(item => [
+      item.Nombre, item.Email, item.Rol, item.Región,
+      item.Estado, item.Certificaciones, `${item['Cumplimiento %']}%`
+    ]);
+
+    autoTable(doc, {
+      head: [['Nombre', 'Email', 'Rol', 'Región', 'Estado', 'Cert.', 'Cumpl.']],
+      body: tableData,
+      startY: (selectedTab !== 'all' || searchTerm) ? 95 : 72,
+      styles: { fontSize: 8, cellPadding: 2 },
+      headStyles: { 
+        fillColor: [19, 59, 107],
+        textColor: 255,
+        fontStyle: 'bold'
+      },
+      alternateRowStyles: { fillColor: [240, 245, 250] },
+      columnStyles: {
+        0: { cellWidth: 35 }, 1: { cellWidth: 40 }, 2: { cellWidth: 20 },
+        3: { cellWidth: 20 }, 4: { cellWidth: 15 }, 5: { cellWidth: 12 },
+        6: { cellWidth: 15 }
+      }
+    });
+
+    const fileName = `usuarios_${new Date().toISOString().split('T')[0]}.pdf`;
+    doc.save(fileName);
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -306,6 +568,7 @@ const UserManagement = () => {
               variant="outlined"
               startIcon={<DownloadIcon />}
               size="small"
+              onClick={handleExportClick}
               sx={{
                 color: colors.primary.main,
                 borderColor: colors.primary.main,
@@ -604,6 +867,16 @@ const UserManagement = () => {
                           </IconButton>
                         </Tooltip>
                         
+                        <Tooltip title="Eliminar usuario">
+                          <IconButton 
+                            size="small"
+                            onClick={() => handleDeleteUser(user.id)}
+                            sx={{ color: colors.status.error }}
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                        
                         <Tooltip title={user.status === 'active' ? 'Desactivar' : 'Activar'}>
                           <FormControlLabel
                             control={
@@ -626,12 +899,6 @@ const UserManagement = () => {
                             }
                             label=""
                           />
-                        </Tooltip>
-                        
-                        <Tooltip title="Más opciones">
-                          <IconButton size="small" sx={{ color: colors.text.secondary }}>
-                            <MoreVertIcon fontSize="small" />
-                          </IconButton>
                         </Tooltip>
                       </Stack>
                     </TableCell>
@@ -708,6 +975,275 @@ const UserManagement = () => {
           ))}
         </Grid>
       </Paper>
+
+      {/* Diálogo de usuario (Agregar/Editar) */}
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ 
+          bgcolor: colors.primary.main, 
+          color: 'white',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            {dialogMode === 'add' ? <PersonAddIcon /> : <EditIcon />}
+            <Typography variant="h6">
+              {dialogMode === 'add' ? 'Nuevo Usuario' : 'Editar Usuario'}
+            </Typography>
+          </Box>
+          <IconButton onClick={() => setOpenDialog(false)} sx={{ color: 'white' }}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        
+        <DialogContent sx={{ mt: 2 }}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Nombre completo"
+                value={selectedUser?.name || ''}
+                onChange={(e) => setSelectedUser({ ...selectedUser, name: e.target.value })}
+                required
+                size="small"
+                sx={{ mt: 1 }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Email"
+                type="email"
+                value={selectedUser?.email || ''}
+                onChange={(e) => setSelectedUser({ ...selectedUser, email: e.target.value })}
+                required
+                size="small"
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <FormControl fullWidth size="small">
+                <InputLabel>Rol</InputLabel>
+                <Select
+                  value={selectedUser?.role || 'agente'}
+                  label="Rol"
+                  onChange={(e) => setSelectedUser({ 
+                    ...selectedUser, 
+                    role: e.target.value,
+                    roleName: getRoleName(e.target.value)
+                  })}
+                >
+                  <MenuItem value="admin">Administrador</MenuItem>
+                  <MenuItem value="comite">Comité</MenuItem>
+                  <MenuItem value="agente">Agente Aduanal</MenuItem>
+                  <MenuItem value="profesionista">Profesionista</MenuItem>
+                  <MenuItem value="empresario">Empresario</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <FormControl fullWidth size="small">
+                <InputLabel>Región</InputLabel>
+                <Select
+                  value={selectedUser?.region || 'Norte'}
+                  label="Región"
+                  onChange={(e) => setSelectedUser({ ...selectedUser, region: e.target.value })}
+                >
+                  <MenuItem value="Norte">Norte</MenuItem>
+                  <MenuItem value="Centro">Centro</MenuItem>
+                  <MenuItem value="Sur">Sur</MenuItem>
+                  <MenuItem value="Occidente">Occidente</MenuItem>
+                  <MenuItem value="Metropolitana">Metropolitana</MenuItem>
+                  <MenuItem value="Todas">Todas</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Teléfono"
+                value={selectedUser?.phone || ''}
+                onChange={(e) => setSelectedUser({ ...selectedUser, phone: e.target.value })}
+                size="small"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={selectedUser?.status === 'active'}
+                    onChange={(e) => setSelectedUser({ 
+                      ...selectedUser, 
+                      status: e.target.checked ? 'active' : 'inactive' 
+                    })}
+                    sx={{
+                      '& .MuiSwitch-switchBase.Mui-checked': {
+                        color: colors.secondary.main,
+                      },
+                      '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                        backgroundColor: colors.secondary.main,
+                      },
+                    }}
+                  />
+                }
+                label="Usuario activo"
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        
+        <DialogActions sx={{ p: 2, borderTop: `1px solid ${colors.primary.light}` }}>
+          <Button 
+            onClick={() => setOpenDialog(false)}
+            variant="outlined"
+            sx={{
+              borderColor: colors.primary.main,
+              color: colors.primary.main,
+              '&:hover': { borderColor: colors.primary.dark, bgcolor: 'rgba(19, 59, 107, 0.08)' }
+            }}
+          >
+            Cancelar
+          </Button>
+          <Button 
+            onClick={handleSaveUser}
+            variant="contained"
+            sx={{ bgcolor: colors.primary.main, '&:hover': { bgcolor: colors.primary.dark } }}
+          >
+            {dialogMode === 'add' ? 'Crear Usuario' : 'Guardar Cambios'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Diálogo de exportación */}
+      <Dialog open={exportDialogOpen} onClose={handleExportDialogClose} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ 
+          bgcolor: colors.primary.main, 
+          color: 'white',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <DownloadIcon />
+            <Typography variant="h6">Exportar Usuarios</Typography>
+          </Box>
+          <IconButton onClick={handleExportDialogClose} sx={{ color: 'white' }}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        
+        <DialogContent sx={{ mt: 2 }}>
+          <Box sx={{ mb: 3 }}>
+            <FormLabel component="legend" sx={{ color: colors.text.primary, fontWeight: 'bold', mb: 1 }}>
+              Formato de exportación
+            </FormLabel>
+            <RadioGroup value={exportFormat} onChange={(e) => setExportFormat(e.target.value)}>
+              <FormControlLabel 
+                value="excel" 
+                control={<Radio sx={{ color: colors.primary.main }} />} 
+                label={
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <ExcelIcon sx={{ color: colors.status.success }} />
+                    <Typography>Excel (.xlsx)</Typography>
+                  </Box>
+                } 
+              />
+              <FormControlLabel 
+                value="pdf" 
+                control={<Radio sx={{ color: colors.primary.main }} />} 
+                label={
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <PdfIcon sx={{ color: colors.status.error }} />
+                    <Typography>PDF (.pdf)</Typography>
+                  </Box>
+                } 
+              />
+            </RadioGroup>
+          </Box>
+
+          <Box>
+            <FormLabel component="legend" sx={{ color: colors.text.primary, fontWeight: 'bold', mb: 1 }}>
+              Alcance de la exportación
+            </FormLabel>
+            <RadioGroup value={exportScope} onChange={(e) => setExportScope(e.target.value)}>
+              <FormControlLabel 
+                value="filtered" 
+                control={<Radio sx={{ color: colors.primary.main }} />} 
+                label={`Solo resultados filtrados (${filteredUsers.length} usuarios)`} 
+              />
+              <FormControlLabel 
+                value="all" 
+                control={<Radio sx={{ color: colors.primary.main }} />} 
+                label={`Todos los usuarios (${users.length} usuarios)`} 
+              />
+            </RadioGroup>
+          </Box>
+
+          {exportScope === 'filtered' && (selectedTab !== 'all' || searchTerm) && (
+            <Alert severity="info" sx={{ mt: 2 }}>
+              Se exportarán {filteredUsers.length} usuarios con los filtros aplicados actualmente.
+            </Alert>
+          )}
+        </DialogContent>
+        
+        <DialogActions sx={{ p: 2, borderTop: `1px solid ${colors.primary.light}` }}>
+          <Button 
+            onClick={handleExportDialogClose}
+            variant="outlined"
+            sx={{
+              borderColor: colors.primary.main,
+              color: colors.primary.main,
+              '&:hover': { borderColor: colors.primary.dark, bgcolor: 'rgba(19, 59, 107, 0.08)' }
+            }}
+          >
+            Cancelar
+          </Button>
+          <Button 
+            onClick={handleExport}
+            variant="contained"
+            disabled={exportLoading}
+            startIcon={exportLoading ? <RefreshIcon className="spin" /> : <DownloadIcon />}
+            sx={{ bgcolor: colors.primary.main, '&:hover': { bgcolor: colors.primary.dark } }}
+          >
+            {exportLoading ? 'Exportando...' : 'Exportar'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Snackbar para notificaciones */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <Alert 
+          onClose={handleCloseSnackbar} 
+          severity={snackbar.severity}
+          sx={{ 
+            width: '100%',
+            bgcolor: snackbar.severity === 'success' ? colors.status.success : 
+                     snackbar.severity === 'error' ? colors.status.error : 
+                     colors.status.info,
+            color: 'white',
+            '& .MuiAlert-icon': { color: 'white' }
+          }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+
+      {/* Estilo para animación de spin */}
+      <style>
+        {`
+          .spin {
+            animation: spin 1s linear infinite;
+          }
+          @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+        `}
+      </style>
     </Box>
   );
 };

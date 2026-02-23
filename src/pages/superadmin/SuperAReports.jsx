@@ -42,8 +42,6 @@ import {
   PieChart as PieChartIcon,
   BarChart as BarChartIcon,
 } from "@mui/icons-material";
-
-// Importar componentes de Recharts
 import {
   LineChart,
   Line,
@@ -62,6 +60,24 @@ import {
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import html2canvas from "html2canvas";
+// Colores institucionales
+const institutionalColors = {
+  primary: '#133B6B',      // Azul oscuro principal
+  secondary: '#1a4c7a',    // Azul medio
+  accent: '#e9e9e9',       // Color para acentos (gris claro)
+  background: '#f4f6f8',   // Fondo claro
+  lightBlue: 'rgba(19, 59, 107, 0.08)',  // Azul transparente para hover
+  darkBlue: '#0D2A4D',     // Azul más oscuro
+  textPrimary: '#2c3e50',  // Texto principal
+  textSecondary: '#7f8c8d', // Texto secundario
+  success: '#27ae60',      // Verde para éxito
+  warning: '#f39c12',      // Naranja para advertencias
+  error: '#e74c3c',        // Rojo para errores
+  info: '#3498db',         // Azul para información
+};
+
+// Importar componentes de Recharts
+
 
 const InstanceReports = () => {
   const [reportType, setReportType] = useState("performance");
@@ -360,13 +376,13 @@ const InstanceReports = () => {
       value: item.expedientes,
       color:
         item.name === "CAAREM"
-          ? "#3498db"
+          ? institutionalColors.primary
           : item.name === "ANAM"
-            ? "#2ecc71"
+            ? institutionalColors.success
             : item.name === "SAT"
-              ? "#e74c3c"
+              ? institutionalColors.error
               : item.name === "SHCP"
-                ? "#f39c12"
+                ? institutionalColors.warning
                 : "#9b59b6",
     }));
   }, [filteredData]);
@@ -384,10 +400,10 @@ const InstanceReports = () => {
   const alertasData = useMemo(() => {
     if (instanceFilter === "all") {
       return [
-        { tipo: "Uptime crítico", cantidad: 1, color: "#e74c3c" },
-        { tipo: "Expedientes duplicados", cantidad: 2, color: "#f39c12" },
+        { tipo: "Uptime crítico", cantidad: 1, color: institutionalColors.error },
+        { tipo: "Expedientes duplicados", cantidad: 2, color: institutionalColors.warning },
         { tipo: "Actualizaciones pendientes", cantidad: 4, color: "#9b59b6" },
-        { tipo: "Seguridad", cantidad: 2, color: "#3498db" },
+        { tipo: "Seguridad", cantidad: 2, color: institutionalColors.info },
       ];
     }
     const instance = filteredData[0];
@@ -396,11 +412,11 @@ const InstanceReports = () => {
         {
           tipo: "Uptime crítico",
           cantidad: instance.uptime < 99.5 ? 1 : 0,
-          color: "#e74c3c",
+          color: institutionalColors.error,
         },
-        { tipo: "Expedientes duplicados", cantidad: 1, color: "#f39c12" },
+        { tipo: "Expedientes duplicados", cantidad: 1, color: institutionalColors.warning },
         { tipo: "Actualizaciones pendientes", cantidad: 2, color: "#9b59b6" },
-        { tipo: "Seguridad", cantidad: 1, color: "#3498db" },
+        { tipo: "Seguridad", cantidad: 1, color: institutionalColors.info },
       ].filter((alert) => alert.cantidad > 0);
     }
     return [];
@@ -409,15 +425,15 @@ const InstanceReports = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case "excelente":
-        return "#27ae60";
+        return institutionalColors.success;
       case "bueno":
-        return "#2ecc71";
+        return institutionalColors.success;
       case "regular":
-        return "#f39c12";
+        return institutionalColors.warning;
       case "critico":
-        return "#e74c3c";
+        return institutionalColors.error;
       default:
-        return "#7f8c8d";
+        return institutionalColors.textSecondary;
     }
   };
 
@@ -466,7 +482,7 @@ const InstanceReports = () => {
         display: "flex",
         flexDirection: "column",
         p: { xs: 2, md: 3 },
-        bgcolor: "#f4f6f8",
+        bgcolor: institutionalColors.background,
       }}
     >
       {/* HEADER */}
@@ -478,11 +494,11 @@ const InstanceReports = () => {
           <Grid item xs={12} md={6}>
             <Typography
               variant="h5"
-              sx={{ fontWeight: "bold", color: "#2c3e50" }}
+              sx={{ fontWeight: "bold", color: institutionalColors.primary }}
             >
               Reportes de Instancias
             </Typography>
-            <Typography variant="body2" sx={{ color: "#7f8c8d" }}>
+            <Typography variant="body2" sx={{ color: institutionalColors.textSecondary }}>
               {instanceFilter === "all"
                 ? "Información estadística de todas las instancias"
                 : `Información detallada de ${instanceFilter}`}
@@ -499,6 +515,10 @@ const InstanceReports = () => {
                 startIcon={<DownloadIcon />}
                 size="small"
                 onClick={handleDownloadPDF}
+                sx={{
+                  bgcolor: institutionalColors.primary,
+                  '&:hover': { bgcolor: institutionalColors.secondary }
+                }}
               >
                 Exportar PDF
               </Button>
@@ -508,15 +528,20 @@ const InstanceReports = () => {
       </Paper>
 
       {/* FILTROS */}
-      <Paper elevation={0} sx={{ p: 2, mb: 3, borderRadius: 2 }}>
+      <Paper elevation={0} sx={{ p: 2, mb: 3, borderRadius: 2, border: `1px solid #e5e7eb` }}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6} md={3}>
             <FormControl fullWidth size="small">
-              <InputLabel>Tipo de Reporte</InputLabel>
+              <InputLabel sx={{ '&.Mui-focused': { color: institutionalColors.primary } }}>Tipo de Reporte</InputLabel>
               <Select
                 value={reportType}
                 label="Tipo de Reporte"
                 onChange={(e) => setReportType(e.target.value)}
+                sx={{
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: institutionalColors.primary,
+                  }
+                }}
               >
                 {reportTypes.map((type) => (
                   <MenuItem key={type.value} value={type.value}>
@@ -531,11 +556,16 @@ const InstanceReports = () => {
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <FormControl fullWidth size="small">
-              <InputLabel>Periodo</InputLabel>
+              <InputLabel sx={{ '&.Mui-focused': { color: institutionalColors.primary } }}>Periodo</InputLabel>
               <Select
                 value={dateRange}
                 label="Periodo"
                 onChange={(e) => setDateRange(e.target.value)}
+                sx={{
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: institutionalColors.primary,
+                  }
+                }}
               >
                 {dateRanges.map((range) => (
                   <MenuItem key={range.value} value={range.value}>
@@ -547,11 +577,16 @@ const InstanceReports = () => {
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <FormControl fullWidth size="small">
-              <InputLabel>Instancia</InputLabel>
+              <InputLabel sx={{ '&.Mui-focused': { color: institutionalColors.primary } }}>Instancia</InputLabel>
               <Select
                 value={instanceFilter}
                 label="Instancia"
                 onChange={(e) => setInstanceFilter(e.target.value)}
+                sx={{
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: institutionalColors.primary,
+                  }
+                }}
               >
                 {instanceFilters.map((filter) => (
                   <MenuItem key={filter.value} value={filter.value}>
@@ -568,10 +603,14 @@ const InstanceReports = () => {
                 variant="contained"
                 startIcon={<RefreshIcon />}
                 onClick={handleGenerateReport}
+                sx={{
+                  bgcolor: institutionalColors.primary,
+                  '&:hover': { bgcolor: institutionalColors.secondary }
+                }}
               >
                 Generar
               </Button>
-              <IconButton>
+              <IconButton sx={{ color: institutionalColors.primary }}>
                 <FilterIcon />
               </IconButton>
             </Stack>
@@ -593,16 +632,16 @@ const InstanceReports = () => {
             <CardContent>
               <Stack direction="row" justifyContent="space-between">
                 <Box>
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography variant="caption" color={institutionalColors.textSecondary}>
                     Instancias
                   </Typography>
 
-                  <Typography variant="h4" fontWeight="bold">
+                  <Typography variant="h4" fontWeight="bold" sx={{ color: institutionalColors.textPrimary }}>
                     {stats.totalInstances}
                   </Typography>
                 </Box>
 
-                <DomainIcon sx={{ fontSize: 40, color: "#3498db33" }} />
+                <DomainIcon sx={{ fontSize: 40, color: `${institutionalColors.primary}33` }} />
               </Stack>
             </CardContent>
           </Card>
@@ -613,16 +652,16 @@ const InstanceReports = () => {
             <CardContent>
               <Stack direction="row" justifyContent="space-between">
                 <Box>
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography variant="caption" color={institutionalColors.textSecondary}>
                     Usuarios
                   </Typography>
 
-                  <Typography variant="h4" fontWeight="bold">
+                  <Typography variant="h4" fontWeight="bold" sx={{ color: institutionalColors.textPrimary }}>
                     {stats.totalUsers}
                   </Typography>
                 </Box>
 
-                <GroupIcon sx={{ fontSize: 40, color: "#27ae6033" }} />
+                <GroupIcon sx={{ fontSize: 40, color: `${institutionalColors.success}33` }} />
               </Stack>
             </CardContent>
           </Card>
@@ -633,16 +672,16 @@ const InstanceReports = () => {
             <CardContent>
               <Stack direction="row" justifyContent="space-between">
                 <Box>
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography variant="caption" color={institutionalColors.textSecondary}>
                     Expedientes
                   </Typography>
 
-                  <Typography variant="h4" fontWeight="bold">
+                  <Typography variant="h4" fontWeight="bold" sx={{ color: institutionalColors.textPrimary }}>
                     {stats.totalExpedientes}
                   </Typography>
                 </Box>
 
-                <StorageIcon sx={{ fontSize: 40, color: "#f39c1233" }} />
+                <StorageIcon sx={{ fontSize: 40, color: `${institutionalColors.warning}33` }} />
               </Stack>
             </CardContent>
           </Card>
@@ -651,53 +690,35 @@ const InstanceReports = () => {
       <br />
 
       {/* TABLA DE INSTANCIAS - OCUPA TODO EL ANCHO */}
-      <Paper sx={{ p: 2, borderRadius: 2, overflow: "hidden", mb: 3 }}>
-        <Typography variant="h6" fontWeight="600" mb={2}>
+      <Paper sx={{ p: 2, borderRadius: 2, overflow: "hidden", mb: 3, border: `1px solid #e5e7eb` }}>
+        <Typography variant="h6" fontWeight="600" mb={2} sx={{ color: institutionalColors.primary }}>
           Detalle de Instancias
         </Typography>
         <TableContainer>
           <Table stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell>
-                  <strong>Instancia</strong>
-                </TableCell>
-                <TableCell>
-                  <strong>Código</strong>
-                </TableCell>
-                <TableCell align="right">
-                  <strong>Usuarios</strong>
-                </TableCell>
-                <TableCell align="right">
-                  <strong>Activos</strong>
-                </TableCell>
-                <TableCell align="right">
-                  <strong>Expedientes</strong>
-                </TableCell>
-                <TableCell align="right">
-                  <strong>Nuevos</strong>
-                </TableCell>
-                <TableCell align="right">
-                  <strong>Uptime</strong>
-                </TableCell>
-                <TableCell>
-                  <strong>Estado</strong>
-                </TableCell>
-                <TableCell align="right">
-                  <strong>Crecimiento</strong>
-                </TableCell>
+                <TableCell sx={{ color: institutionalColors.primary }}><strong>Instancia</strong></TableCell>
+                <TableCell sx={{ color: institutionalColors.primary }}><strong>Código</strong></TableCell>
+                <TableCell align="right" sx={{ color: institutionalColors.primary }}><strong>Usuarios</strong></TableCell>
+                <TableCell align="right" sx={{ color: institutionalColors.primary }}><strong>Activos</strong></TableCell>
+                <TableCell align="right" sx={{ color: institutionalColors.primary }}><strong>Expedientes</strong></TableCell>
+                <TableCell align="right" sx={{ color: institutionalColors.primary }}><strong>Nuevos</strong></TableCell>
+                <TableCell align="right" sx={{ color: institutionalColors.primary }}><strong>Uptime</strong></TableCell>
+                <TableCell sx={{ color: institutionalColors.primary }}><strong>Estado</strong></TableCell>
+                <TableCell align="right" sx={{ color: institutionalColors.primary }}><strong>Crecimiento</strong></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {filteredData.map((row) => (
                 <TableRow key={row.name} hover>
-                  <TableCell>{row.name}</TableCell>
-                  <TableCell>{row.code}</TableCell>
-                  <TableCell align="right">{row.users}</TableCell>
-                  <TableCell align="right">{row.activeUsers}</TableCell>
-                  <TableCell align="right">{row.expedientes}</TableCell>
-                  <TableCell align="right">{row.nuevosExpedientes}</TableCell>
-                  <TableCell align="right">{row.uptime}%</TableCell>
+                  <TableCell sx={{ color: institutionalColors.textPrimary }}>{row.name}</TableCell>
+                  <TableCell sx={{ color: institutionalColors.textSecondary }}>{row.code}</TableCell>
+                  <TableCell align="right" sx={{ color: institutionalColors.textPrimary }}>{row.users}</TableCell>
+                  <TableCell align="right" sx={{ color: institutionalColors.textPrimary }}>{row.activeUsers}</TableCell>
+                  <TableCell align="right" sx={{ color: institutionalColors.textPrimary }}>{row.expedientes}</TableCell>
+                  <TableCell align="right" sx={{ color: institutionalColors.textPrimary }}>{row.nuevosExpedientes}</TableCell>
+                  <TableCell align="right" sx={{ color: institutionalColors.textPrimary }}>{row.uptime}%</TableCell>
                   <TableCell>
                     <Chip
                       label={row.status}
@@ -712,11 +733,11 @@ const InstanceReports = () => {
                   </TableCell>
                   <TableCell align="right">
                     <Typography
-                      color={
-                        row.crecimiento.includes("+")
-                          ? "success.main"
-                          : "error.main"
-                      }
+                      sx={{
+                        color: row.crecimiento.includes("+")
+                          ? institutionalColors.success
+                          : institutionalColors.error
+                      }}
                     >
                       {row.crecimiento}
                     </Typography>
@@ -735,28 +756,29 @@ const InstanceReports = () => {
           borderRadius: 2,
           mb: 3,
           width: "100%",
+          border: `1px solid #e5e7eb`,
         }}
       >
-        <Typography variant="h6" fontWeight="600" sx={{ mb: 2 }}>
+        <Typography variant="h6" fontWeight="600" sx={{ mb: 2, color: institutionalColors.primary }}>
           Visualización de Datos
         </Typography>
 
         {/* LINE CHART */}
         <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2, borderRadius: 3 }}>
+          <Paper sx={{ p: 2, borderRadius: 3, border: `1px solid #e5e7eb` }}>
             <Stack
               direction="row"
               justifyContent="space-between"
               alignItems="center"
               sx={{ mb: 2 }}
             >
-              <Typography variant="subtitle1" fontWeight="600">
+              <Typography variant="subtitle1" fontWeight="600" sx={{ color: institutionalColors.textPrimary }}>
                 <ShowChartIcon
-                  sx={{ mr: 1, verticalAlign: "middle", color: "#1976d2" }}
+                  sx={{ mr: 1, verticalAlign: "middle", color: institutionalColors.primary }}
                 />
                 {getTrendTitle()}
               </Typography>
-              <IconButton onClick={toggleLineChart} size="small">
+              <IconButton onClick={toggleLineChart} size="small" sx={{ color: institutionalColors.primary }}>
                 {showLineChart ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </IconButton>
             </Stack>
@@ -776,25 +798,25 @@ const InstanceReports = () => {
                     <Line
                       type="monotone"
                       dataKey="CAAREM"
-                      stroke="#1976d2"
+                      stroke={institutionalColors.primary}
                       strokeWidth={3}
                     />
                     <Line
                       type="monotone"
                       dataKey="ANAM"
-                      stroke="#2e7d32"
+                      stroke={institutionalColors.success}
                       strokeWidth={3}
                     />
                     <Line
                       type="monotone"
                       dataKey="SAT"
-                      stroke="#d32f2f"
+                      stroke={institutionalColors.error}
                       strokeWidth={3}
                     />
                     <Line
                       type="monotone"
                       dataKey="SHCP"
-                      stroke="#ed6c02"
+                      stroke={institutionalColors.warning}
                       strokeWidth={3}
                     />
                     <Line
@@ -812,20 +834,20 @@ const InstanceReports = () => {
         <br />
         {/* PIE CHART */}
         <Grid item xs={12} md={3}>
-          <Paper sx={{ p: 2, borderRadius: 3 }}>
+          <Paper sx={{ p: 2, borderRadius: 3, border: `1px solid #e5e7eb` }}>
             <Stack
               direction="row"
               justifyContent="space-between"
               alignItems="center"
               sx={{ mb: 2 }}
             >
-              <Typography variant="subtitle1" fontWeight="600">
+              <Typography variant="subtitle1" fontWeight="600" sx={{ color: institutionalColors.textPrimary }}>
                 <PieChartIcon
-                  sx={{ mr: 1, verticalAlign: "middle", color: "#9c27b0" }}
+                  sx={{ mr: 1, verticalAlign: "middle", color: institutionalColors.primary }}
                 />
                 Distribución de Expedientes
               </Typography>
-              <IconButton onClick={togglePieChart} size="small">
+              <IconButton onClick={togglePieChart} size="small" sx={{ color: institutionalColors.primary }}>
                 {showPieChart ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </IconButton>
             </Stack>
@@ -858,20 +880,20 @@ const InstanceReports = () => {
         <br />
         {/* BAR CHART */}
         <Grid item xs={12} md={3}>
-          <Paper sx={{ p: 2, borderRadius: 3 }}>
+          <Paper sx={{ p: 2, borderRadius: 3, border: `1px solid #e5e7eb` }}>
             <Stack
               direction="row"
               justifyContent="space-between"
               alignItems="center"
               sx={{ mb: 2 }}
             >
-              <Typography variant="subtitle1" fontWeight="600">
+              <Typography variant="subtitle1" fontWeight="600" sx={{ color: institutionalColors.textPrimary }}>
                 <BarChartIcon
-                  sx={{ mr: 1, verticalAlign: "middle", color: "#2e7d32" }}
+                  sx={{ mr: 1, verticalAlign: "middle", color: institutionalColors.primary }}
                 />
                 Usuarios Activos
               </Typography>
-              <IconButton onClick={toggleBarChart} size="small">
+              <IconButton onClick={toggleBarChart} size="small" sx={{ color: institutionalColors.primary }}>
                 {showBarChart ? <ExpandLessIcon /> : <ExpandMoreIcon />}
               </IconButton>
             </Stack>
@@ -889,7 +911,7 @@ const InstanceReports = () => {
                     <RechartsTooltip />
                     <Bar
                       dataKey="activos"
-                      fill="#1976d2"
+                      fill={institutionalColors.primary}
                       radius={[6, 6, 0, 0]}
                       barSize={40}
                     />
