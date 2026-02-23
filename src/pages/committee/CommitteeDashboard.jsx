@@ -66,6 +66,44 @@ import {
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
+// Paleta de colores corporativa CAAAREM (versión clara)
+const colors = {
+  primary: {
+    dark: '#0D2A4D',
+    main: '#133B6B',
+    light: '#3A6EA5'
+  },
+  secondary: {
+    main: '#00A8A8',
+    light: '#00C2D1',
+    lighter: '#35D0FF'
+  },
+  accents: {
+    blue: '#0099FF',
+    purple: '#6C5CE7'
+  },
+  status: {
+    success: '#00A8A8',
+    warning: '#00C2D1',
+    error: '#0099FF',
+    info: '#3A6EA5'
+  },
+  text: {
+    primary: '#0D2A4D',
+    secondary: '#3A6EA5',
+    light: '#6C5CE7'
+  },
+  background: {
+    default: '#ffffff',
+    paper: '#ffffff',
+    subtle: '#f5f7fa'
+  },
+  gradients: {
+    primary: 'linear-gradient(135deg, #0D2A4D, #3A6EA5)',
+    secondary: 'linear-gradient(135deg, #00A8A8, #00C2D1)',
+  }
+};
+
 const CommitteeDashboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
@@ -94,7 +132,7 @@ const CommitteeDashboard = () => {
       category: 'Regulatoria',
       lastAction: 'Asignado a Comité',
       assignedTo: 'María González',
-      color: '#1a237e'
+      color: colors.primary.main
     },
     { 
       id: 2, 
@@ -111,7 +149,7 @@ const CommitteeDashboard = () => {
       category: 'Fiscal',
       lastAction: 'En validación técnica',
       assignedTo: 'Carlos Ruiz',
-      color: '#2e7d32'
+      color: colors.secondary.main
     },
     { 
       id: 3, 
@@ -128,7 +166,7 @@ const CommitteeDashboard = () => {
       category: 'Profesional',
       lastAction: 'Esperando documentación',
       assignedTo: 'Laura Díaz',
-      color: '#9c27b0'
+      color: colors.accents.purple
     },
     { 
       id: 4, 
@@ -145,7 +183,7 @@ const CommitteeDashboard = () => {
       category: 'Legal',
       lastAction: 'Solicitada información adicional',
       assignedTo: 'Pedro Sánchez',
-      color: '#ed6c02'
+      color: colors.status.warning
     },
     { 
       id: 5, 
@@ -162,7 +200,7 @@ const CommitteeDashboard = () => {
       category: 'Fiscal',
       lastAction: 'En cola de revisión',
       assignedTo: 'Ana López',
-      color: '#0288d1'
+      color: colors.accents.blue
     },
   ];
 
@@ -221,17 +259,17 @@ const CommitteeDashboard = () => {
 
   const getUserTypeColor = (type) => {
     switch(type) {
-      case 'agente': return '#1a237e';
-      case 'profesionista': return '#2e7d32';
-      case 'empresario': return '#ed6c02';
-      default: return '#7f8c8d';
+      case 'agente': return colors.primary.main;
+      case 'profesionista': return colors.secondary.main;
+      case 'empresario': return colors.status.warning;
+      default: return colors.text.secondary;
     }
   };
 
   const getDaysColor = (days) => {
-    if (days <= 2) return '#e74c3c';
-    if (days <= 4) return '#f39c12';
-    return '#27ae60';
+    if (days <= 2) return colors.status.error;
+    if (days <= 4) return colors.status.warning;
+    return colors.status.success;
   };
 
   const filteredCertifications = certifications.filter(cert => {
@@ -270,17 +308,24 @@ const CommitteeDashboard = () => {
       overflow: 'hidden',
       display: 'flex',
       flexDirection: 'column',
-      p: 2
+      p: 2,
+      bgcolor: colors.background.subtle
     }}>
       {/* Header Compacto */}
       <Box sx={{ mb: 3 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
           <Box>
-            <Typography variant="h5" sx={{ color: '#2c3e50', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
-              <InsightsIcon sx={{ color: '#1a237e' }} />
+            <Typography variant="h5" sx={{ 
+              color: colors.primary.dark, 
+              fontWeight: 'bold', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 1 
+            }}>
+              <InsightsIcon sx={{ color: colors.primary.main }} />
               Panel de Control del Comité
             </Typography>
-            <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+            <Typography variant="caption" sx={{ color: colors.text.secondary }}>
               Gestión y validación de certificaciones individuales
             </Typography>
           </Box>
@@ -292,10 +337,18 @@ const CommitteeDashboard = () => {
                   size="small"
                   checked={autoRefresh}
                   onChange={(e) => setAutoRefresh(e.target.checked)}
+                  sx={{
+                    '& .MuiSwitch-switchBase.Mui-checked': {
+                      color: colors.secondary.main,
+                    },
+                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                      backgroundColor: colors.secondary.light,
+                    },
+                  }}
                 />
               }
               label={
-                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                   Auto-refresh
                 </Typography>
               }
@@ -304,6 +357,14 @@ const CommitteeDashboard = () => {
               variant="outlined"
               size="small"
               startIcon={<DownloadIcon />}
+              sx={{
+                borderColor: colors.primary.light,
+                color: colors.primary.main,
+                '&:hover': {
+                  borderColor: colors.primary.main,
+                  bgcolor: 'rgba(19, 59, 107, 0.04)',
+                }
+              }}
             >
               Exportar
             </Button>
@@ -311,9 +372,14 @@ const CommitteeDashboard = () => {
               variant="contained"
               size="small"
               startIcon={<RocketLaunchIcon />}
-              sx={{ bgcolor: '#1a237e' }}
               component={Link}
               to="/committee/review"
+              sx={{ 
+                bgcolor: colors.primary.main,
+                '&:hover': { 
+                  bgcolor: colors.primary.dark,
+                }
+              }}
             >
               Revisión Rápida
             </Button>
@@ -321,7 +387,12 @@ const CommitteeDashboard = () => {
         </Box>
 
         {/* Filtros Rápidos */}
-        <Paper elevation={0} sx={{ p: 2, mb: 2, bgcolor: '#f8f9fa' }}>
+        <Paper elevation={0} sx={{ 
+          p: 2, 
+          mb: 2, 
+          bgcolor: colors.background.paper,
+          border: `1px solid ${colors.primary.light}20`,
+        }}>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} md={4}>
               <TextField
@@ -330,15 +401,29 @@ const CommitteeDashboard = () => {
                 placeholder="Buscar certificaciones..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    color: colors.primary.dark,
+                    '& fieldset': {
+                      borderColor: colors.primary.light,
+                    },
+                    '&:hover fieldset': {
+                      borderColor: colors.primary.main,
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: colors.primary.dark,
+                    },
+                  },
+                }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon fontSize="small" />
+                      <SearchIcon fontSize="small" sx={{ color: colors.text.secondary }} />
                     </InputAdornment>
                   ),
                   endAdornment: searchTerm && (
                     <InputAdornment position="end">
-                      <IconButton size="small" onClick={() => setSearchTerm('')}>
+                      <IconButton size="small" onClick={() => setSearchTerm('')} sx={{ color: colors.text.secondary }}>
                         <RefreshIcon fontSize="small" />
                       </IconButton>
                     </InputAdornment>
@@ -349,11 +434,23 @@ const CommitteeDashboard = () => {
             
             <Grid item xs={12} md={2}>
               <FormControl fullWidth size="small">
-                <InputLabel>Prioridad</InputLabel>
+                <InputLabel sx={{ color: colors.text.secondary }}>Prioridad</InputLabel>
                 <Select
                   value={filterPriority}
                   label="Prioridad"
                   onChange={(e) => setFilterPriority(e.target.value)}
+                  sx={{
+                    color: colors.primary.dark,
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: colors.primary.light,
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: colors.primary.main,
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: colors.primary.dark,
+                    },
+                  }}
                 >
                   <MenuItem value="all">Todas</MenuItem>
                   <MenuItem value="ALTA">Alta</MenuItem>
@@ -365,11 +462,23 @@ const CommitteeDashboard = () => {
             
             <Grid item xs={12} md={2}>
               <FormControl fullWidth size="small">
-                <InputLabel>Estado</InputLabel>
+                <InputLabel sx={{ color: colors.text.secondary }}>Estado</InputLabel>
                 <Select
                   value={filterStatus}
                   label="Estado"
                   onChange={(e) => setFilterStatus(e.target.value)}
+                  sx={{
+                    color: colors.primary.dark,
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: colors.primary.light,
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: colors.primary.main,
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: colors.primary.dark,
+                    },
+                  }}
                 >
                   <MenuItem value="all">Todos</MenuItem>
                   <MenuItem value="PENDIENTE">Pendiente</MenuItem>
@@ -381,11 +490,23 @@ const CommitteeDashboard = () => {
             
             <Grid item xs={12} md={2}>
               <FormControl fullWidth size="small">
-                <InputLabel>Región</InputLabel>
+                <InputLabel sx={{ color: colors.text.secondary }}>Región</InputLabel>
                 <Select
                   value={filterRegion}
                   label="Región"
                   onChange={(e) => setFilterRegion(e.target.value)}
+                  sx={{
+                    color: colors.primary.dark,
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: colors.primary.light,
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: colors.primary.main,
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: colors.primary.dark,
+                    },
+                  }}
                 >
                   <MenuItem value="all">Todas</MenuItem>
                   {regions.map(region => (
@@ -401,13 +522,18 @@ const CommitteeDashboard = () => {
                   <IconButton 
                     size="small"
                     onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-                    color={showAdvancedFilters ? 'primary' : 'default'}
+                    sx={{ 
+                      color: showAdvancedFilters ? colors.primary.main : colors.text.secondary,
+                      '&:hover': {
+                        bgcolor: 'rgba(19, 59, 107, 0.04)',
+                      }
+                    }}
                   >
                     <FilterIcon />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Ordenar">
-                  <IconButton size="small">
+                  <IconButton size="small" sx={{ color: colors.text.secondary }}>
                     <SortIcon />
                   </IconButton>
                 </Tooltip>
@@ -415,6 +541,7 @@ const CommitteeDashboard = () => {
                   <IconButton 
                     size="small"
                     onClick={() => setActiveView(activeView === 'grid' ? 'list' : 'grid')}
+                    sx={{ color: colors.text.secondary }}
                   >
                     <ViewColumnIcon />
                   </IconButton>
@@ -425,15 +552,25 @@ const CommitteeDashboard = () => {
 
           {/* Filtros Avanzados */}
           {showAdvancedFilters && (
-            <Box sx={{ mt: 2, pt: 2, borderTop: '1px dashed #e0e0e0' }}>
+            <Box sx={{ 
+              mt: 2, 
+              pt: 2, 
+              borderTop: `1px dashed ${colors.primary.light}` 
+            }}>
               <Grid container spacing={2}>
                 <Grid item xs={12} md={3}>
                   <FormControl fullWidth size="small">
-                    <InputLabel>Tipo</InputLabel>
+                    <InputLabel sx={{ color: colors.text.secondary }}>Tipo</InputLabel>
                     <Select
                       value={filterType}
                       label="Tipo"
                       onChange={(e) => setFilterType(e.target.value)}
+                      sx={{
+                        color: colors.primary.dark,
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: colors.primary.light,
+                        },
+                      }}
                     >
                       <MenuItem value="all">Todos</MenuItem>
                       {types.map(type => (
@@ -444,33 +581,45 @@ const CommitteeDashboard = () => {
                 </Grid>
                 
                 <Grid item xs={12} md={3}>
-                  <TextField
-                    select
-                    fullWidth
-                    size="small"
-                    label="Categoría"
-                    value="all"
-                  >
-                    <MenuItem value="all">Todas</MenuItem>
-                    {categories.map(cat => (
-                      <MenuItem key={cat} value={cat}>{cat}</MenuItem>
-                    ))}
-                  </TextField>
+                  <FormControl fullWidth size="small">
+                    <InputLabel sx={{ color: colors.text.secondary }}>Categoría</InputLabel>
+                    <Select
+                      value="all"
+                      label="Categoría"
+                      sx={{
+                        color: colors.primary.dark,
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: colors.primary.light,
+                        },
+                      }}
+                    >
+                      <MenuItem value="all">Todas</MenuItem>
+                      {categories.map(cat => (
+                        <MenuItem key={cat} value={cat}>{cat}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 </Grid>
                 
                 <Grid item xs={12} md={3}>
-                  <TextField
-                    select
-                    fullWidth
-                    size="small"
-                    label="Ordenar por"
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                  >
-                    <MenuItem value="priority">Prioridad</MenuItem>
-                    <MenuItem value="days">Días pendientes</MenuItem>
-                    <MenuItem value="date">Fecha de carga</MenuItem>
-                  </TextField>
+                  <FormControl fullWidth size="small">
+                    <InputLabel sx={{ color: colors.text.secondary }}>Ordenar por</InputLabel>
+                    <Select
+                      value={sortBy}
+                      label="Ordenar por"
+                      onChange={(e) => setSortBy(e.target.value)}
+                      sx={{
+                        color: colors.primary.dark,
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: colors.primary.light,
+                        },
+                      }}
+                    >
+                      <MenuItem value="priority">Prioridad</MenuItem>
+                      <MenuItem value="days">Días pendientes</MenuItem>
+                      <MenuItem value="date">Fecha de carga</MenuItem>
+                    </Select>
+                  </FormControl>
                 </Grid>
                 
                 <Grid item xs={12} md={3}>
@@ -484,6 +633,14 @@ const CommitteeDashboard = () => {
                       setFilterStatus('all');
                       setFilterPriority('all');
                       setSearchTerm('');
+                    }}
+                    sx={{
+                      borderColor: colors.primary.light,
+                      color: colors.primary.main,
+                      '&:hover': {
+                        borderColor: colors.primary.main,
+                        bgcolor: 'rgba(19, 59, 107, 0.04)',
+                      }
                     }}
                   >
                     Limpiar Filtros
@@ -506,42 +663,42 @@ const CommitteeDashboard = () => {
                 { 
                   label: 'Urgentes', 
                   value: stats.urgent, 
-                  color: '#e74c3c', 
+                  color: colors.status.error, 
                   icon: <PriorityHighIcon />,
                   tooltip: 'Certificaciones con vencimiento en 3 días o menos'
                 },
                 { 
                   label: 'Pendientes', 
                   value: stats.pending, 
-                  color: '#f39c12', 
+                  color: colors.status.warning, 
                   icon: <TimerIcon />,
                   tooltip: 'Certificaciones pendientes de revisión'
                 },
                 { 
                   label: 'Asignadas', 
                   value: stats.assignedToMe, 
-                  color: '#1a237e', 
+                  color: colors.primary.main, 
                   icon: <AssignmentIcon />,
                   tooltip: 'Certificaciones asignadas a mí'
                 },
                 { 
                   label: 'En Revisión', 
                   value: stats.inReview, 
-                  color: '#3498db', 
+                  color: colors.accents.blue, 
                   icon: <AssessmentIcon />,
                   tooltip: 'Certificaciones en proceso de revisión'
                 },
                 { 
                   label: 'Tiempo Prom.', 
                   value: `${stats.avgReviewTime}d`, 
-                  color: '#27ae60', 
+                  color: colors.status.success, 
                   icon: <SpeedIcon />,
                   tooltip: 'Tiempo promedio de revisión'
                 },
                 { 
                   label: 'Total', 
                   value: stats.total, 
-                  color: '#9b59b6', 
+                  color: colors.accents.purple, 
                   icon: <FolderOpenIcon />,
                   tooltip: 'Total de certificaciones activas'
                 },
@@ -554,9 +711,12 @@ const CommitteeDashboard = () => {
                         textAlign: 'center',
                         cursor: 'pointer',
                         transition: 'all 0.2s',
+                        bgcolor: colors.background.paper,
+                        border: `1px solid ${colors.primary.light}20`,
                         '&:hover': {
                           transform: 'translateY(-2px)',
-                          boxShadow: 3
+                          boxShadow: 3,
+                          borderColor: colors.primary.light,
                         }
                       }}
                     >
@@ -566,7 +726,7 @@ const CommitteeDashboard = () => {
                       <Typography variant="h6" sx={{ color: kpi.color, fontWeight: 'bold', lineHeight: 1 }}>
                         {kpi.value}
                       </Typography>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                         {kpi.label}
                       </Typography>
                     </Card>
@@ -576,29 +736,44 @@ const CommitteeDashboard = () => {
             </Grid>
 
             {/* Vista de Certificaciones */}
-            <Paper elevation={1} sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            <Paper elevation={1} sx={{ 
+              flex: 1, 
+              display: 'flex', 
+              flexDirection: 'column', 
+              overflow: 'hidden',
+              bgcolor: colors.background.paper,
+              border: `1px solid ${colors.primary.light}20`,
+            }}>
               <Box sx={{ 
                 p: 2, 
-                borderBottom: '1px solid #e0e0e0',
+                borderBottom: `1px solid ${colors.primary.light}`,
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center'
               }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
                   {sortedCertifications.length} certificaciones para revisión
                 </Typography>
                 <Stack direction="row" spacing={1}>
                   <Chip 
                     label={`${stats.highPriority} PRIORIDAD ALTA`}
                     size="small"
-                    color="error"
-                    icon={<PriorityHighIcon />}
+                    sx={{
+                      bgcolor: colors.status.error,
+                      color: 'white',
+                      fontWeight: 'bold',
+                    }}
+                    icon={<PriorityHighIcon sx={{ color: 'white' }} />}
                   />
                   <Chip 
                     label={`${stats.urgent} URGENTES`}
                     size="small"
-                    color="warning"
-                    icon={<WarningIcon />}
+                    sx={{
+                      bgcolor: colors.status.warning,
+                      color: colors.primary.dark,
+                      fontWeight: 'bold',
+                    }}
+                    icon={<WarningIcon sx={{ color: colors.primary.dark }} />}
                   />
                 </Stack>
               </Box>
@@ -609,12 +784,48 @@ const CommitteeDashboard = () => {
                   <Table size="small" stickyHeader>
                     <TableHead>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold', width: '25%' }}>Certificación</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold', width: '20%' }}>Solicitante</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold', width: '10%' }}>Estado</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold', width: '15%' }}>Tiempo</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold', width: '10%' }}>Documentos</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold', width: '20%' }} align="right">Acciones</TableCell>
+                        <TableCell sx={{ 
+                          fontWeight: 'bold', 
+                          width: '25%',
+                          bgcolor: colors.background.subtle,
+                          color: colors.primary.dark,
+                          borderBottom: `2px solid ${colors.primary.main}`,
+                        }}>Certificación</TableCell>
+                        <TableCell sx={{ 
+                          fontWeight: 'bold', 
+                          width: '20%',
+                          bgcolor: colors.background.subtle,
+                          color: colors.primary.dark,
+                          borderBottom: `2px solid ${colors.primary.main}`,
+                        }}>Solicitante</TableCell>
+                        <TableCell sx={{ 
+                          fontWeight: 'bold', 
+                          width: '10%',
+                          bgcolor: colors.background.subtle,
+                          color: colors.primary.dark,
+                          borderBottom: `2px solid ${colors.primary.main}`,
+                        }}>Estado</TableCell>
+                        <TableCell sx={{ 
+                          fontWeight: 'bold', 
+                          width: '15%',
+                          bgcolor: colors.background.subtle,
+                          color: colors.primary.dark,
+                          borderBottom: `2px solid ${colors.primary.main}`,
+                        }}>Tiempo</TableCell>
+                        <TableCell sx={{ 
+                          fontWeight: 'bold', 
+                          width: '10%',
+                          bgcolor: colors.background.subtle,
+                          color: colors.primary.dark,
+                          borderBottom: `2px solid ${colors.primary.main}`,
+                        }}>Documentos</TableCell>
+                        <TableCell sx={{ 
+                          fontWeight: 'bold', 
+                          width: '20%',
+                          bgcolor: colors.background.subtle,
+                          color: colors.primary.dark,
+                          borderBottom: `2px solid ${colors.primary.main}`,
+                        }} align="right">Acciones</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -623,27 +834,38 @@ const CommitteeDashboard = () => {
                           key={cert.id} 
                           hover
                           sx={{ 
-                            '&:hover': { bgcolor: '#f8f9fa' },
+                            '&:hover': { 
+                              bgcolor: 'rgba(58, 110, 165, 0.04)',
+                            },
                             borderLeft: `4px solid ${cert.color}`,
-                            cursor: 'pointer'
+                            cursor: 'pointer',
+                            '& td': {
+                              color: colors.primary.dark,
+                              borderBottom: `1px solid ${colors.primary.light}`,
+                            }
                           }}
                           onClick={() => window.location.href = `/committee/review/${cert.id}`}
                         >
                           <TableCell>
                             <Box>
-                              <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                              <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
                                 {cert.type}
                               </Typography>
                               <Stack direction="row" spacing={0.5} alignItems="center" sx={{ mt: 0.5 }}>
-                                <PlaceIcon sx={{ color: '#7f8c8d', fontSize: 12 }} />
-                                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                <PlaceIcon sx={{ color: colors.text.secondary, fontSize: 12 }} />
+                                <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                                   {cert.region}
                                 </Typography>
                                 <Chip 
                                   label={cert.category}
                                   size="small"
                                   variant="outlined"
-                                  sx={{ height: 18, ml: 1 }}
+                                  sx={{ 
+                                    height: 18, 
+                                    ml: 1,
+                                    color: colors.text.secondary,
+                                    borderColor: colors.primary.light,
+                                  }}
                                 />
                               </Stack>
                             </Box>
@@ -662,7 +884,7 @@ const CommitteeDashboard = () => {
                                 {cert.applicant.avatar}
                               </Avatar>
                               <Box>
-                                <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                                <Typography variant="body2" sx={{ fontWeight: 'medium', color: colors.primary.dark }}>
                                   {cert.applicant.name}
                                 </Typography>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
@@ -672,10 +894,14 @@ const CommitteeDashboard = () => {
                                     sx={{ 
                                       width: 40, 
                                       height: 4,
-                                      borderRadius: 2
+                                      borderRadius: 2,
+                                      bgcolor: colors.primary.light,
+                                      '& .MuiLinearProgress-bar': {
+                                        bgcolor: colors.primary.main,
+                                      }
                                     }}
                                   />
-                                  <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                  <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                                     {cert.applicant.complianceScore}%
                                   </Typography>
                                 </Box>
@@ -688,15 +914,29 @@ const CommitteeDashboard = () => {
                               <Chip 
                                 label={cert.status}
                                 size="small"
-                                color={getStatusColor(cert.status)}
-                                sx={{ height: 20 }}
+                                sx={{
+                                  height: 20,
+                                  bgcolor: cert.status === 'PENDIENTE' ? colors.status.warning :
+                                          cert.status === 'EN REVISIÓN' ? colors.accents.blue :
+                                          cert.status === 'REQUIERE INFO' ? colors.status.error :
+                                          colors.primary.main,
+                                  color: cert.status === 'PENDIENTE' ? colors.primary.dark : 'white',
+                                  fontWeight: 'bold',
+                                }}
                               />
                               <Chip 
                                 label={cert.priority}
                                 size="small"
-                                color={getPriorityColor(cert.priority)}
                                 variant="outlined"
-                                sx={{ height: 18 }}
+                                sx={{
+                                  height: 18,
+                                  color: cert.priority === 'ALTA' ? colors.status.error :
+                                         cert.priority === 'MEDIA' ? colors.status.warning :
+                                         colors.status.success,
+                                  borderColor: cert.priority === 'ALTA' ? colors.status.error :
+                                              cert.priority === 'MEDIA' ? colors.status.warning :
+                                              colors.status.success,
+                                }}
                               />
                             </Stack>
                           </TableCell>
@@ -709,10 +949,10 @@ const CommitteeDashboard = () => {
                               }}>
                                 {cert.daysPending} días
                               </Typography>
-                              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                                 Vence: {cert.dueDate}
                               </Typography>
-                              <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block' }}>
+                              <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
                                 Prom: {cert.reviewTime}
                               </Typography>
                             </Box>
@@ -728,10 +968,13 @@ const CommitteeDashboard = () => {
                                     height: 6,
                                     borderRadius: 3,
                                     mb: 0.5,
-                                    bgcolor: '#f0f0f0'
+                                    bgcolor: colors.primary.light,
+                                    '& .MuiLinearProgress-bar': {
+                                      bgcolor: colors.primary.main,
+                                    }
                                   }}
                                 />
-                                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                                   {cert.documents.completed}/{cert.documents.total}
                                 </Typography>
                               </Box>
@@ -749,8 +992,10 @@ const CommitteeDashboard = () => {
                                   startIcon={<GavelIcon />}
                                   onClick={(e) => e.stopPropagation()}
                                   sx={{ 
-                                    bgcolor: '#1a237e',
-                                    '&:hover': { bgcolor: '#283593' },
+                                    bgcolor: colors.primary.main,
+                                    '&:hover': { 
+                                      bgcolor: colors.primary.dark,
+                                    },
                                     minWidth: 'auto',
                                     px: 1.5
                                   }}
@@ -759,7 +1004,7 @@ const CommitteeDashboard = () => {
                                 </Button>
                               </Tooltip>
                               <Tooltip title="Más opciones">
-                                <IconButton size="small" onClick={(e) => e.stopPropagation()}>
+                                <IconButton size="small" onClick={(e) => e.stopPropagation()} sx={{ color: colors.text.secondary }}>
                                   <MoreVertIcon fontSize="small" />
                                 </IconButton>
                               </Tooltip>
@@ -777,14 +1022,20 @@ const CommitteeDashboard = () => {
           {/* Columna Derecha - 30% */}
           <Grid item xs={12} lg={4} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             {/* Alertas Inmediatas */}
-            <Paper elevation={1} sx={{ p: 2, mb: 2, flex: 1 }}>
+            <Paper elevation={1} sx={{ 
+              p: 2, 
+              mb: 2, 
+              flex: 1,
+              bgcolor: colors.background.paper,
+              border: `1px solid ${colors.primary.light}20`,
+            }}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#2c3e50', display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <NotificationsIcon sx={{ color: '#e74c3c' }} />
+                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: colors.primary.dark, display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <NotificationsIcon sx={{ color: colors.status.error }} />
                   Alertas Críticas
                 </Typography>
-                <Badge badgeContent={3} color="error">
-                  <IconButton size="small">
+                <Badge badgeContent={3} sx={{ '& .MuiBadge-badge': { bgcolor: colors.status.error, color: 'white' } }}>
+                  <IconButton size="small" sx={{ color: colors.text.secondary }}>
                     <MoreVertIcon />
                   </IconButton>
                 </Badge>
@@ -822,21 +1073,23 @@ const CommitteeDashboard = () => {
                     variant="outlined"
                     sx={{ 
                       p: 1.5,
+                      bgcolor: 'transparent',
+                      borderColor: colors.primary.light,
                       borderLeft: `3px solid ${
-                        alert.type === 'error' ? '#e74c3c' :
-                        alert.type === 'warning' ? '#f39c12' : '#3498db'
+                        alert.type === 'error' ? colors.status.error :
+                        alert.type === 'warning' ? colors.status.warning : colors.accents.blue
                       }`
                     }}
                   >
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-                      <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                      <Typography variant="body2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
                         {alert.title}
                       </Typography>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                         {alert.time}
                       </Typography>
                     </Box>
-                    <Typography variant="caption" sx={{ color: '#5a6c7d', mb: 1, display: 'block' }}>
+                    <Typography variant="caption" sx={{ color: colors.text.secondary, mb: 1, display: 'block' }}>
                       {alert.message}
                     </Typography>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -844,12 +1097,20 @@ const CommitteeDashboard = () => {
                         label={alert.cert}
                         size="small"
                         variant="outlined"
+                        sx={{ 
+                          color: colors.text.secondary,
+                          borderColor: colors.primary.light,
+                        }}
                       />
                       <Button
                         size="small"
                         variant="text"
                         endIcon={<ArrowForwardIcon />}
-                        sx={{ textTransform: 'none' }}
+                        sx={{ 
+                          textTransform: 'none',
+                          color: colors.primary.main,
+                          '&:hover': { color: colors.primary.dark }
+                        }}
                       >
                         {alert.action === 'revisar' ? 'Revisar ahora' : 'Solicitar'}
                       </Button>
@@ -863,52 +1124,83 @@ const CommitteeDashboard = () => {
                 variant="outlined"
                 component={Link}
                 to="/committee/alerts"
-                sx={{ mt: 2 }}
+                sx={{ 
+                  mt: 2,
+                  borderColor: colors.primary.light,
+                  color: colors.primary.main,
+                  '&:hover': {
+                    borderColor: colors.primary.main,
+                    bgcolor: 'rgba(19, 59, 107, 0.04)',
+                  }
+                }}
               >
                 Ver todas las alertas
               </Button>
             </Paper>
 
             {/* Métricas Personales */}
-            <Paper elevation={1} sx={{ p: 2, mb: 2, flex: 1 }}>
-              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: '#2c3e50', display: 'flex', alignItems: 'center', gap: 1 }}>
-                <AutoAwesomeIcon /> Mi Desempeño
+            <Paper elevation={1} sx={{ 
+              p: 2, 
+              mb: 2, 
+              flex: 1,
+              bgcolor: colors.background.paper,
+              border: `1px solid ${colors.primary.light}20`,
+            }}>
+              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: colors.primary.dark, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <AutoAwesomeIcon sx={{ color: colors.accents.purple }} /> Mi Desempeño
               </Typography>
               
               <Stack spacing={2}>
                 <Box>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                    <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                       Revisadas este mes
                     </Typography>
-                    <Typography variant="caption" sx={{ fontWeight: 'bold', color: '#1a237e' }}>
+                    <Typography variant="caption" sx={{ fontWeight: 'bold', color: colors.primary.main }}>
                       15/20 (75%)
                     </Typography>
                   </Box>
                   <LinearProgress 
                     variant="determinate" 
                     value={75}
-                    sx={{ height: 6, borderRadius: 3 }}
+                    sx={{ 
+                      height: 6, 
+                      borderRadius: 3,
+                      bgcolor: colors.primary.light,
+                      '& .MuiLinearProgress-bar': {
+                        bgcolor: colors.primary.main,
+                      }
+                    }}
                   />
                 </Box>
                 
                 <Grid container spacing={1}>
                   <Grid item xs={6}>
-                    <Card variant="outlined" sx={{ p: 1.5, textAlign: 'center' }}>
-                      <Typography variant="h6" sx={{ color: '#27ae60', fontWeight: 'bold' }}>
+                    <Card variant="outlined" sx={{ 
+                      p: 1.5, 
+                      textAlign: 'center',
+                      bgcolor: 'transparent',
+                      borderColor: colors.primary.light,
+                    }}>
+                      <Typography variant="h6" sx={{ color: colors.status.success, fontWeight: 'bold' }}>
                         92%
                       </Typography>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                         Aprobación
                       </Typography>
                     </Card>
                   </Grid>
                   <Grid item xs={6}>
-                    <Card variant="outlined" sx={{ p: 1.5, textAlign: 'center' }}>
-                      <Typography variant="h6" sx={{ color: '#3498db', fontWeight: 'bold' }}>
+                    <Card variant="outlined" sx={{ 
+                      p: 1.5, 
+                      textAlign: 'center',
+                      bgcolor: 'transparent',
+                      borderColor: colors.primary.light,
+                    }}>
+                      <Typography variant="h6" sx={{ color: colors.accents.blue, fontWeight: 'bold' }}>
                         2.3d
                       </Typography>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                         Tiempo promedio
                       </Typography>
                     </Card>
@@ -916,19 +1208,29 @@ const CommitteeDashboard = () => {
                 </Grid>
                 
                 <Box>
-                  <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', mb: 1 }}>
+                  <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mb: 1 }}>
                     Próximas revisiones programadas:
                   </Typography>
                   <Stack spacing={0.5}>
                     {['Hoy - 10:00 AM', 'Hoy - 2:00 PM', 'Mañana - 9:00 AM'].map((time, idx) => (
-                      <Box key={idx} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 1 }}>
-                        <Typography variant="caption">
+                      <Box key={idx} sx={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'space-between', 
+                        p: 1,
+                        borderBottom: idx < 2 ? `1px solid ${colors.primary.light}` : 'none',
+                      }}>
+                        <Typography variant="caption" sx={{ color: colors.primary.dark }}>
                           {time}
                         </Typography>
                         <Chip 
                           label="Programado"
                           size="small"
-                          color="info"
+                          sx={{
+                            bgcolor: 'rgba(0, 168, 168, 0.1)',
+                            color: colors.secondary.main,
+                            borderColor: colors.secondary.main,
+                          }}
                           variant="outlined"
                         />
                       </Box>
@@ -939,8 +1241,12 @@ const CommitteeDashboard = () => {
             </Paper>
 
             {/* Acciones Rápidas */}
-            <Paper elevation={1} sx={{ p: 2 }}>
-              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: '#2c3e50' }}>
+            <Paper elevation={1} sx={{ 
+              p: 2,
+              bgcolor: colors.background.paper,
+              border: `1px solid ${colors.primary.light}20`,
+            }}>
+              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: colors.primary.dark }}>
                 Acciones Directas
               </Typography>
               
@@ -951,7 +1257,13 @@ const CommitteeDashboard = () => {
                   startIcon={<GavelIcon />}
                   component={Link}
                   to="/committee/review"
-                  sx={{ justifyContent: 'flex-start', bgcolor: '#1a237e' }}
+                  sx={{ 
+                    justifyContent: 'flex-start', 
+                    bgcolor: colors.primary.main,
+                    '&:hover': { 
+                      bgcolor: colors.primary.dark,
+                    }
+                  }}
                 >
                   Iniciar nueva revisión
                 </Button>
@@ -960,7 +1272,15 @@ const CommitteeDashboard = () => {
                   fullWidth
                   variant="outlined"
                   startIcon={<BarChartIcon />}
-                  sx={{ justifyContent: 'flex-start' }}
+                  sx={{ 
+                    justifyContent: 'flex-start',
+                    borderColor: colors.primary.light,
+                    color: colors.primary.main,
+                    '&:hover': {
+                      borderColor: colors.primary.main,
+                      bgcolor: 'rgba(19, 59, 107, 0.04)',
+                    }
+                  }}
                 >
                   Ver métricas completas
                 </Button>
@@ -969,7 +1289,15 @@ const CommitteeDashboard = () => {
                   fullWidth
                   variant="outlined"
                   startIcon={<DownloadIcon />}
-                  sx={{ justifyContent: 'flex-start' }}
+                  sx={{ 
+                    justifyContent: 'flex-start',
+                    borderColor: colors.primary.light,
+                    color: colors.primary.main,
+                    '&:hover': {
+                      borderColor: colors.primary.main,
+                      bgcolor: 'rgba(19, 59, 107, 0.04)',
+                    }
+                  }}
                 >
                   Descargar reporte
                 </Button>
@@ -979,7 +1307,15 @@ const CommitteeDashboard = () => {
                   variant="outlined"
                   startIcon={<RefreshIcon />}
                   onClick={() => window.location.reload()}
-                  sx={{ justifyContent: 'flex-start' }}
+                  sx={{ 
+                    justifyContent: 'flex-start',
+                    borderColor: colors.primary.light,
+                    color: colors.primary.main,
+                    '&:hover': {
+                      borderColor: colors.primary.main,
+                      bgcolor: 'rgba(19, 59, 107, 0.04)',
+                    }
+                  }}
                 >
                   Actualizar datos
                 </Button>

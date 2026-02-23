@@ -20,7 +20,6 @@ import {
   Tab,
   Alert,
   LinearProgress,
-  // NUEVOS COMPONENTES
   Tooltip,
   Badge,
   InputAdornment,
@@ -47,7 +46,6 @@ import {
   VpnKey as VpnKeyIcon,
   History as HistoryIcon,
   Download as DownloadIcon,
-  // NUEVOS ICONOS
   ExpandMore as ExpandMoreIcon,
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
@@ -69,6 +67,45 @@ import {
   Gavel as GavelIcon
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
+
+// Paleta de colores corporativa CAAAREM (versión clara)
+const colors = {
+  primary: {
+    dark: '#0D2A4D',
+    main: '#133B6B',
+    light: '#3A6EA5'
+  },
+  secondary: {
+    main: '#00A8A8',
+    light: '#00C2D1',
+    lighter: '#35D0FF'
+  },
+  accents: {
+    blue: '#0099FF',
+    purple: '#6C5CE7'
+  },
+  status: {
+    warning: '#00C2D1',      // Advertencias en cyan
+    error: '#0099FF',         // Errores en azul eléctrico
+    info: '#3A6EA5',          // Información en azul claro
+    success: '#00A8A8',       // Éxito en verde/teal
+    purple: '#6C5CE7'         // Púrpura para énfasis
+  },
+  text: {
+    primary: '#0D2A4D',
+    secondary: '#3A6EA5',
+    light: '#6C5CE7'
+  },
+  background: {
+    default: '#ffffff',
+    paper: '#ffffff',
+    subtle: '#f5f7fa'
+  },
+  gradients: {
+    primary: 'linear-gradient(135deg, #0D2A4D, #3A6EA5)',
+    secondary: 'linear-gradient(135deg, #00A8A8, #00C2D1)',
+  }
+};
 
 const CommitteeProfile = () => {
   const { user, updateUser } = useAuth();
@@ -185,10 +222,10 @@ const CommitteeProfile = () => {
 
   // Logros y reconocimientos
   const achievements = [
-    { id: 1, title: 'Revisor del Mes', date: 'Enero 2026', icon: <StarIcon />, color: '#ffd700' },
-    { id: 2, title: '100 Certificaciones', date: 'Diciembre 2025', icon: <CheckCircleIcon />, color: '#27ae60' },
-    { id: 3, title: 'Alta Eficiencia', date: 'Noviembre 2025', icon: <SpeedIcon />, color: '#3498db' },
-    { id: 4, title: 'Especialista Fiscal', date: 'Octubre 2025', icon: <VerifiedIcon />, color: '#9b59b6' },
+    { id: 1, title: 'Revisor del Mes', date: 'Enero 2026', icon: <StarIcon />, color: colors.status.warning },
+    { id: 2, title: '100 Certificaciones', date: 'Diciembre 2025', icon: <CheckCircleIcon />, color: colors.status.success },
+    { id: 3, title: 'Alta Eficiencia', date: 'Noviembre 2025', icon: <SpeedIcon />, color: colors.accents.blue },
+    { id: 4, title: 'Especialista Fiscal', date: 'Octubre 2025', icon: <VerifiedIcon />, color: colors.accents.purple },
   ];
 
   // Historial de actividad mejorado
@@ -242,11 +279,11 @@ const CommitteeProfile = () => {
 
   const getActivityColor = (type) => {
     switch(type) {
-      case 'success': return '#27ae60';
-      case 'error': return '#e74c3c';
-      case 'warning': return '#f39c12';
-      case 'info': return '#3498db';
-      default: return '#7f8c8d';
+      case 'success': return colors.status.success;
+      case 'error': return colors.status.error;
+      case 'warning': return colors.status.warning;
+      case 'info': return colors.status.info;
+      default: return colors.text.secondary;
     }
   };
 
@@ -256,17 +293,18 @@ const CommitteeProfile = () => {
       overflow: 'hidden',
       display: 'flex',
       flexDirection: 'column',
-      p: 2
+      p: 2,
+      bgcolor: colors.background.subtle
     }}>
       {/* Header Compacto */}
       <Box sx={{ mb: 3 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
           <Box>
-            <Typography variant="h5" sx={{ color: '#2c3e50', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
-              <AccountCircleIcon sx={{ color: '#1a237e' }} />
+            <Typography variant="h5" sx={{ color: colors.primary.dark, fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
+              <AccountCircleIcon sx={{ color: colors.primary.main }} />
               Mi Perfil - Comité de Cumplimiento
             </Typography>
-            <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+            <Typography variant="caption" sx={{ color: colors.text.secondary }}>
               Gestiona tu información personal, seguridad y preferencias del sistema
             </Typography>
           </Box>
@@ -276,6 +314,14 @@ const CommitteeProfile = () => {
               variant="outlined"
               size="small"
               startIcon={<DownloadIcon />}
+              sx={{
+                borderColor: colors.primary.light,
+                color: colors.primary.main,
+                '&:hover': {
+                  borderColor: colors.primary.main,
+                  bgcolor: 'rgba(19, 59, 107, 0.04)',
+                }
+              }}
             >
               Exportar Datos
             </Button>
@@ -284,8 +330,12 @@ const CommitteeProfile = () => {
               size="small"
               startIcon={editMode ? <SaveIcon /> : <EditIcon />}
               onClick={editMode ? handleSave : () => setEditMode(true)}
-              color={editMode ? 'success' : 'primary'}
-              sx={{ bgcolor: editMode ? '#2e7d32' : '#1a237e' }}
+              sx={{
+                bgcolor: editMode ? colors.status.success : colors.primary.main,
+                '&:hover': {
+                  bgcolor: editMode ? colors.secondary.main : colors.primary.dark,
+                }
+              }}
             >
               {editMode ? 'Guardar' : 'Editar'}
             </Button>
@@ -299,7 +349,12 @@ const CommitteeProfile = () => {
           {/* Columna Izquierda - 35% */}
           <Grid item xs={12} lg={4} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             {/* Tarjeta de Perfil Mejorada */}
-            <Paper elevation={1} sx={{ p: 2.5, mb: 2, flex: 1 }}>
+            <Paper elevation={1} sx={{ 
+              p: 2.5, 
+              mb: 2, 
+              flex: 1,
+              border: `1px solid ${colors.primary.light}20`,
+            }}>
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
                 <Badge
                   overlap="circular"
@@ -309,11 +364,11 @@ const CommitteeProfile = () => {
                       sx={{ 
                         width: 28, 
                         height: 28, 
-                        bgcolor: '#1a237e',
+                        bgcolor: colors.primary.main,
                         border: '2px solid white'
                       }}
                     >
-                      <VerifiedIcon fontSize="small" />
+                      <VerifiedIcon fontSize="small" sx={{ color: 'white' }} />
                     </Avatar>
                   }
                 >
@@ -321,7 +376,7 @@ const CommitteeProfile = () => {
                     sx={{
                       width: 100,
                       height: 100,
-                      bgcolor: '#1a237e',
+                      bgcolor: colors.primary.main,
                       fontSize: '2.2rem',
                       fontWeight: 'bold',
                       mb: 2,
@@ -332,7 +387,7 @@ const CommitteeProfile = () => {
                   </Avatar>
                 </Badge>
                 
-                <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#2c3e50', mb: 0.5, textAlign: 'center' }}>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', color: colors.primary.dark, mb: 0.5, textAlign: 'center' }}>
                   {formData.name}
                 </Typography>
                 
@@ -340,19 +395,27 @@ const CommitteeProfile = () => {
                   <Chip 
                     label={formData.role}
                     size="small"
-                    color="primary"
-                    icon={<PersonIcon />}
+                    sx={{
+                      bgcolor: 'rgba(19, 59, 107, 0.08)',
+                      color: colors.primary.main,
+                      fontWeight: 600
+                    }}
+                    icon={<PersonIcon sx={{ color: colors.primary.main }} />}
                   />
                   <Chip 
                     label={formData.badge}
                     size="small"
-                    color="success"
                     variant="outlined"
-                    icon={<StarIcon />}
+                    sx={{
+                      color: colors.status.success,
+                      borderColor: colors.status.success,
+                      fontWeight: 600
+                    }}
+                    icon={<StarIcon sx={{ color: colors.status.success }} />}
                   />
                 </Stack>
                 
-                <Typography variant="body2" sx={{ color: '#5a6c7d', textAlign: 'center', mb: 2, lineHeight: 1.4 }}>
+                <Typography variant="body2" sx={{ color: colors.text.secondary, textAlign: 'center', mb: 2, lineHeight: 1.4 }}>
                   {formData.bio}
                 </Typography>
               </Box>
@@ -360,11 +423,11 @@ const CommitteeProfile = () => {
               {/* Información de Contacto Compacta */}
               <Stack spacing={1.5}>
                 {[
-                  { icon: <EmailIcon />, label: 'Correo', value: formData.email, color: '#d32f2f' },
-                  { icon: <PhoneIcon />, label: 'Teléfono', value: formData.phone, color: '#1976d2' },
-                  { icon: <PlaceIcon />, label: 'Región', value: formData.region, color: '#388e3c' },
-                  { icon: <CalendarTodayIcon />, label: 'Miembro desde', value: formData.joinDate, color: '#7b1fa2' },
-                  { icon: <SecurityIcon />, label: 'Experiencia', value: formData.experience, color: '#f57c00' },
+                  { icon: <EmailIcon />, label: 'Correo', value: formData.email, color: colors.status.error },
+                  { icon: <PhoneIcon />, label: 'Teléfono', value: formData.phone, color: colors.accents.blue },
+                  { icon: <PlaceIcon />, label: 'Región', value: formData.region, color: colors.status.success },
+                  { icon: <CalendarTodayIcon />, label: 'Miembro desde', value: formData.joinDate, color: colors.accents.purple },
+                  { icon: <SecurityIcon />, label: 'Experiencia', value: formData.experience, color: colors.status.warning },
                 ].map((item, index) => (
                   <Box 
                     key={index} 
@@ -373,18 +436,18 @@ const CommitteeProfile = () => {
                       alignItems: 'center', 
                       p: 1.5,
                       borderRadius: 1,
-                      bgcolor: '#f8f9fa',
-                      '&:hover': { bgcolor: '#f0f0f0' }
+                      bgcolor: colors.background.subtle,
+                      '&:hover': { bgcolor: 'rgba(58, 110, 165, 0.04)' }
                     }}
                   >
                     <Box sx={{ color: item.color, mr: 1.5 }}>
                       {item.icon}
                     </Box>
                     <Box sx={{ flex: 1 }}>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block' }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
                         {item.label}
                       </Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 'medium', color: '#2c3e50' }}>
+                      <Typography variant="body2" sx={{ fontWeight: 'medium', color: colors.primary.dark }}>
                         {item.value}
                       </Typography>
                     </Box>
@@ -394,12 +457,16 @@ const CommitteeProfile = () => {
             </Paper>
 
             {/* Estadísticas Personales Mejoradas */}
-            <Paper elevation={1} sx={{ p: 2.5, flex: 1 }}>
+            <Paper elevation={1} sx={{ 
+              p: 2.5, 
+              flex: 1,
+              border: `1px solid ${colors.primary.light}20`,
+            }}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#2c3e50', display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <AssessmentIcon /> Mi Desempeño
+                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: colors.primary.dark, display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <AssessmentIcon sx={{ color: colors.primary.main }} /> Mi Desempeño
                 </Typography>
-                <IconButton size="small" onClick={handleSectionToggle('stats')}>
+                <IconButton size="small" onClick={handleSectionToggle('stats')} sx={{ color: colors.text.secondary }}>
                   <ExpandMoreIcon sx={{ transform: expandedSections.stats ? 'rotate(180deg)' : 'none' }} />
                 </IconButton>
               </Box>
@@ -409,29 +476,45 @@ const CommitteeProfile = () => {
                   {/* KPI Principal */}
                   <Grid container spacing={1.5}>
                     <Grid item xs={6}>
-                      <Card variant="outlined" sx={{ p: 1.5, textAlign: 'center' }}>
-                        <Typography variant="h5" sx={{ color: '#1a237e', fontWeight: 'bold' }}>
+                      <Card variant="outlined" sx={{ 
+                        p: 1.5, 
+                        textAlign: 'center',
+                        borderColor: colors.primary.light,
+                      }}>
+                        <Typography variant="h5" sx={{ color: colors.primary.main, fontWeight: 'bold' }}>
                           {stats.reviewsThisMonth.current}
                         </Typography>
-                        <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                        <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                           Este mes
                         </Typography>
                         <LinearProgress 
                           variant="determinate" 
                           value={(stats.reviewsThisMonth.current / stats.reviewsThisMonth.target) * 100}
-                          sx={{ mt: 1, height: 4, borderRadius: 2 }}
+                          sx={{ 
+                            mt: 1, 
+                            height: 4, 
+                            borderRadius: 2,
+                            bgcolor: colors.primary.light,
+                            '& .MuiLinearProgress-bar': {
+                              bgcolor: colors.primary.main
+                            }
+                          }}
                         />
                       </Card>
                     </Grid>
                     <Grid item xs={6}>
-                      <Card variant="outlined" sx={{ p: 1.5, textAlign: 'center' }}>
-                        <Typography variant="h5" sx={{ color: '#27ae60', fontWeight: 'bold' }}>
+                      <Card variant="outlined" sx={{ 
+                        p: 1.5, 
+                        textAlign: 'center',
+                        borderColor: colors.primary.light,
+                      }}>
+                        <Typography variant="h5" sx={{ color: colors.status.success, fontWeight: 'bold' }}>
                           {stats.approvalRate.value}%
                         </Typography>
-                        <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                        <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                           Aprobación
                         </Typography>
-                        <Typography variant="caption" sx={{ color: '#27ae60', display: 'block' }}>
+                        <Typography variant="caption" sx={{ color: colors.status.success, display: 'block' }}>
                           {stats.approvalRate.trend}
                         </Typography>
                       </Card>
@@ -440,24 +523,27 @@ const CommitteeProfile = () => {
                   
                   {/* Métricas Secundarias */}
                   {[
-                    { label: 'Total revisadas', value: stats.reviewsTotal, icon: <GavelIcon />, color: '#9b59b6' },
-                    { label: 'Tiempo promedio', value: stats.avgResponseTime.value, icon: <SpeedIcon />, color: '#3498db', trend: stats.avgResponseTime.trend },
-                    { label: 'Eficiencia', value: `${stats.efficiency}%`, icon: <TrendingUpIcon />, color: '#2ecc71' },
-                    { label: 'Precisión', value: `${stats.accuracy}%`, icon: <AutoAwesomeIcon />, color: '#f39c12' },
+                    { label: 'Total revisadas', value: stats.reviewsTotal, icon: <GavelIcon />, color: colors.accents.purple },
+                    { label: 'Tiempo promedio', value: stats.avgResponseTime.value, icon: <SpeedIcon />, color: colors.accents.blue, trend: stats.avgResponseTime.trend },
+                    { label: 'Eficiencia', value: `${stats.efficiency}%`, icon: <TrendingUpIcon />, color: colors.status.success },
+                    { label: 'Precisión', value: `${stats.accuracy}%`, icon: <AutoAwesomeIcon />, color: colors.status.warning },
                   ].map((metric, idx) => (
                     <Box key={idx} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 1 }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                         <Box sx={{ color: metric.color }}>
                           {metric.icon}
                         </Box>
-                        <Typography variant="body2" sx={{ color: '#5a6c7d' }}>
+                        <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                           {metric.label}
                         </Typography>
                       </Box>
-                      <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                      <Typography variant="body2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
                         {metric.value}
                         {metric.trend && (
-                          <Typography variant="caption" sx={{ color: metric.trend.startsWith('+') ? '#27ae60' : '#e74c3c', ml: 0.5 }}>
+                          <Typography variant="caption" sx={{ 
+                            color: metric.trend.startsWith('+') ? colors.status.success : colors.status.error, 
+                            ml: 0.5 
+                          }}>
                             {metric.trend}
                           </Typography>
                         )}
@@ -472,7 +558,13 @@ const CommitteeProfile = () => {
           {/* Columna Derecha - 65% */}
           <Grid item xs={12} lg={8} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             {/* Tabs Mejoradas */}
-            <Paper elevation={1} sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            <Paper elevation={1} sx={{ 
+              flex: 1, 
+              display: 'flex', 
+              flexDirection: 'column', 
+              overflow: 'hidden',
+              border: `1px solid ${colors.primary.light}20`,
+            }}>
               <Tabs
                 value={tabValue}
                 onChange={handleTabChange}
@@ -480,8 +572,17 @@ const CommitteeProfile = () => {
                 scrollButtons="auto"
                 sx={{ 
                   borderBottom: 1, 
-                  borderColor: 'divider',
-                  bgcolor: '#f8f9fa'
+                  borderColor: colors.primary.light,
+                  bgcolor: colors.background.subtle,
+                  '& .MuiTab-root': {
+                    color: colors.text.secondary,
+                    '&.Mui-selected': {
+                      color: colors.primary.main,
+                    }
+                  },
+                  '& .MuiTabs-indicator': {
+                    backgroundColor: colors.primary.main,
+                  }
                 }}
               >
                 <Tab 
@@ -502,7 +603,16 @@ const CommitteeProfile = () => {
                   label={
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       Notificaciones
-                      <Badge badgeContent={3} color="error" size="small" />
+                      <Badge 
+                        badgeContent={3} 
+                        sx={{ 
+                          '& .MuiBadge-badge': { 
+                            bgcolor: colors.status.error,
+                            color: 'white'
+                          } 
+                        }} 
+                        size="small" 
+                      />
                     </Box>
                   } 
                   sx={{ minHeight: 48 }}
@@ -525,8 +635,8 @@ const CommitteeProfile = () => {
               <Box sx={{ flex: 1, overflowY: 'auto', p: 3 }}>
                 {tabValue === 0 && (
                   <Box>
-                    <Typography variant="subtitle1" sx={{ mb: 3, fontWeight: 'bold', color: '#2c3e50', display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <PersonIcon /> Información Personal
+                    <Typography variant="subtitle1" sx={{ mb: 3, fontWeight: 'bold', color: colors.primary.dark, display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <PersonIcon sx={{ color: colors.primary.main }} /> Información Personal
                     </Typography>
                     
                     <Grid container spacing={2}>
@@ -588,10 +698,29 @@ const CommitteeProfile = () => {
                             disabled={!editMode}
                             type={field.type || 'text'}
                             select={field.select}
+                            sx={{
+                              '& .MuiOutlinedInput-root': {
+                                color: colors.primary.dark,
+                                '& fieldset': {
+                                  borderColor: colors.primary.light,
+                                },
+                                '&:hover fieldset': {
+                                  borderColor: colors.primary.main,
+                                },
+                                '&.Mui-focused fieldset': {
+                                  borderColor: colors.primary.dark,
+                                },
+                              },
+                              '& .MuiInputLabel-root': {
+                                color: colors.text.secondary,
+                              },
+                            }}
                             InputProps={{
                               startAdornment: (
                                 <InputAdornment position="start">
-                                  {field.icon}
+                                  <Box sx={{ color: colors.primary.main }}>
+                                    {field.icon}
+                                  </Box>
                                 </InputAdornment>
                               ),
                             }}
@@ -613,6 +742,20 @@ const CommitteeProfile = () => {
                           onChange={handleInputChange('bio')}
                           disabled={!editMode}
                           placeholder="Describe tu experiencia y especialidades..."
+                          sx={{
+                            '& .MuiOutlinedInput-root': {
+                              color: colors.primary.dark,
+                              '& fieldset': {
+                                borderColor: colors.primary.light,
+                              },
+                              '&:hover fieldset': {
+                                borderColor: colors.primary.main,
+                              },
+                            },
+                            '& .MuiInputLabel-root': {
+                              color: colors.text.secondary,
+                            },
+                          }}
                         />
                       </Grid>
                     </Grid>
@@ -621,11 +764,18 @@ const CommitteeProfile = () => {
 
                 {tabValue === 1 && (
                   <Box>
-                    <Typography variant="subtitle1" sx={{ mb: 3, fontWeight: 'bold', color: '#2c3e50', display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <LockIcon /> Seguridad y Contraseña
+                    <Typography variant="subtitle1" sx={{ mb: 3, fontWeight: 'bold', color: colors.primary.dark, display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <LockIcon sx={{ color: colors.primary.main }} /> Seguridad y Contraseña
                     </Typography>
                     
-                    <Alert severity="info" sx={{ mb: 3 }}>
+                    <Alert severity="info" sx={{ 
+                      mb: 3,
+                      bgcolor: 'rgba(58, 110, 165, 0.08)',
+                      color: colors.primary.dark,
+                      '& .MuiAlert-icon': {
+                        color: colors.primary.main
+                      }
+                    }}>
                       <Typography variant="body2">
                         <strong>Recomendación de seguridad:</strong> Cambia tu contraseña cada 90 días y utiliza una combinación única de caracteres.
                       </Typography>
@@ -674,15 +824,31 @@ const CommitteeProfile = () => {
                             })}
                             error={field.error}
                             helperText={field.error ? 'Las contraseñas no coinciden' : ''}
+                            sx={{
+                              '& .MuiOutlinedInput-root': {
+                                color: colors.primary.dark,
+                                '& fieldset': {
+                                  borderColor: field.error ? colors.status.error : colors.primary.light,
+                                },
+                                '&:hover fieldset': {
+                                  borderColor: colors.primary.main,
+                                },
+                              },
+                              '& .MuiInputLabel-root': {
+                                color: colors.text.secondary,
+                              },
+                            }}
                             InputProps={{
                               startAdornment: (
                                 <InputAdornment position="start">
-                                  {field.icon}
+                                  <Box sx={{ color: colors.primary.main }}>
+                                    {field.icon}
+                                  </Box>
                                 </InputAdornment>
                               ),
                               endAdornment: (
                                 <InputAdornment position="end">
-                                  <IconButton onClick={field.toggle} size="small">
+                                  <IconButton onClick={field.toggle} size="small" sx={{ color: colors.text.secondary }}>
                                     {field.showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
                                   </IconButton>
                                 </InputAdornment>
@@ -693,8 +859,12 @@ const CommitteeProfile = () => {
                       ))}
                       
                       <Grid item xs={12}>
-                        <Card variant="outlined" sx={{ p: 2, mb: 2 }}>
-                          <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 'bold', color: '#2c3e50' }}>
+                        <Card variant="outlined" sx={{ 
+                          p: 2, 
+                          mb: 2,
+                          borderColor: colors.primary.light,
+                        }}>
+                          <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 'bold', color: colors.primary.dark }}>
                             Requisitos de seguridad:
                           </Typography>
                           <Grid container spacing={1}>
@@ -707,11 +877,11 @@ const CommitteeProfile = () => {
                               <Grid item xs={6} key={idx}>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                   {req.met ? (
-                                    <CheckCircleIcon sx={{ color: '#27ae60', fontSize: 16 }} />
+                                    <CheckCircleIcon sx={{ color: colors.status.success, fontSize: 16 }} />
                                   ) : (
-                                    <ErrorIcon sx={{ color: '#e74c3c', fontSize: 16 }} />
+                                    <ErrorIcon sx={{ color: colors.status.error, fontSize: 16 }} />
                                   )}
-                                  <Typography variant="caption" sx={{ color: req.met ? '#27ae60' : '#7f8c8d' }}>
+                                  <Typography variant="caption" sx={{ color: req.met ? colors.status.success : colors.text.secondary }}>
                                     {req.text}
                                   </Typography>
                                 </Box>
@@ -729,7 +899,13 @@ const CommitteeProfile = () => {
                                    !passwordData.confirmPassword ||
                                    passwordData.newPassword !== passwordData.confirmPassword ||
                                    passwordData.newPassword.length < 12}
-                          sx={{ bgcolor: '#1a237e' }}
+                          sx={{ 
+                            bgcolor: colors.primary.main,
+                            '&:hover': { bgcolor: colors.primary.dark },
+                            '&.Mui-disabled': {
+                              bgcolor: colors.primary.light,
+                            }
+                          }}
                         >
                           Actualizar Contraseña
                         </Button>
@@ -740,15 +916,18 @@ const CommitteeProfile = () => {
 
                 {tabValue === 2 && (
                   <Box>
-                    <Typography variant="subtitle1" sx={{ mb: 3, fontWeight: 'bold', color: '#2c3e50', display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <NotificationsIcon /> Configuración de Notificaciones
+                    <Typography variant="subtitle1" sx={{ mb: 3, fontWeight: 'bold', color: colors.primary.dark, display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <NotificationsIcon sx={{ color: colors.primary.main }} /> Configuración de Notificaciones
                     </Typography>
                     
                     <Grid container spacing={3}>
                       <Grid item xs={12} md={6}>
-                        <Card variant="outlined" sx={{ p: 2.5 }}>
-                          <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 'bold', color: '#2c3e50', display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <NotificationsIcon /> Tipos de Alertas
+                        <Card variant="outlined" sx={{ 
+                          p: 2.5,
+                          borderColor: colors.primary.light,
+                        }}>
+                          <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 'bold', color: colors.primary.dark, display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <NotificationsIcon sx={{ color: colors.primary.main }} /> Tipos de Alertas
                           </Typography>
                           
                           <Stack spacing={2}>
@@ -761,12 +940,27 @@ const CommitteeProfile = () => {
                               { key: 'cambiosEstado', label: 'Cambios de estado', color: 'default' },
                             ].map((item) => (
                               <Box key={item.key} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Typography variant="body2">{item.label}</Typography>
+                                <Typography variant="body2" sx={{ color: colors.primary.dark }}>{item.label}</Typography>
                                 <Switch
                                   size="small"
                                   checked={formData.notifications[item.key]}
                                   onChange={handleNotificationChange(item.key)}
-                                  color={item.color}
+                                  sx={{
+                                    '& .MuiSwitch-switchBase.Mui-checked': {
+                                      color: item.color === 'warning' ? colors.status.warning :
+                                             item.color === 'error' ? colors.status.error :
+                                             item.color === 'info' ? colors.status.info :
+                                             item.color === 'success' ? colors.status.success :
+                                             colors.primary.main,
+                                    },
+                                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                                      backgroundColor: item.color === 'warning' ? colors.status.warning :
+                                                       item.color === 'error' ? colors.status.error :
+                                                       item.color === 'info' ? colors.status.info :
+                                                       item.color === 'success' ? colors.status.success :
+                                                       colors.primary.light,
+                                    },
+                                  }}
                                 />
                               </Box>
                             ))}
@@ -775,9 +969,12 @@ const CommitteeProfile = () => {
                       </Grid>
                       
                       <Grid item xs={12} md={6}>
-                        <Card variant="outlined" sx={{ p: 2.5 }}>
-                          <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 'bold', color: '#2c3e50', display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <SettingsIcon /> Métodos de Entrega
+                        <Card variant="outlined" sx={{ 
+                          p: 2.5,
+                          borderColor: colors.primary.light,
+                        }}>
+                          <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 'bold', color: colors.primary.dark, display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <SettingsIcon sx={{ color: colors.primary.main }} /> Métodos de Entrega
                           </Typography>
                           
                           <Stack spacing={2}>
@@ -788,12 +985,20 @@ const CommitteeProfile = () => {
                                     size="small"
                                     checked={formData.notifications.email}
                                     onChange={handleNotificationChange('email')}
+                                    sx={{
+                                      '& .MuiSwitch-switchBase.Mui-checked': {
+                                        color: colors.primary.main,
+                                      },
+                                      '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                                        backgroundColor: colors.primary.light,
+                                      },
+                                    }}
                                   />
                                 }
                                 label={
                                   <Box>
-                                    <Typography variant="body2">Correo electrónico</Typography>
-                                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                    <Typography variant="body2" sx={{ color: colors.primary.dark }}>Correo electrónico</Typography>
+                                    <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                                       Recibe alertas importantes en tu correo
                                     </Typography>
                                   </Box>
@@ -808,12 +1013,20 @@ const CommitteeProfile = () => {
                                     size="small"
                                     checked={formData.notifications.push}
                                     onChange={handleNotificationChange('push')}
+                                    sx={{
+                                      '& .MuiSwitch-switchBase.Mui-checked': {
+                                        color: colors.primary.main,
+                                      },
+                                      '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                                        backgroundColor: colors.primary.light,
+                                      },
+                                    }}
                                   />
                                 }
                                 label={
                                   <Box>
-                                    <Typography variant="body2">Notificaciones push</Typography>
-                                    <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                    <Typography variant="body2" sx={{ color: colors.primary.dark }}>Notificaciones push</Typography>
+                                    <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                                       Alertas en tiempo real en el sistema
                                     </Typography>
                                   </Box>
@@ -821,10 +1034,10 @@ const CommitteeProfile = () => {
                               />
                             </Box>
                             
-                            <Divider sx={{ my: 1 }} />
+                            <Divider sx={{ my: 1, borderColor: colors.primary.light }} />
                             
                             <Box>
-                              <Typography variant="body2" sx={{ mb: 1, color: '#5a6c7d' }}>
+                              <Typography variant="body2" sx={{ mb: 1, color: colors.text.secondary }}>
                                 Frecuencia de resúmenes:
                               </Typography>
                               <Stack direction="row" spacing={1}>
@@ -839,9 +1052,13 @@ const CommitteeProfile = () => {
                                     label={freq.label}
                                     size="small"
                                     variant={formData.notifications.resumenDiario && freq.value === 'diario' ? 'filled' : 'outlined'}
-                                    color="primary"
+                                    sx={{
+                                      bgcolor: formData.notifications.resumenDiario && freq.value === 'diario' ? colors.primary.main : 'transparent',
+                                      color: formData.notifications.resumenDiario && freq.value === 'diario' ? 'white' : colors.primary.main,
+                                      borderColor: colors.primary.light,
+                                      cursor: 'pointer'
+                                    }}
                                     onClick={() => {}}
-                                    sx={{ cursor: 'pointer' }}
                                   />
                                 ))}
                               </Stack>
@@ -854,7 +1071,11 @@ const CommitteeProfile = () => {
                     <Button
                       variant="contained"
                       startIcon={<SaveIcon />}
-                      sx={{ mt: 3, bgcolor: '#1a237e' }}
+                      sx={{ 
+                        mt: 3, 
+                        bgcolor: colors.primary.main,
+                        '&:hover': { bgcolor: colors.primary.dark }
+                      }}
                     >
                       Guardar Configuración
                     </Button>
@@ -864,13 +1085,21 @@ const CommitteeProfile = () => {
                 {tabValue === 3 && (
                   <Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                      <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#2c3e50', display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <HistoryIcon /> Historial de Actividad
+                      <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: colors.primary.dark, display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <HistoryIcon sx={{ color: colors.primary.main }} /> Historial de Actividad
                       </Typography>
                       <Button
                         startIcon={<DownloadIcon />}
                         variant="outlined"
                         size="small"
+                        sx={{
+                          borderColor: colors.primary.light,
+                          color: colors.primary.main,
+                          '&:hover': {
+                            borderColor: colors.primary.main,
+                            bgcolor: 'rgba(19, 59, 107, 0.04)',
+                          }
+                        }}
                       >
                         Exportar Historial
                       </Button>
@@ -884,15 +1113,16 @@ const CommitteeProfile = () => {
                           sx={{ 
                             p: 2,
                             borderLeft: `3px solid ${getActivityColor(activity.type)}`,
-                            '&:hover': { bgcolor: '#f8f9fa' }
+                            borderColor: colors.primary.light,
+                            '&:hover': { bgcolor: colors.background.subtle }
                           }}
                         >
                           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
                             <Box>
-                              <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                              <Typography variant="body2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
                                 {activity.action}
                               </Typography>
-                              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                                 {activity.details}
                               </Typography>
                             </Box>
@@ -900,14 +1130,18 @@ const CommitteeProfile = () => {
                               label={activity.time}
                               size="small"
                               variant="outlined"
-                              sx={{ height: 20 }}
+                              sx={{ 
+                                height: 20,
+                                borderColor: colors.primary.light,
+                                color: colors.text.secondary,
+                              }}
                             />
                           </Box>
                           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                            <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                               {activity.date}
                             </Typography>
-                            <Typography variant="caption" sx={{ color: '#5a6c7d' }}>
+                            <Typography variant="caption" sx={{ color: colors.primary.light }}>
                               Por: {activity.user}
                             </Typography>
                           </Box>
@@ -919,20 +1153,23 @@ const CommitteeProfile = () => {
 
                 {tabValue === 4 && (
                   <Box>
-                    <Typography variant="subtitle1" sx={{ mb: 3, fontWeight: 'bold', color: '#2c3e50', display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <SettingsIcon /> Preferencias del Sistema
+                    <Typography variant="subtitle1" sx={{ mb: 3, fontWeight: 'bold', color: colors.primary.dark, display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <SettingsIcon sx={{ color: colors.primary.main }} /> Preferencias del Sistema
                     </Typography>
                     
                     <Grid container spacing={3}>
                       <Grid item xs={12} md={6}>
-                        <Card variant="outlined" sx={{ p: 2.5 }}>
-                          <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 'bold' }}>
+                        <Card variant="outlined" sx={{ 
+                          p: 2.5,
+                          borderColor: colors.primary.light,
+                        }}>
+                          <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 'bold', color: colors.primary.dark }}>
                             Interfaz y Visualización
                           </Typography>
                           
                           <Stack spacing={2}>
                             <Box>
-                              <Typography variant="body2" sx={{ mb: 1, color: '#5a6c7d' }}>
+                              <Typography variant="body2" sx={{ mb: 1, color: colors.text.secondary }}>
                                 Tema de color:
                               </Typography>
                               <Stack direction="row" spacing={1}>
@@ -942,8 +1179,12 @@ const CommitteeProfile = () => {
                                     label={theme}
                                     size="small"
                                     variant={theme === 'Claro' ? 'filled' : 'outlined'}
-                                    color="primary"
-                                    sx={{ cursor: 'pointer' }}
+                                    sx={{
+                                      bgcolor: theme === 'Claro' ? colors.primary.main : 'transparent',
+                                      color: theme === 'Claro' ? 'white' : colors.primary.main,
+                                      borderColor: colors.primary.light,
+                                      cursor: 'pointer'
+                                    }}
                                   />
                                 ))}
                               </Stack>
@@ -951,41 +1192,84 @@ const CommitteeProfile = () => {
                             
                             <FormControlLabel
                               control={<Switch size="small" defaultChecked />}
-                              label="Mostrar tutoriales"
+                              sx={{
+                                '& .MuiSwitch-switchBase.Mui-checked': {
+                                  color: colors.primary.main,
+                                },
+                                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                                  backgroundColor: colors.primary.light,
+                                },
+                              }}
+                              label={<Typography sx={{ color: colors.primary.dark }}>Mostrar tutoriales</Typography>}
                             />
                             
                             <FormControlLabel
                               control={<Switch size="small" />}
-                              label="Modo compacto"
+                              sx={{
+                                '& .MuiSwitch-switchBase.Mui-checked': {
+                                  color: colors.primary.main,
+                                },
+                                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                                  backgroundColor: colors.primary.light,
+                                },
+                              }}
+                              label={<Typography sx={{ color: colors.primary.dark }}>Modo compacto</Typography>}
                             />
                           </Stack>
                         </Card>
                       </Grid>
                       
                       <Grid item xs={12} md={6}>
-                        <Card variant="outlined" sx={{ p: 2.5 }}>
-                          <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 'bold' }}>
+                        <Card variant="outlined" sx={{ 
+                          p: 2.5,
+                          borderColor: colors.primary.light,
+                        }}>
+                          <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 'bold', color: colors.primary.dark }}>
                             Comportamiento del Sistema
                           </Typography>
                           
                           <Stack spacing={2}>
                             <FormControlLabel
                               control={<Switch size="small" defaultChecked />}
-                              label="Confirmación antes de acciones"
+                              sx={{
+                                '& .MuiSwitch-switchBase.Mui-checked': {
+                                  color: colors.primary.main,
+                                },
+                                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                                  backgroundColor: colors.primary.light,
+                                },
+                              }}
+                              label={<Typography sx={{ color: colors.primary.dark }}>Confirmación antes de acciones</Typography>}
                             />
                             
                             <FormControlLabel
                               control={<Switch size="small" />}
-                              label="Auto-guardado de formularios"
+                              sx={{
+                                '& .MuiSwitch-switchBase.Mui-checked': {
+                                  color: colors.primary.main,
+                                },
+                                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                                  backgroundColor: colors.primary.light,
+                                },
+                              }}
+                              label={<Typography sx={{ color: colors.primary.dark }}>Auto-guardado de formularios</Typography>}
                             />
                             
                             <FormControlLabel
                               control={<Switch size="small" defaultChecked />}
-                              label="Recordatorios de vencimiento"
+                              sx={{
+                                '& .MuiSwitch-switchBase.Mui-checked': {
+                                  color: colors.primary.main,
+                                },
+                                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                                  backgroundColor: colors.primary.light,
+                                },
+                              }}
+                              label={<Typography sx={{ color: colors.primary.dark }}>Recordatorios de vencimiento</Typography>}
                             />
                             
                             <Box>
-                              <Typography variant="body2" sx={{ mb: 1, color: '#5a6c7d' }}>
+                              <Typography variant="body2" sx={{ mb: 1, color: colors.text.secondary }}>
                                 Idioma:
                               </Typography>
                               <TextField
@@ -993,6 +1277,14 @@ const CommitteeProfile = () => {
                                 fullWidth
                                 size="small"
                                 defaultValue="es"
+                                sx={{
+                                  '& .MuiOutlinedInput-root': {
+                                    color: colors.primary.dark,
+                                    '& fieldset': {
+                                      borderColor: colors.primary.light,
+                                    },
+                                  },
+                                }}
                               >
                                 <MenuItem value="es">Español</MenuItem>
                                 <MenuItem value="en">English</MenuItem>
@@ -1006,7 +1298,11 @@ const CommitteeProfile = () => {
                     <Button
                       variant="contained"
                       startIcon={<SaveIcon />}
-                      sx={{ mt: 3, bgcolor: '#1a237e' }}
+                      sx={{ 
+                        mt: 3, 
+                        bgcolor: colors.primary.main,
+                        '&:hover': { bgcolor: colors.primary.dark }
+                      }}
                     >
                       Guardar Preferencias
                     </Button>

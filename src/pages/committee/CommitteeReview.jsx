@@ -22,7 +22,6 @@ import {
   Select,
   FormControl,
   InputLabel,
-  // NUEVOS COMPONENTES
   Tooltip,
   Badge,
   Avatar,
@@ -49,7 +48,6 @@ import {
   Event as EventIcon,
   Person as PersonIcon,
   Place as PlaceIcon,
-  // NUEVOS ICONOS
   Sort as SortIcon,
   Refresh as RefreshIcon,
   ViewColumn as ViewColumnIcon,
@@ -69,6 +67,45 @@ import {
   CalendarMonth as CalendarMonthIcon
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
+
+// Paleta de colores corporativa CAAAREM (versión clara)
+const colors = {
+  primary: {
+    dark: '#0D2A4D',
+    main: '#133B6B',
+    light: '#3A6EA5'
+  },
+  secondary: {
+    main: '#00A8A8',
+    light: '#00C2D1',
+    lighter: '#35D0FF'
+  },
+  accents: {
+    blue: '#0099FF',
+    purple: '#6C5CE7'
+  },
+  status: {
+    warning: '#00C2D1',      // Advertencias en cyan
+    error: '#0099FF',         // Errores en azul eléctrico
+    info: '#3A6EA5',          // Información en azul claro
+    success: '#00A8A8',       // Éxito en verde/teal
+    purple: '#6C5CE7'         // Púrpura para énfasis
+  },
+  text: {
+    primary: '#0D2A4D',
+    secondary: '#3A6EA5',
+    light: '#6C5CE7'
+  },
+  background: {
+    default: '#ffffff',
+    paper: '#ffffff',
+    subtle: '#f5f7fa'
+  },
+  gradients: {
+    primary: 'linear-gradient(135deg, #0D2A4D, #3A6EA5)',
+    secondary: 'linear-gradient(135deg, #00A8A8, #00C2D1)',
+  }
+};
 
 const CommitteeReview = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -106,7 +143,7 @@ const CommitteeReview = () => {
       assignedTo: 'María González',
       lastActivity: 'Hace 2 horas',
       reviewEstimate: '1.5 horas',
-      color: '#1a237e'
+      color: colors.primary.main
     },
     { 
       id: 2, 
@@ -130,7 +167,7 @@ const CommitteeReview = () => {
       assignedTo: 'Carlos Ruiz',
       lastActivity: 'En progreso',
       reviewEstimate: '45 minutos',
-      color: '#2e7d32'
+      color: colors.secondary.main
     },
     { 
       id: 3, 
@@ -154,7 +191,7 @@ const CommitteeReview = () => {
       assignedTo: 'Laura Díaz',
       lastActivity: 'Hace 1 día',
       reviewEstimate: '2 horas',
-      color: '#9c27b0'
+      color: colors.accents.purple
     },
     { 
       id: 4, 
@@ -178,7 +215,7 @@ const CommitteeReview = () => {
       assignedTo: 'Pedro Sánchez',
       lastActivity: 'Esperando respuesta',
       reviewEstimate: '30 minutos',
-      color: '#ed6c02'
+      color: colors.status.warning
     },
     { 
       id: 5, 
@@ -202,7 +239,7 @@ const CommitteeReview = () => {
       assignedTo: 'Ana López',
       lastActivity: 'Hace 2 días',
       reviewEstimate: '1 hora',
-      color: '#0288d1'
+      color: colors.accents.blue
     },
   ];
 
@@ -252,15 +289,15 @@ const CommitteeReview = () => {
   };
 
   const getDaysColor = (days) => {
-    if (days <= 2) return '#e74c3c';
-    if (days <= 4) return '#f39c12';
-    return '#27ae60';
+    if (days <= 2) return colors.status.error;
+    if (days <= 4) return colors.status.warning;
+    return colors.status.success;
   };
 
   const getComplianceColor = (score) => {
-    if (score >= 85) return '#27ae60';
-    if (score >= 70) return '#f39c12';
-    return '#e74c3c';
+    if (score >= 85) return colors.status.success;
+    if (score >= 70) return colors.status.warning;
+    return colors.status.error;
   };
 
   // Filtrado y ordenamiento
@@ -326,17 +363,18 @@ const CommitteeReview = () => {
       overflow: 'hidden',
       display: 'flex',
       flexDirection: 'column',
-      p: 2
+      p: 2,
+      bgcolor: colors.background.subtle
     }}>
       {/* Header Compacto */}
       <Box sx={{ mb: 3 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
           <Box>
-            <Typography variant="h5" sx={{ color: '#2c3e50', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
-              <GavelIcon sx={{ color: '#1a237e' }} />
+            <Typography variant="h5" sx={{ color: colors.primary.dark, fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
+              <GavelIcon sx={{ color: colors.primary.main }} />
               Revisión de Certificaciones
             </Typography>
-            <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+            <Typography variant="caption" sx={{ color: colors.text.secondary }}>
               Validación individual de certificaciones - Comité de Cumplimiento
             </Typography>
           </Box>
@@ -346,6 +384,14 @@ const CommitteeReview = () => {
               variant="outlined"
               size="small"
               startIcon={<DownloadIcon />}
+              sx={{
+                borderColor: colors.primary.light,
+                color: colors.primary.main,
+                '&:hover': {
+                  borderColor: colors.primary.main,
+                  bgcolor: 'rgba(19, 59, 107, 0.04)',
+                }
+              }}
             >
               Exportar
             </Button>
@@ -355,7 +401,10 @@ const CommitteeReview = () => {
                 size="small"
                 startIcon={<AssignmentIcon />}
                 onClick={() => setBatchActionDialog(true)}
-                sx={{ bgcolor: '#1a237e' }}
+                sx={{ 
+                  bgcolor: colors.primary.main,
+                  '&:hover': { bgcolor: colors.primary.dark }
+                }}
               >
                 Acciones ({selectedRows.length})
               </Button>
@@ -364,7 +413,12 @@ const CommitteeReview = () => {
         </Box>
 
         {/* Filtros Rápidos */}
-        <Paper elevation={0} sx={{ p: 2, mb: 2, bgcolor: '#f8f9fa' }}>
+        <Paper elevation={0} sx={{ 
+          p: 2, 
+          mb: 2, 
+          bgcolor: colors.background.paper,
+          border: `1px solid ${colors.primary.light}20`,
+        }}>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} md={4}>
               <TextField
@@ -373,15 +427,29 @@ const CommitteeReview = () => {
                 placeholder="Buscar certificaciones..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    color: colors.primary.dark,
+                    '& fieldset': {
+                      borderColor: colors.primary.light,
+                    },
+                    '&:hover fieldset': {
+                      borderColor: colors.primary.main,
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: colors.primary.dark,
+                    },
+                  },
+                }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon fontSize="small" />
+                      <SearchIcon fontSize="small" sx={{ color: colors.text.secondary }} />
                     </InputAdornment>
                   ),
                   endAdornment: searchTerm && (
                     <InputAdornment position="end">
-                      <IconButton size="small" onClick={() => setSearchTerm('')}>
+                      <IconButton size="small" onClick={() => setSearchTerm('')} sx={{ color: colors.text.secondary }}>
                         <RefreshIcon fontSize="small" />
                       </IconButton>
                     </InputAdornment>
@@ -392,11 +460,20 @@ const CommitteeReview = () => {
             
             <Grid item xs={12} md={2}>
               <FormControl fullWidth size="small">
-                <InputLabel>Estado</InputLabel>
+                <InputLabel sx={{ color: colors.text.secondary }}>Estado</InputLabel>
                 <Select
                   value={filterStatus}
                   label="Estado"
                   onChange={(e) => setFilterStatus(e.target.value)}
+                  sx={{
+                    color: colors.primary.dark,
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: colors.primary.light,
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: colors.primary.main,
+                    },
+                  }}
                 >
                   <MenuItem value="all">Todos</MenuItem>
                   {statusOptions.map(status => (
@@ -408,11 +485,20 @@ const CommitteeReview = () => {
             
             <Grid item xs={12} md={2}>
               <FormControl fullWidth size="small">
-                <InputLabel>Prioridad</InputLabel>
+                <InputLabel sx={{ color: colors.text.secondary }}>Prioridad</InputLabel>
                 <Select
                   value={filterPriority}
                   label="Prioridad"
                   onChange={(e) => setFilterPriority(e.target.value)}
+                  sx={{
+                    color: colors.primary.dark,
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: colors.primary.light,
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: colors.primary.main,
+                    },
+                  }}
                 >
                   <MenuItem value="all">Todas</MenuItem>
                   {priorityOptions.map(priority => (
@@ -424,11 +510,20 @@ const CommitteeReview = () => {
             
             <Grid item xs={12} md={2}>
               <FormControl fullWidth size="small">
-                <InputLabel>Región</InputLabel>
+                <InputLabel sx={{ color: colors.text.secondary }}>Región</InputLabel>
                 <Select
                   value={filterRegion}
                   label="Región"
                   onChange={(e) => setFilterRegion(e.target.value)}
+                  sx={{
+                    color: colors.primary.dark,
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: colors.primary.light,
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: colors.primary.main,
+                    },
+                  }}
                 >
                   <MenuItem value="all">Todas</MenuItem>
                   {regionOptions.map(region => (
@@ -444,13 +539,18 @@ const CommitteeReview = () => {
                   <IconButton 
                     size="small"
                     onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-                    color={showAdvancedFilters ? 'primary' : 'default'}
+                    sx={{ 
+                      color: showAdvancedFilters ? colors.primary.main : colors.text.secondary,
+                      '&:hover': {
+                        bgcolor: 'rgba(19, 59, 107, 0.04)',
+                      }
+                    }}
                   >
                     <FilterIcon />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Ordenar">
-                  <IconButton size="small">
+                  <IconButton size="small" sx={{ color: colors.text.secondary }}>
                     <SortIcon />
                   </IconButton>
                 </Tooltip>
@@ -458,6 +558,7 @@ const CommitteeReview = () => {
                   <IconButton 
                     size="small"
                     onClick={() => setActiveView(activeView === 'list' ? 'grid' : 'list')}
+                    sx={{ color: colors.text.secondary }}
                   >
                     <ViewColumnIcon />
                   </IconButton>
@@ -468,15 +569,25 @@ const CommitteeReview = () => {
 
           {/* Filtros Avanzados */}
           {showAdvancedFilters && (
-            <Box sx={{ mt: 2, pt: 2, borderTop: '1px dashed #e0e0e0' }}>
+            <Box sx={{ 
+              mt: 2, 
+              pt: 2, 
+              borderTop: `1px dashed ${colors.primary.light}` 
+            }}>
               <Grid container spacing={2}>
                 <Grid item xs={12} md={3}>
                   <FormControl fullWidth size="small">
-                    <InputLabel>Tipo</InputLabel>
+                    <InputLabel sx={{ color: colors.text.secondary }}>Tipo</InputLabel>
                     <Select
                       value={filterType}
                       label="Tipo"
                       onChange={(e) => setFilterType(e.target.value)}
+                      sx={{
+                        color: colors.primary.dark,
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: colors.primary.light,
+                        },
+                      }}
                     >
                       <MenuItem value="all">Todos</MenuItem>
                       {typeOptions.map(type => (
@@ -487,34 +598,46 @@ const CommitteeReview = () => {
                 </Grid>
                 
                 <Grid item xs={12} md={3}>
-                  <TextField
-                    select
-                    fullWidth
-                    size="small"
-                    label="Ordenar por"
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                  >
-                    <MenuItem value="priority">Prioridad</MenuItem>
-                    <MenuItem value="days">Días pendientes</MenuItem>
-                    <MenuItem value="date">Fecha de carga</MenuItem>
-                    <MenuItem value="compliance">Cumplimiento</MenuItem>
-                  </TextField>
+                  <FormControl fullWidth size="small">
+                    <InputLabel sx={{ color: colors.text.secondary }}>Ordenar por</InputLabel>
+                    <Select
+                      value={sortBy}
+                      label="Ordenar por"
+                      onChange={(e) => setSortBy(e.target.value)}
+                      sx={{
+                        color: colors.primary.dark,
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: colors.primary.light,
+                        },
+                      }}
+                    >
+                      <MenuItem value="priority">Prioridad</MenuItem>
+                      <MenuItem value="days">Días pendientes</MenuItem>
+                      <MenuItem value="date">Fecha de carga</MenuItem>
+                      <MenuItem value="compliance">Cumplimiento</MenuItem>
+                    </Select>
+                  </FormControl>
                 </Grid>
                 
                 <Grid item xs={12} md={3}>
-                  <TextField
-                    select
-                    fullWidth
-                    size="small"
-                    label="Categoría"
-                    value="all"
-                  >
-                    <MenuItem value="all">Todas</MenuItem>
-                    {categoryOptions.map(cat => (
-                      <MenuItem key={cat} value={cat}>{cat}</MenuItem>
-                    ))}
-                  </TextField>
+                  <FormControl fullWidth size="small">
+                    <InputLabel sx={{ color: colors.text.secondary }}>Categoría</InputLabel>
+                    <Select
+                      value="all"
+                      label="Categoría"
+                      sx={{
+                        color: colors.primary.dark,
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: colors.primary.light,
+                        },
+                      }}
+                    >
+                      <MenuItem value="all">Todas</MenuItem>
+                      {categoryOptions.map(cat => (
+                        <MenuItem key={cat} value={cat}>{cat}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 </Grid>
                 
                 <Grid item xs={12} md={3}>
@@ -530,6 +653,14 @@ const CommitteeReview = () => {
                       setFilterType('all');
                       setSearchTerm('');
                       setSortBy('priority');
+                    }}
+                    sx={{
+                      borderColor: colors.primary.light,
+                      color: colors.primary.main,
+                      '&:hover': {
+                        borderColor: colors.primary.main,
+                        bgcolor: 'rgba(19, 59, 107, 0.04)',
+                      }
                     }}
                   >
                     Limpiar Filtros
@@ -552,42 +683,42 @@ const CommitteeReview = () => {
                 { 
                   label: 'Urgentes', 
                   value: stats.urgent, 
-                  color: '#e74c3c', 
+                  color: colors.status.error, 
                   icon: <PriorityHighIcon />,
                   tooltip: 'Certificaciones con vencimiento en 3 días o menos'
                 },
                 { 
                   label: 'Pendientes', 
                   value: stats.pending, 
-                  color: '#f39c12', 
+                  color: colors.status.warning, 
                   icon: <TimerIcon />,
                   tooltip: 'Certificaciones pendientes de revisión'
                 },
                 { 
                   label: 'Asignadas a mí', 
                   value: stats.assignedToMe, 
-                  color: '#1a237e', 
+                  color: colors.primary.main, 
                   icon: <AssignmentIcon />,
                   tooltip: 'Certificaciones asignadas a tu usuario'
                 },
                 { 
                   label: 'Alta Prioridad', 
                   value: stats.highPriority, 
-                  color: '#9b59b6', 
+                  color: colors.accents.purple, 
                   icon: <WarningIcon />,
                   tooltip: 'Certificaciones con prioridad ALTA'
                 },
                 { 
                   label: 'Tiempo Prom.', 
                   value: stats.avgReviewTime, 
-                  color: '#3498db', 
+                  color: colors.accents.blue, 
                   icon: <SpeedIcon />,
                   tooltip: 'Tiempo promedio de revisión'
                 },
                 { 
                   label: 'Total', 
                   value: stats.total, 
-                  color: '#27ae60', 
+                  color: colors.status.success, 
                   icon: <FolderOpenIcon />,
                   tooltip: 'Total de certificaciones activas'
                 },
@@ -600,9 +731,11 @@ const CommitteeReview = () => {
                         textAlign: 'center',
                         cursor: 'pointer',
                         transition: 'all 0.2s',
+                        border: `1px solid ${colors.primary.light}20`,
                         '&:hover': {
                           transform: 'translateY(-2px)',
-                          boxShadow: 3
+                          boxShadow: 3,
+                          borderColor: colors.primary.light,
                         }
                       }}
                     >
@@ -612,7 +745,7 @@ const CommitteeReview = () => {
                       <Typography variant="h6" sx={{ color: kpi.color, fontWeight: 'bold', lineHeight: 1 }}>
                         {kpi.value}
                       </Typography>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                         {kpi.label}
                       </Typography>
                     </Card>
@@ -622,16 +755,22 @@ const CommitteeReview = () => {
             </Grid>
 
             {/* Tabla de Certificaciones */}
-            <Paper elevation={1} sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            <Paper elevation={1} sx={{ 
+              flex: 1, 
+              display: 'flex', 
+              flexDirection: 'column', 
+              overflow: 'hidden',
+              border: `1px solid ${colors.primary.light}20`,
+            }}>
               <Box sx={{ 
                 p: 2, 
-                borderBottom: '1px solid #e0e0e0',
+                borderBottom: `1px solid ${colors.primary.light}`,
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                bgcolor: '#f8f9fa'
+                bgcolor: colors.background.subtle
               }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
                   {sortedCertifications.length} certificaciones para revisión
                 </Typography>
                 
@@ -640,11 +779,16 @@ const CommitteeReview = () => {
                     <Chip 
                       label={`${selectedRows.length} seleccionadas`}
                       size="small"
-                      color="primary"
+                      sx={{
+                        bgcolor: colors.primary.main,
+                        color: 'white',
+                        height: 20,
+                        fontSize: '0.7rem'
+                      }}
                       onDelete={() => setSelectedRows([])}
                     />
                   )}
-                  <IconButton size="small">
+                  <IconButton size="small" sx={{ color: colors.text.secondary }}>
                     <MoreVertIcon />
                   </IconButton>
                 </Stack>
@@ -666,12 +810,12 @@ const CommitteeReview = () => {
                             />
                           </Tooltip>
                         </TableCell>
-                        <TableCell sx={{ fontWeight: 'bold', width: '25%' }}>Certificación</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold', width: '20%' }}>Solicitante</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold', width: '10%' }}>Estado</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold', width: '15%' }}>Tiempo</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold', width: '10%' }}>Documentos</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold', width: '20%' }} align="right">Acciones</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '25%', color: colors.primary.dark }}>Certificación</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '20%', color: colors.primary.dark }}>Solicitante</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '10%', color: colors.primary.dark }}>Estado</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '15%', color: colors.primary.dark }}>Tiempo</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '10%', color: colors.primary.dark }}>Documentos</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '20%', color: colors.primary.dark }} align="right">Acciones</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -683,9 +827,9 @@ const CommitteeReview = () => {
                           onClick={() => handleRowSelect(cert.id)}
                           sx={{ 
                             cursor: 'pointer',
-                            '&:hover': { bgcolor: '#f8f9fa' },
+                            '&:hover': { bgcolor: 'rgba(58, 110, 165, 0.04)' },
                             borderLeft: `4px solid ${cert.color}`,
-                            bgcolor: selectedRows.includes(cert.id) ? '#e8f4f8' : 'transparent'
+                            bgcolor: selectedRows.includes(cert.id) ? 'rgba(58, 110, 165, 0.08)' : 'transparent'
                           }}
                         >
                           <TableCell padding="checkbox">
@@ -700,18 +844,23 @@ const CommitteeReview = () => {
                           
                           <TableCell>
                             <Box>
-                              <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                              <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
                                 {cert.type}
                               </Typography>
                               <Stack direction="row" spacing={0.5} alignItems="center" sx={{ mt: 0.5 }}>
-                                <Typography variant="caption" sx={{ color: '#7f8c8d', fontFamily: 'monospace' }}>
+                                <Typography variant="caption" sx={{ color: colors.text.secondary, fontFamily: 'monospace' }}>
                                   {cert.code}
                                 </Typography>
                                 <Chip 
                                   label={cert.category}
                                   size="small"
                                   variant="outlined"
-                                  sx={{ height: 18, ml: 1 }}
+                                  sx={{ 
+                                    height: 18, 
+                                    ml: 1,
+                                    color: colors.text.secondary,
+                                    borderColor: colors.primary.light,
+                                  }}
                                 />
                               </Stack>
                             </Box>
@@ -724,13 +873,13 @@ const CommitteeReview = () => {
                                   width: 28, 
                                   height: 28, 
                                   fontSize: '0.75rem',
-                                  bgcolor: '#1a237e'
+                                  bgcolor: colors.primary.main
                                 }}
                               >
                                 {cert.applicant.avatar}
                               </Avatar>
                               <Box>
-                                <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                                <Typography variant="body2" sx={{ fontWeight: 'medium', color: colors.primary.dark }}>
                                   {cert.applicant.name}
                                 </Typography>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
@@ -741,13 +890,13 @@ const CommitteeReview = () => {
                                       width: 40, 
                                       height: 4,
                                       borderRadius: 2,
-                                      bgcolor: '#f0f0f0',
+                                      bgcolor: colors.primary.light,
                                       '& .MuiLinearProgress-bar': {
                                         bgcolor: getComplianceColor(cert.applicant.complianceScore)
                                       }
                                     }}
                                   />
-                                  <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                  <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                                     {cert.applicant.complianceScore}%
                                   </Typography>
                                 </Box>
@@ -760,15 +909,29 @@ const CommitteeReview = () => {
                               <Chip 
                                 label={cert.status}
                                 size="small"
-                                color={getStatusColor(cert.status)}
-                                sx={{ height: 20 }}
+                                sx={{
+                                  height: 20,
+                                  bgcolor: cert.status === 'PENDIENTE' ? colors.status.warning :
+                                          cert.status === 'EN REVISIÓN' ? colors.accents.blue :
+                                          cert.status === 'REQUIERE INFO' ? colors.status.error :
+                                          colors.primary.main,
+                                  color: cert.status === 'PENDIENTE' ? colors.primary.dark : 'white',
+                                  fontWeight: 'bold',
+                                }}
                               />
                               <Chip 
                                 label={cert.priority}
                                 size="small"
-                                color={getPriorityColor(cert.priority)}
                                 variant="outlined"
-                                sx={{ height: 18 }}
+                                sx={{
+                                  height: 18,
+                                  color: cert.priority === 'ALTA' ? colors.status.error :
+                                         cert.priority === 'MEDIA' ? colors.status.warning :
+                                         colors.status.success,
+                                  borderColor: cert.priority === 'ALTA' ? colors.status.error :
+                                              cert.priority === 'MEDIA' ? colors.status.warning :
+                                              colors.status.success,
+                                }}
                               />
                             </Stack>
                           </TableCell>
@@ -781,10 +944,10 @@ const CommitteeReview = () => {
                               }}>
                                 {cert.daysPending} días
                               </Typography>
-                              <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                                 Vence: {cert.dueDate}
                               </Typography>
-                              <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block' }}>
+                              <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
                                 Est: {cert.reviewEstimate}
                               </Typography>
                             </Box>
@@ -800,10 +963,13 @@ const CommitteeReview = () => {
                                     height: 6,
                                     borderRadius: 3,
                                     mb: 0.5,
-                                    bgcolor: '#f0f0f0'
+                                    bgcolor: colors.primary.light,
+                                    '& .MuiLinearProgress-bar': {
+                                      bgcolor: colors.primary.main,
+                                    }
                                   }}
                                 />
-                                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                                   {cert.documents.completed}/{cert.documents.total}
                                 </Typography>
                               </Box>
@@ -818,6 +984,7 @@ const CommitteeReview = () => {
                                   component={Link}
                                   to={`/committee/review/${cert.id}`}
                                   onClick={(e) => e.stopPropagation()}
+                                  sx={{ color: colors.text.secondary }}
                                 >
                                   <VisibilityIcon fontSize="small" />
                                 </IconButton>
@@ -831,8 +998,8 @@ const CommitteeReview = () => {
                                   startIcon={<GavelIcon />}
                                   onClick={(e) => e.stopPropagation()}
                                   sx={{ 
-                                    bgcolor: '#1a237e',
-                                    '&:hover': { bgcolor: '#283593' },
+                                    bgcolor: colors.primary.main,
+                                    '&:hover': { bgcolor: colors.primary.dark },
                                     minWidth: 'auto',
                                     px: 1.5
                                   }}
@@ -850,11 +1017,11 @@ const CommitteeReview = () => {
 
                 {sortedCertifications.length === 0 && (
                   <Box sx={{ p: 8, textAlign: 'center' }}>
-                    <FolderOpenIcon sx={{ fontSize: 60, color: '#bdc3c7', mb: 2 }} />
-                    <Typography variant="h6" sx={{ color: '#7f8c8d', mb: 1 }}>
+                    <FolderOpenIcon sx={{ fontSize: 60, color: colors.primary.light, mb: 2 }} />
+                    <Typography variant="h6" sx={{ color: colors.text.secondary, mb: 1 }}>
                       No hay certificaciones que coincidan
                     </Typography>
-                    <Typography variant="body2" sx={{ color: '#95a5a6' }}>
+                    <Typography variant="body2" sx={{ color: colors.primary.light }}>
                       Intenta ajustar los filtros de búsqueda
                     </Typography>
                   </Box>
@@ -866,14 +1033,22 @@ const CommitteeReview = () => {
           {/* Columna Derecha - 30% */}
           <Grid item xs={12} lg={4} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             {/* Guía Rápida de Revisión */}
-            <Paper elevation={1} sx={{ p: 2.5, mb: 2, flex: 1 }}>
-              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: '#2c3e50', display: 'flex', alignItems: 'center', gap: 1 }}>
-                <InsightsIcon /> Guía de Revisión
+            <Paper elevation={1} sx={{ 
+              p: 2.5, 
+              mb: 2, 
+              flex: 1,
+              border: `1px solid ${colors.primary.light}20`,
+            }}>
+              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: colors.primary.dark, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <InsightsIcon sx={{ color: colors.primary.main }} /> Guía de Revisión
               </Typography>
               
               <Stack spacing={2}>
-                <Card variant="outlined" sx={{ p: 1.5 }}>
-                  <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold', color: '#2c3e50' }}>
+                <Card variant="outlined" sx={{ 
+                  p: 1.5,
+                  borderColor: colors.primary.light,
+                }}>
+                  <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold', color: colors.primary.dark }}>
                     📋 Procedimiento Estándar
                   </Typography>
                   <Stack spacing={0.5}>
@@ -884,22 +1059,25 @@ const CommitteeReview = () => {
                       '4. Evaluar fundamentación técnica',
                       '5. Emitir dictamen individual'
                     ].map((step, idx) => (
-                      <Typography key={idx} variant="caption" sx={{ color: '#5a6c7d' }}>
+                      <Typography key={idx} variant="caption" sx={{ color: colors.text.secondary }}>
                         {step}
                       </Typography>
                     ))}
                   </Stack>
                 </Card>
                 
-                <Card variant="outlined" sx={{ p: 1.5 }}>
-                  <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold', color: '#2c3e50' }}>
+                <Card variant="outlined" sx={{ 
+                  p: 1.5,
+                  borderColor: colors.primary.light,
+                }}>
+                  <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold', color: colors.primary.dark }}>
                     🚨 Criterios de Prioridad
                   </Typography>
                   <Stack spacing={1}>
                     {[
-                      { label: 'ALTA', color: '#e74c3c', criteria: 'Vencimiento ≤ 3 días / Crítico' },
-                      { label: 'MEDIA', color: '#f39c12', criteria: 'Requiere validación adicional' },
-                      { label: 'BAJA', color: '#27ae60', criteria: 'Sin observaciones / Lejano' }
+                      { label: 'ALTA', color: colors.status.error, criteria: 'Vencimiento ≤ 3 días / Crítico' },
+                      { label: 'MEDIA', color: colors.status.warning, criteria: 'Requiere validación adicional' },
+                      { label: 'BAJA', color: colors.status.success, criteria: 'Sin observaciones / Lejano' }
                     ].map((item, idx) => (
                       <Box key={idx} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <Chip 
@@ -912,7 +1090,7 @@ const CommitteeReview = () => {
                             height: 20
                           }}
                         />
-                        <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                        <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                           {item.criteria}
                         </Typography>
                       </Box>
@@ -920,20 +1098,23 @@ const CommitteeReview = () => {
                   </Stack>
                 </Card>
                 
-                <Card variant="outlined" sx={{ p: 1.5 }}>
-                  <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold', color: '#2c3e50' }}>
+                <Card variant="outlined" sx={{ 
+                  p: 1.5,
+                  borderColor: colors.primary.light,
+                }}>
+                  <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold', color: colors.primary.dark }}>
                     ⚖️ Consideraciones Clave
                   </Typography>
-                  <Typography variant="caption" sx={{ color: '#5a6c7d', display: 'block', mb: 0.5 }}>
+                  <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mb: 0.5 }}>
                     • Revisar cada certificación INDIVIDUALMENTE
                   </Typography>
-                  <Typography variant="caption" sx={{ color: '#5a6c7d', display: 'block', mb: 0.5 }}>
+                  <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mb: 0.5 }}>
                     • Fundamentación técnica obligatoria
                   </Typography>
-                  <Typography variant="caption" sx={{ color: '#5a6c7d', display: 'block', mb: 0.5 }}>
+                  <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mb: 0.5 }}>
                     • No aprobar expedientes completos
                   </Typography>
-                  <Typography variant="caption" sx={{ color: '#5a6c7d', display: 'block' }}>
+                  <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
                     • Registrar observaciones específicas
                   </Typography>
                 </Card>
@@ -941,9 +1122,13 @@ const CommitteeReview = () => {
             </Paper>
 
             {/* Acciones Rápidas y Estadísticas */}
-            <Paper elevation={1} sx={{ p: 2.5, flex: 1 }}>
-              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: '#2c3e50', display: 'flex', alignItems: 'center', gap: 1 }}>
-                <AutoAwesomeIcon /> Acciones Directas
+            <Paper elevation={1} sx={{ 
+              p: 2.5, 
+              flex: 1,
+              border: `1px solid ${colors.primary.light}20`,
+            }}>
+              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: colors.primary.dark, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <AutoAwesomeIcon sx={{ color: colors.accents.purple }} /> Acciones Directas
               </Typography>
               
               <Stack spacing={1.5}>
@@ -953,7 +1138,11 @@ const CommitteeReview = () => {
                   startIcon={<GavelIcon />}
                   component={Link}
                   to="/committee/review/new"
-                  sx={{ justifyContent: 'flex-start', bgcolor: '#1a237e' }}
+                  sx={{ 
+                    justifyContent: 'flex-start', 
+                    bgcolor: colors.primary.main,
+                    '&:hover': { bgcolor: colors.primary.dark }
+                  }}
                 >
                   Iniciar nueva revisión
                 </Button>
@@ -962,7 +1151,15 @@ const CommitteeReview = () => {
                   fullWidth
                   variant="outlined"
                   startIcon={<CalendarMonthIcon />}
-                  sx={{ justifyContent: 'flex-start' }}
+                  sx={{ 
+                    justifyContent: 'flex-start',
+                    borderColor: colors.primary.light,
+                    color: colors.primary.main,
+                    '&:hover': {
+                      borderColor: colors.primary.main,
+                      bgcolor: 'rgba(19, 59, 107, 0.04)',
+                    }
+                  }}
                 >
                   Programar revisiones
                 </Button>
@@ -971,15 +1168,23 @@ const CommitteeReview = () => {
                   fullWidth
                   variant="outlined"
                   startIcon={<DownloadIcon />}
-                  sx={{ justifyContent: 'flex-start' }}
+                  sx={{ 
+                    justifyContent: 'flex-start',
+                    borderColor: colors.primary.light,
+                    color: colors.primary.main,
+                    '&:hover': {
+                      borderColor: colors.primary.main,
+                      bgcolor: 'rgba(19, 59, 107, 0.04)',
+                    }
+                  }}
                 >
                   Descargar checklist
                 </Button>
                 
-                <Divider sx={{ my: 1 }} />
+                <Divider sx={{ my: 1, borderColor: colors.primary.light }} />
                 
                 <Box>
-                  <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block', mb: 1 }}>
+                  <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mb: 1 }}>
                     Tu productividad hoy:
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -989,6 +1194,12 @@ const CommitteeReview = () => {
                         value={75}
                         size={60}
                         thickness={4}
+                        sx={{
+                          color: colors.primary.main,
+                          '& .MuiCircularProgress-circle': {
+                            strokeLinecap: 'round',
+                          }
+                        }}
                       />
                       <Box
                         sx={{
@@ -1002,16 +1213,16 @@ const CommitteeReview = () => {
                           justifyContent: 'center',
                         }}
                       >
-                        <Typography variant="caption" component="div" sx={{ fontWeight: 'bold' }}>
+                        <Typography variant="caption" component="div" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
                           3/4
                         </Typography>
                       </Box>
                     </Box>
                     <Box>
-                      <Typography variant="caption" sx={{ color: '#7f8c8d', display: 'block' }}>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
                         Revisiones completadas
                       </Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                      <Typography variant="body2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
                         75% de tu meta diaria
                       </Typography>
                     </Box>
@@ -1024,21 +1235,31 @@ const CommitteeReview = () => {
       </Box>
 
       {/* Diálogo de Acciones Masivas */}
-      <Dialog open={batchActionDialog} onClose={() => setBatchActionDialog(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>
+      <Dialog 
+        open={batchActionDialog} 
+        onClose={() => setBatchActionDialog(false)} 
+        maxWidth="sm" 
+        fullWidth
+        PaperProps={{
+          sx: {
+            border: `1px solid ${colors.primary.light}`,
+          }
+        }}
+      >
+        <DialogTitle sx={{ color: colors.primary.dark }}>
           Acciones en Lote ({selectedRows.length} certificaciones)
         </DialogTitle>
         <DialogContent>
-          <Typography variant="body2" sx={{ mb: 3, color: '#5a6c7d' }}>
+          <Typography variant="body2" sx={{ mb: 3, color: colors.text.secondary }}>
             Selecciona una acción para aplicar a todas las certificaciones seleccionadas:
           </Typography>
           
           <Grid container spacing={2}>
             {[
-              { icon: <AssignmentIcon />, label: 'Asignar a', color: '#3498db' },
-              { icon: <CheckCircleIcon />, label: 'Marcar como revisadas', color: '#27ae60' },
-              { icon: <WarningIcon />, label: 'Cambiar prioridad', color: '#f39c12' },
-              { icon: <DownloadIcon />, label: 'Exportar selección', color: '#9b59b6' },
+              { icon: <AssignmentIcon />, label: 'Asignar a', color: colors.accents.blue },
+              { icon: <CheckCircleIcon />, label: 'Marcar como revisadas', color: colors.status.success },
+              { icon: <WarningIcon />, label: 'Cambiar prioridad', color: colors.status.warning },
+              { icon: <DownloadIcon />, label: 'Exportar selección', color: colors.accents.purple },
             ].map((action, idx) => (
               <Grid item xs={6} key={idx}>
                 <Card 
@@ -1046,7 +1267,7 @@ const CommitteeReview = () => {
                     p: 2, 
                     textAlign: 'center',
                     cursor: 'pointer',
-                    border: '1px solid #e0e0e0',
+                    border: `1px solid ${colors.primary.light}`,
                     '&:hover': {
                       borderColor: action.color,
                       bgcolor: `${action.color}10`
@@ -1057,7 +1278,7 @@ const CommitteeReview = () => {
                   <Box sx={{ color: action.color, mb: 1 }}>
                     {action.icon}
                   </Box>
-                  <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                  <Typography variant="body2" sx={{ fontWeight: 'medium', color: colors.primary.dark }}>
                     {action.label}
                   </Typography>
                 </Card>
@@ -1065,15 +1286,36 @@ const CommitteeReview = () => {
             ))}
           </Grid>
           
-          <Alert severity="info" sx={{ mt: 3, fontSize: '0.8rem' }}>
+          <Alert severity="info" sx={{ 
+            mt: 3, 
+            fontSize: '0.8rem',
+            bgcolor: 'rgba(58, 110, 165, 0.08)',
+            color: colors.primary.dark,
+            '& .MuiAlert-icon': {
+              color: colors.primary.main
+            }
+          }}>
             Esta acción se aplicará a {selectedRows.length} certificaciones seleccionadas.
           </Alert>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setBatchActionDialog(false)}>Cancelar</Button>
+          <Button 
+            onClick={() => setBatchActionDialog(false)}
+            sx={{ color: colors.text.secondary }}
+          >
+            Cancelar
+          </Button>
           <Button 
             onClick={() => setBatchActionDialog(false)}
             variant="outlined"
+            sx={{
+              borderColor: colors.primary.light,
+              color: colors.primary.main,
+              '&:hover': {
+                borderColor: colors.primary.main,
+                bgcolor: 'rgba(19, 59, 107, 0.04)',
+              }
+            }}
           >
             Continuar después
           </Button>

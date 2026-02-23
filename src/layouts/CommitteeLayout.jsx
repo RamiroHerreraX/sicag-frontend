@@ -33,7 +33,6 @@ import {
   Logout as LogoutIcon,
   Menu as MenuIcon,
   ArrowDropDown as ArrowDropDownIcon,
-  ArrowBack as ArrowBackIcon,
   Assignment as AssignmentIcon,
   Timeline as TimelineIcon,
   Person as PersonIcon,
@@ -42,10 +41,25 @@ import {
   AccountCircle as AccountCircleIcon,
   Email as EmailIcon,
   Phone as PhoneIcon,
-  LocationOn as LocationIcon
+  LocationOn as LocationIcon,
+  History as HistoryIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { roleThemes, layoutConstants } from '../theme';
+
+// Colores institucionales para Comité (unificados en azul oscuro como SuperAdmin)
+const institutionalColors = {
+  primary: "#133B6B", // Azul oscuro principal (mismo que SuperAdmin)
+  secondary: "#133B6B", // Azul medio (mismo que SuperAdmin)
+  accent: "#e9e9e9", // Color para acentos (blanco/gris claro)
+  notification: "#ef4444", // Rojo para notificaciones
+  light: "rgba(13, 42, 77, 0.08)", // Versión transparente del primary
+  lightAccent: "rgba(14, 15, 15, 0.1)", // Versión transparente del accent
+  drawerBg: "#133B6B", // Fondo del drawer unificado en azul oscuro
+  background: "#133B6B", // Fondo unificado para AppBar y Drawer
+  textWhite: "#ffffff", // Texto blanco
+  textWhiteSecondary: "rgba(255, 255, 255, 0.7)", // Texto blanco secundario
+};
 
 const CommitteeLayout = () => {
   const { user, logout } = useAuth();
@@ -58,13 +72,12 @@ const CommitteeLayout = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [profileAnchorEl, setProfileAnchorEl] = useState(null);
 
-  // COLORES del tema comité
-  const committeeTheme = roleThemes.committee;
-  const primaryColor = committeeTheme.primary;
-  const sidebarColor = committeeTheme.sidebar;
-  const activeColor = committeeTheme.active;
-  const textColor = committeeTheme.text;
-  const iconColor = committeeTheme.icon;
+  // COLORES unificados como en SuperAdminLayout
+  const primaryColor = institutionalColors.primary;
+  const secondaryColor = institutionalColors.secondary;
+  const accentColor = institutionalColors.accent;
+  const notificationColor = institutionalColors.notification;
+  const background = institutionalColors.background;
 
   // MENÚ PRINCIPAL - Solo rutas que existen
   const menuItems = [
@@ -80,7 +93,8 @@ const CommitteeLayout = () => {
       icon: <ReviewIcon />, 
       path: '/committee/review',
       description: 'Revisión de certificaciones',
-      badge: 5 // Certificaciones pendientes
+      badge: 5, // Certificaciones pendientes
+      highlight: true,
     },
     { 
       text: 'ALERTAS', 
@@ -96,11 +110,14 @@ const CommitteeLayout = () => {
       description: 'Mi perfil y configuración',
       badge: 0
     },
+    { 
+      text: 'AUDITORÍA', 
+      icon: <HistoryIcon />, 
+      path: '/committee/audit',
+      description: 'Historial de revisiones',
+      badge: 0
+    },
   ];
-
-  // Rutas que no están implementadas (comentadas)
-  // { text: 'ASIGNACIONES', icon: <AssignmentIcon />, path: '/committee/assignments' },
-  // { text: 'MÉTRICAS', icon: <TimelineIcon />, path: '/committee/metrics' },
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -143,21 +160,20 @@ const CommitteeLayout = () => {
     return location.pathname.startsWith(path);
   };
 
-  // Contenido del drawer mejorado
+  // Contenido del drawer unificado en azul (como SuperAdmin)
   const drawerContent = (
     <Box sx={{ 
       display: 'flex', 
       flexDirection: 'column', 
       height: '100%',
-      bgcolor: 'white',
-      boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.05)',
-      borderRight: '1px solid rgba(0, 0, 0, 0.08)',
+      bgcolor: background,
+      borderRight: '1px solid rgba(255, 255, 255, 0.1)',
     }}>
-      {/* Header del Drawer */}
+      {/* Header del Drawer - Unificado en azul */}
       <Box sx={{ 
         p: open ? 3 : 2,
-        borderBottom: '1px solid rgba(0, 0, 0, 0.08)',
-        bgcolor: '#f8fafc',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+        bgcolor: 'transparent',
         display: 'flex',
         flexDirection: open ? 'row' : 'column',
         alignItems: 'center',
@@ -169,10 +185,11 @@ const CommitteeLayout = () => {
           sx={{ 
             width: open ? 48 : 40,
             height: open ? 48 : 40,
-            bgcolor: primaryColor,
+            bgcolor: 'white',
+            color: primaryColor,
             fontSize: open ? '1.2rem' : '1rem',
             fontWeight: 'bold',
-            border: '3px solid rgba(26, 35, 126, 0.1)',
+            border: '3px solid rgba(255, 255, 255, 0.3)',
           }}
         >
           {user?.name?.charAt(0) || 'C'}
@@ -183,10 +200,11 @@ const CommitteeLayout = () => {
             <Typography 
               variant="subtitle1" 
               sx={{ 
-                fontWeight: 700,
-                color: '#1a237e',
+                fontWeight: 800,
+                color: 'white',
                 lineHeight: 1.2,
                 fontSize: '1rem',
+                textShadow: '0 2px 4px rgba(0,0,0,0.2)',
               }}
             >
               {user?.name?.split(' ')[0] || 'Miembro'}
@@ -194,9 +212,10 @@ const CommitteeLayout = () => {
             <Typography 
               variant="caption" 
               sx={{ 
-                color: '#64748b',
+                color: 'rgba(255, 255, 255, 0.9)',
                 display: 'block',
-                fontWeight: 500,
+                fontWeight: 600,
+                fontSize: '0.75rem',
               }}
             >
               Comité de Cumplimiento
@@ -206,20 +225,21 @@ const CommitteeLayout = () => {
         
         {open && (
           <Chip 
-            label="Comité"
+            label="COMITÉ"
             size="small"
             sx={{ 
-              bgcolor: 'rgba(26, 35, 126, 0.1)',
-              color: primaryColor,
-              fontWeight: 700,
+              bgcolor: 'rgba(255, 255, 255, 0.2)',
+              color: 'white',
+              fontWeight: 800,
               fontSize: '0.7rem',
-              height: 20,
+              height: 22,
+              border: '1px solid rgba(255, 255, 255, 0.3)',
             }}
           />
         )}
       </Box>
 
-      {/* Menú Principal */}
+      {/* Menú Principal - Con elementos en blanco sobre azul */}
       <Box sx={{ 
         flex: 1,
         p: open ? 2 : 1,
@@ -232,21 +252,26 @@ const CommitteeLayout = () => {
           sx={{ 
             px: 2,
             py: 1,
-            color: '#64748b',
-            fontWeight: 700,
+            color: 'rgba(255, 255, 255, 0.7)',
+            fontWeight: 800,
             fontSize: '0.7rem',
-            letterSpacing: '0.5px',
+            letterSpacing: '1px',
             textTransform: 'uppercase',
             opacity: open ? 1 : 0,
             transition: 'opacity 0.2s',
+            bgcolor: 'rgba(255, 255, 255, 0.1)',
+            borderRadius: '4px',
+            mt: 1,
           }}
         >
-          Navegación
+          Gestión de Certificaciones
         </Typography>
         
         <List sx={{ p: 0 }}>
           {menuItems.map((item) => {
             const isActive = isActivePath(item.path);
+            const isHighlight = item.highlight;
+
             return (
               <ListItem 
                 key={item.text} 
@@ -271,31 +296,38 @@ const CommitteeLayout = () => {
                       px: open ? 2 : 1.5,
                       py: 1.5,
                       mx: open ? 0 : 0.5,
+                      borderLeft: isHighlight ? '3px solid white' : 'none',
+                      background: isHighlight ? 'rgba(255, 255, 255, 0.05)' : 'transparent',
                       '&.Mui-selected': {
-                        bgcolor: 'rgba(26, 35, 126, 0.08)',
-                        borderLeft: `3px solid ${primaryColor}`,
+                        bgcolor: 'rgba(255, 255, 255, 0.15)',
+                        borderLeft: `3px solid ${accentColor}`,
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
                         '&:hover': {
-                          bgcolor: 'rgba(26, 35, 126, 0.12)',
+                          bgcolor: 'rgba(255, 255, 255, 0.2)',
                         },
                         '& .MuiListItemIcon-root': {
-                          color: primaryColor,
+                          color: accentColor,
                         },
-                        '& .MuiTypography-root': {
-                          color: primaryColor,
-                          fontWeight: 600,
+                        '& .MuiListItemText-primary': {
+                          color: 'white',
+                          fontWeight: 700,
+                        },
+                        '& .MuiListItemText-secondary': {
+                          color: 'rgba(255, 255, 255, 0.7)',
                         }
                       },
                       '&:hover': {
-                        bgcolor: 'rgba(0, 0, 0, 0.04)',
-                        transform: 'translateX(2px)',
+                        bgcolor: 'rgba(255, 255, 255, 0.1)',
+                        transform: 'translateX(3px)',
                         transition: 'all 0.2s',
+                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
                       },
                     }}
                   >
                     <ListItemIcon
                       sx={{
                         minWidth: open ? 40 : 'auto',
-                        color: isActive ? primaryColor : '#64748b',
+                        color: isActive ? accentColor : 'rgba(255, 255, 255, 0.8)',
                         justifyContent: 'center',
                         mr: open ? 2 : 0,
                       }}
@@ -327,15 +359,15 @@ const CommitteeLayout = () => {
                         primaryTypographyProps={{
                           sx: {
                             fontSize: '0.85rem',
-                            fontWeight: isActive ? 600 : 500,
-                            color: isActive ? primaryColor : '#374151',
-                            letterSpacing: '0.2px',
+                            fontWeight: isActive ? 700 : 600,
+                            color: 'white',
+                            letterSpacing: '0.1px',
                           }
                         }}
                         secondaryTypographyProps={{
                           sx: {
                             fontSize: '0.75rem',
-                            color: '#6b7280',
+                            color: 'rgba(255, 255, 255, 0.6)',
                             mt: 0.25,
                           }
                         }}
@@ -365,106 +397,44 @@ const CommitteeLayout = () => {
         {/* Espacio adicional para separación */}
         <Box sx={{ flex: 1 }} />
         
-        {/* Enlaces de ayuda y configuración */}
-        {open && (
-          <Box sx={{ mt: 3, px: 2 }}>
-            <Divider sx={{ mb: 2 }} />
-            <Typography 
-              variant="caption" 
-              sx={{ 
-                color: '#64748b',
-                fontWeight: 700,
-                fontSize: '0.7rem',
-                letterSpacing: '0.5px',
-                textTransform: 'uppercase',
-                display: 'block',
-                mb: 1,
-              }}
-            >
-              Soporte
-            </Typography>
-            
-            <List sx={{ p: 0 }}>
-              <ListItem disablePadding sx={{ mb: 0.5 }}>
-                <ListItemButton
-                  sx={{
-                    minHeight: 40,
-                    borderRadius: '8px',
-                    px: 2,
-                    py: 1,
-                  }}
-                  onClick={() => navigate('/sitemap')}
-                >
-                  <ListItemIcon sx={{ minWidth: 40, color: '#64748b' }}>
-                    <HelpIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText 
-                    primary="Mapa del Sitio"
-                    primaryTypographyProps={{
-                      sx: {
-                        fontSize: '0.85rem',
-                        fontWeight: 500,
-                        color: '#374151',
-                      }
-                    }}
-                  />
-                </ListItemButton>
-              </ListItem>
-              
-              <ListItem disablePadding>
-                <ListItemButton
-                  sx={{
-                    minHeight: 40,
-                    borderRadius: '8px',
-                    px: 2,
-                    py: 1,
-                  }}
-                  onClick={handleMenuOpen}
-                >
-                  <ListItemIcon sx={{ minWidth: 40, color: '#64748b' }}>
-                    <SettingsIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText 
-                    primary="Configuración"
-                    primaryTypographyProps={{
-                      sx: {
-                        fontSize: '0.85rem',
-                        fontWeight: 500,
-                        color: '#374151',
-                      }
-                    }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            </List>
-          </Box>
-        )}
+        
       </Box>
 
-      {/* Footer del Drawer */}
+      {/* Footer del Drawer - Unificado en azul */}
       <Box sx={{ 
         p: open ? 2 : 1.5,
-        borderTop: '1px solid rgba(0, 0, 0, 0.08)',
-        bgcolor: '#f8fafc',
+        borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+        bgcolor: 'transparent',
       }}>
         {open ? (
           <Stack spacing={1.5}>
             <Box sx={{ textAlign: 'center' }}>
               <Typography variant="caption" sx={{ 
-                color: '#94a3b8',
+                color: 'rgba(255, 255, 255, 0.8)',
                 fontSize: '0.7rem',
-                fontWeight: 500,
+                fontWeight: 600,
                 display: 'block',
               }}>
                 SICAG Comité v1.0
               </Typography>
               <Typography variant="caption" sx={{ 
-                color: '#94a3b8',
+                color: 'rgba(255, 255, 255, 0.6)',
                 fontSize: '0.65rem',
                 display: 'block',
               }}>
-                Región: {user?.region || 'Todas'}
+                {user?.region ? `Región: ${user.region}` : 'Todas las regiones'}
               </Typography>
+              <Chip 
+                label="8 certificaciones pendientes"
+                size="small"
+                sx={{ 
+                  mt: 1,
+                  fontSize: '0.65rem',
+                  bgcolor: 'rgba(255, 255, 255, 0.15)',
+                  color: 'white',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                }}
+              />
             </Box>
             
             <Button
@@ -473,15 +443,16 @@ const CommitteeLayout = () => {
               startIcon={<LogoutIcon />}
               onClick={handleLogout}
               sx={{
-                borderColor: 'rgba(0, 0, 0, 0.12)',
-                color: '#64748b',
-                fontWeight: 600,
+                borderColor: 'rgba(255, 255, 255, 0.3)',
+                color: 'white',
+                fontWeight: 700,
                 fontSize: '0.85rem',
                 py: 1,
+                borderRadius: '8px',
                 '&:hover': {
-                  borderColor: primaryColor,
-                  color: primaryColor,
-                  bgcolor: 'rgba(26, 35, 126, 0.04)',
+                  borderColor: 'white',
+                  color: 'white',
+                  bgcolor: 'rgba(255, 255, 255, 0.1)',
                 },
               }}
             >
@@ -495,10 +466,11 @@ const CommitteeLayout = () => {
                 onClick={handleLogout}
                 size="small"
                 sx={{
-                  color: '#64748b',
+                  color: 'white',
+                  bgcolor: 'rgba(255, 255, 255, 0.1)',
                   '&:hover': {
-                    color: primaryColor,
-                    bgcolor: 'rgba(26, 35, 126, 0.08)',
+                    color: 'white',
+                    bgcolor: 'rgba(255, 255, 255, 0.2)',
                   },
                 }}
               >
@@ -507,9 +479,9 @@ const CommitteeLayout = () => {
             </Tooltip>
             
             <Typography variant="caption" sx={{ 
-              color: '#94a3b8',
+              color: 'rgba(255, 255, 255, 0.7)',
               fontSize: '0.6rem',
-              fontWeight: 500,
+              fontWeight: 600,
             }}>
               v1.0
             </Typography>
@@ -521,17 +493,17 @@ const CommitteeLayout = () => {
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#f8fafc' }}>
-      {/* AppBar superior - Mejorado */}
+      {/* AppBar superior - MISMO COLOR AZUL que el Drawer */}
       <AppBar
         position="fixed"
         elevation={0}
         sx={{
-          bgcolor: 'white',
-          color: '#1a237e',
+          bgcolor: background,
+          color: 'white',
           width: '100%',
           zIndex: theme.zIndex.drawer + 1,
-          borderBottom: '1px solid rgba(0, 0, 0, 0.08)',
-          boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.05)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.2)',
         }}
       >
         <Toolbar sx={{ 
@@ -551,9 +523,9 @@ const CommitteeLayout = () => {
               onClick={isMobile ? handleDrawerToggle : handleDesktopDrawerToggle}
               edge="start"
               sx={{ 
-                color: '#1a237e',
+                color: 'white',
                 '&:hover': {
-                  bgcolor: 'rgba(26, 35, 126, 0.08)',
+                  bgcolor: 'rgba(255, 255, 255, 0.1)',
                 }
               }}
             >
@@ -571,23 +543,24 @@ const CommitteeLayout = () => {
             onClick={() => navigate('/committee/dashboard')}
             >
               <Box sx={{ 
-                width: 32, 
-                height: 32,
-                bgcolor: primaryColor,
-                borderRadius: '8px',
+                width: 36, 
+                height: 36,
+                bgcolor: 'white',
+                borderRadius: '10px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
               }}>
                 <Typography 
                   variant="subtitle1" 
                   sx={{ 
-                    color: 'white',
-                    fontWeight: 800,
-                    fontSize: '1rem',
+                    color: primaryColor,
+                    fontWeight: 900,
+                    fontSize: '1.2rem',
                   }}
                 >
-                  S
+                  C
                 </Typography>
               </Box>
               
@@ -595,10 +568,11 @@ const CommitteeLayout = () => {
                 variant="h6" 
                 noWrap 
                 sx={{ 
-                  fontWeight: 700,
-                  color: '#1a237e',
-                  fontSize: '1.25rem',
-                  display: { xs: 'none', sm: 'block' }
+                  fontWeight: 800,
+                  color: 'white',
+                  fontSize: '1.4rem',
+                  display: { xs: 'none', sm: 'block' },
+                  textShadow: '0 2px 4px rgba(0,0,0,0.2)',
                 }}
               >
                 SICAG
@@ -608,12 +582,13 @@ const CommitteeLayout = () => {
                 label="COMITÉ"
                 size="small"
                 sx={{ 
-                  bgcolor: 'rgba(26, 35, 126, 0.1)',
-                  color: primaryColor,
-                  fontWeight: 700,
+                  bgcolor: 'rgba(255, 255, 255, 0.2)',
+                  color: 'white',
+                  fontWeight: 800,
                   fontSize: '0.7rem',
-                  height: 22,
-                  display: { xs: 'none', md: 'flex' }
+                  height: 24,
+                  display: { xs: 'none', md: 'flex' },
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
                 }}
               />
             </Box>
@@ -625,14 +600,14 @@ const CommitteeLayout = () => {
               ml: 3,
               px: 2,
               py: 0.5,
-              bgcolor: 'rgba(26, 35, 126, 0.05)',
-              borderRadius: '6px',
+              bgcolor: 'rgba(255, 255, 255, 0.15)',
+              borderRadius: '8px',
             }}>
               <Typography 
                 variant="caption" 
                 sx={{ 
-                  fontWeight: 600,
-                  color: '#4f46e5',
+                  fontWeight: 700,
+                  color: 'white',
                   fontSize: '0.8rem',
                 }}
               >
@@ -643,18 +618,17 @@ const CommitteeLayout = () => {
 
           {/* Lado derecho */}
           <Stack direction="row" spacing={1} alignItems="center">
-            {/* Botón de notificaciones */}
+            {/* Botón de notificaciones - AHORA EN ROJO */}
             <Tooltip title="Alertas y notificaciones">
               <IconButton
                 color="inherit"
                 component={Link}
                 to="/committee/alerts"
                 sx={{ 
-                  color: '#64748b',
+                  color: 'white',
                   position: 'relative',
                   '&:hover': {
-                    color: primaryColor,
-                    bgcolor: 'rgba(26, 35, 126, 0.08)',
+                    bgcolor: 'rgba(255, 255, 255, 0.1)',
                   }
                 }}
               >
@@ -664,8 +638,8 @@ const CommitteeLayout = () => {
                   sx={{
                     '& .MuiBadge-badge': {
                       fontSize: '0.6rem',
-                      height: 16,
-                      minWidth: 16,
+                      height: 18,
+                      minWidth: 18,
                     }
                   }}
                 >
@@ -682,6 +656,7 @@ const CommitteeLayout = () => {
                 height: 24,
                 alignSelf: 'center',
                 mx: 1,
+                borderColor: 'rgba(255, 255, 255, 0.2)',
               }}
             />
             
@@ -696,7 +671,7 @@ const CommitteeLayout = () => {
                   borderRadius: '8px',
                   cursor: 'pointer',
                   '&:hover': {
-                    bgcolor: 'rgba(0, 0, 0, 0.04)',
+                    bgcolor: 'rgba(255, 255, 255, 0.1)',
                   }
                 }}
                 onClick={handleProfileMenuOpen}
@@ -706,8 +681,8 @@ const CommitteeLayout = () => {
                     variant="body2" 
                     noWrap
                     sx={{ 
-                      fontWeight: 600,
-                      color: '#1e293b',
+                      fontWeight: 700,
+                      color: 'white',
                       fontSize: '0.9rem',
                       lineHeight: 1.2,
                     }}
@@ -718,9 +693,9 @@ const CommitteeLayout = () => {
                     variant="caption" 
                     noWrap
                     sx={{ 
-                      color: '#64748b',
+                      color: 'rgba(255, 255, 255, 0.8)',
                       fontSize: '0.75rem',
-                      fontWeight: 500,
+                      fontWeight: 600,
                     }}
                   >
                     Comité de Cumplimiento
@@ -729,18 +704,20 @@ const CommitteeLayout = () => {
                 
                 <Avatar 
                   sx={{ 
-                    width: 36,
-                    height: 36,
-                    bgcolor: primaryColor,
-                    fontSize: '0.9rem',
+                    width: 40,
+                    height: 40,
+                    bgcolor: 'white',
+                    color: primaryColor,
+                    fontSize: '1rem',
                     fontWeight: 'bold',
-                    border: '2px solid rgba(26, 35, 126, 0.1)',
+                    border: '2px solid rgba(255, 255, 255, 0.3)',
+                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
                   }}
                 >
                   {user?.name?.charAt(0) || 'C'}
                 </Avatar>
                 
-                <ArrowDropDownIcon sx={{ color: '#64748b', fontSize: 20 }} />
+                <ArrowDropDownIcon sx={{ color: 'white', fontSize: 20 }} />
               </Box>
             </Tooltip>
           </Stack>
@@ -756,54 +733,77 @@ const CommitteeLayout = () => {
           elevation: 3,
           sx: {
             mt: 1.5,
-            minWidth: 280,
+            minWidth: 300,
             borderRadius: '12px',
             overflow: 'hidden',
+            border: '1px solid rgba(13, 42, 77, 0.1)',
           }
         }}
       >
-        <Box sx={{ p: 2, bgcolor: '#f8fafc', borderBottom: '1px solid rgba(0, 0, 0, 0.08)' }}>
+        <Box sx={{ 
+          p: 2, 
+          background: `linear-gradient(135deg, ${institutionalColors.primary} 0%, ${institutionalColors.secondary} 100%)`,
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+        }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
             <Avatar 
               sx={{ 
-                width: 48,
-                height: 48,
-                bgcolor: primaryColor,
-                fontSize: '1.2rem',
+                width: 56,
+                height: 56,
+                bgcolor: 'white',
+                color: primaryColor,
+                fontSize: '1.4rem',
                 fontWeight: 'bold',
+                border: '3px solid rgba(255, 255, 255, 0.3)',
               }}
             >
               {user?.name?.charAt(0) || 'C'}
             </Avatar>
             <Box>
-              <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#1a237e' }}>
+              <Typography variant="h6" sx={{ fontWeight: 800, color: 'white' }}>
                 {user?.name || 'Miembro Comité'}
               </Typography>
-              <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 500 }}>
+              <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 600 }}>
                 Comité de Cumplimiento
               </Typography>
             </Box>
           </Box>
           
-          <Box sx={{ display: 'flex', gap: 2 }}>
+          <Stack direction="row" spacing={1} flexWrap="wrap">
             <Chip 
-              label={user?.region || 'Todas'}
+              label={user?.region || 'Todas las regiones'}
               size="small"
               icon={<LocationIcon />}
               sx={{ 
-                bgcolor: 'rgba(26, 35, 126, 0.1)',
-                color: primaryColor,
-                fontWeight: 600,
+                bgcolor: 'rgba(255, 255, 255, 0.2)',
+                color: 'white',
+                fontWeight: 700,
+                mb: 0.5,
+                '& .MuiChip-icon': { color: 'white' },
               }}
             />
             <Chip 
-              label="Activo"
+              label="Comité"
               size="small"
-              color="success"
-              variant="outlined"
-              sx={{ fontWeight: 600 }}
+              sx={{ 
+                bgcolor: 'rgba(255, 255, 255, 0.2)',
+                color: 'white',
+                fontWeight: 700,
+                mb: 0.5,
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+              }}
             />
-          </Box>
+            <Chip 
+              label="8 pendientes"
+              size="small"
+              sx={{ 
+                bgcolor: 'rgba(255, 255, 255, 0.2)',
+                color: 'white',
+                fontWeight: 700,
+                mb: 0.5,
+              }}
+            />
+          </Stack>
         </Box>
         
         <MenuItem 
@@ -812,12 +812,13 @@ const CommitteeLayout = () => {
           onClick={handleProfileMenuClose}
           sx={{ py: 1.5, px: 2 }}
         >
-          <ListItemIcon>
+          <ListItemIcon sx={{ color: primaryColor }}>
             <AccountCircleIcon />
           </ListItemIcon>
           <ListItemText 
             primary="Mi Perfil"
             secondary="Información personal y preferencias"
+            primaryTypographyProps={{ fontWeight: 600 }}
           />
         </MenuItem>
         
@@ -827,16 +828,17 @@ const CommitteeLayout = () => {
           onClick={handleProfileMenuClose}
           sx={{ py: 1.5, px: 2 }}
         >
-          <ListItemIcon>
+          <ListItemIcon sx={{ color: primaryColor }}>
             <HelpIcon />
           </ListItemIcon>
           <ListItemText 
             primary="Ayuda y Soporte"
             secondary="Documentación y contacto"
+            primaryTypographyProps={{ fontWeight: 600 }}
           />
         </MenuItem>
         
-        <Divider />
+        <Divider sx={{ borderColor: 'rgba(13, 42, 77, 0.1)' }} />
         
         <MenuItem 
           onClick={handleLogout}
@@ -854,7 +856,7 @@ const CommitteeLayout = () => {
           </ListItemIcon>
           <ListItemText 
             primary="Cerrar Sesión"
-            primaryTypographyProps={{ fontWeight: 600 }}
+            primaryTypographyProps={{ fontWeight: 700 }}
           />
         </MenuItem>
       </Menu>
@@ -893,7 +895,7 @@ const CommitteeLayout = () => {
         </MenuItem>
       </Menu>
 
-      {/* Drawer (Barra lateral) */}
+      {/* Drawer (Barra lateral) - MISMO COLOR AZUL que el AppBar */}
       <Box
         component="nav"
         sx={{ 
@@ -917,6 +919,7 @@ const CommitteeLayout = () => {
             '& .MuiDrawer-paper': {
               width: layoutConstants.drawerWidth,
               boxSizing: 'border-box',
+              bgcolor: background,
             },
           }}
         >
@@ -931,7 +934,8 @@ const CommitteeLayout = () => {
             '& .MuiDrawer-paper': {
               width: open ? layoutConstants.drawerWidth : layoutConstants.collapsedDrawerWidth,
               boxSizing: 'border-box',
-              borderRight: '1px solid rgba(0, 0, 0, 0.08)',
+              borderRight: '1px solid rgba(255, 255, 255, 0.1)',
+              bgcolor: background,
               transition: theme.transitions.create('width', {
                 easing: theme.transitions.easing.sharp,
                 duration: theme.transitions.duration.standard,

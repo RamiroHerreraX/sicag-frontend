@@ -22,7 +22,6 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  // NUEVOS COMPONENTES
   Badge,
   Tooltip,
   Avatar,
@@ -53,7 +52,6 @@ import {
   OpenInNew as OpenInNewIcon,
   Sort as SortIcon,
   MoreVert as MoreVertIcon,
-  // NUEVOS ICONOS - AGREGAR PlaceIcon AQUÍ
   Timer as TimerIcon,
   TrendingUp as TrendingUpIcon,
   AutoDelete as AutoDeleteIcon,
@@ -62,8 +60,47 @@ import {
   ExpandMore as ExpandMoreIcon,
   Speed as SpeedIcon,
   Insights as InsightsIcon,
-  Place as PlaceIcon  // <-- AGREGAR ESTA LÍNEA
+  Place as PlaceIcon
 } from '@mui/icons-material';
+
+// Paleta de colores corporativa CAAAREM (versión clara)
+const colors = {
+  primary: {
+    dark: '#0D2A4D',
+    main: '#133B6B',
+    light: '#3A6EA5'
+  },
+  secondary: {
+    main: '#00A8A8',
+    light: '#00C2D1',
+    lighter: '#35D0FF'
+  },
+  accents: {
+    blue: '#0099FF',
+    purple: '#6C5CE7'
+  },
+  status: {
+    warning: '#00C2D1',      // Advertencias en cyan
+    error: '#0099FF',         // Errores en azul eléctrico
+    info: '#3A6EA5',          // Información en azul claro
+    success: '#00A8A8',       // Éxito en verde/teal
+    purple: '#6C5CE7'         // Púrpura para énfasis
+  },
+  text: {
+    primary: '#0D2A4D',
+    secondary: '#3A6EA5',
+    light: '#6C5CE7'
+  },
+  background: {
+    default: '#ffffff',
+    paper: '#ffffff',
+    subtle: '#f5f7fa'
+  },
+  gradients: {
+    primary: 'linear-gradient(135deg, #0D2A4D, #3A6EA5)',
+    secondary: 'linear-gradient(135deg, #00A8A8, #00C2D1)',
+  }
+};
 
 const CommitteeAlerts = () => {
   const [tabValue, setTabValue] = useState(0);
@@ -237,11 +274,11 @@ const CommitteeAlerts = () => {
 
   const getAlertColor = (type) => {
     switch(type) {
-      case 'warning': return '#f39c12';
-      case 'error': return '#e74c3c';
-      case 'info': return '#3498db';
-      case 'success': return '#27ae60';
-      default: return '#7f8c8d';
+      case 'warning': return colors.status.warning;      // #00C2D1
+      case 'error': return colors.status.error;          // #0099FF
+      case 'info': return colors.status.info;            // #3A6EA5
+      case 'success': return colors.status.success;      // #00A8A8
+      default: return colors.text.secondary;
     }
   };
 
@@ -306,17 +343,18 @@ const CommitteeAlerts = () => {
       overflow: 'hidden',
       display: 'flex',
       flexDirection: 'column',
-      p: 2
+      p: 2,
+      bgcolor: colors.background.subtle
     }}>
       {/* Header Compacto */}
       <Box sx={{ mb: 3 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
           <Box>
-            <Typography variant="h5" sx={{ color: '#2c3e50', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
-              <NotificationsIcon sx={{ color: '#1a237e' }} />
+            <Typography variant="h5" sx={{ color: colors.primary.dark, fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
+              <NotificationsIcon sx={{ color: colors.primary.main }} />
               Centro de Alertas
             </Typography>
-            <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+            <Typography variant="caption" sx={{ color: colors.text.secondary }}>
               Monitoreo y gestión de notificaciones del sistema
             </Typography>
           </Box>
@@ -326,6 +364,14 @@ const CommitteeAlerts = () => {
               variant="outlined"
               size="small"
               startIcon={<DownloadIcon />}
+              sx={{
+                borderColor: colors.primary.light,
+                color: colors.primary.main,
+                '&:hover': {
+                  borderColor: colors.primary.main,
+                  bgcolor: 'rgba(19, 59, 107, 0.04)',
+                }
+              }}
             >
               Exportar
             </Button>
@@ -334,6 +380,14 @@ const CommitteeAlerts = () => {
               size="small"
               startIcon={<SettingsIcon />}
               onClick={() => setShowSettings(true)}
+              sx={{
+                borderColor: colors.primary.light,
+                color: colors.primary.main,
+                '&:hover': {
+                  borderColor: colors.primary.main,
+                  bgcolor: 'rgba(19, 59, 107, 0.04)',
+                }
+              }}
             >
               Configurar
             </Button>
@@ -341,7 +395,12 @@ const CommitteeAlerts = () => {
         </Box>
 
         {/* Filtros Rápidos en Línea */}
-        <Paper elevation={0} sx={{ p: 2, mb: 2, bgcolor: '#f8f9fa' }}>
+        <Paper elevation={0} sx={{ 
+          p: 2, 
+          mb: 2, 
+          bgcolor: colors.background.paper,
+          border: `1px solid ${colors.primary.light}20`,
+        }}>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} md={4}>
               <TextField
@@ -350,15 +409,29 @@ const CommitteeAlerts = () => {
                 placeholder="Buscar alertas..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    color: colors.primary.dark,
+                    '& fieldset': {
+                      borderColor: colors.primary.light,
+                    },
+                    '&:hover fieldset': {
+                      borderColor: colors.primary.main,
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: colors.primary.dark,
+                    },
+                  },
+                }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon fontSize="small" />
+                      <SearchIcon fontSize="small" sx={{ color: colors.text.secondary }} />
                     </InputAdornment>
                   ),
                   endAdornment: searchTerm && (
                     <InputAdornment position="end">
-                      <IconButton size="small" onClick={() => setSearchTerm('')}>
+                      <IconButton size="small" onClick={() => setSearchTerm('')} sx={{ color: colors.text.secondary }}>
                         <RefreshIcon fontSize="small" />
                       </IconButton>
                     </InputAdornment>
@@ -375,6 +448,14 @@ const CommitteeAlerts = () => {
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
                 label="Tipo"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    color: colors.primary.dark,
+                    '& fieldset': {
+                      borderColor: colors.primary.light,
+                    },
+                  },
+                }}
               >
                 <MenuItem value="all">Todos</MenuItem>
                 <MenuItem value="warning">Advertencias</MenuItem>
@@ -392,6 +473,14 @@ const CommitteeAlerts = () => {
                 value={filterPriority}
                 onChange={(e) => setFilterPriority(e.target.value)}
                 label="Prioridad"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    color: colors.primary.dark,
+                    '& fieldset': {
+                      borderColor: colors.primary.light,
+                    },
+                  },
+                }}
               >
                 <MenuItem value="all">Todas</MenuItem>
                 <MenuItem value="alta">Alta</MenuItem>
@@ -408,6 +497,14 @@ const CommitteeAlerts = () => {
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
                 label="Estado"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    color: colors.primary.dark,
+                    '& fieldset': {
+                      borderColor: colors.primary.light,
+                    },
+                  },
+                }}
               >
                 <MenuItem value="all">Todos</MenuItem>
                 <MenuItem value="unread">No leídas</MenuItem>
@@ -428,6 +525,14 @@ const CommitteeAlerts = () => {
                   setSearchTerm('');
                   setTabValue(0);
                 }}
+                sx={{
+                  borderColor: colors.primary.light,
+                  color: colors.primary.main,
+                  '&:hover': {
+                    borderColor: colors.primary.main,
+                    bgcolor: 'rgba(19, 59, 107, 0.04)',
+                  }
+                }}
               >
                 Limpiar
               </Button>
@@ -442,13 +547,27 @@ const CommitteeAlerts = () => {
           {/* Columna Izquierda - 70% */}
           <Grid item xs={12} lg={8} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             {/* Tabs Compactas */}
-            <Paper elevation={1} sx={{ mb: 2 }}>
+            <Paper elevation={1} sx={{ 
+              mb: 2,
+              border: `1px solid ${colors.primary.light}20`,
+            }}>
               <Tabs 
                 value={tabValue} 
                 onChange={handleTabChange}
                 variant="scrollable"
                 scrollButtons="auto"
-                sx={{ minHeight: 48 }}
+                sx={{ 
+                  minHeight: 48,
+                  '& .MuiTab-root': {
+                    color: colors.text.secondary,
+                    '&.Mui-selected': {
+                      color: colors.primary.main,
+                    }
+                  },
+                  '& .MuiTabs-indicator': {
+                    backgroundColor: colors.primary.main,
+                  }
+                }}
               >
                 {tabs.map((tab) => (
                   <Tab 
@@ -461,7 +580,15 @@ const CommitteeAlerts = () => {
                             label={tab.badge}
                             size="small"
                             color={tab.color || 'default'}
-                            sx={{ height: 20, minWidth: 20 }}
+                            sx={{ 
+                              height: 20, 
+                              minWidth: 20,
+                              bgcolor: tab.color === 'error' ? colors.status.error :
+                                      tab.color === 'warning' ? colors.status.warning :
+                                      tab.color === 'info' ? colors.status.info :
+                                      colors.primary.main,
+                              color: 'white',
+                            }}
                           />
                         )}
                       </Box>
@@ -472,25 +599,31 @@ const CommitteeAlerts = () => {
             </Paper>
 
             {/* Lista de Alertas - Scroll Interno */}
-            <Paper elevation={1} sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            <Paper elevation={1} sx={{ 
+              flex: 1, 
+              display: 'flex', 
+              flexDirection: 'column', 
+              overflow: 'hidden',
+              border: `1px solid ${colors.primary.light}20`,
+            }}>
               <Box sx={{ 
                 p: 2, 
-                borderBottom: '1px solid #e0e0e0',
+                borderBottom: `1px solid ${colors.primary.light}`,
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center'
               }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
                   {filteredAlerts.length} alertas encontradas
                 </Typography>
                 <Stack direction="row" spacing={1}>
                   <Tooltip title="Marcar todas como leídas">
-                    <IconButton size="small">
+                    <IconButton size="small" sx={{ color: colors.text.secondary }}>
                       <MarkReadIcon fontSize="small" />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Configurar vista">
-                    <IconButton size="small">
+                    <IconButton size="small" sx={{ color: colors.text.secondary }}>
                       <SortIcon fontSize="small" />
                     </IconButton>
                   </Tooltip>
@@ -505,10 +638,11 @@ const CommitteeAlerts = () => {
                     sx={{
                       mb: 1,
                       borderLeft: `4px solid ${getAlertColor(alert.type)}`,
-                      bgcolor: alert.read ? 'transparent' : '#f8f9fa',
+                      bgcolor: alert.read ? 'transparent' : 'rgba(58, 110, 165, 0.04)',
                       cursor: 'pointer',
-                      '&:hover': { bgcolor: '#f0f0f0' },
-                      transition: 'all 0.2s'
+                      '&:hover': { bgcolor: 'rgba(58, 110, 165, 0.08)' },
+                      transition: 'all 0.2s',
+                      border: `1px solid ${colors.primary.light}10`,
                     }}
                     onClick={() => handleAlertClick(alert.id)}
                   >
@@ -520,7 +654,7 @@ const CommitteeAlerts = () => {
                               <Box sx={{ color: getAlertColor(alert.type) }}>
                                 {getAlertIcon(alert.type)}
                               </Box>
-                              <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                              <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
                                 {alert.title}
                               </Typography>
                               {alert.priority === 'alta' && !alert.read && (
@@ -528,8 +662,13 @@ const CommitteeAlerts = () => {
                                   icon={getPriorityIcon(alert.priority)}
                                   label="URGENTE"
                                   size="small"
-                                  color="error"
-                                  sx={{ height: 20, fontSize: '0.65rem' }}
+                                  sx={{
+                                    bgcolor: colors.status.error,
+                                    color: 'white',
+                                    height: 20,
+                                    fontSize: '0.65rem',
+                                    '& .MuiChip-icon': { color: 'white' }
+                                  }}
                                 />
                               )}
                             </Box>
@@ -540,12 +679,13 @@ const CommitteeAlerts = () => {
                                   <IconButton 
                                     size="small"
                                     onClick={(e) => handleMarkAsRead(alert.id, e)}
+                                    sx={{ color: colors.text.secondary }}
                                   >
                                     <MarkReadIcon fontSize="small" />
                                   </IconButton>
                                 </Tooltip>
                               )}
-                              <IconButton size="small">
+                              <IconButton size="small" sx={{ color: colors.text.secondary }}>
                                 <MoreVertIcon fontSize="small" />
                               </IconButton>
                             </Stack>
@@ -553,7 +693,7 @@ const CommitteeAlerts = () => {
                         </Grid>
 
                         <Grid item xs={12}>
-                          <Typography variant="body2" sx={{ color: '#5a6c7d', mb: 1.5 }}>
+                          <Typography variant="body2" sx={{ color: colors.primary.dark, mb: 1.5 }}>
                             {alert.message}
                           </Typography>
                         </Grid>
@@ -564,10 +704,15 @@ const CommitteeAlerts = () => {
                             <Stack direction="row" spacing={2} alignItems="center">
                               {alert.user && (
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                  <Avatar sx={{ width: 24, height: 24, fontSize: '0.75rem' }}>
+                                  <Avatar sx={{ 
+                                    width: 24, 
+                                    height: 24, 
+                                    fontSize: '0.75rem',
+                                    bgcolor: colors.primary.main
+                                  }}>
                                     {alert.user.avatar}
                                   </Avatar>
-                                  <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                                  <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                                     {alert.user.name}
                                   </Typography>
                                 </Box>
@@ -578,20 +723,24 @@ const CommitteeAlerts = () => {
                                   label={alert.certificationNumber}
                                   size="small"
                                   variant="outlined"
-                                  sx={{ height: 20 }}
+                                  sx={{ 
+                                    height: 20,
+                                    color: colors.text.secondary,
+                                    borderColor: colors.primary.light,
+                                  }}
                                 />
                               )}
                               
                               {alert.region && (
-                                <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                                  <PlaceIcon sx={{ fontSize: '0.8rem', verticalAlign: 'middle', mr: 0.5 }} />
+                                <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+                                  <PlaceIcon sx={{ fontSize: '0.8rem', verticalAlign: 'middle', mr: 0.5, color: colors.primary.light }} />
                                   {alert.region}
                                 </Typography>
                               )}
                             </Stack>
                             
-                            <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
-                              <EventIcon sx={{ fontSize: '0.8rem', verticalAlign: 'middle', mr: 0.5 }} />
+                            <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+                              <EventIcon sx={{ fontSize: '0.8rem', verticalAlign: 'middle', mr: 0.5, color: colors.primary.light }} />
                               {alert.time}
                             </Typography>
                           </Box>
@@ -599,9 +748,9 @@ const CommitteeAlerts = () => {
 
                         {/* Panel Expandible */}
                         {expandedAlert === alert.id && (
-                          <Grid item xs={12} sx={{ mt: 2, pt: 2, borderTop: '1px dashed #e0e0e0' }}>
+                          <Grid item xs={12} sx={{ mt: 2, pt: 2, borderTop: `1px dashed ${colors.primary.light}` }}>
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <Typography variant="caption" sx={{ fontWeight: 'bold', color: '#7f8c8d' }}>
+                              <Typography variant="caption" sx={{ fontWeight: 'bold', color: colors.text.secondary }}>
                                 ACCIONES DISPONIBLES:
                               </Typography>
                               <Stack direction="row" spacing={1}>
@@ -611,7 +760,10 @@ const CommitteeAlerts = () => {
                                     variant="contained"
                                     startIcon={<OpenInNewIcon />}
                                     onClick={(e) => handleQuickAction(alert, 'review', e)}
-                                    sx={{ bgcolor: '#1a237e' }}
+                                    sx={{ 
+                                      bgcolor: colors.primary.main,
+                                      '&:hover': { bgcolor: colors.primary.dark }
+                                    }}
                                   >
                                     Revisar
                                   </Button>
@@ -621,6 +773,14 @@ const CommitteeAlerts = () => {
                                     size="small"
                                     variant="outlined"
                                     onClick={(e) => handleQuickAction(alert, 'extend', e)}
+                                    sx={{
+                                      borderColor: colors.primary.light,
+                                      color: colors.primary.main,
+                                      '&:hover': {
+                                        borderColor: colors.primary.main,
+                                        bgcolor: 'rgba(19, 59, 107, 0.04)',
+                                      }
+                                    }}
                                   >
                                     Extender
                                   </Button>
@@ -630,6 +790,14 @@ const CommitteeAlerts = () => {
                                     size="small"
                                     variant="outlined"
                                     onClick={(e) => handleQuickAction(alert, 'contact', e)}
+                                    sx={{
+                                      borderColor: colors.primary.light,
+                                      color: colors.primary.main,
+                                      '&:hover': {
+                                        borderColor: colors.primary.main,
+                                        bgcolor: 'rgba(19, 59, 107, 0.04)',
+                                      }
+                                    }}
                                   >
                                     Contactar
                                   </Button>
@@ -645,11 +813,11 @@ const CommitteeAlerts = () => {
 
                 {filteredAlerts.length === 0 && (
                   <Box sx={{ p: 8, textAlign: 'center' }}>
-                    <CircleNotificationsIcon sx={{ fontSize: 60, color: '#bdc3c7', mb: 2 }} />
-                    <Typography variant="h6" sx={{ color: '#7f8c8d', mb: 1 }}>
+                    <CircleNotificationsIcon sx={{ fontSize: 60, color: colors.primary.light, mb: 2 }} />
+                    <Typography variant="h6" sx={{ color: colors.text.secondary, mb: 1 }}>
                       No hay alertas que coincidan
                     </Typography>
-                    <Typography variant="body2" sx={{ color: '#95a5a6' }}>
+                    <Typography variant="body2" sx={{ color: colors.primary.light }}>
                       Intenta ajustar los filtros de búsqueda
                     </Typography>
                   </Box>
@@ -661,20 +829,28 @@ const CommitteeAlerts = () => {
           {/* Columna Derecha - 30% - Paneles Informativos */}
           <Grid item xs={12} lg={4} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             {/* Estadísticas Rápidas */}
-            <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
-              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: '#2c3e50', display: 'flex', alignItems: 'center', gap: 1 }}>
-                <InsightsIcon /> Resumen de Estado
+            <Paper elevation={1} sx={{ 
+              p: 2, 
+              mb: 2,
+              border: `1px solid ${colors.primary.light}20`,
+            }}>
+              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: colors.primary.dark, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <InsightsIcon sx={{ color: colors.primary.main }} /> Resumen de Estado
               </Typography>
               
               <Grid container spacing={1.5}>
                 {[
-                  { label: 'Sin Leer', value: stats.unread, color: '#e74c3c', icon: <NotificationsIcon /> },
-                  { label: 'Urgentes', value: stats.urgent, color: '#f39c12', icon: <TimerIcon /> },
-                  { label: 'Pendientes', value: stats.requiresAction, color: '#3498db', icon: <AssignmentTurnedInIcon /> },
-                  { label: 'Hoy', value: stats.today, color: '#27ae60', icon: <SpeedIcon /> },
+                  { label: 'Sin Leer', value: stats.unread, color: colors.status.error, icon: <NotificationsIcon /> },
+                  { label: 'Urgentes', value: stats.urgent, color: colors.status.warning, icon: <TimerIcon /> },
+                  { label: 'Pendientes', value: stats.requiresAction, color: colors.status.info, icon: <AssignmentTurnedInIcon /> },
+                  { label: 'Hoy', value: stats.today, color: colors.status.success, icon: <SpeedIcon /> },
                 ].map((stat, index) => (
                   <Grid item xs={6} key={index}>
-                    <Card variant="outlined" sx={{ p: 1.5, textAlign: 'center' }}>
+                    <Card variant="outlined" sx={{ 
+                      p: 1.5, 
+                      textAlign: 'center',
+                      borderColor: colors.primary.light,
+                    }}>
                       <Box sx={{ 
                         display: 'flex', 
                         flexDirection: 'column',
@@ -688,7 +864,7 @@ const CommitteeAlerts = () => {
                         <Typography variant="h5" sx={{ color: stat.color, fontWeight: 'bold', lineHeight: 1 }}>
                           {stat.value}
                         </Typography>
-                        <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                        <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                           {stat.label}
                         </Typography>
                       </Box>
@@ -699,29 +875,34 @@ const CommitteeAlerts = () => {
             </Paper>
 
             {/* Distribución por Categoría */}
-            <Paper elevation={1} sx={{ p: 2, mb: 2, flex: 1 }}>
-              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: '#2c3e50', display: 'flex', alignItems: 'center', gap: 1 }}>
-                <TrendingUpIcon /> Distribución
+            <Paper elevation={1} sx={{ 
+              p: 2, 
+              mb: 2, 
+              flex: 1,
+              border: `1px solid ${colors.primary.light}20`,
+            }}>
+              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: colors.primary.dark, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <TrendingUpIcon sx={{ color: colors.primary.main }} /> Distribución
               </Typography>
               
               <Stack spacing={1.5}>
                 {Object.entries(categoryStats).map(([category, count]) => {
-                  const percentage = (count / stats.total) * 100;
-                  const colors = {
-                    vencimiento: '#f39c12',
-                    rechazo: '#e74c3c',
-                    asignacion: '#3498db',
-                    observacion: '#9b59b6',
-                    aprobacion: '#27ae60'
+                  const percentage = stats.total > 0 ? (count / stats.total) * 100 : 0;
+                  const categoryColors = {
+                    vencimiento: colors.status.warning,
+                    rechazo: colors.status.error,
+                    asignacion: colors.status.info,
+                    observacion: colors.accents.purple,
+                    aprobacion: colors.status.success
                   };
                   
                   return (
                     <Box key={category}>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                        <Typography variant="caption" sx={{ textTransform: 'capitalize', color: '#5a6c7d' }}>
+                        <Typography variant="caption" sx={{ textTransform: 'capitalize', color: colors.primary.dark }}>
                           {category}
                         </Typography>
-                        <Typography variant="caption" sx={{ fontWeight: 'bold', color: colors[category] }}>
+                        <Typography variant="caption" sx={{ fontWeight: 'bold', color: categoryColors[category] }}>
                           {count} ({percentage.toFixed(0)}%)
                         </Typography>
                       </Box>
@@ -731,9 +912,9 @@ const CommitteeAlerts = () => {
                         sx={{ 
                           height: 4,
                           borderRadius: 2,
-                          bgcolor: '#f0f0f0',
+                          bgcolor: colors.primary.light,
                           '& .MuiLinearProgress-bar': {
-                            bgcolor: colors[category]
+                            bgcolor: categoryColors[category]
                           }
                         }}
                       />
@@ -744,8 +925,11 @@ const CommitteeAlerts = () => {
             </Paper>
 
             {/* Acciones Rápidas */}
-            <Paper elevation={1} sx={{ p: 2 }}>
-              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: '#2c3e50' }}>
+            <Paper elevation={1} sx={{ 
+              p: 2,
+              border: `1px solid ${colors.primary.light}20`,
+            }}>
+              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: colors.primary.dark }}>
                 Acciones Rápidas
               </Typography>
               
@@ -755,7 +939,14 @@ const CommitteeAlerts = () => {
                   variant="contained"
                   startIcon={<MarkReadIcon />}
                   disabled={stats.unread === 0}
-                  sx={{ justifyContent: 'flex-start', bgcolor: '#1a237e' }}
+                  sx={{ 
+                    justifyContent: 'flex-start', 
+                    bgcolor: colors.primary.main,
+                    '&:hover': { bgcolor: colors.primary.dark },
+                    '&.Mui-disabled': {
+                      bgcolor: colors.primary.light,
+                    }
+                  }}
                 >
                   Marcar todas como leídas
                 </Button>
@@ -764,7 +955,15 @@ const CommitteeAlerts = () => {
                   fullWidth
                   variant="outlined"
                   startIcon={<DownloadIcon />}
-                  sx={{ justifyContent: 'flex-start' }}
+                  sx={{ 
+                    justifyContent: 'flex-start',
+                    borderColor: colors.primary.light,
+                    color: colors.primary.main,
+                    '&:hover': {
+                      borderColor: colors.primary.main,
+                      bgcolor: 'rgba(19, 59, 107, 0.04)',
+                    }
+                  }}
                 >
                   Descargar reporte
                 </Button>
@@ -773,7 +972,15 @@ const CommitteeAlerts = () => {
                   fullWidth
                   variant="outlined"
                   startIcon={<AutoDeleteIcon />}
-                  sx={{ justifyContent: 'flex-start' }}
+                  sx={{ 
+                    justifyContent: 'flex-start',
+                    borderColor: colors.primary.light,
+                    color: colors.primary.main,
+                    '&:hover': {
+                      borderColor: colors.primary.main,
+                      bgcolor: 'rgba(19, 59, 107, 0.04)',
+                    }
+                  }}
                 >
                   Limpiar antiguas
                 </Button>
@@ -783,7 +990,15 @@ const CommitteeAlerts = () => {
                   variant="outlined"
                   startIcon={<SettingsIcon />}
                   onClick={() => setShowSettings(true)}
-                  sx={{ justifyContent: 'flex-start' }}
+                  sx={{ 
+                    justifyContent: 'flex-start',
+                    borderColor: colors.primary.light,
+                    color: colors.primary.main,
+                    '&:hover': {
+                      borderColor: colors.primary.main,
+                      bgcolor: 'rgba(19, 59, 107, 0.04)',
+                    }
+                  }}
                 >
                   Configurar notificaciones
                 </Button>
@@ -794,15 +1009,25 @@ const CommitteeAlerts = () => {
       </Box>
 
       {/* Diálogo de Configuración */}
-      <Dialog open={showSettings} onClose={() => setShowSettings(false)} maxWidth="sm" fullWidth>
+      <Dialog 
+        open={showSettings} 
+        onClose={() => setShowSettings(false)} 
+        maxWidth="sm" 
+        fullWidth
+        PaperProps={{
+          sx: {
+            border: `1px solid ${colors.primary.light}`,
+          }
+        }}
+      >
         <DialogTitle>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <SettingsIcon />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: colors.primary.dark }}>
+            <SettingsIcon sx={{ color: colors.primary.main }} />
             Configuración de Alertas
           </Box>
         </DialogTitle>
         <DialogContent>
-          <Typography variant="subtitle1" sx={{ mb: 3, fontWeight: 'bold', color: '#2c3e50' }}>
+          <Typography variant="subtitle1" sx={{ mb: 3, fontWeight: 'bold', color: colors.primary.dark }}>
             Tipos de alertas a recibir:
           </Typography>
           
@@ -815,13 +1040,16 @@ const CommitteeAlerts = () => {
               { key: 'aprobaciones', label: 'Aprobaciones completadas', icon: <CheckCircleIcon /> },
             ].map((item) => (
               <Grid item xs={12} key={item.key}>
-                <Paper variant="outlined" sx={{ p: 2 }}>
+                <Paper variant="outlined" sx={{ 
+                  p: 2,
+                  borderColor: colors.primary.light,
+                }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                      <Box sx={{ color: '#1a237e' }}>
+                      <Box sx={{ color: colors.primary.main }}>
                         {item.icon}
                       </Box>
-                      <Typography>{item.label}</Typography>
+                      <Typography sx={{ color: colors.primary.dark }}>{item.label}</Typography>
                     </Box>
                     <Switch
                       checked={notificationSettings[item.key]}
@@ -829,7 +1057,14 @@ const CommitteeAlerts = () => {
                         ...notificationSettings,
                         [item.key]: e.target.checked
                       })}
-                      color="primary"
+                      sx={{
+                        '& .MuiSwitch-switchBase.Mui-checked': {
+                          color: colors.primary.main,
+                        },
+                        '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                          backgroundColor: colors.primary.light,
+                        },
+                      }}
                     />
                   </Box>
                 </Paper>
@@ -837,9 +1072,9 @@ const CommitteeAlerts = () => {
             ))}
           </Grid>
           
-          <Divider sx={{ my: 3 }} />
+          <Divider sx={{ my: 3, borderColor: colors.primary.light }} />
           
-          <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: '#2c3e50' }}>
+          <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: colors.primary.dark }}>
             Métodos de entrega:
           </Typography>
           
@@ -852,12 +1087,20 @@ const CommitteeAlerts = () => {
                     ...notificationSettings,
                     email: e.target.checked
                   })}
+                  sx={{
+                    '& .MuiSwitch-switchBase.Mui-checked': {
+                      color: colors.primary.main,
+                    },
+                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                      backgroundColor: colors.primary.light,
+                    },
+                  }}
                 />
               }
               label={
                 <Box>
-                  <Typography>Notificaciones por correo</Typography>
-                  <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                  <Typography sx={{ color: colors.primary.dark }}>Notificaciones por correo</Typography>
+                  <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                     Recibe alertas importantes en tu correo electrónico
                   </Typography>
                 </Box>
@@ -872,12 +1115,20 @@ const CommitteeAlerts = () => {
                     ...notificationSettings,
                     push: e.target.checked
                   })}
+                  sx={{
+                    '& .MuiSwitch-switchBase.Mui-checked': {
+                      color: colors.primary.main,
+                    },
+                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                      backgroundColor: colors.primary.light,
+                    },
+                  }}
                 />
               }
               label={
                 <Box>
-                  <Typography>Notificaciones en sistema</Typography>
-                  <Typography variant="caption" sx={{ color: '#7f8c8d' }}>
+                  <Typography sx={{ color: colors.primary.dark }}>Notificaciones en sistema</Typography>
+                  <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                     Alertas push mientras usas la plataforma
                   </Typography>
                 </Box>
@@ -886,11 +1137,19 @@ const CommitteeAlerts = () => {
           </Stack>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setShowSettings(false)}>Cancelar</Button>
+          <Button 
+            onClick={() => setShowSettings(false)}
+            sx={{ color: colors.text.secondary }}
+          >
+            Cancelar
+          </Button>
           <Button 
             variant="contained" 
             onClick={() => setShowSettings(false)}
-            sx={{ bgcolor: '#1a237e' }}
+            sx={{ 
+              bgcolor: colors.primary.main,
+              '&:hover': { bgcolor: colors.primary.dark }
+            }}
           >
             Guardar Configuración
           </Button>
