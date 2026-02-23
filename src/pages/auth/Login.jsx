@@ -22,6 +22,7 @@ import {
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
   Login as LoginIcon,
+  ArrowBack as ArrowBackIcon,
 } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
 
@@ -115,12 +116,18 @@ const Login = () => {
   return (
     <Box
       sx={{
+        width: "100vw",
+        height: "100vh",
         minHeight: "100vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(135deg, #0D2A4D 0%, #133B6B 50%, #1E4A7A 100%)",
-        py: 4,
+        background:
+          "linear-gradient(135deg, #ffffff 0%, #133B6B 50%, #1E4A7A 100%)",
+        position: "fixed", // IMPORTANTE
+        top: 0,
+        left: 0,
+        overflow: "auto",
       }}
     >
       <Container maxWidth="sm">
@@ -163,7 +170,10 @@ const Login = () => {
             >
               VUGAA
             </Typography>
-            <Typography variant="subtitle1" sx={{ color: "rgba(255,255,255,0.85)", fontWeight: 300 }}>
+            <Typography
+              variant="subtitle1"
+              sx={{ color: "rgba(255,255,255,0.85)", fontWeight: 300 }}
+            >
               Ventanilla Única de Gestión de Agentes Aduanales
             </Typography>
           </Box>
@@ -200,6 +210,12 @@ const Login = () => {
                       "&:hover fieldset": {
                         borderColor: "#00C2D1",
                       },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#00C2D1",
+                      },
+                    },
+                    "& .MuiInputLabel-root.Mui-focused": {
+                      color: "#00C2D1",
                     },
                   }}
                 />
@@ -226,10 +242,27 @@ const Login = () => {
                           onClick={() => setShowPassword(!showPassword)}
                           edge="end"
                         >
-                          {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                          {showPassword ? (
+                            <VisibilityOffIcon />
+                          ) : (
+                            <VisibilityIcon />
+                          )}
                         </IconButton>
                       </InputAdornment>
                     ),
+                  }}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      "&:hover fieldset": {
+                        borderColor: "#00C2D1",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#00C2D1",
+                      },
+                    },
+                    "& .MuiInputLabel-root.Mui-focused": {
+                      color: "#00C2D1",
+                    },
                   }}
                 />
 
@@ -239,7 +272,13 @@ const Login = () => {
                   size="large"
                   fullWidth
                   disabled={loading}
-                  startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <LoginIcon />}
+                  startIcon={
+                    loading ? (
+                      <CircularProgress size={20} color="inherit" />
+                    ) : (
+                      <LoginIcon />
+                    )
+                  }
                   sx={{
                     py: 1.5,
                     bgcolor: "#133B6B",
@@ -268,6 +307,35 @@ const Login = () => {
                 ¿Olvidaste tu contraseña?
               </Link>
             </Box>
+            {/* Botón de regresar */}
+            <Box
+              sx={{
+                position: "absolute",
+                top: 20,
+                left: 20,
+              }}
+            >
+              <Button
+                component={Link}
+                to="/inicio"
+                startIcon={<ArrowBackIcon />}
+                sx={{
+                  color: "white",
+                  backgroundColor: "rgba(255, 255, 255, 0.1)",
+                  backdropFilter: "blur(10px)",
+                  "&:hover": {
+                    backgroundColor: "rgba(255, 255, 255, 0.2)",
+                  },
+                  textTransform: "none",
+                  fontWeight: 500,
+                  borderRadius: 2,
+                  px: 3,
+                  py: 1,
+                }}
+              >
+                Regresar a Inicio
+              </Button>
+            </Box>
 
             <Divider sx={{ my: 3 }}>
               <Typography variant="caption" sx={{ color: "#94a3b8", px: 2 }}>
@@ -276,7 +344,13 @@ const Login = () => {
             </Divider>
 
             {/* Demo Login Buttons */}
-            <Stack direction="row" spacing={1} justifyContent="center" flexWrap="wrap" useFlexGap>
+            <Stack
+              direction="row"
+              spacing={1}
+              justifyContent="center"
+              flexWrap="wrap"
+              useFlexGap
+            >
               {[
                 { role: "supera", label: "Super", color: "#6C5CE7" },
                 { role: "admin", label: "Admin", color: "#133B6B" },

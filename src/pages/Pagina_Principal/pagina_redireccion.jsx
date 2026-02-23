@@ -688,10 +688,6 @@ const Inicio = () => {
                 })}
               </Box>
 
-              <IconButton sx={{ color: colors.text.secondary }}>
-                <NotificationsIcon />
-              </IconButton>
-
               <Button
                 variant="contained"
                 startIcon={<LoginIcon />}
@@ -831,30 +827,6 @@ const Inicio = () => {
                       }}
                     >
                       Explorar Sistemas
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      size="large"
-                      sx={{
-                        borderColor: colors.secondary.main,
-                        color: colors.white,
-                        px: { xs: 3, md: 5 },
-                        py: { xs: 1.5, md: 1.8 },
-                        fontSize: { xs: "0.9rem", md: "1rem" },
-                        fontWeight: 600,
-                        borderRadius: sizes.borderRadius.medium,
-                        borderWidth: 2,
-                        backdropFilter: "blur(10px)",
-                        backgroundColor: alpha(colors.white, 0.05),
-                        "&:hover": {
-                          borderColor: colors.secondary.light,
-                          backgroundColor: alpha(colors.secondary.main, 0.1),
-                          transform: "translateY(-2px)",
-                        },
-                        transition: "all 0.3s ease",
-                      }}
-                    >
-                      Ver Demo
                     </Button>
                   </Stack>
                 </Box>
