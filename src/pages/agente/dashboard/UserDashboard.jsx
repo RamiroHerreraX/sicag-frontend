@@ -482,7 +482,7 @@ const UserDashboard = () => {
           </Grid>
 
           {/* Alertas y Notificaciones - Expandido */}
-          <Grid item xs={12} md={6}>  {/* Cambiado de md={4} a md={6} para hacerlo más ancho y que quede a la misma altura */}
+          <Grid item xs={12} md={5}>  {/* Cambiado de md={4} a md={6} para hacerlo más ancho y que quede a la misma altura */}
             <Card sx={{ 
               borderRadius: 2,
               boxShadow: `0 4px 12px ${colors.primary.main}15`,

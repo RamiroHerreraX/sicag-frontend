@@ -1637,16 +1637,7 @@ const PreviewModal = () => (
         </Box>
         
         <Stack direction="row" spacing={2}>
-          <Button
-            variant="outlined"
-            startIcon={<DownloadIcon />}
-            sx={{
-              color: colors.primary.main,
-              borderColor: colors.primary.main
-            }}
-          >
-            Exportar Lista
-          </Button>
+          
           <Button
             variant="contained"
             startIcon={<AddIcon />}
