@@ -45,7 +45,9 @@ import {
   Timer as TimerIcon,
   AssignmentTurnedIn as AssignmentTurnedInIcon,
   CircleNotifications as CircleNotificationsIcon,
-  Place as PlaceIcon
+  Place as PlaceIcon,
+  School as SchoolIcon,
+  Verified as VerifiedIcon
 } from '@mui/icons-material';
 
 // Paleta corporativa del UserManagement
@@ -80,7 +82,7 @@ const colors = {
 const AgentAlerts = () => {
   const [tabValue, setTabValue] = useState(0);
   const [filterType, setFilterType] = useState('all');
-  const [filterStatus, setFilterStatus] = useState('unread');
+  const [filterStatus, setFilterStatus] = useState('all');
   const [filterPriority, setFilterPriority] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [showSettings, setShowSettings] = useState(false);
@@ -95,110 +97,57 @@ const AgentAlerts = () => {
     push: false
   });
 
-  // Datos mock de alertas
+  // Datos mock de alertas - CONSERVANDO SUBAPARTADOS PERO SOLO CON LAS DOS NOTIFICACIONES
   const alerts = [
     { 
       id: 1, 
-      type: 'warning', 
-      title: 'Vencimiento Próximo', 
-      message: 'Certificación de Patente Aduanal vence en 2 días. Se requiere acción inmediata para evitar incumplimiento.', 
-      date: '15/01/2026 10:30', 
-      time: 'Hace 2 horas',
+      type: 'success', 
+      title: 'Certificaciones Validadas', 
+      message: 'Tus certificaciones de Curso de Ética Profesional y Diplomado en Comercio Exterior han sido validadas exitosamente por el comité. Cumples con los requisitos de horas establecidos.', 
+      date: '15/02/2026 14:30', 
+      time: 'Hoy',
       read: false,
-      priority: 'alta',
-      source: 'PATENTE ADUANAL',
-      certificationNumber: 'PA-2026-00145',
-      user: { name: 'Luis Rodríguez', avatar: 'LR', type: 'Agente Aduanal' },
-      region: 'Norte',
-      actions: ['review', 'extend', 'contact'],
-      requiresAction: true,
-      deadline: '17/01/2026',
-      category: 'vencimiento'
+      priority: 'media',
+      source: 'COMITÉ DE VALIDACIÓN',
+      certificationNumber: 'CET-2025-001, DCE-2025-002',
+      user: { name: 'Comité de Validación', avatar: 'CV', type: 'Comité' },
+      region: 'Nacional',
+      actions: ['review', 'view'],
+      requiresAction: false,
+      deadline: null,
+      category: 'aprobacion',
+      subseccion: 'Formación Ética y Cumplimiento / Actualización Técnica y Aduanera',
+      hours: '100 horas totales (20 ética + 80 técnica)',
+      certificaciones: [
+        { nombre: 'Curso de Ética Profesional y Código de Conducta', horas: 20, estado: 'Validado' },
+        { nombre: 'Diplomado en Comercio Exterior y Legislación Aduanera', horas: 80, estado: 'Validado' }
+      ]
     },
     { 
       id: 2, 
-      type: 'error', 
-      title: 'Certificación Rechazada', 
-      message: 'La certificación de Opinión SAT fue rechazada por documentos incompletos. El solicitante ha sido notificado y requiere cargar documentación faltante.', 
-      date: '14/01/2026 15:45', 
-      time: 'Hace 1 día',
-      read: false,
-      priority: 'alta',
-      source: 'OPINIÓN SAT',
-      certificationNumber: 'OS-2025-03421',
-      user: { name: 'Ana López', avatar: 'AL', type: 'Profesionista' },
-      region: 'Centro',
-      actions: ['review', 'contact'],
-      requiresAction: true,
-      category: 'rechazo'
-    },
-    { 
-      id: 3, 
-      type: 'info', 
-      title: 'Nueva Asignación', 
-      message: 'Se te ha asignado una nueva certificación para revisión: Cédula Profesional del solicitante Carlos Martínez.', 
-      date: '14/01/2026 09:15', 
-      time: 'Hace 1 día',
-      read: true,
-      priority: 'media',
-      source: 'Sistema',
-      certificationNumber: 'CP-2024-56789',
-      user: { name: 'Carlos Martínez', avatar: 'CM', type: 'Profesionista' },
-      region: 'Sur',
-      actions: ['review'],
-      requiresAction: true,
-      category: 'asignacion'
-    },
-    { 
-      id: 4, 
-      type: 'warning', 
-      title: 'Observación Pendiente', 
-      message: 'La certificación de Cédula Profesional requiere información adicional. El solicitante ha sido contactado.', 
-      date: '13/01/2026 16:20', 
-      time: 'Hace 2 días',
-      read: false,
-      priority: 'media',
-      source: 'CÉDULA PROFESIONAL',
-      certificationNumber: 'CP-2024-56789',
-      user: { name: 'Carlos Martínez', avatar: 'CM', type: 'Profesionista' },
-      region: 'Sur',
-      actions: ['review', 'contact'],
-      requiresAction: true,
-      category: 'observacion'
-    },
-    { 
-      id: 5, 
       type: 'success', 
-      title: 'Certificación Aprobada', 
-      message: 'Tu revisión de la certificación de Poder Notarial ha sido completada y aprobada exitosamente.', 
-      date: '12/01/2026 11:10', 
-      time: 'Hace 3 días',
-      read: true,
-      priority: 'baja',
-      source: 'PODER NOTARIAL',
-      certificationNumber: 'PN-2025-12345',
-      user: { name: 'María González', avatar: 'MG', type: 'Empresario' },
-      region: 'Metropolitana',
-      actions: ['view'],
+      title: 'Certificado de Nivel Recibido', 
+      message: 'Has recibido tu Certificado de Nivel II - Sistema Gremial Intermedio. Felicidades por alcanzar este importante logro en tu desarrollo profesional.', 
+      date: '16/02/2026 09:15', 
+      time: 'Hoy',
+      read: false,
+      priority: 'media',
+      source: 'SISTEMA GREMIAL',
+      certificationNumber: 'NIVEL-II-2026-001',
+      user: { name: 'Sistema SICAG', avatar: 'SS', type: 'Sistema' },
+      region: 'Nacional',
+      actions: ['view', 'download'],
       requiresAction: false,
-      category: 'aprobacion'
-    },
-    { 
-      id: 6, 
-      type: 'error', 
-      title: 'Error en Sistema', 
-      message: 'Problema de sincronización detectado en los documentos de Constancia Fiscal. El equipo técnico está trabajando en la solución.', 
-      date: '11/01/2026 14:05', 
-      time: 'Hace 4 días',
-      read: true,
-      priority: 'alta',
-      source: 'Sistema',
-      certificationNumber: null,
-      user: null,
-      region: null,
-      actions: ['dismiss'],
-      requiresAction: false,
-      category: 'sistema'
+      deadline: null,
+      category: 'logro',
+      nivel: 'NIVEL II',
+      descripcion: 'Sistema Gremial Intermedio',
+      beneficios: [
+        'Acceso a servicios premium',
+        'Participación en comités',
+        'Descuentos en capacitaciones',
+        'Certificación válida por 3 años'
+      ]
     },
   ];
 
@@ -221,16 +170,13 @@ const AgentAlerts = () => {
     e.stopPropagation();
     switch(action) {
       case 'review':
-        window.location.href = `/committee/review/${alert.certificationNumber?.split('-')[2]}`;
+        console.log('Revisar certificaciones:', alert.id);
         break;
-      case 'extend':
-        console.log('Extender certificación:', alert.id);
+      case 'view':
+        console.log('Ver detalles:', alert.id);
         break;
-      case 'contact':
-        console.log('Contactar solicitante:', alert.user?.name);
-        break;
-      case 'dismiss':
-        console.log('Descartar alerta:', alert.id);
+      case 'download':
+        console.log('Descargar certificado:', alert.id);
         break;
       default:
         break;
@@ -291,16 +237,18 @@ const AgentAlerts = () => {
     unread: alerts.filter(a => !a.read).length,
     requiresAction: alerts.filter(a => a.requiresAction).length,
     urgent: alerts.filter(a => a.priority === 'alta').length,
-    today: alerts.filter(a => a.time.includes('horas')).length,
+    today: alerts.filter(a => a.time.includes('horas') || a.time.includes('día')).length,
     warnings: alerts.filter(a => a.type === 'warning').length,
-    errors: alerts.filter(a => a.type === 'error').length
+    errors: alerts.filter(a => a.type === 'error').length,
+    success: alerts.filter(a => a.type === 'success').length
   };
 
   const tabs = [
     { label: 'Todas', value: 0, badge: stats.total },
     { label: 'No Leídas', value: 1, badge: stats.unread, color: 'error' },
     { label: 'Urgentes', value: 2, badge: stats.urgent, color: 'warning' },
-    { label: 'Resueltas', value: 3, badge: alerts.length - stats.requiresAction }
+    { label: 'Logros', value: 3, badge: stats.success, color: 'success' },
+    { label: 'Requieren Acción', value: 4, badge: stats.requiresAction, color: 'info' }
   ];
 
   return (
@@ -320,20 +268,17 @@ const AgentAlerts = () => {
               Centro de Alertas
             </Typography>
             <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-              Monitoreo y gestión de notificaciones del sistema
+              Notificaciones de validaciones y logros profesionales
             </Typography>
           </Box>
           
-          <Stack direction="row" spacing={1}>
-            
-           
-          </Stack>
+         
         </Box>
 
-        {/* Filtros Rápidos en Línea */}
+        {/* Filtros Rápidos en Línea - MANTENIENDO TODOS LOS SUBAPARTADOS */}
         <Paper elevation={0} sx={{ p: 2, mb: 2, bgcolor: '#f8f9fa' }}>
           <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} md={3}>
               <TextField
                 fullWidth
                 size="small"
@@ -408,7 +353,7 @@ const AgentAlerts = () => {
               </TextField>
             </Grid>
             
-            <Grid item xs={12} md={2}>
+            <Grid item xs={12} md={3}>
               <Button
                 fullWidth
                 size="small"
@@ -416,7 +361,7 @@ const AgentAlerts = () => {
                 startIcon={<RefreshIcon />}
                 onClick={() => {
                   setFilterType('all');
-                  setFilterStatus('unread');
+                  setFilterStatus('all');
                   setFilterPriority('all');
                   setSearchTerm('');
                   setTabValue(0);
@@ -426,7 +371,7 @@ const AgentAlerts = () => {
                   borderColor: colors.primary.main
                 }}
               >
-                Limpiar
+                Limpiar filtros
               </Button>
             </Grid>
           </Grid>
@@ -435,7 +380,7 @@ const AgentAlerts = () => {
 
       {/* Contenido Principal */}
       <Box sx={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        {/* Tabs Compactas */}
+        {/* Tabs Compactas - MANTENIENDO TODAS */}
         <Paper elevation={1} sx={{ mb: 2 }}>
           <Tabs 
             value={tabValue} 
@@ -466,7 +411,9 @@ const AgentAlerts = () => {
                           height: 20, 
                           minWidth: 20,
                           bgcolor: tab.color === 'error' ? colors.status.error :
-                                  tab.color === 'warning' ? colors.status.warning : colors.primary.main,
+                                  tab.color === 'warning' ? colors.status.warning :
+                                  tab.color === 'success' ? colors.status.success :
+                                  tab.color === 'info' ? colors.primary.main : colors.primary.main,
                           color: 'white'
                         }}
                       />
@@ -531,7 +478,7 @@ const AgentAlerts = () => {
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                           <Box sx={{ color: getAlertColor(alert.type) }}>
-                            {getAlertIcon(alert.type)}
+                            {alert.id === 1 ? <VerifiedIcon /> : <SchoolIcon />}
                           </Box>
                           <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: colors.text.primary }}>
                             {alert.title}
@@ -576,10 +523,10 @@ const AgentAlerts = () => {
                       </Typography>
                     </Grid>
 
-                    {/* Información Compacta */}
+                    {/* Información específica según la alerta */}
                     <Grid item xs={12}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <Stack direction="row" spacing={2} alignItems="center">
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1 }}>
+                        <Stack direction="row" spacing={2} alignItems="center" sx={{ flexWrap: 'wrap', gap: 1 }}>
                           {alert.user && (
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                               <Avatar sx={{ 
@@ -609,11 +556,41 @@ const AgentAlerts = () => {
                             />
                           )}
                           
-                          {alert.region && (
-                            <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                              <PlaceIcon sx={{ fontSize: '0.8rem', verticalAlign: 'middle', mr: 0.5, color: colors.primary.main }} />
-                              {alert.region}
-                            </Typography>
+                          {alert.hours && (
+                            <Chip 
+                              label={alert.hours}
+                              size="small"
+                              sx={{ 
+                                height: 20,
+                                bgcolor: colors.status.success + '20',
+                                color: colors.status.success
+                              }}
+                            />
+                          )}
+                          
+                          {alert.nivel && (
+                            <Chip 
+                              label={alert.nivel}
+                              size="small"
+                              sx={{ 
+                                height: 20,
+                                bgcolor: colors.accents.blue + '20',
+                                color: colors.accents.blue,
+                                fontWeight: 'bold'
+                              }}
+                            />
+                          )}
+
+                          {alert.subseccion && (
+                            <Chip 
+                              label={alert.subseccion}
+                              size="small"
+                              sx={{ 
+                                height: 20,
+                                bgcolor: colors.secondary.main + '20',
+                                color: colors.secondary.main
+                              }}
+                            />
                           )}
                         </Stack>
                         
@@ -624,15 +601,48 @@ const AgentAlerts = () => {
                       </Box>
                     </Grid>
 
-                    {/* Panel Expandible */}
+                    {/* Panel Expandible - CON SUBAPARTADOS DETALLADOS */}
                     {expandedAlert === alert.id && (
                       <Grid item xs={12} sx={{ mt: 2, pt: 2, borderTop: `1px dashed ${colors.primary.main}20` }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        {alert.id === 1 && alert.certificaciones && (
+                          <Box sx={{ mb: 2 }}>
+                            <Typography variant="subtitle2" sx={{ color: colors.primary.main, fontWeight: 'bold', mb: 1 }}>
+                              Certificaciones validadas:
+                            </Typography>
+                            <Stack spacing={1}>
+                              {alert.certificaciones.map((cert, idx) => (
+                                <Paper key={idx} variant="outlined" sx={{ p: 1, bgcolor: '#f8f9fa' }}>
+                                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <Typography variant="body2" sx={{ fontWeight: '500' }}>
+                                      {cert.nombre}
+                                    </Typography>
+                                    <Box>
+                                      <Chip 
+                                        label={`${cert.horas} hrs`}
+                                        size="small"
+                                        sx={{ mr: 1, height: 20, bgcolor: colors.primary.main, color: 'white' }}
+                                      />
+                                      <Chip 
+                                        label={cert.estado}
+                                        size="small"
+                                        sx={{ height: 20, bgcolor: colors.status.success, color: 'white' }}
+                                      />
+                                    </Box>
+                                  </Box>
+                                </Paper>
+                              ))}
+                            </Stack>
+                          </Box>
+                        )}
+
+                        
+
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
                           <Typography variant="caption" sx={{ fontWeight: 'bold', color: colors.text.secondary }}>
                             ACCIONES DISPONIBLES:
                           </Typography>
                           <Stack direction="row" spacing={1}>
-                            {alert.actions.includes('review') && alert.certificationNumber && (
+                            {alert.actions.includes('review') && (
                               <Button
                                 size="small"
                                 variant="contained"
@@ -646,30 +656,32 @@ const AgentAlerts = () => {
                                 Revisar
                               </Button>
                             )}
-                            {alert.actions.includes('extend') && (
+                            {alert.actions.includes('view') && (
                               <Button
                                 size="small"
-                                variant="outlined"
-                                onClick={(e) => handleQuickAction(alert, 'extend', e)}
-                                sx={{
-                                  color: colors.primary.main,
-                                  borderColor: colors.primary.main
+                                variant="contained"
+                                startIcon={<OpenInNewIcon />}
+                                onClick={(e) => handleQuickAction(alert, 'view', e)}
+                                sx={{ 
+                                  bgcolor: colors.primary.main,
+                                  '&:hover': { bgcolor: colors.primary.dark }
                                 }}
                               >
-                                Extender
+                                Ver detalles
                               </Button>
                             )}
-                            {alert.actions.includes('contact') && (
+                            {alert.actions.includes('download') && (
                               <Button
                                 size="small"
                                 variant="outlined"
-                                onClick={(e) => handleQuickAction(alert, 'contact', e)}
+                                startIcon={<DownloadIcon />}
+                                onClick={(e) => handleQuickAction(alert, 'download', e)}
                                 sx={{
                                   color: colors.primary.main,
                                   borderColor: colors.primary.main
                                 }}
                               >
-                                Contactar
+                                Descargar
                               </Button>
                             )}
                           </Stack>
@@ -688,7 +700,7 @@ const AgentAlerts = () => {
                   No hay alertas que coincidan
                 </Typography>
                 <Typography variant="body2" sx={{ color: colors.text.secondary }}>
-                  Intenta ajustar los filtros de búsqueda
+                  Todas tus notificaciones están al día
                 </Typography>
               </Box>
             )}
@@ -711,11 +723,11 @@ const AgentAlerts = () => {
           
           <Grid container spacing={2}>
             {[
+              { key: 'aprobaciones', label: 'Validaciones completadas', icon: <CheckCircleIcon />, color: colors.status.success },
+              { key: 'asignaciones', label: 'Logros y certificados', icon: <SchoolIcon />, color: colors.accents.blue },
               { key: 'vencimientos', label: 'Vencimientos próximos', icon: <TimerIcon />, color: colors.status.warning },
               { key: 'rechazos', label: 'Certificaciones rechazadas', icon: <ErrorIcon />, color: colors.status.error },
               { key: 'observaciones', label: 'Observaciones pendientes', icon: <WarningIcon />, color: colors.status.warning },
-              { key: 'asignaciones', label: 'Nuevas asignaciones', icon: <AssignmentTurnedInIcon />, color: colors.primary.main },
-              { key: 'aprobaciones', label: 'Aprobaciones completadas', icon: <CheckCircleIcon />, color: colors.status.success },
             ].map((item) => (
               <Grid item xs={12} key={item.key}>
                 <Paper variant="outlined" sx={{ p: 2 }}>
@@ -727,7 +739,7 @@ const AgentAlerts = () => {
                       <Typography sx={{ color: colors.text.primary }}>{item.label}</Typography>
                     </Box>
                     <Switch
-                      checked={notificationSettings[item.key]}
+                      checked={notificationSettings[item.key] || false}
                       onChange={(e) => setNotificationSettings({
                         ...notificationSettings,
                         [item.key]: e.target.checked

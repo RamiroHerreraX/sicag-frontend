@@ -34,6 +34,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [demoAgenteCargado, setDemoAgenteCargado] = useState(false);
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -110,6 +111,36 @@ const Login = () => {
     if (demos[role]) {
       setEmail(demos[role].email);
       setPassword("demo123");
+      
+      // Marcar que se cargaron los datos de agente
+      if (role === "agente") {
+        setDemoAgenteCargado(true);
+      } else {
+        setDemoAgenteCargado(false);
+      }
+    }
+  };
+
+  const handleDashboardClick = () => {
+    if (demoAgenteCargado) {
+      // Si ya se cargaron los datos de agente, hacer login automático y redirigir a dashboards
+      setLoading(true);
+      setTimeout(() => {
+        try {
+          const userData = login({ email: "agente@caaarem.com", password: "demo123" });
+          if (userData.role === "agente") {
+            navigate("/dashboards");
+          } else {
+            setError("Error: Los datos cargados no son de agente");
+          }
+        } catch (err) {
+          setError("Error al iniciar sesión automática");
+        } finally {
+          setLoading(false);
+        }
+      }, 500);
+    } else {
+      setError("Primero debe cargar los datos de agente haciendo clic en el botón 'Agente'");
     }
   };
 
@@ -124,7 +155,7 @@ const Login = () => {
         justifyContent: "center",
         background:
           "linear-gradient(135deg, #ffffff 0%, #133B6B 50%, #1E4A7A 100%)",
-        position: "fixed", // IMPORTANTE
+        position: "fixed",
         top: 0,
         left: 0,
         overflow: "auto",
@@ -184,6 +215,8 @@ const Login = () => {
                 {error}
               </Alert>
             )}
+
+           
 
             <Box component="form" onSubmit={handleSubmit}>
               <Stack spacing={3}>
@@ -295,7 +328,13 @@ const Login = () => {
               </Stack>
             </Box>
 
-            <Box sx={{ mt: 2, textAlign: "center" }}>
+            <Box sx={{ 
+              mt: 2, 
+              display: "flex", 
+              alignItems: "center",
+              justifyContent: "center",
+              position: "relative"
+            }}>
               <Link
                 to="/forgot-password"
                 style={{
@@ -306,7 +345,36 @@ const Login = () => {
               >
                 ¿Olvidaste tu contraseña?
               </Link>
+              
+             {/* Botón de Dashboards - INVISIBLE */}
+<Button
+  onClick={handleDashboardClick}
+  disabled={loading || !demoAgenteCargado}
+  sx={{
+    position: "absolute",
+    right: 0,
+    color: "transparent", // Texto invisible
+    backgroundColor: "transparent", // Fondo transparente
+    textTransform: "none",
+    fontSize: "0.65rem",
+    fontWeight: 600,
+    minWidth: "auto",
+    p: "2px 6px",
+    textDecoration: "none", // Sin subrayado
+    "&:hover": {
+      color: "transparent", // Sigue invisible al hover
+      backgroundColor: "transparent",
+      textDecoration: "none",
+    },
+    "&.Mui-disabled": {
+      color: "transparent", // Invisible cuando está deshabilitado
+    }
+  }}
+>
+  {loading ? "..." : "DB"}
+</Button>
             </Box>
+
             {/* Botón de regresar */}
             <Box
               sx={{

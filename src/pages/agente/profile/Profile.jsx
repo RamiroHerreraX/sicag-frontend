@@ -108,22 +108,7 @@ const Profile = () => {
       fechaRegistro: '15/01/2024',
       estado: 'Activa'
     },
-    { 
-      id: 2, 
-      nombre: 'Aduana de Ciudad de México', 
-      tipo: 'Secundaria', 
-      numeroRegistro: 'ADCDMX-2024-00456', 
-      fechaRegistro: '20/03/2024',
-      estado: 'Activa'
-    },
-    { 
-      id: 3, 
-      nombre: 'Aduana de Guadalajara', 
-      tipo: 'Secundaria', 
-      numeroRegistro: 'ADGDL-2024-00789', 
-      fechaRegistro: '10/06/2024',
-      estado: 'Activa'
-    }
+    
   ]);
 
   const [profile, setProfile] = useState({
@@ -131,11 +116,11 @@ const Profile = () => {
     email: 'luis.rodriguez@ejemplo.com',
     telefono: '+52 55 1234 5678',
     rol: 'Agente Aduanal',
-    nivel:'Nivel II',
-    des_Nivel: 'Sistema Gremial Intermedio',
+    nivel:'Nivel I',
+    des_Nivel: 'Sistema Gremial Básico',
     region: 'Norte',
-    fechaRegistro: '15/01/2024',
-    ultimoAcceso: '15/01/2026 10:30 AM'
+    fechaRegistro: '24/02/2026',
+    ultimoAcceso: '24/02/2026 10:30 AM'
   });
   
   const [formData, setFormData] = useState({
@@ -688,7 +673,7 @@ const handleDownloadCertificate = async () => {
               Certificaciones Activas
             </Typography>
             <Typography variant="h4" fontWeight="bold" sx={{ color: colors.text.primary, fontSize: '2rem' }}>
-              8
+              2
             </Typography>
           </Box>
           
@@ -1420,7 +1405,7 @@ const handleDownloadCertificate = async () => {
                 fontWeight: 'bold',
                 textTransform: 'uppercase'
               }}>
-                Nivel II - Sistema Gremial Intermedio
+                Nivel I - Sistema Gremial Basico
               </Typography>
             </Box>
 
@@ -1437,116 +1422,89 @@ const handleDownloadCertificate = async () => {
   }}
 >
   {/* Bloque FORMACIÓN ESPECIALIZADA */}
-  <Box sx={{ flex: 1, width: '50%' }}>
-    <Paper sx={{ 
-      p: 2.5, 
-      bgcolor: 'white',
-      borderLeft: `6px solid ${colors.primary.main}`,
-      boxShadow: `0 2px 8px ${colors.primary.main}15`,
-      height: '100%'
+<Box sx={{ 
+  flex: 1, 
+  width: '50%'
+}}>
+  <Paper sx={{ 
+    p: 2.5, 
+    bgcolor: 'white',
+    borderLeft: `6px solid ${colors.primary.main}`,
+    boxShadow: `0 2px 8px ${colors.primary.main}15`,
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center', // Centra horizontalmente los hijos
+    justifyContent: 'center' // Centra verticalmente los hijos
+  }}>
+    <Typography variant="h6" sx={{ 
+      color: colors.primary.dark,
+      fontWeight: 'bold',
+      mb: 2,
+      borderBottom: `1px solid ${colors.primary.main}30`,
+      pb: 1,
+      textAlign: 'center',
+      width: '100%' // Ocupa todo el ancho para que el borde se extienda
     }}>
-      <Typography variant="h6" sx={{ 
-        color: colors.primary.dark,
-        fontWeight: 'bold',
-        mb: 2,
-        borderBottom: `1px solid ${colors.primary.main}30`,
-        pb: 1
+      FORMACIÓN ESPECIALIZADA
+    </Typography>
+    
+    <Box sx={{ 
+      display: 'flex', 
+      alignItems: 'center', 
+      gap: 1, 
+      mb: 1.5,
+      width: '100%',
+      justifyContent: 'center' // Centra el contenido de este Box
+    }}>
+      <Box sx={{ 
+        width: 20, 
+        height: 20, 
+        borderRadius: '50%', 
+        bgcolor: colors.status.success,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'white',
+        fontSize: '0.8rem',
+        fontWeight: 'bold'
       }}>
-        FORMACIÓN ESPECIALIZADA
+        ✓
+      </Box>
+      <Typography variant="body1">
+        <strong>Formación Ética y Cumplimiento:</strong> 20 horas
       </Typography>
-      
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-        <Box sx={{ 
-          width: 20, 
-          height: 20, 
-          borderRadius: '50%', 
-          bgcolor: colors.status.success,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'white',
-          fontSize: '0.8rem',
-          fontWeight: 'bold'
-        }}>
-          ✓
-        </Box>
-        <Typography variant="body1">
-          <strong>Formación Ética y Cumplimiento:</strong> 20 horas
-        </Typography>
+    </Box>
+    
+    <Box sx={{ 
+      display: 'flex', 
+      alignItems: 'center', 
+      gap: 1,
+      width: '100%',
+      justifyContent: 'center' // Centra el contenido de este Box
+    }}>
+      <Box sx={{ 
+        width: 20, 
+        height: 20, 
+        borderRadius: '50%', 
+        bgcolor: colors.status.success,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'white',
+        fontSize: '0.8rem',
+        fontWeight: 'bold'
+      }}>
+        ✓
       </Box>
-      
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <Box sx={{ 
-          width: 20, 
-          height: 20, 
-          borderRadius: '50%', 
-          bgcolor: colors.status.success,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'white',
-          fontSize: '0.8rem',
-          fontWeight: 'bold'
-        }}>
-          ✓
-        </Box>
-        <Typography variant="body1">
-          <strong>Actualización Técnica Aduanera:</strong> 80 horas
-        </Typography>
-      </Box>
-    </Paper>
-  </Box>
+      <Typography variant="body1">
+        <strong>Actualización Técnica Aduanera:</strong> 80 horas
+      </Typography>
+    </Box>
+  </Paper>
+</Box>
 
-  {/* Bloque CERTIFICACIONES */}
-  <Box sx={{ flex: 1, width: '50%' }}>
-    <Paper sx={{ 
-      p: 2.5, 
-      bgcolor: 'white',
-      borderLeft: `6px solid ${colors.secondary.main}`,
-      boxShadow: `0 2px 8px ${colors.secondary.main}15`,
-      height: '100%'
-    }}>
-      <Typography variant="h6" sx={{ 
-        color: colors.primary.dark,
-        fontWeight: 'bold',
-        mb: 2,
-        borderBottom: `1px solid ${colors.primary.main}30`,
-        pb: 1
-      }}>
-        CERTIFICACIONES
-      </Typography>
-      
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-        <Box sx={{ 
-          width: 20, 
-          height: 20, 
-          borderRadius: '50%', 
-          bgcolor: colors.status.success,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'white',
-          fontSize: '0.8rem',
-          fontWeight: 'bold'
-        }}>
-          ✓
-        </Box>
-        <Typography variant="body1">
-          <strong>Sistema de Seguridad de Cadena de Suministros:</strong>
-        </Typography>
-      </Box>
-      <Chip 
-        label="APROBADO" 
-        size="small"
-        sx={{ 
-          ml: 3,
-          bgcolor: colors.status.success,
-          color: 'white',
-          fontWeight: 'bold'
-        }} 
-      />
-    </Paper>
-  </Box>
+  
 </Box>
 
             {/* Fechas y Vigencia */}
@@ -1570,7 +1528,7 @@ const handleDownloadCertificate = async () => {
                   Fecha de Emisión
                 </Typography>
                 <Typography variant="h6" sx={{ color: colors.primary.dark, fontWeight: 'bold' }}>
-                  15 de Enero de 2024
+                  24 de Febrero de 2026
                 </Typography>
               </Paper>
               
@@ -1585,7 +1543,7 @@ const handleDownloadCertificate = async () => {
                   Vigencia del Nivel
                 </Typography>
                 <Typography variant="h6" sx={{ color: colors.status.warning, fontWeight: 'bold' }}>
-                  255 días
+                  365 días
                 </Typography>
               </Paper>
 
@@ -1600,7 +1558,7 @@ const handleDownloadCertificate = async () => {
                   Vence el
                 </Typography>
                 <Typography variant="h6" sx={{ color: colors.status.error, fontWeight: 'bold' }}>
-                  15 de Octubre de 2024
+                  24 de Febrero de 2026
                 </Typography>
               </Paper>
             </Box>

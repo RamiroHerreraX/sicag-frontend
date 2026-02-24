@@ -136,7 +136,7 @@ const DeclaracionesCumplimientoAduanero = () => {
           texto: '¿Actúo con diligencia, probidad y buena fe en todas las operaciones aduaneras que realizo?',
           respuesta: null,
           explicacion: '',
-          puntos: 25,
+          
           responsabilidad: 'Diligencia y Probidad'
         },
         {
@@ -144,7 +144,7 @@ const DeclaracionesCumplimientoAduanero = () => {
           texto: '¿Mantengo la confidencialidad de la información de mis clientes según lo establecido por la ley?',
           respuesta: null,
           explicacion: '',
-          puntos: 20,
+          
           responsabilidad: 'Confidencialidad'
         },
         {
@@ -152,7 +152,7 @@ const DeclaracionesCumplimientoAduanero = () => {
           texto: '¿Evito conflictos de interés y declaro cualquier situación que pueda afectar mi imparcialidad?',
           respuesta: null,
           explicacion: '',
-          puntos: 20,
+          
           responsabilidad: 'Prevención de Conflictos'
         },
         {
@@ -160,7 +160,7 @@ const DeclaracionesCumplimientoAduanero = () => {
           texto: '¿Capacito adecuadamente a mi personal auxiliar en principios éticos y normativos?',
           respuesta: null,
           explicacion: '',
-          puntos: 15,
+          
           responsabilidad: 'Capacitación del Personal'
         },
         {
@@ -168,14 +168,13 @@ const DeclaracionesCumplimientoAduanero = () => {
           texto: '¿Rechazo cualquier operación que pueda constituir evasión fiscal o contrabando?',
           respuesta: null,
           explicacion: '',
-          puntos: 20,
+          
           responsabilidad: 'Integridad Operativa'
         }
       ],
       estado: 'pendiente',
       guardado: false,
-      puntuacionTotal: 0,
-      maxPuntos: 100,
+      
       color: colors.primary.main
     },
 
@@ -190,7 +189,7 @@ const DeclaracionesCumplimientoAduanero = () => {
           texto: '¿Verifico que el mandato otorgado por el cliente esté debidamente formalizado y sea vigente?',
           respuesta: null,
           explicacion: '',
-          puntos: 30,
+          
           responsabilidad: 'Formalización del Mandato'
         },
         {
@@ -198,7 +197,7 @@ const DeclaracionesCumplimientoAduanero = () => {
           texto: '¿Confirmo que actúo dentro de los límites del mandato conferido por mi cliente?',
           respuesta: null,
           explicacion: '',
-          puntos: 25,
+          
           responsabilidad: 'Límites del Mandato'
         },
         {
@@ -206,7 +205,7 @@ const DeclaracionesCumplimientoAduanero = () => {
           texto: '¿Mantengo comunicación clara con el cliente sobre el alcance de mis facultades como agente?',
           respuesta: null,
           explicacion: '',
-          puntos: 25,
+          
           responsabilidad: 'Comunicación con el Cliente'
         },
         {
@@ -214,14 +213,13 @@ const DeclaracionesCumplimientoAduanero = () => {
           texto: '¿Documento adecuadamente las instrucciones específicas recibidas del mandante?',
           respuesta: null,
           explicacion: '',
-          puntos: 20,
+          
           responsabilidad: 'Documentación de Instrucciones'
         }
       ],
       estado: 'pendiente',
       guardado: false,
-      puntuacionTotal: 0,
-      maxPuntos: 100,
+     
       color: colors.status.success
     },
 
@@ -236,7 +234,7 @@ const DeclaracionesCumplimientoAduanero = () => {
           texto: '¿Verifico personalmente la exactitud de la información material en las declaraciones que presento?',
           respuesta: null,
           explicacion: '',
-          puntos: 25,
+          
           responsabilidad: 'Exactitud de la Información'
         },
         {
@@ -244,7 +242,7 @@ const DeclaracionesCumplimientoAduanero = () => {
           texto: '¿Confirmo la correcta clasificación arancelaria de todas las mercancías que declaro?',
           respuesta: null,
           explicacion: '',
-          puntos: 25,
+          
           responsabilidad: 'Clasificación Arancelaria'
         },
         {
@@ -252,7 +250,7 @@ const DeclaracionesCumplimientoAduanero = () => {
           texto: '¿Valido el valor en aduana declarado con la documentación comercial correspondiente?',
           respuesta: null,
           explicacion: '',
-          puntos: 20,
+          
           responsabilidad: 'Valor en Aduana'
         },
         {
@@ -260,7 +258,7 @@ const DeclaracionesCumplimientoAduanero = () => {
           texto: '¿Verifico el origen de las mercancías y aplico correctamente los tratados comerciales?',
           respuesta: null,
           explicacion: '',
-          puntos: 15,
+          
           responsabilidad: 'Origen Preferencial'
         },
         {
@@ -268,14 +266,13 @@ const DeclaracionesCumplimientoAduanero = () => {
           texto: '¿Reporto inmediatamente cualquier error o omisión material que detecte en las declaraciones?',
           respuesta: null,
           explicacion: '',
-          puntos: 15,
+          
           responsabilidad: 'Reporte de Errores'
         }
       ],
       estado: 'pendiente',
       guardado: false,
-      puntuacionTotal: 0,
-      maxPuntos: 100,
+   
       color: colors.status.warning
     },
 
@@ -290,7 +287,7 @@ const DeclaracionesCumplimientoAduanero = () => {
           texto: '¿Verifico la integridad de los precintos aduaneros en las operaciones que manejo?',
           respuesta: null,
           explicacion: '',
-          puntos: 25,
+          
           responsabilidad: 'Control de Precintos'
         },
         {
@@ -298,7 +295,7 @@ const DeclaracionesCumplimientoAduanero = () => {
           texto: '¿Confirmo que las mercancías bajo mi responsabilidad estén almacenadas en áreas seguras?',
           respuesta: null,
           explicacion: '',
-          puntos: 25,
+          
           responsabilidad: 'Almacenamiento Seguro'
         },
         {
@@ -306,7 +303,7 @@ const DeclaracionesCumplimientoAduanero = () => {
           texto: '¿Reporto inmediatamente cualquier irregularidad o incidente de seguridad detectado?',
           respuesta: null,
           explicacion: '',
-          puntos: 20,
+          
           responsabilidad: 'Reporte de Incidentes'
         },
         {
@@ -314,7 +311,7 @@ const DeclaracionesCumplimientoAduanero = () => {
           texto: '¿Aplico los procedimientos de seguridad establecidos durante el transporte de mercancías?',
           respuesta: null,
           explicacion: '',
-          puntos: 15,
+          
           responsabilidad: 'Procedimientos de Transporte'
         },
         {
@@ -322,14 +319,13 @@ const DeclaracionesCumplimientoAduanero = () => {
           texto: '¿Verifico la identidad de las personas autorizadas para el manejo de mercancías?',
           respuesta: null,
           explicacion: '',
-          puntos: 15,
+          
           responsabilidad: 'Control de Accesos'
         }
       ],
       estado: 'pendiente',
       guardado: false,
-      puntuacionTotal: 0,
-      maxPuntos: 100,
+      
       color: colors.accents.purple
     },
 
@@ -345,7 +341,7 @@ const DeclaracionesCumplimientoAduanero = () => {
           texto: "¿Tiene intereses comerciales directos con proveedores o clientes de la organización?", 
           respuesta: null,
           explicacion: '',
-          puntos: 20,
+          
           responsabilidad: 'Intereses Comerciales'
         },
         { 
@@ -353,7 +349,7 @@ const DeclaracionesCumplimientoAduanero = () => {
           texto: "¿Participa en decisiones que puedan beneficiar a familiares cercanos?", 
           respuesta: null,
           explicacion: '',
-          puntos: 20,
+          
           responsabilidad: 'Beneficio Familiar'
         },
         { 
@@ -361,7 +357,7 @@ const DeclaracionesCumplimientoAduanero = () => {
           texto: "¿Recibe compensaciones adicionales de terceros relacionados con la organización?", 
           respuesta: null,
           explicacion: '',
-          puntos: 20,
+          
           responsabilidad: 'Compensaciones Externas'
         },
         { 
@@ -369,7 +365,7 @@ const DeclaracionesCumplimientoAduanero = () => {
           texto: "¿Participa en empresas competidoras o proveedores alternativos?", 
           respuesta: null,
           explicacion: '',
-          puntos: 20,
+          
           responsabilidad: 'Competencia Directa'
         },
         { 
@@ -377,7 +373,7 @@ const DeclaracionesCumplimientoAduanero = () => {
           texto: "¿Tiene acceso a información privilegiada que podría usar para beneficio personal?", 
           respuesta: null,
           explicacion: '',
-          puntos: 20,
+          
           responsabilidad: 'Información Privilegiada'
         },
       ],
@@ -841,9 +837,7 @@ const DeclaracionesCumplimientoAduanero = () => {
                             fontWeight: '500'
                           }}
                         />
-                        <Typography variant="body2" sx={{ color: colors.text.secondary, fontWeight: '600' }}>
-                          {pregunta.puntos || 0} puntos
-                        </Typography>
+                       
                       </Box>
                       
                       {/* Estado de la respuesta */}
@@ -1028,9 +1022,7 @@ const DeclaracionesCumplimientoAduanero = () => {
                     <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                       {apartado.id === 'conflictos_intereses' ? 'Situaciones evaluadas:' : 'Responsabilidades evaluadas:'} {preguntasContestadas}/{preguntasTotales}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: colors.text.secondary }}>
-                      Puntuación obtenida: {apartado.puntuacionTotal || 0}/{apartado.maxPuntos || 100} puntos
-                    </Typography>
+                  
                     {apartado.guardado && (
                       <Typography variant="body2" sx={{ color: apartado.color || colors.primary.main, fontWeight: '600', mt: 0.5 }}>
                         Nivel de cumplimiento: {cumplimiento}%

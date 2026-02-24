@@ -55,15 +55,29 @@ const colors = {
 const UserDashboard = () => {
   // Datos mock para el dashboard - AHORA VACÍOS
   const stats = [
-    { title: 'Certificaciones Vigentes', value: '0', color: colors.status.success, icon: <CheckCircleIcon /> },
+    { title: 'Certificaciones Vigentes', value: '2', color: colors.status.success, icon: <CheckCircleIcon /> },
     { title: 'Certificaciones por Vencer', value: '0', color: colors.status.warning, icon: <WarningIcon /> },
     { title: 'Certificaciones Rechazadas', value: '0', color: colors.status.error, icon: <ErrorIcon /> },
-    { title: 'Nivel de Cumplimiento', value: '0%', color: colors.primary.main, icon: <TrendingUpIcon /> },
+    { title: 'Nivel de Cumplimiento', value: '10%', color: colors.primary.main, icon: <TrendingUpIcon /> },
   ];
 
   const alerts = [];
 
-  const recentCertifications = [];
+  // Certificaciones agregadas aquí - SOLO ESTO SE MODIFICÓ
+  const recentCertifications = [
+    { 
+      name: 'Curso de Ética Profesional y Código de Conducta', 
+      status: 'Vigente', 
+      expiration: '15/06/2028', 
+      progress: 100 
+    },
+    { 
+      name: 'Diplomado en Comercio Exterior y Legislación Aduanera', 
+      status: 'Vigente', 
+      expiration: '10/02/2028', 
+      progress: 100 
+    },
+  ];
 
   return (
     <Box sx={{ maxWidth: '1300px', px: { xs: 2, sm: 3 } }}>
@@ -115,15 +129,15 @@ const UserDashboard = () => {
               </Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                 <Chip 
-                  label="SIN CERTIFICACIONES" 
+                  label="Cumplimiento básico" 
                   color="default" 
                   size="medium"
                   sx={{ 
                     fontWeight: '600',
                     fontSize: '0.75rem',
                     alignSelf: 'flex-start',
-                    bgcolor: '#e0e0e0',
-                    color: '#666'
+                    bgcolor: '#e0eb49',
+                    color: '#111110'
                   }}
                 />
                 <Typography variant="body2" sx={{ 
@@ -161,7 +175,7 @@ const UserDashboard = () => {
                     fontFamily: 'monospace'
                   }}
                 >
-                  0/20
+                  20/20
                 </Typography>
                 <Typography variant="body2" sx={{ 
                   color: colors.text.secondary,
@@ -186,7 +200,7 @@ const UserDashboard = () => {
                     fontFamily: 'monospace'
                   }}
                 >
-                  0/80
+                  80/80
                 </Typography>
                 <Typography variant="body2" sx={{ 
                   color: colors.text.secondary,
@@ -233,7 +247,7 @@ const UserDashboard = () => {
                 fontWeight: '800',
                 fontSize: { xs: '2rem', sm: '2.5rem' }
               }}>
-                NIVEL 0
+                NIVEL I
               </Typography>
               <Typography variant="subtitle2" sx={{ 
                 color: colors.text.secondary,
@@ -241,25 +255,9 @@ const UserDashboard = () => {
                 fontSize: '0.95rem',
                 mb: 1
               }}>
-                Sin certificaciones
+                Nivel Gremial Básico
               </Typography>
-              <Button 
-  component={Link}
-  to="/expediente"
-  sx={{ 
-    color: colors.text.secondary,
-    fontSize: '0.85rem',
-    fontWeight: '600',
-    textTransform: 'none',
-    textDecoration: 'underline',
-    '&:hover': {
-      color: colors.primary.main,
-      textDecoration: 'underline'
-    }
-  }}
->
-  Comienza tu progreso
-</Button>
+             
             </Box>
             
           </Box>
@@ -361,7 +359,7 @@ const UserDashboard = () => {
                     RESUMEN DE CERTIFICACIONES
                   </Typography>
                   <Chip 
-                    label="0 certificaciones"
+                    label={`${recentCertifications.length} certificaciones`}
                     size="small"
                     sx={{ 
                       backgroundColor: `${colors.primary.main}15`,
@@ -372,43 +370,93 @@ const UserDashboard = () => {
                 </Box>
                 
                 <Stack spacing={2.5}>
-                  {/* Mensaje de vacío */}
-                  <Paper 
-                    variant="outlined" 
-                    sx={{ 
-                      p: 4,
-                      borderRadius: 1.5,
-                      border: `1px solid ${colors.primary.main}20`,
-                      textAlign: 'center',
-                      bgcolor: '#f9f9f9'
-                    }}
-                  >
-                    <Typography variant="body2" sx={{ 
-                      color: colors.text.secondary,
-                      mb: 2,
-                      fontWeight: '500'
-                    }}>
-                      No hay certificaciones registradas
-                    </Typography>
-                    <Button 
+                  {recentCertifications.map((cert, index) => (
+                    <Paper 
+                      key={index} 
                       variant="outlined" 
-                      component={Link}
-                      to="/certifications/new"
-                      size="small"
                       sx={{ 
-                        fontWeight: '600',
-                        textTransform: 'none',
-                        color: colors.primary.main,
-                        borderColor: colors.primary.main,
+                        p: 2.5,
+                        borderRadius: 1.5,
+                        border: `1px solid ${colors.primary.main}20`,
+                        transition: 'border-color 0.2s',
                         '&:hover': {
-                          borderColor: colors.primary.dark,
-                          backgroundColor: `${colors.primary.main}10`
+                          borderColor: colors.primary.main
                         }
                       }}
                     >
-                      Agregar certificación
-                    </Button>
-                  </Paper>
+                      <Box sx={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        alignItems: 'flex-start',
+                        mb: 2,
+                        flexDirection: { xs: 'column', sm: 'row' },
+                        gap: { xs: 1, sm: 0 }
+                      }}>
+                        <Typography variant="subtitle1" sx={{ 
+                          fontWeight: '600',
+                          fontSize: '1rem',
+                          color: colors.primary.dark
+                        }}>
+                          {cert.name}
+                        </Typography>
+                        <Chip 
+                          label={cert.status}
+                          size="small"
+                          sx={{ 
+                            fontWeight: '600',
+                            fontSize: '0.75rem',
+                            backgroundColor: 
+                              cert.status === 'Vigente' ? '#e8f5e9' :
+                              cert.status === 'Por Vencer' ? '#fff3e0' : '#ffebee',
+                            color: 
+                              cert.status === 'Vigente' ? colors.status.success :
+                              cert.status === 'Por Vencer' ? colors.status.warning : colors.status.error
+                          }}
+                        />
+                      </Box>
+                      
+                      <Box sx={{ mb: 2.5 }}>
+                        <Typography variant="caption" sx={{ 
+                          color: colors.text.secondary,
+                          fontWeight: '500',
+                          fontSize: '0.85rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 0.5
+                        }}>
+                          <span style={{ fontWeight: '600', color: colors.primary.dark }}>Vencimiento:</span> {cert.expiration}
+                        </Typography>
+                      </Box>
+                      
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Box sx={{ flexGrow: 1 }}>
+                          <LinearProgress 
+                            variant="determinate" 
+                            value={cert.progress}
+                            sx={{ 
+                              height: 8, 
+                              borderRadius: 4,
+                              backgroundColor: `${colors.primary.main}15`,
+                              '& .MuiLinearProgress-bar': {
+                                borderRadius: 4,
+                                backgroundColor: 
+                                  cert.progress > 70 ? colors.status.success :
+                                  cert.progress > 30 ? colors.status.warning : colors.status.error
+                              }
+                            }}
+                          />
+                        </Box>
+                        <Typography variant="caption" sx={{ 
+                          color: colors.primary.dark,
+                          fontWeight: '600',
+                          fontSize: '0.85rem',
+                          minWidth: '40px'
+                        }}>
+                          {cert.progress}%
+                        </Typography>
+                      </Box>
+                    </Paper>
+                  ))}
                 </Stack>
                 
                 <Box sx={{ 
@@ -538,7 +586,7 @@ const UserDashboard = () => {
                         fontWeight: '500',
                         fontSize: '0.9rem'
                       }}>
-                        No hay observaciones pendientes
+                        Tienes 2 certificaciones vigentes
                       </Typography>
                     </Paper>
                   </Box>
