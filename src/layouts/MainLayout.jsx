@@ -586,7 +586,7 @@ const MainLayout = () => {
                 }}
               >
                 <Badge
-                  
+                  badgeContent={3}
                   color="error"
                   sx={{
                     "& .MuiBadge-badge": {
