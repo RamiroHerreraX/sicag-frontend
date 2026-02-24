@@ -493,8 +493,8 @@ const UserDashboard = () => {
           {/* Alertas y Notificaciones - MODIFICADO CON CSS PARA SER MÁS ANCHO */}
           <Grid item xs={12} md={5} sx={{
             // Aumentamos el ancho proporcionalmente
-            flexBasis: '45%',
-            maxWidth: '45%',
+            flexBasis: '40%',
+            maxWidth: '40%',
             flexGrow: 1,
             paddingLeft: '16px',
             paddingRight: '16px'
