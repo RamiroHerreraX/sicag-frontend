@@ -129,7 +129,7 @@ const recognitionLevels = [
 const initialUsers = [
   {
     id: 1,
-    name: "Luis Rodríguez Martínez",
+    name: "Luis Rodríguez Lopez",
     email: "luis.rodriguez@empresa.com",
     role: "agente",
     roleName: "Agente Aduanal",
