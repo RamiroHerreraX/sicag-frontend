@@ -41,7 +41,8 @@ import {
   FormLabel,
   Radio,
   RadioGroup,
-  Divider
+  Divider,
+  Input
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -65,7 +66,9 @@ import {
   PictureAsPdf as PdfIcon,
   TableChart as ExcelIcon,
   SwapHoriz as SwapHorizIcon,
-  Info as InfoIcon
+  Info as InfoIcon,
+  VisibilityOff as VisibilityOffIcon,
+  Lock as LockIcon
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
@@ -113,6 +116,10 @@ const UserManagement = () => {
   const [dialogMode, setDialogMode] = useState('add'); // 'add' o 'edit'
   const rowsPerPage = 10;
 
+  // Estado para la contraseña
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
   // Estados para exportación
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
   const [exportFormat, setExportFormat] = useState('excel');
@@ -122,14 +129,14 @@ const UserManagement = () => {
 
   // Datos mock mejorados
   const [users, setUsers] = useState([
-    { 
-      id: 1, 
-      name: 'Luis Rodríguez', 
-      email: 'luis@ejemplo.com', 
-      role: 'agente', 
+    {
+      id: 1,
+      name: 'Luis Rodríguez',
+      email: 'luis@ejemplo.com',
+      role: 'agente',
       roleName: 'Agente Aduanal',
-      region: 'Norte', 
-      status: 'active', 
+      region: 'Norte',
+      status: 'active',
       lastAccess: '15/01/2026 10:30',
       registrationDate: '15/01/2024',
       phone: '+52 55 1234 5678',
@@ -137,16 +144,17 @@ const UserManagement = () => {
       certifications: 8,
       pending: 2,
       color: colors.primary.main,
-      avatar: 'LR'
+      avatar: 'LR',
+      password: 'hashed_password_here'
     },
-    { 
-      id: 2, 
-      name: 'María González', 
-      email: 'maria@ejemplo.com', 
-      role: 'comite', 
+    {
+      id: 2,
+      name: 'María González',
+      email: 'maria@ejemplo.com',
+      role: 'comite',
       roleName: 'Comité',
-      region: 'Centro', 
-      status: 'active', 
+      region: 'Centro',
+      status: 'active',
       lastAccess: '14/01/2026 14:20',
       registrationDate: '20/03/2024',
       phone: '+52 55 8765 4321',
@@ -154,16 +162,17 @@ const UserManagement = () => {
       certifications: 12,
       pending: 0,
       color: colors.accents.purple,
-      avatar: 'MG'
+      avatar: 'MG',
+      password: 'hashed_password_here'
     },
-    { 
-      id: 3, 
-      name: 'Carlos Martínez', 
-      email: 'carlos@ejemplo.com', 
-      role: 'profesionista', 
+    {
+      id: 3,
+      name: 'Carlos Martínez',
+      email: 'carlos@ejemplo.com',
+      role: 'profesionista',
       roleName: 'Profesionista',
-      region: 'Sur', 
-      status: 'inactive', 
+      region: 'Sur',
+      status: 'inactive',
       lastAccess: '10/01/2026 09:15',
       registrationDate: '05/06/2024',
       phone: '+52 55 5555 5555',
@@ -171,16 +180,17 @@ const UserManagement = () => {
       certifications: 5,
       pending: 1,
       color: colors.accents.blue,
-      avatar: 'CM'
+      avatar: 'CM',
+      password: 'hashed_password_here'
     },
-    { 
-      id: 4, 
-      name: 'Ana López', 
-      email: 'ana@ejemplo.com', 
-      role: 'empresario', 
+    {
+      id: 4,
+      name: 'Ana López',
+      email: 'ana@ejemplo.com',
+      role: 'empresario',
       roleName: 'Empresario',
-      region: 'Metropolitana', 
-      status: 'active', 
+      region: 'Metropolitana',
+      status: 'active',
       lastAccess: '15/01/2026 11:45',
       registrationDate: '12/08/2024',
       phone: '+52 55 9999 8888',
@@ -188,16 +198,17 @@ const UserManagement = () => {
       certifications: 6,
       pending: 0,
       color: colors.secondary.main,
-      avatar: 'AL'
+      avatar: 'AL',
+      password: 'hashed_password_here'
     },
-    { 
-      id: 5, 
-      name: 'Pedro Sánchez', 
-      email: 'pedro@ejemplo.com', 
-      role: 'admin', 
+    {
+      id: 5,
+      name: 'Pedro Sánchez',
+      email: 'pedro@ejemplo.com',
+      role: 'admin',
       roleName: 'Administrador',
-      region: 'Todas', 
-      status: 'active', 
+      region: 'Todas',
+      status: 'active',
       lastAccess: '15/01/2026 08:30',
       registrationDate: '01/01/2024',
       phone: '+52 55 7777 6666',
@@ -205,16 +216,17 @@ const UserManagement = () => {
       certifications: 15,
       pending: 0,
       color: colors.primary.dark,
-      avatar: 'PS'
+      avatar: 'PS',
+      password: 'hashed_password_here'
     },
-    { 
-      id: 6, 
-      name: 'Laura Díaz', 
-      email: 'laura@ejemplo.com', 
-      role: 'comite', 
+    {
+      id: 6,
+      name: 'Laura Díaz',
+      email: 'laura@ejemplo.com',
+      role: 'comite',
       roleName: 'Comité',
-      region: 'Occidente', 
-      status: 'active', 
+      region: 'Occidente',
+      status: 'active',
       lastAccess: '13/01/2026 16:10',
       registrationDate: '15/09/2024',
       phone: '+52 55 3333 2222',
@@ -222,11 +234,12 @@ const UserManagement = () => {
       certifications: 10,
       pending: 1,
       color: colors.accents.purple,
-      avatar: 'LD'
+      avatar: 'LD',
+      password: 'hashed_password_here'
     },
   ]);
 
-  // Roles disponibles (esto debería venir de SystemConfig o de una API)
+  // Roles disponibles
   const availableRoles = [
     { value: 'admin', label: 'Administrador', color: colors.primary.dark },
     { value: 'comite', label: 'Comité', color: colors.accents.purple },
@@ -251,17 +264,17 @@ const UserManagement = () => {
 
   // Filtros
   const filteredUsers = users.filter(user => {
-    const matchesSearch = 
+    const matchesSearch =
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.roleName.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesTab = 
+
+    const matchesTab =
       selectedTab === 'all' ? true :
-      selectedTab === 'active' ? user.status === 'active' :
-      selectedTab === 'inactive' ? user.status === 'inactive' :
-      user.role === selectedTab;
-    
+        selectedTab === 'active' ? user.status === 'active' :
+          selectedTab === 'inactive' ? user.status === 'inactive' :
+            user.role === selectedTab;
+
     return matchesSearch && matchesTab;
   });
 
@@ -282,12 +295,14 @@ const UserManagement = () => {
       phone: '',
       roleName: 'Agente Aduanal'
     });
+    setPassword('');
     setOpenDialog(true);
   };
 
   const handleEditUser = (user) => {
     setDialogMode('edit');
     setSelectedUser({ ...user });
+    setPassword('');
     setOpenDialog(true);
   };
 
@@ -299,8 +314,8 @@ const UserManagement = () => {
   const handleSaveRole = () => {
     if (!selectedUser?.role) return;
 
-    setUsers(users.map(user => 
-      user.id === selectedUser.id ? { 
+    setUsers(users.map(user =>
+      user.id === selectedUser.id ? {
         ...selectedUser,
         roleName: getRoleName(selectedUser.role),
         color: getRoleColor(selectedUser.role)
@@ -327,7 +342,16 @@ const UserManagement = () => {
     }
 
     if (dialogMode === 'add') {
-      // Crear nuevo usuario
+      const emailExists = users.some(user => user.email.toLowerCase() === selectedUser.email.toLowerCase());
+      if (emailExists) {
+        setSnackbar({
+          open: true,
+          message: 'Ya existe un usuario con este email',
+          severity: 'error'
+        });
+        return;
+      }
+
       const newUser = {
         ...selectedUser,
         id: Math.max(...users.map(u => u.id), 0) + 1,
@@ -337,7 +361,8 @@ const UserManagement = () => {
         pending: 0,
         compliance: 0,
         avatar: selectedUser.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase(),
-        color: getRoleColor(selectedUser.role)
+        color: getRoleColor(selectedUser.role),
+        password: 'hashed_' + password
       };
       setUsers([...users, newUser]);
       setSnackbar({
@@ -346,9 +371,8 @@ const UserManagement = () => {
         severity: 'success'
       });
     } else {
-      // Actualizar usuario existente
-      setUsers(users.map(user => 
-        user.id === selectedUser.id ? { 
+      setUsers(users.map(user =>
+        user.id === selectedUser.id ? {
           ...selectedUser,
           roleName: getRoleName(selectedUser.role),
           color: getRoleColor(selectedUser.role),
@@ -365,10 +389,10 @@ const UserManagement = () => {
   };
 
   const handleToggleStatus = (id) => {
-    setUsers(users.map(user => 
-      user.id === id ? { 
-        ...user, 
-        status: user.status === 'active' ? 'inactive' : 'active' 
+    setUsers(users.map(user =>
+      user.id === id ? {
+        ...user,
+        status: user.status === 'active' ? 'inactive' : 'active'
       } : user
     ));
     setSnackbar({
@@ -390,7 +414,7 @@ const UserManagement = () => {
   };
 
   const getRoleColor = (role) => {
-    switch(role) {
+    switch (role) {
       case 'admin': return colors.primary.dark;
       case 'comite': return colors.accents.purple;
       case 'agente': return colors.primary.main;
@@ -401,7 +425,7 @@ const UserManagement = () => {
   };
 
   const getRoleName = (role) => {
-    switch(role) {
+    switch (role) {
       case 'admin': return 'Administrador';
       case 'comite': return 'Comité';
       case 'agente': return 'Agente Aduanal';
@@ -412,7 +436,7 @@ const UserManagement = () => {
   };
 
   const getRoleText = (role) => {
-    switch(role) {
+    switch (role) {
       case 'admin': return 'Administrador';
       case 'comite': return 'Comité';
       case 'agente': return 'Agente';
@@ -444,11 +468,10 @@ const UserManagement = () => {
 
   const handleExport = async () => {
     setExportLoading(true);
-    
+
     try {
       const dataToExport = exportScope === 'all' ? users : filteredUsers;
-      
-      // Preparar datos para exportación
+
       const exportData = dataToExport.map(user => ({
         'Nombre': user.name,
         'Email': user.email,
@@ -489,7 +512,7 @@ const UserManagement = () => {
 
   const exportToExcel = (data) => {
     const ws = XLSX.utils.json_to_sheet(data);
-    
+
     const colWidths = [
       { wch: 20 }, { wch: 30 }, { wch: 15 }, { wch: 20 },
       { wch: 15 }, { wch: 10 }, { wch: 15 }, { wch: 12 },
@@ -527,25 +550,25 @@ const UserManagement = () => {
 
   const exportToPDF = (data, originalData) => {
     const doc = new jsPDF();
-    
+
     doc.setFontSize(18);
     doc.setTextColor(19, 59, 107);
     doc.text('Reporte de Usuarios', 14, 22);
-    
+
     doc.setFontSize(10);
     doc.setTextColor(100, 100, 100);
     doc.text(`Fecha de exportación: ${new Date().toLocaleString()}`, 14, 30);
-    
+
     doc.setFontSize(12);
     doc.setTextColor(13, 42, 77);
     doc.text('Resumen', 14, 40);
-    
+
     doc.setFontSize(10);
     doc.setTextColor(60, 60, 60);
     doc.text(`Total de Usuarios: ${stats.total}`, 20, 48);
     doc.text(`Usuarios Activos: ${stats.active}`, 20, 55);
     doc.text(`Usuarios Inactivos: ${stats.inactive}`, 20, 62);
-    
+
     if (selectedTab !== 'all' || searchTerm) {
       doc.text('Filtros aplicados:', 20, 72);
       if (selectedTab !== 'all') {
@@ -566,7 +589,7 @@ const UserManagement = () => {
       body: tableData,
       startY: (selectedTab !== 'all' || searchTerm) ? 95 : 72,
       styles: { fontSize: 8, cellPadding: 2 },
-      headStyles: { 
+      headStyles: {
         fillColor: [19, 59, 107],
         textColor: 255,
         fontStyle: 'bold'
@@ -600,7 +623,7 @@ const UserManagement = () => {
               Administre los usuarios del sistema SICAG - {filteredUsers.length} usuarios encontrados
             </Typography>
           </Box>
-          
+
           <Stack direction="row" spacing={1}>
             <Button
               variant="outlined"
@@ -622,9 +645,9 @@ const UserManagement = () => {
               variant="contained"
               startIcon={<PersonAddIcon />}
               onClick={handleAddUser}
-              sx={{ 
-                bgcolor: colors.primary.main, 
-                '&:hover': { bgcolor: colors.primary.dark } 
+              sx={{
+                bgcolor: colors.primary.main,
+                '&:hover': { bgcolor: colors.primary.dark }
               }}
             >
               Nuevo Usuario
@@ -660,32 +683,32 @@ const UserManagement = () => {
             </Grid>
             <Grid item xs={12} md={6}>
               <Stack direction="row" spacing={1} justifyContent="flex-end" flexWrap="wrap">
-                <Chip 
-                  label={`Total: ${stats.total}`} 
-                  size="small" 
+                <Chip
+                  label={`Total: ${stats.total}`}
+                  size="small"
                   sx={{
                     borderColor: colors.primary.main,
                     color: colors.primary.main
                   }}
-                  variant="outlined" 
+                  variant="outlined"
                 />
-                <Chip 
-                  label={`Activos: ${stats.active}`} 
-                  size="small" 
+                <Chip
+                  label={`Activos: ${stats.active}`}
+                  size="small"
                   sx={{
                     borderColor: colors.secondary.main,
                     color: colors.secondary.main
                   }}
-                  variant="outlined" 
+                  variant="outlined"
                 />
-                <Chip 
-                  label={`Inactivos: ${stats.inactive}`} 
-                  size="small" 
+                <Chip
+                  label={`Inactivos: ${stats.inactive}`}
+                  size="small"
                   sx={{
                     borderColor: colors.primary.dark,
                     color: colors.primary.dark
                   }}
-                  variant="outlined" 
+                  variant="outlined"
                 />
               </Stack>
             </Grid>
@@ -695,15 +718,15 @@ const UserManagement = () => {
 
       {/* Tabs de navegación */}
       <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
-        <Tabs 
-          value={selectedTab} 
+        <Tabs
+          value={selectedTab}
           onChange={(e, newValue) => {
             setSelectedTab(newValue);
             setPage(1);
           }}
           variant="scrollable"
           scrollButtons="auto"
-          sx={{ 
+          sx={{
             minHeight: 48,
             '& .MuiTab-root': {
               color: colors.text.secondary,
@@ -717,13 +740,13 @@ const UserManagement = () => {
           }}
         >
           {tabs.map((tab) => (
-            <Tab 
+            <Tab
               key={tab.value}
               value={tab.value}
               icon={tab.icon}
               iconPosition="start"
               label={tab.label}
-              sx={{ 
+              sx={{
                 minHeight: 48,
                 textTransform: 'none',
                 fontSize: '0.85rem',
@@ -753,20 +776,20 @@ const UserManagement = () => {
               </TableHead>
               <TableBody>
                 {paginatedUsers.map((user) => (
-                  <TableRow 
-                    key={user.id} 
+                  <TableRow
+                    key={user.id}
                     hover
-                    sx={{ 
+                    sx={{
                       '&:hover': { bgcolor: '#f8f9fa' },
                       opacity: user.status === 'inactive' ? 0.7 : 1
                     }}
                   >
                     <TableCell>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                        <Avatar 
-                          sx={{ 
-                            width: 36, 
-                            height: 36, 
+                        <Avatar
+                          sx={{
+                            width: 36,
+                            height: 36,
                             bgcolor: user.color,
                             fontSize: '0.9rem',
                             fontWeight: 'bold'
@@ -778,12 +801,12 @@ const UserManagement = () => {
                           <Typography variant="body2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
                             {user.name}
                             {user.status === 'inactive' && (
-                              <Chip 
-                                label="INACTIVO" 
-                                size="small" 
-                                sx={{ 
-                                  ml: 1, 
-                                  height: 18, 
+                              <Chip
+                                label="INACTIVO"
+                                size="small"
+                                sx={{
+                                  ml: 1,
+                                  height: 18,
                                   fontSize: '0.65rem',
                                   bgcolor: colors.primary.dark,
                                   color: 'white'
@@ -803,12 +826,12 @@ const UserManagement = () => {
                         </Box>
                       </Box>
                     </TableCell>
-                    
+
                     <TableCell>
-                      <Chip 
+                      <Chip
                         label={user.roleName}
                         size="small"
-                        sx={{ 
+                        sx={{
                           bgcolor: `${getRoleColor(user.role)}15`,
                           color: getRoleColor(user.role),
                           fontWeight: 600,
@@ -816,7 +839,7 @@ const UserManagement = () => {
                         }}
                       />
                     </TableCell>
-                    
+
                     <TableCell>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                         <LocationIcon sx={{ fontSize: 14, color: colors.text.secondary }} />
@@ -826,19 +849,19 @@ const UserManagement = () => {
                         Registro: {user.registrationDate}
                       </Typography>
                     </TableCell>
-                    
+
                     <TableCell>
                       <Box>
                         <Typography variant="body2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
                           {user.certifications}
                         </Typography>
                         {user.pending > 0 && (
-                          <Chip 
+                          <Chip
                             label={`${user.pending} pendientes`}
                             size="small"
-                            sx={{ 
-                              height: 18, 
-                              fontSize: '0.65rem', 
+                            sx={{
+                              height: 18,
+                              fontSize: '0.65rem',
                               mt: 0.5,
                               bgcolor: colors.accents.blue,
                               color: 'white'
@@ -847,7 +870,7 @@ const UserManagement = () => {
                         )}
                       </Box>
                     </TableCell>
-                    
+
                     <TableCell>
                       <Tooltip title={`${user.compliance}% de cumplimiento`}>
                         <Box>
@@ -856,23 +879,23 @@ const UserManagement = () => {
                               {user.compliance}%
                             </Typography>
                           </Box>
-                          <LinearProgress 
-                            variant="determinate" 
+                          <LinearProgress
+                            variant="determinate"
                             value={user.compliance}
-                            sx={{ 
+                            sx={{
                               height: 6,
                               borderRadius: 3,
                               bgcolor: '#f0f0f0',
                               '& .MuiLinearProgress-bar': {
-                                bgcolor: user.compliance >= 90 ? colors.secondary.main : 
-                                        user.compliance >= 70 ? colors.accents.blue : colors.primary.dark
+                                bgcolor: user.compliance >= 90 ? colors.secondary.main :
+                                  user.compliance >= 70 ? colors.accents.blue : colors.primary.dark
                               }
                             }}
                           />
                         </Box>
                       </Tooltip>
                     </TableCell>
-                    
+
                     <TableCell>
                       <Typography variant="body2" sx={{ color: colors.primary.dark }}>
                         {user.lastAccess.split(' ')[0]}
@@ -881,11 +904,11 @@ const UserManagement = () => {
                         {user.lastAccess.split(' ')[1]}
                       </Typography>
                     </TableCell>
-                    
+
                     <TableCell align="center">
                       <Stack direction="row" spacing={0.5} justifyContent="center">
                         <Tooltip title="Revisar perfil">
-                          <IconButton 
+                          <IconButton
                             size="small"
                             component={Link}
                             to={`/admin/users/${user.id}/review`}
@@ -894,12 +917,12 @@ const UserManagement = () => {
                             <VisibilityIcon fontSize="small" />
                           </IconButton>
                         </Tooltip>
-                        
+
                         <Tooltip title="Cambiar rol del usuario">
-                          <IconButton 
+                          <IconButton
                             size="small"
                             onClick={() => handleChangeRole(user)}
-                            sx={{ 
+                            sx={{
                               color: colors.accents.purple,
                               bgcolor: '#f0ebff',
                               '&:hover': {
@@ -910,9 +933,9 @@ const UserManagement = () => {
                             <SwapHorizIcon fontSize="small" />
                           </IconButton>
                         </Tooltip>
-                        
+
                         <Tooltip title="Editar usuario">
-                          <IconButton 
+                          <IconButton
                             size="small"
                             onClick={() => handleEditUser(user)}
                             sx={{ color: colors.accents.blue }}
@@ -920,9 +943,9 @@ const UserManagement = () => {
                             <EditIcon fontSize="small" />
                           </IconButton>
                         </Tooltip>
-                        
+
                         <Tooltip title="Eliminar usuario">
-                          <IconButton 
+                          <IconButton
                             size="small"
                             onClick={() => handleDeleteUser(user.id)}
                             sx={{ color: colors.status.error }}
@@ -930,7 +953,7 @@ const UserManagement = () => {
                             <DeleteIcon fontSize="small" />
                           </IconButton>
                         </Tooltip>
-                        
+
                         <Tooltip title={user.status === 'active' ? 'Desactivar' : 'Activar'}>
                           <FormControlLabel
                             control={
@@ -1019,10 +1042,10 @@ const UserManagement = () => {
                   {count}
                 </Typography>
                 <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                  {role === 'agente' ? 'Agentes' : 
-                   role === 'comite' ? 'Comité' : 
-                   role === 'profesionista' ? 'Profesionistas' : 
-                   role === 'empresario' ? 'Empresarios' : 'Admins'}
+                  {role === 'agente' ? 'Agentes' :
+                    role === 'comite' ? 'Comité' :
+                      role === 'profesionista' ? 'Profesionistas' :
+                        role === 'empresario' ? 'Empresarios' : 'Admins'}
                 </Typography>
               </Box>
             </Grid>
@@ -1032,8 +1055,8 @@ const UserManagement = () => {
 
       {/* Diálogo para cambiar rol */}
       <Dialog open={openRoleDialog} onClose={() => setOpenRoleDialog(false)} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ 
-          bgcolor: colors.accents.purple, 
+        <DialogTitle sx={{
+          bgcolor: colors.accents.purple,
           color: 'white',
           display: 'flex',
           justifyContent: 'space-between',
@@ -1047,7 +1070,7 @@ const UserManagement = () => {
             <CloseIcon />
           </IconButton>
         </DialogTitle>
-        
+
         <DialogContent sx={{ mt: 2 }}>
           {selectedUser && (
             <>
@@ -1056,10 +1079,10 @@ const UserManagement = () => {
                   Usuario Seleccionado:
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                  <Avatar 
-                    sx={{ 
-                      width: 48, 
-                      height: 48, 
+                  <Avatar
+                    sx={{
+                      width: 48,
+                      height: 48,
                       bgcolor: getRoleColor(selectedUser.role),
                       fontSize: '1rem',
                       fontWeight: 'bold'
@@ -1074,10 +1097,10 @@ const UserManagement = () => {
                     <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
                       {selectedUser.email}
                     </Typography>
-                    <Chip 
+                    <Chip
                       label={`Rol actual: ${selectedUser.roleName}`}
                       size="small"
-                      sx={{ 
+                      sx={{
                         mt: 0.5,
                         bgcolor: `${getRoleColor(selectedUser.role)}15`,
                         color: getRoleColor(selectedUser.role),
@@ -1101,8 +1124,8 @@ const UserManagement = () => {
                   labelId="change-role-label"
                   value={selectedUser.role}
                   label="Nuevo Rol"
-                  onChange={(e) => setSelectedUser({ 
-                    ...selectedUser, 
+                  onChange={(e) => setSelectedUser({
+                    ...selectedUser,
                     role: e.target.value,
                     roleName: getRoleName(e.target.value)
                   })}
@@ -1110,26 +1133,26 @@ const UserManagement = () => {
                   {availableRoles.map((role) => (
                     <MenuItem key={role.value} value={role.value}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
-                        <Box 
-                          sx={{ 
-                            width: 12, 
-                            height: 12, 
-                            borderRadius: '50%', 
+                        <Box
+                          sx={{
+                            width: 12,
+                            height: 12,
+                            borderRadius: '50%',
                             bgcolor: role.color,
                             mr: 1
-                          }} 
+                          }}
                         />
                         <Typography sx={{ flex: 1 }}>{role.label}</Typography>
                         {selectedUser.role === role.value && (
-                          <Chip 
-                            label="Actual" 
-                            size="small" 
-                            sx={{ 
+                          <Chip
+                            label="Actual"
+                            size="small"
+                            sx={{
                               bgcolor: colors.secondary.main,
                               color: 'white',
                               height: 20,
                               fontSize: '0.65rem'
-                            }} 
+                            }}
                           />
                         )}
                       </Box>
@@ -1157,9 +1180,9 @@ const UserManagement = () => {
             </>
           )}
         </DialogContent>
-        
+
         <DialogActions sx={{ p: 2, borderTop: `1px solid ${colors.primary.light}` }}>
-          <Button 
+          <Button
             onClick={() => setOpenRoleDialog(false)}
             variant="outlined"
             sx={{
@@ -1170,7 +1193,7 @@ const UserManagement = () => {
           >
             Cancelar
           </Button>
-          <Button 
+          <Button
             onClick={handleSaveRole}
             variant="contained"
             sx={{ bgcolor: colors.accents.purple, '&:hover': { bgcolor: colors.primary.dark } }}
@@ -1180,10 +1203,10 @@ const UserManagement = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Diálogo de usuario (Agregar/Editar) */}
+      {/* Diálogo de usuario - COMPLETAMENTE SIMPLIFICADO */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ 
-          bgcolor: colors.primary.main, 
+        <DialogTitle sx={{
+          bgcolor: colors.primary.main,
           color: 'white',
           display: 'flex',
           justifyContent: 'space-between',
@@ -1199,7 +1222,7 @@ const UserManagement = () => {
             <CloseIcon />
           </IconButton>
         </DialogTitle>
-        
+
         <DialogContent sx={{ mt: 2 }}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -1210,7 +1233,6 @@ const UserManagement = () => {
                 onChange={(e) => setSelectedUser({ ...selectedUser, name: e.target.value })}
                 required
                 size="small"
-                sx={{ mt: 1 }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -1224,14 +1246,48 @@ const UserManagement = () => {
                 size="small"
               />
             </Grid>
+
+            {/* Solo campo de contraseña simple en modo agregar */}
+            {dialogMode === 'add' && (
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Contraseña"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  size="small"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <LockIcon fontSize="small" sx={{ color: colors.primary.main }} />
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() => setShowPassword(!showPassword)}
+                          edge="end"
+                          size="small"
+                        >
+                          {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
+                />
+              </Grid>
+            )}
+
             <Grid item xs={12} md={6}>
               <FormControl fullWidth size="small">
                 <InputLabel>Rol</InputLabel>
                 <Select
                   value={selectedUser?.role || 'agente'}
                   label="Rol"
-                  onChange={(e) => setSelectedUser({ 
-                    ...selectedUser, 
+                  onChange={(e) => setSelectedUser({
+                    ...selectedUser,
                     role: e.target.value,
                     roleName: getRoleName(e.target.value)
                   })}
@@ -1278,9 +1334,9 @@ const UserManagement = () => {
                 control={
                   <Switch
                     checked={selectedUser?.status === 'active'}
-                    onChange={(e) => setSelectedUser({ 
-                      ...selectedUser, 
-                      status: e.target.checked ? 'active' : 'inactive' 
+                    onChange={(e) => setSelectedUser({
+                      ...selectedUser,
+                      status: e.target.checked ? 'active' : 'inactive'
                     })}
                     sx={{
                       '& .MuiSwitch-switchBase.Mui-checked': {
@@ -1297,9 +1353,9 @@ const UserManagement = () => {
             </Grid>
           </Grid>
         </DialogContent>
-        
+
         <DialogActions sx={{ p: 2, borderTop: `1px solid ${colors.primary.light}` }}>
-          <Button 
+          <Button
             onClick={() => setOpenDialog(false)}
             variant="outlined"
             sx={{
@@ -1310,7 +1366,7 @@ const UserManagement = () => {
           >
             Cancelar
           </Button>
-          <Button 
+          <Button
             onClick={handleSaveUser}
             variant="contained"
             sx={{ bgcolor: colors.primary.main, '&:hover': { bgcolor: colors.primary.dark } }}
@@ -1322,8 +1378,8 @@ const UserManagement = () => {
 
       {/* Diálogo de exportación */}
       <Dialog open={exportDialogOpen} onClose={handleExportDialogClose} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ 
-          bgcolor: colors.primary.main, 
+        <DialogTitle sx={{
+          bgcolor: colors.primary.main,
           color: 'white',
           display: 'flex',
           justifyContent: 'space-between',
@@ -1337,32 +1393,32 @@ const UserManagement = () => {
             <CloseIcon />
           </IconButton>
         </DialogTitle>
-        
+
         <DialogContent sx={{ mt: 2 }}>
           <Box sx={{ mb: 3 }}>
             <FormLabel component="legend" sx={{ color: colors.text.primary, fontWeight: 'bold', mb: 1 }}>
               Formato de exportación
             </FormLabel>
             <RadioGroup value={exportFormat} onChange={(e) => setExportFormat(e.target.value)}>
-              <FormControlLabel 
-                value="excel" 
-                control={<Radio sx={{ color: colors.primary.main }} />} 
+              <FormControlLabel
+                value="excel"
+                control={<Radio sx={{ color: colors.primary.main }} />}
                 label={
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <ExcelIcon sx={{ color: colors.status.success }} />
                     <Typography>Excel (.xlsx)</Typography>
                   </Box>
-                } 
+                }
               />
-              <FormControlLabel 
-                value="pdf" 
-                control={<Radio sx={{ color: colors.primary.main }} />} 
+              <FormControlLabel
+                value="pdf"
+                control={<Radio sx={{ color: colors.primary.main }} />}
                 label={
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <PdfIcon sx={{ color: colors.status.error }} />
                     <Typography>PDF (.pdf)</Typography>
                   </Box>
-                } 
+                }
               />
             </RadioGroup>
           </Box>
@@ -1372,15 +1428,15 @@ const UserManagement = () => {
               Alcance de la exportación
             </FormLabel>
             <RadioGroup value={exportScope} onChange={(e) => setExportScope(e.target.value)}>
-              <FormControlLabel 
-                value="filtered" 
-                control={<Radio sx={{ color: colors.primary.main }} />} 
-                label={`Solo resultados filtrados (${filteredUsers.length} usuarios)`} 
+              <FormControlLabel
+                value="filtered"
+                control={<Radio sx={{ color: colors.primary.main }} />}
+                label={`Solo resultados filtrados (${filteredUsers.length} usuarios)`}
               />
-              <FormControlLabel 
-                value="all" 
-                control={<Radio sx={{ color: colors.primary.main }} />} 
-                label={`Todos los usuarios (${users.length} usuarios)`} 
+              <FormControlLabel
+                value="all"
+                control={<Radio sx={{ color: colors.primary.main }} />}
+                label={`Todos los usuarios (${users.length} usuarios)`}
               />
             </RadioGroup>
           </Box>
@@ -1391,9 +1447,9 @@ const UserManagement = () => {
             </Alert>
           )}
         </DialogContent>
-        
+
         <DialogActions sx={{ p: 2, borderTop: `1px solid ${colors.primary.light}` }}>
-          <Button 
+          <Button
             onClick={handleExportDialogClose}
             variant="outlined"
             sx={{
@@ -1404,7 +1460,7 @@ const UserManagement = () => {
           >
             Cancelar
           </Button>
-          <Button 
+          <Button
             onClick={handleExport}
             variant="contained"
             disabled={exportLoading}
@@ -1423,14 +1479,14 @@ const UserManagement = () => {
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
-        <Alert 
-          onClose={handleCloseSnackbar} 
+        <Alert
+          onClose={handleCloseSnackbar}
           severity={snackbar.severity}
-          sx={{ 
+          sx={{
             width: '100%',
-            bgcolor: snackbar.severity === 'success' ? colors.status.success : 
-                     snackbar.severity === 'error' ? colors.status.error : 
-                     colors.status.info,
+            bgcolor: snackbar.severity === 'success' ? colors.status.success :
+              snackbar.severity === 'error' ? colors.status.error :
+                colors.status.info,
             color: 'white',
             '& .MuiAlert-icon': { color: 'white' }
           }}

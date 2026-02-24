@@ -149,13 +149,7 @@ const AdminLayout = () => {
       icon: <HistoryIcon />, 
       path: '/admin/audit',
       description: 'Registro de auditoría',
-    },
-    { 
-      text: 'MI PERFIL', 
-      icon: <AccountCircleIcon />, 
-      path: '/admin/profile',
-      description: 'Información personal y preferencias',
-    },
+    }
   ];
 
   const handleDrawerToggle = () => {

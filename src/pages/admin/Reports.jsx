@@ -49,6 +49,12 @@ const CHART_COLORS = {
   navy:   C.primary.main,
   light:  C.primary.light,
   teal:   C.secondary.light,
+  // Colores específicos para el semáforo de la primera gráfica
+  semaforo: {
+    verde: '#4CAF50',    // Verde estándar
+    amarillo: '#FFC107', // Amarillo ámbar
+    rojo: '#F44336'      // Rojo estándar
+  }
 };
 
 // ─── DATOS MOCK ENRIQUECIDOS ─────────────────────────────────────────────────
@@ -283,7 +289,7 @@ const ComplianceBarChart = ({ data }) => {
 
       {/* Usamos flexbox en lugar de Grid para garantizar que cada mitad tenga ancho real */}
       <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
-        {/* Barras apiladas semáforo */}
+        {/* Barras apiladas semáforo - SOLO ESTA PARTE TIENE LOS COLORES MODIFICADOS */}
         <Box sx={{ flex: '1 1 380px', minWidth: 0 }}>
           <Typography variant="body2" sx={{ color: C.text.secondary, mb: 1, fontWeight: 600 }}>
             Distribución Semáforo por Región
@@ -307,15 +313,16 @@ const ComplianceBarChart = ({ data }) => {
                 <YAxis tick={{ fontSize: 11, fill: C.text.secondary }} width={38} />
                 <ReTooltip content={<CustomTooltip />} />
                 <Legend wrapperStyle={{ fontSize: 11, paddingTop: 4 }} />
-                <Bar dataKey="verde"    name="Verde (Cumple)"       stackId="a" fill={CHART_COLORS.green} />
-                <Bar dataKey="amarillo" name="Amarillo (Pendiente)" stackId="a" fill={CHART_COLORS.yellow} />
-                <Bar dataKey="rojo"     name="Rojo (Incumple)"      stackId="a" fill={CHART_COLORS.red} radius={[4,4,0,0]} />
+                {/* AQUÍ ESTÁ EL CAMBIO: Usando los colores de semáforo */}
+                <Bar dataKey="verde"    name="Verde (Cumple)"       stackId="a" fill={CHART_COLORS.semaforo.verde} />
+                <Bar dataKey="amarillo" name="Amarillo (Pendiente)" stackId="a" fill={CHART_COLORS.semaforo.amarillo} />
+                <Bar dataKey="rojo"     name="Rojo (Incumple)"      stackId="a" fill={CHART_COLORS.semaforo.rojo} radius={[4,4,0,0]} />
               </BarChart>
             </ResponsiveContainer>
           </Box>
         </Box>
 
-        {/* Barras horizontales % cumplimiento */}
+        {/* Barras horizontales % cumplimiento - ESTA PARTE CONSERVA LOS COLORES ORIGINALES */}
         <Box sx={{ flex: '1 1 300px', minWidth: 0 }}>
           <Typography variant="body2" sx={{ color: C.text.secondary, mb: 1, fontWeight: 600 }}>
             % Cumplimiento por Región
