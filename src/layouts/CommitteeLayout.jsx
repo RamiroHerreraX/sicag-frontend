@@ -107,13 +107,6 @@ const CommitteeLayout = () => {
       path: '/committee/alerts',
       description: 'Alertas y notificaciones',
       badge: 3 // Alertas no leídas
-    },
-    { 
-      text: 'PERFIL', 
-      icon: <PersonIcon />, 
-      path: '/committee/profile',
-      description: 'Mi perfil y configuración',
-      badge: 0
     },/*
     { 
       text: 'AUDITORÍA', 
@@ -129,15 +122,13 @@ const CommitteeLayout = () => {
     description: 'Asignar revisiones (Solo Secretario)',
     badge: 5,
     highlight: user?.subRole === 'secretario',
-  },*/ /*
-  { 
-    text: 'VOTAR', 
-    icon: <HowToVoteIcon />, 
-    path: '/committee/voting',
-    description: 'Votación colegiada',
-    badge: 3,
-    highlight: ['presidente', 'vocal'].includes(user?.subRole),
-  },*/
+  },*/ { 
+      text: 'VOTACIÓN',  // DESCOMENTADO
+      icon: <HowToVoteIcon />, 
+      path: '/committee/voting',
+      description: 'Votación colegiada',
+      badge: 2, // Certificaciones listas para votar
+    },
   { 
     text: 'REPOSITORIO', 
     icon: <FolderIcon />, 
