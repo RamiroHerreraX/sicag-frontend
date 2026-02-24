@@ -21,10 +21,8 @@ import {
 import {
   Domain as DomainIcon,
   Settings as SettingsIcon,
-  Download as DownloadIcon,
   Visibility as VisibilityIcon,
   CheckCircle as CheckCircleIcon,
-  Refresh as RefreshIcon,
   Person as PersonIcon,
   CheckCircleOutline as CheckCircleOutlineIcon,
   ErrorOutline as ErrorOutlineIcon,

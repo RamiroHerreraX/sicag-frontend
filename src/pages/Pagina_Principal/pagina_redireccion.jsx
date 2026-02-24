@@ -36,7 +36,6 @@ import Grid from "@mui/material/Grid";
 import {
   Menu as MenuIcon,
   Dashboard as DashboardIcon,
-  Description as TramitesIcon,
   Help as HelpIcon,
   ContactMail as ContactIcon,
   Facebook as FacebookIcon,
@@ -49,7 +48,6 @@ import {
   ChevronRight as ChevronRightIcon,
   Close as CloseIcon,
   Login as LoginIcon,
-  PersonAdd as PersonAddIcon,
   School as SchoolIcon,
   Assessment as AssessmentIcon,
   Verified as VerifiedIcon,
@@ -59,16 +57,14 @@ import {
   Flag as FlagIcon,
   Description as DescriptionIcon,
   Info as InfoIcon,
-  Notifications as NotificationsIcon,
-  AccountCircle as AccountCircleIcon,
   Star as StarIcon,
-  ExpandMore as ExpandMoreIcon,
   TrendingUp as TrendingUpIcon,
   Shield as ShieldIcon,
 } from "@mui/icons-material";
 import Imagen2 from "../../assets/Imagen_2.png";
 
 // Paleta de colores mejorada - más luminosa en secciones intermedias
+
 const colors = {
   primary: {
     main: "#133B6B",
