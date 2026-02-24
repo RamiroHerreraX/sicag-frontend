@@ -39,7 +39,7 @@ const CertificationReview = () => {
   const [tabValue, setTabValue] = useState(0);
   const [notification, setNotification] = useState({ show: false, type: '', message: '' });
   
-  // Datos mock de la certificación con documentos actualizados
+  // Datos de la certificación ACTUALIZADOS con los 3 documentos reales
   const certification = {
     id: id || '1',
     type: 'PATENTE ADUANAL',
@@ -62,77 +62,77 @@ const CertificationReview = () => {
       level: 'Avanzado'
     },
     certificationNumber: 'PA-2026-00145',
+    // ACTUALIZADO: Solo los 3 documentos que tienen PDF real
     documents: [
       { 
         id: 1, 
         name: 'CURSO DE ÉTICA PROFESIONAL Y CÓDIGO DE CONDUCTA', 
+        displayName: 'Curso de Ética Profesional',
         type: 'PDF', 
         size: '1.2 MB', 
         status: 'completo', 
-        uploadDate: '15/06/2028' 
+        uploadDate: '20/02/2026',
+        dueDate: '15/06/2028'
       },
       { 
         id: 2, 
         name: 'DIPLOMADO EN COMERCIO EXTERIOR Y LEGISLACIÓN ADUANERA', 
-        type: 'JPG', 
-        size: '0.8 MB', 
+        displayName: 'Diplomado en Comercio Exterior',
+        type: 'PDF', 
+        size: '2.4 MB', 
         status: 'completo', 
-        uploadDate: '10/02/2028' 
+        uploadDate: '15/02/2026',
+        dueDate: '10/02/2028'
       },
       { 
         id: 3, 
-        name: 'CURSO DE ÉTICA PROFESIONAL Y CÓDIGO DE CONDUCTA', 
-        type: 'PDF', 
-        size: '0.9 MB', 
-        status: 'completo', 
-        uploadDate: '15/06/2028' 
-      },
-      { 
-        id: 4, 
-        name: 'DIPLOMADO EN COMERCIO EXTERIOR Y LEGISLACIÓN ADUANERA', 
+        name: 'MATERIA DEL IVA - 60 HORAS', 
+        displayName: 'Materia del IVA',
         type: 'PDF', 
         size: '2.1 MB', 
         status: 'completo', 
-        uploadDate: '10/02/2028' 
-      },
-      { 
-        id: 5, 
-        name: 'DIPLOMADO EN COMERCIO EXTERIOR Y LEGISLACIÓN ADUANERA', 
-        type: 'PDF', 
-        size: '1.5 MB', 
-        status: 'completo', 
-        uploadDate: '15/02/2028' 
-      },
+        uploadDate: '12/02/2026',
+        dueDate: '12/02/2028',
+        institution: 'Universidad de Guanajuato',
+        location: 'Calle Abasolo 235'
+      }
     ],
     validationHistory: [
       { 
-        date: '05/12/2025 14:30', 
-        action: 'Solicitud enviada', 
+        date: '12/02/2026 15:45', 
+        action: 'Documento "Materia del IVA" cargado', 
         user: 'Luis Rodríguez',
         role: 'Agente Aduanal',
         type: 'submission'
       },
       { 
-        date: '06/12/2025 09:15', 
-        action: 'Asignada para revisión técnica', 
+        date: '15/02/2026 14:30', 
+        action: 'Documento "Diplomado Comercio Exterior" cargado', 
+        user: 'Luis Rodríguez',
+        role: 'Agente Aduanal',
+        type: 'submission'
+      },
+      { 
+        date: '20/02/2026 10:30', 
+        action: 'Documento "Curso de Ética" cargado', 
+        user: 'Luis Rodríguez',
+        role: 'Agente Aduanal',
+        type: 'submission'
+      },
+      { 
+        date: '24/02/2026 09:15', 
+        action: 'Certificación asignada para revisión técnica', 
         user: 'Sistema',
         role: 'Automático',
         type: 'assignment'
-      },
-      { 
-        date: '06/12/2025 10:00', 
-        action: 'Revisión técnica iniciada', 
-        user: 'Carlos Ruiz',
-        role: 'Secretario Técnico',
-        type: 'technical_start'
-      },
+      }
     ]
   };
 
   const steps = [
     {
       label: 'Revisión Técnica',
-      description: 'El Secretario Técnico evalúa la documentación',
+      description: 'El Comité evalúa la documentación',
       status: 'in_progress',
       icon: <DescriptionIcon />
     },
@@ -274,7 +274,7 @@ const CertificationReview = () => {
         </Alert>
       )}
 
-      {/* Contenido Principal - Solo Documentación */}
+      {/* Contenido Principal - Documentación */}
       <Box sx={{ flex: 1, overflow: 'hidden', p: 2 }}>
         <Paper sx={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           {/* Tabs de contenido */}
@@ -301,11 +301,16 @@ const CertificationReview = () => {
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <Box>
                             <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                              {doc.name}
+                              {doc.displayName || doc.name}
                             </Typography>
                             <Typography variant="caption" sx={{ color: '#64748b' }}>
-                              {doc.type} • {doc.size} • {doc.uploadDate}
+                              {doc.type} • {doc.size} • Subido: {doc.uploadDate} • Vence: {doc.dueDate}
                             </Typography>
+                            {doc.id === 3 && (
+                              <Typography variant="caption" sx={{ color: '#64748b', display: 'block' }}>
+                                {doc.institution} • {doc.location}
+                              </Typography>
+                            )}
                           </Box>
                           <Stack direction="row" spacing={0.5}>
                             <Tooltip title="Ver documento">
@@ -341,8 +346,7 @@ const CertificationReview = () => {
                       <TimelineDot sx={{ 
                         bgcolor: 
                           item.type === 'submission' ? '#4caf50' :
-                          item.type === 'assignment' ? '#ff9800' :
-                          item.type === 'technical_start' ? '#2196f3' : '#9c27b0'
+                          item.type === 'assignment' ? '#ff9800' : '#2196f3'
                       }} />
                       {index < certification.validationHistory.length - 1 && <TimelineConnector />}
                     </TimelineSeparator>
@@ -426,6 +430,26 @@ const CertificationReview = () => {
                       <Typography variant="body2">{certification.applicant.rfc}</Typography>
                     </Grid>
                   </Grid>
+                </Card>
+                
+                <Card variant="outlined" sx={{ p: 2 }}>
+                  <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600, color: '#1a237e' }}>
+                    Documentos Adjuntos
+                  </Typography>
+                  <Typography variant="body2">
+                    {certification.documents.length} documentos • Todos en formato PDF
+                  </Typography>
+                  <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+                    {certification.documents.map(doc => (
+                      <Chip 
+                        key={doc.id}
+                        label={`Doc ${doc.id}`}
+                        size="small"
+                        color="primary"
+                        variant="outlined"
+                      />
+                    ))}
+                  </Stack>
                 </Card>
               </Stack>
             )}

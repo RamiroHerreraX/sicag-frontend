@@ -71,7 +71,7 @@ const CollegiateVoting = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  // Datos mock de certificaciones para votar
+  // Datos mock de certificaciones para votar - ACTUALIZADO con el nuevo curso
   const [votingItems, setVotingItems] = useState([
     {
       id: 1,
@@ -102,6 +102,21 @@ const CollegiateVoting = () => {
         { memberId: 3, status: 'reject' }
       ],
       status: 'voting'
+    },
+    {
+      id: 3,
+      certification: 'CUR-IVA-2026-001',
+      type: 'MATERIA DEL IVA',
+      displayName: 'MATERIA DEL IVA',
+      applicant: 'Luis Rodríguez',
+      pdfPath: 'https://drive.google.com/file/d/1iRDbcm_fvo02szzzrt8JCKPmkzg2IOn5/view?usp=sharing',
+      technicalReview: 'Documento cargado el 12/02/2026, Universidad de Guanajuato',
+      votes: [
+        { memberId: 1, status: null },
+        { memberId: 2, status: null },
+        { memberId: 3, status: null }
+      ],
+      status: 'pending'
     }
   ]);
 
@@ -245,6 +260,11 @@ const CollegiateVoting = () => {
               {/* Título compacto */}
               <Box sx={{ p: 1.5, borderBottom: 1, borderColor: 'divider', bgcolor: '#f8f9fa' }}>
                 <Typography variant="subtitle1" fontWeight="bold" noWrap>{selectedItem.displayName}</Typography>
+                {selectedItem.id === 3 && (
+                  <Typography variant="caption" color="text.secondary">
+                    
+                  </Typography>
+                )}
               </Box>
 
               {/* Visor PDF - Tamaño completo */}
@@ -410,6 +430,11 @@ const CertificationList = ({ items, selectedItem, onSelect }) => (
           <Typography variant="caption" display="block" color="text.secondary" noWrap>
             {item.certification}
           </Typography>
+          {item.id === 3 && (
+            <Typography variant="caption" display="block" color="text.secondary" sx={{ fontSize: '0.6rem' }}>
+              Universidad de Guanajuato • 60h
+            </Typography>
+          )}
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
             <Stack direction="row" spacing={0.5}>
               {item.votes.map((vote, idx) => {

@@ -331,43 +331,8 @@ const CommitteeDashboard = () => {
           </Box>
           
           <Stack direction="row" spacing={1} alignItems="center">
-            <FormControlLabel
-              control={
-                <Switch
-                  size="small"
-                  checked={autoRefresh}
-                  onChange={(e) => setAutoRefresh(e.target.checked)}
-                  sx={{
-                    '& .MuiSwitch-switchBase.Mui-checked': {
-                      color: colors.secondary.main,
-                    },
-                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                      backgroundColor: colors.secondary.light,
-                    },
-                  }}
-                />
-              }
-              label={
-                <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                  Auto-refresh
-                </Typography>
-              }
-            />
-            <Button
-              variant="outlined"
-              size="small"
-              startIcon={<DownloadIcon />}
-              sx={{
-                borderColor: colors.primary.light,
-                color: colors.primary.main,
-                '&:hover': {
-                  borderColor: colors.primary.main,
-                  bgcolor: 'rgba(19, 59, 107, 0.04)',
-                }
-              }}
-            >
-              Exportar
-            </Button>
+            
+            
             <Button
               variant="contained"
               size="small"

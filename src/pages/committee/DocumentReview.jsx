@@ -133,184 +133,17 @@ const DocumentReview = () => {
     security: { checked: false, comment: '' }
   });
 
-  // Datos del documento según el certId - Usando los PDFs reales de Google Drive
-  const getDocumentData = () => {
-    // Curso de Ética (certId = 1)
-    if (certId === '1') {
-      return {
-        id: '1',
-        name: 'Curso_Etica_Profesional.pdf',
-        displayName: 'CURSO DE ÉTICA PROFESIONAL Y CÓDIGO DE CONDUCTA',
-        type: 'PDF',
-        size: '1.8 MB',
-        uploadDate: '20/02/2026 10:30',
-        uploadBy: { 
-          name: 'Luis Rodríguez', 
-          avatar: 'LR', 
-          role: 'Agente Aduanal',
-          region: 'Norte',
-          level: 'Avanzado'
-        },
-        dueDate: '15/06/2028',
-        validationDate: '24/02/2026',
-        status: 'PENDIENTE DE REVISIÓN',
-        priority: 'ALTA',
-        hash: 'a1b2c3d4e5f6789012345678901234567890123456789012345678901234',
-        pages: 15,
-        security: 'Nivel Alto',
-        version: '1.0',
-        previousVersions: 0,
-        pdfPath: 'https://drive.google.com/file/d/1Pocj7S4sMPGJuE8_pzVUELsYetlfmEB5/view?usp=sharing',
-        relatedCertification: {
-          id: '1',
-          type: 'CURSO DE ÉTICA',
-          code: 'CUR-ET-2026-001',
-          applicant: 'Luis Rodríguez Martínez',
-          region: 'Norte',
-          status: 'En Revisión',
-          totalDocs: 1,
-          reviewedDocs: 0,
-          complianceScore: 85
-        },
-        metadata: {
-          creationDate: '20/02/2026 09:15',
-          lastModified: '20/02/2026 10:30',
-          author: 'CAAAREM Educación',
-          software: 'Adobe Acrobat Pro DC',
-          pageSize: 'A4',
-          dpi: 300,
-          colorProfile: 'CMYK',
-          encryption: 'AES-256'
-        },
-        validationHistory: [
-          { 
-            id: 1,
-            date: '20/02/2026 10:30', 
-            user: { name: 'Luis Rodríguez', role: 'Agente Aduanal' }, 
-            action: 'Documento cargado', 
-            status: 'info',
-            comments: 'Carga inicial del documento'
-          },
-          { 
-            id: 2,
-            date: '24/02/2026 09:15', 
-            user: { name: 'Sistema', role: 'Automático' }, 
-            action: 'Asignado para revisión', 
-            status: 'info',
-            comments: 'Asignado al comité'
-          },
-        ],
-        commonIssues: [
-          { id: 1, issue: 'Firma ilegible o ausente', frequency: 'Alta', category: 'Formalidad' },
-          { id: 2, issue: 'Fechas inconsistentes', frequency: 'Media', category: 'Consistencia' },
-          { id: 3, issue: 'Datos personales incompletos', frequency: 'Alta', category: 'Completitud' },
-        ],
-        requirements: [
-          { id: 1, requirement: 'Constancia oficial del curso', mandatory: true, met: true },
-          { id: 2, requirement: 'Firma del participante', mandatory: true, met: true },
-          { id: 3, requirement: 'Fecha de emisión vigente', mandatory: true, met: true },
-          { id: 4, requirement: 'Horas de duración (20 hrs)', mandatory: true, met: true },
-          { id: 5, requirement: 'Sello de la institución', mandatory: false, met: true },
-        ]
-      };
-    }
-    
-    // Diplomado (certId = 2)
-    if (certId === '2') {
-      return {
-        id: '2',
-        name: 'Diplomado_Comercio_Exterior.pdf',
-        displayName: 'DIPLOMADO EN COMERCIO EXTERIOR Y LEGISLACIÓN ADUANERA',
-        type: 'PDF',
-        size: '2.4 MB',
-        uploadDate: '15/02/2026 14:30',
-        uploadBy: { 
-          name: 'Luis Rodríguez', 
-          avatar: 'LR', 
-          role: 'Agente Aduanal',
-          region: 'Norte',
-          level: 'Avanzado'
-        },
-        dueDate: '10/02/2028',
-        validationDate: '24/02/2026',
-        status: 'PENDIENTE DE REVISIÓN',
-        priority: 'ALTA',
-        hash: 'b2c3d4e5f67890123456789012345678901234567890123456789012345',
-        pages: 25,
-        security: 'Nivel Alto',
-        version: '1.0',
-        previousVersions: 0,
-        pdfPath: 'https://drive.google.com/file/d/1_LeeJr9dDka0hTRdDXJItZdduuHip8XT/view?usp=sharing',
-        relatedCertification: {
-          id: '2',
-          type: 'DIPLOMADO',
-          code: 'DIP-CE-2026-001',
-          applicant: 'Luis Rodríguez Martínez',
-          region: 'Norte',
-          status: 'En Revisión',
-          totalDocs: 1,
-          reviewedDocs: 0,
-          complianceScore: 85
-        },
-        metadata: {
-          creationDate: '15/02/2026 13:15',
-          lastModified: '15/02/2026 14:30',
-          author: 'CAAAREM Comercio Exterior',
-          software: 'Adobe Acrobat Pro DC',
-          pageSize: 'A4',
-          dpi: 300,
-          colorProfile: 'CMYK',
-          encryption: 'AES-256'
-        },
-        validationHistory: [
-          { 
-            id: 1,
-            date: '15/02/2026 14:30', 
-            user: { name: 'Luis Rodríguez', role: 'Agente Aduanal' }, 
-            action: 'Documento cargado', 
-            status: 'info',
-            comments: 'Carga inicial del documento'
-          },
-          { 
-            id: 2,
-            date: '24/02/2026 09:15', 
-            user: { name: 'Sistema', role: 'Automático' }, 
-            action: 'Asignado para revisión', 
-            status: 'info',
-            comments: 'Asignado al comité'
-          },
-        ],
-        commonIssues: [
-          { id: 1, issue: 'Firma ilegible o ausente', frequency: 'Alta', category: 'Formalidad' },
-          { id: 2, issue: 'Fechas inconsistentes', frequency: 'Media', category: 'Consistencia' },
-          { id: 3, issue: 'Datos personales incompletos', frequency: 'Alta', category: 'Completitud' },
-        ],
-        requirements: [
-          { id: 1, requirement: 'Constancia oficial del diplomado', mandatory: true, met: true },
-          { id: 2, requirement: 'Firma del participante', mandatory: true, met: true },
-          { id: 3, requirement: 'Fecha de emisión vigente', mandatory: true, met: true },
-          { id: 4, requirement: 'Horas de duración (80 hrs)', mandatory: true, met: true },
-          { id: 5, requirement: 'Sello de la institución', mandatory: false, met: true },
-        ]
-      };
-    }
-    
-    // Declaraciones (para otros certId)
-    const declarations = {
-      '3': { title: 'Declaración Artículo 95', desc: 'Principios Rectores del Cumplimiento Aduanero' },
-      '4': { title: 'Declaración Artículo 96', desc: 'Conocimiento del Mandante y Debida Diligencia' },
-      '5': { title: 'Declaración Artículo 97', desc: 'Materialidad' },
-      '6': { title: 'Declaración Artículo 98', desc: 'Reglas Mínimas de Seguridad' },
-      '7': { title: 'Declaración de Conflicto de Interés', desc: 'Conflicto de Interés e Independencia Profesional' }
-    };
-    
-    return {
-      id: certId,
-      name: 'Declaracion.pdf',
-      displayName: declarations[certId]?.title || 'Documento',
-      type: 'Declaración',
-      size: '0.1 MB',
-      uploadDate: '01/02/2026 09:00',
+  // Base de datos de documentos para Luis Rodríguez
+  // Usamos la combinación de certId y docId para identificar cada documento
+  const documentsDatabase = {
+    // Certificación 1 (PATENTE ADUANAL) - Documento 1: Curso de Ética
+    '1-1': {
+      id: '1',
+      name: 'Curso_Etica_Profesional.pdf',
+      displayName: 'CURSO DE ÉTICA PROFESIONAL Y CÓDIGO DE CONDUCTA',
+      type: 'PDF',
+      size: '1.2 MB',
+      uploadDate: '20/02/2026 10:30',
       uploadBy: { 
         name: 'Luis Rodríguez', 
         avatar: 'LR', 
@@ -318,61 +151,229 @@ const DocumentReview = () => {
         region: 'Norte',
         level: 'Avanzado'
       },
-      dueDate: '01/02/2027',
+      dueDate: '15/06/2028',
       validationDate: '24/02/2026',
       status: 'PENDIENTE DE REVISIÓN',
-      priority: 'MEDIA',
-      hash: 'declaracion-hash-123456',
-      pages: 1,
-      security: 'Nivel Básico',
+      priority: 'ALTA',
+      hash: 'a1b2c3d4e5f6789012345678901234567890123456789012345678901234',
+      pages: 15,
+      security: 'Nivel Alto',
       version: '1.0',
       previousVersions: 0,
-      pdfPath: null,
+      pdfPath: 'https://drive.google.com/file/d/1Pocj7S4sMPGJuE8_pzVUELsYetlfmEB5/view?usp=sharing',
       relatedCertification: {
-        id: certId,
-        type: 'DECLARACIÓN',
-        code: `DEC-${certId}-2026-001`,
+        id: '1',
+        type: 'CURSO DE ÉTICA',
+        code: 'CUR-ET-2026-001',
         applicant: 'Luis Rodríguez Martínez',
-        region: 'Norte',
-        status: 'En Revisión',
-        totalDocs: 1,
-        reviewedDocs: 0,
-        complianceScore: 85
+        region: 'Norte'
       },
       metadata: {
-        creationDate: '01/02/2026 08:45',
-        lastModified: '01/02/2026 09:00',
-        author: 'Luis Rodríguez',
-        software: 'Sistema SICAG',
+        creationDate: '20/02/2026 09:15',
+        lastModified: '20/02/2026 10:30',
+        author: 'CAAAREM Educación',
+        software: 'Adobe Acrobat Pro DC',
         pageSize: 'A4',
-        dpi: 150,
-        colorProfile: 'RGB',
-        encryption: 'Ninguna'
+        dpi: 300,
+        colorProfile: 'CMYK',
+        encryption: 'AES-256'
       },
       validationHistory: [
         { 
           id: 1,
-          date: '01/02/2026 09:00', 
+          date: '20/02/2026 10:30', 
           user: { name: 'Luis Rodríguez', role: 'Agente Aduanal' }, 
-          action: 'Declaración registrada', 
+          action: 'Documento cargado', 
           status: 'info',
-          comments: 'Registro de declaración de buena fe'
-        },
+          comments: 'Carga inicial del documento'
+        }
       ],
       commonIssues: [
-        { id: 1, issue: 'Información incompleta', frequency: 'Media', category: 'Completitud' },
-        { id: 2, issue: 'Fechas incorrectas', frequency: 'Baja', category: 'Consistencia' },
+        { id: 1, issue: 'Firma ilegible o ausente', frequency: 'Alta', category: 'Formalidad' },
+        { id: 2, issue: 'Fechas inconsistentes', frequency: 'Media', category: 'Consistencia' }
       ],
       requirements: [
-        { id: 1, requirement: 'Declaración firmada', mandatory: true, met: true },
-        { id: 2, requirement: 'Fecha de declaración', mandatory: true, met: true },
+        { id: 1, requirement: 'Constancia oficial del curso', mandatory: true, met: true },
+        { id: 2, requirement: 'Firma del participante', mandatory: true, met: true },
+        { id: 3, requirement: 'Fecha de emisión vigente', mandatory: true, met: true },
+      ]
+    },
+    // Certificación 1 - Documento 2: Diplomado
+    '1-2': {
+      id: '2',
+      name: 'Diplomado_Comercio_Exterior.pdf',
+      displayName: 'DIPLOMADO EN COMERCIO EXTERIOR Y LEGISLACIÓN ADUANERA',
+      type: 'PDF',
+      size: '2.4 MB',
+      uploadDate: '15/02/2026 14:30',
+      uploadBy: { 
+        name: 'Luis Rodríguez', 
+        avatar: 'LR', 
+        role: 'Agente Aduanal',
+        region: 'Norte',
+        level: 'Avanzado'
+      },
+      dueDate: '10/02/2028',
+      validationDate: '24/02/2026',
+      status: 'PENDIENTE DE REVISIÓN',
+      priority: 'ALTA',
+      hash: 'b2c3d4e5f67890123456789012345678901234567890123456789012345',
+      pages: 25,
+      security: 'Nivel Alto',
+      version: '1.0',
+      previousVersions: 0,
+      pdfPath: 'https://drive.google.com/file/d/1_LeeJr9dDka0hTRdDXJItZdduuHip8XT/view?usp=sharing',
+      relatedCertification: {
+        id: '1',
+        type: 'DIPLOMADO',
+        code: 'DIP-CE-2026-001',
+        applicant: 'Luis Rodríguez Martínez',
+        region: 'Norte'
+      },
+      metadata: {
+        creationDate: '15/02/2026 13:15',
+        lastModified: '15/02/2026 14:30',
+        author: 'CAAAREM Comercio Exterior',
+        software: 'Adobe Acrobat Pro DC',
+        pageSize: 'A4',
+        dpi: 300,
+        colorProfile: 'CMYK',
+        encryption: 'AES-256'
+      },
+      validationHistory: [
+        { 
+          id: 1,
+          date: '15/02/2026 14:30', 
+          user: { name: 'Luis Rodríguez', role: 'Agente Aduanal' }, 
+          action: 'Documento cargado', 
+          status: 'info',
+          comments: 'Carga inicial del documento'
+        }
       ],
-      description: declarations[certId]?.desc || 'Declaración de buena fe'
+      commonIssues: [
+        { id: 1, issue: 'Firma ilegible o ausente', frequency: 'Alta', category: 'Formalidad' },
+        { id: 2, issue: 'Fechas inconsistentes', frequency: 'Media', category: 'Consistencia' }
+      ],
+      requirements: [
+        { id: 1, requirement: 'Constancia oficial del diplomado', mandatory: true, met: true },
+        { id: 2, requirement: 'Firma del participante', mandatory: true, met: true },
+        { id: 3, requirement: 'Fecha de emisión vigente', mandatory: true, met: true }
+      ]
+    },
+    // Certificación 1 - Documento 3: Materia del IVA
+    '1-3': {
+      id: '3',
+      name: 'Materia_del_IVA.pdf',
+      displayName: 'MATERIA DEL IVA - 60 HORAS',
+      type: 'PDF',
+      size: '2.1 MB',
+      uploadDate: '12/02/2026 15:45',
+      uploadBy: { 
+        name: 'Luis Rodríguez', 
+        avatar: 'LR', 
+        role: 'Agente Aduanal',
+        region: 'Norte',
+        level: 'Avanzado'
+      },
+      dueDate: '12/02/2028',
+      validationDate: '24/02/2026',
+      status: 'PENDIENTE DE REVISIÓN',
+      priority: 'ALTA',
+      hash: 'c3d4e5f67890123456789012345678901234567890123456789012345678',
+      pages: 18,
+      security: 'Nivel Alto',
+      version: '1.0',
+      previousVersions: 0,
+      pdfPath: 'https://drive.google.com/file/d/1iRDbcm_fvo02szzzrt8JCKPmkzg2IOn5/view?usp=sharing',
+      institution: 'Universidad de Guanajuato',
+      location: 'Calle Abasolo 235',
+      hours: 60,
+      relatedCertification: {
+        id: '1',
+        type: 'CURSO DE IVA',
+        code: 'CUR-IVA-2026-001',
+        applicant: 'Luis Rodríguez Martínez',
+        region: 'Norte'
+      },
+      metadata: {
+        creationDate: '12/02/2026 14:30',
+        lastModified: '12/02/2026 15:45',
+        author: 'Universidad de Guanajuato',
+        software: 'Adobe Acrobat Pro DC',
+        pageSize: 'A4',
+        dpi: 300,
+        colorProfile: 'CMYK',
+        encryption: 'AES-256'
+      },
+      validationHistory: [
+        { 
+          id: 1,
+          date: '12/02/2026 15:45', 
+          user: { name: 'Luis Rodríguez', role: 'Agente Aduanal' }, 
+          action: 'Documento cargado', 
+          status: 'info',
+          comments: 'Carga inicial del documento - Universidad de Guanajuato'
+        }
+      ],
+      commonIssues: [
+        { id: 1, issue: 'Firma ilegible o ausente', frequency: 'Alta', category: 'Formalidad' },
+        { id: 2, issue: 'Fechas inconsistentes', frequency: 'Media', category: 'Consistencia' }
+      ],
+      requirements: [
+        { id: 1, requirement: 'Constancia oficial del curso', mandatory: true, met: true },
+        { id: 2, requirement: 'Firma del participante', mandatory: true, met: true },
+        { id: 3, requirement: 'Fecha de emisión vigente', mandatory: true, met: true },
+        { id: 5, requirement: 'Sello de la institución', mandatory: true, met: true }
+      ]
+    }
+  };
+
+  // Función para obtener el documento basado en certId y docId
+  const getDocumentData = () => {
+    const key = `${certId}-${docId}`;
+    
+    // Buscar en la base de datos
+    if (documentsDatabase[key]) {
+      return documentsDatabase[key];
+    }
+    
+    // Si no se encuentra con la combinación específica, intentar con solo certId
+    // Esto es para mantener compatibilidad con llamadas anteriores
+    if (certId === '1' && docId === '1') return documentsDatabase['1-1'];
+    if (certId === '1' && docId === '2') return documentsDatabase['1-2'];
+    if (certId === '1' && docId === '3') return documentsDatabase['1-3'];
+    if (certId === '1') return documentsDatabase['1-1'];
+    
+    // Para otros certId que no sean de Luis Rodríguez, devolver un documento por defecto
+    return {
+      id: docId || '1',
+      name: 'Documento.pdf',
+      displayName: 'Documento de Certificación',
+      type: 'PDF',
+      size: '1.0 MB',
+      uploadDate: '01/01/2026 00:00',
+      uploadBy: { 
+        name: 'Usuario', 
+        avatar: 'U', 
+        role: 'Usuario',
+        region: 'Región',
+        level: 'Básico'
+      },
+      dueDate: '01/01/2027',
+      status: 'PENDIENTE DE REVISIÓN',
+      priority: 'MEDIA',
+      pages: 10,
+      pdfPath: 'https://drive.google.com/file/d/1Pocj7S4sMPGJuE8_pzVUELsYetlfmEB5/view?usp=sharing',
+      relatedCertification: {
+        code: 'CERT-001',
+        type: 'CERTIFICACIÓN'
+      },
+      requirements: []
     };
   };
 
   const document = getDocumentData();
-  const isPdfDocument = certId === '1' || certId === '2';
+  const isPdfDocument = true; // Todos los documentos de Luis Rodríguez son PDFs
 
   // Manejo del zoom con slider
   const handleZoomChange = (event, newValue) => {
@@ -406,16 +407,15 @@ const DocumentReview = () => {
   };
 
   const confirmEvaluation = () => {
-    // Simular envío
     console.log('Evaluación enviada:', { 
       approvalStatus, 
       comments, 
       validationChecks,
+      documentId: docId,
       timestamp: new Date().toISOString()
     });
     setShowValidationDialog(false);
     
-    // Mostrar confirmación
     setTimeout(() => {
       navigate(`/committee/review/${certId}`);
     }, 1500);
@@ -519,6 +519,15 @@ const DocumentReview = () => {
                     sx={{ fontSize: '0.7rem' }}
                   />
                 </Box>
+                
+                {/* Información adicional para el curso de IVA (docId=3) */}
+                {docId === '3' && (
+                  <Box sx={{ mt: 0.5 }}>
+                    <Typography variant="caption" sx={{ color: '#64748b' }}>
+                      {document.institution} • {document.location} • {document.hours} horas
+                    </Typography>
+                  </Box>
+                )}
               </Box>
             </Box>
           </Grid>
@@ -530,7 +539,7 @@ const DocumentReview = () => {
                   Certificación:
                 </Typography>
                 <Typography variant="body2" sx={{ fontWeight: 600, color: '#1a237e' }}>
-                  {document.relatedCertification.code}
+                  {document.relatedCertification?.code || 'CUR-ET-2026-001'}
                 </Typography>
               </Box>
               
@@ -540,10 +549,9 @@ const DocumentReview = () => {
                   size="small"
                   startIcon={<DownloadIcon />}
                   component="a"
-                  href={document.pdfPath || '#'}
+                  href={document.pdfPath}
                   target="_blank"
                   rel="noopener noreferrer"
-                  disabled={!isPdfDocument}
                   sx={{ minWidth: 'auto', px: 1.5 }}
                 >
                   Descargar
@@ -795,267 +803,85 @@ const DocumentReview = () => {
                   p: 4,
                   minHeight: '100%'
                 }}>
-                  {isPdfDocument ? (
-                    // Visor de PDF real desde Google Drive
-                    <Paper 
-                      elevation={3}
-                      sx={{ 
-                        width: '100%',
-                        maxWidth: '1000px',
-                        minHeight: '700px',
-                        bgcolor: 'white',
-                        borderRadius: 2,
-                        overflow: 'hidden',
-                        transform: `rotate(${rotation}deg) scale(${zoom/100})`,
-                        transition: 'transform 0.3s ease',
-                        transformOrigin: 'center center'
-                      }}
-                    >
-                      <iframe
-                        src={getGoogleDrivePreviewUrl(document.pdfPath)}
-                        title={document.displayName}
-                        width="100%"
-                        height="700px"
-                        style={{ border: 'none' }}
-                      />
-                    </Paper>
-                  ) : (
-                    // Simulación de documento para declaraciones
-                    <Paper 
-                      elevation={3}
-                      sx={{ 
-                        width: '100%',
-                        maxWidth: '800px',
-                        minHeight: '600px',
-                        bgcolor: 'white',
-                        borderRadius: 2,
-                        overflow: 'hidden',
-                        position: 'relative',
-                        transform: `rotate(${rotation}deg)`,
-                        transition: 'transform 0.3s ease',
-                        transformOrigin: 'center center'
-                      }}
-                    >
-                      {/* Encabezado del Documento */}
-                      <Box sx={{ 
-                        p: 3, 
-                        bgcolor: '#1a237e',
-                        color: 'white',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between'
-                      }}>
-                        <Box>
-                          <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                            {document.displayName}
-                          </Typography>
-                          <Typography variant="caption">
-                            {document.relatedCertification.code}
-                          </Typography>
-                        </Box>
-                        <Chip 
-                          label="DECLARACIÓN"
-                          size="small"
-                          sx={{ 
-                            bgcolor: 'white',
-                            color: '#1a237e',
-                            fontWeight: 700
-                          }}
-                        />
-                      </Box>
-                      
-                      {/* Contenido del Documento */}
-                      <Box sx={{ p: 4 }}>
-                        {/* Información del Solicitante */}
-                        <Grid container spacing={3} sx={{ mb: 4 }}>
-                          <Grid item xs={12}>
-                            <Typography variant="subtitle1" sx={{ 
-                              mb: 2, 
-                              color: '#2c3e50',
-                              fontWeight: 600,
-                              borderBottom: '2px solid #e0e0e0',
-                              pb: 1
-                            }}>
-                              DATOS DEL SOLICITANTE
-                            </Typography>
-                          </Grid>
-                          
-                          <Grid item xs={12} md={6}>
-                            <Box sx={{ mb: 2 }}>
-                              <Typography variant="caption" sx={{ color: '#64748b', display: 'block', mb: 0.5 }}>
-                                Nombre Completo
-                              </Typography>
-                              <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                                {document.uploadBy.name}
-                              </Typography>
-                            </Box>
-                            
-                            <Box sx={{ mb: 2 }}>
-                              <Typography variant="caption" sx={{ color: '#64748b', display: 'block', mb: 0.5 }}>
-                                Tipo de Usuario
-                              </Typography>
-                              <Typography variant="body1">
-                                {document.uploadBy.role}
-                              </Typography>
-                            </Box>
-                          </Grid>
-                          
-                          <Grid item xs={12} md={6}>
-                            <Box sx={{ mb: 2 }}>
-                              <Typography variant="caption" sx={{ color: '#64748b', display: 'block', mb: 0.5 }}>
-                                Región
-                              </Typography>
-                              <Typography variant="body1">
-                                {document.uploadBy.region}
-                              </Typography>
-                            </Box>
-                            
-                            <Box sx={{ mb: 2 }}>
-                              <Typography variant="caption" sx={{ color: '#64748b', display: 'block', mb: 0.5 }}>
-                                Nivel de Reconocimiento
-                              </Typography>
-                              <Chip 
-                                label={document.uploadBy.level}
-                                size="small"
-                                color="success"
-                                sx={{ fontWeight: 600 }}
-                              />
-                            </Box>
-                          </Grid>
-                        </Grid>
-                        
-                        {/* Sección de Declaración */}
-                        <Box sx={{ 
-                          mt: 8, 
-                          pt: 6, 
-                          borderTop: '2px solid #2c3e50'
-                        }}>
-                          <Typography variant="caption" sx={{ 
-                            color: '#64748b', 
-                            display: 'block', 
-                            mb: 2,
-                            fontWeight: 600
-                          }}>
-                            TEXTO DE LA DECLARACIÓN
-                          </Typography>
-                          <Typography variant="body2" paragraph sx={{ fontStyle: 'italic' }}>
-                            "Por medio de la presente, el suscrito manifiesta bajo protesta de decir verdad que ha cumplido 
-                            con todas las disposiciones aplicables durante el período correspondiente, actuando con 
-                            transparencia, legalidad y debida diligencia en el ejercicio de sus funciones como Agente Aduanal."
-                          </Typography>
-                          
-                          <Box sx={{ 
-                            mt: 4,
-                            p: 2,
-                            bgcolor: '#f8fafc',
-                            border: '1px solid #e2e8f0',
-                            borderRadius: 1
-                          }}>
-                            <Typography variant="caption" sx={{ color: '#64748b', display: 'block' }}>
-                              <strong>Descripción:</strong> {document.description}
-                            </Typography>
-                          </Box>
-                        </Box>
-                        
-                        {/* Fecha */}
-                        <Box sx={{ 
-                          mt: 4,
-                          display: 'flex',
-                          justifyContent: 'flex-end'
-                        }}>
-                          <Box sx={{ 
-                            p: 2,
-                            bgcolor: '#f8fafc',
-                            border: '1px solid #e2e8f0',
-                            borderRadius: 1,
-                            display: 'inline-block'
-                          }}>
-                            <Typography variant="caption" sx={{ color: '#64748b', display: 'block', mb: 0.5 }}>
-                              FECHA DE DECLARACIÓN
-                            </Typography>
-                            <Typography variant="body1" sx={{ fontWeight: 600, color: '#1a237e' }}>
-                              {document.uploadDate.split(' ')[0]}
-                            </Typography>
-                          </Box>
-                        </Box>
-                      </Box>
-                      
-                      {/* Pie de Página */}
-                      <Box sx={{ 
-                        p: 2, 
-                        bgcolor: '#f8fafc',
-                        borderTop: '1px solid #e2e8f0',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center'
-                      }}>
-                        <Typography variant="caption" sx={{ color: '#64748b' }}>
-                          Documento de declaración • Folio: {document.relatedCertification.code}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: '#64748b', fontFamily: 'monospace' }}>
-                          Hash: {document.hash.substring(0, 16)}...
-                        </Typography>
-                      </Box>
-                    </Paper>
-                  )}
+                  {/* Visor de PDF real desde Google Drive */}
+                  <Paper 
+                    elevation={3}
+                    sx={{ 
+                      width: '100%',
+                      maxWidth: '1000px',
+                      minHeight: '700px',
+                      bgcolor: 'white',
+                      borderRadius: 2,
+                      overflow: 'hidden',
+                      transform: `rotate(${rotation}deg) scale(${zoom/100})`,
+                      transition: 'transform 0.3s ease',
+                      transformOrigin: 'center center'
+                    }}
+                  >
+                    <iframe
+                      src={getGoogleDrivePreviewUrl(document.pdfPath)}
+                      title={document.displayName}
+                      width="100%"
+                      height="700px"
+                      style={{ border: 'none' }}
+                    />
+                  </Paper>
                   
-                  {/* Navegación de Páginas (solo para PDFs) */}
-                  {isPdfDocument && (
-                    <Stack 
-                      direction="row" 
-                      spacing={1} 
-                      sx={{ 
-                        mt: 3,
-                        p: 1.5,
-                        bgcolor: 'white',
-                        borderRadius: 2,
-                        boxShadow: 1
-                      }}
+                  {/* Navegación de Páginas */}
+                  <Stack 
+                    direction="row" 
+                    spacing={1} 
+                    sx={{ 
+                      mt: 3,
+                      p: 1.5,
+                      bgcolor: 'white',
+                      borderRadius: 2,
+                      boxShadow: 1
+                    }}
+                  >
+                    <Button 
+                      variant="outlined" 
+                      size="small"
+                      disabled
                     >
-                      <Button 
-                        variant="outlined" 
-                        size="small"
-                        disabled
-                      >
-                        ← Anterior
-                      </Button>
-                      
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                        {Array.from({ length: Math.min(document.pages, 6) }).map((_, idx) => (
+                      ← Anterior
+                    </Button>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                      {Array.from({ length: Math.min(document.pages, 6) }).map((_, idx) => (
+                        <Chip 
+                          key={idx}
+                          label={idx + 1}
+                          size="small"
+                          variant={idx === 0 ? 'filled' : 'outlined'}
+                          color="primary"
+                          onClick={() => {}}
+                          sx={{ cursor: 'pointer' }}
+                        />
+                      ))}
+                      {document.pages > 6 && (
+                        <>
+                          <Typography variant="caption" sx={{ color: '#64748b' }}>
+                            ...
+                          </Typography>
                           <Chip 
-                            key={idx}
-                            label={idx + 1}
+                            label={document.pages}
                             size="small"
-                            variant={idx === 0 ? 'filled' : 'outlined'}
-                            color="primary"
+                            variant="outlined"
                             onClick={() => {}}
                             sx={{ cursor: 'pointer' }}
                           />
-                        ))}
-                        {document.pages > 6 && (
-                          <>
-                            <Typography variant="caption" sx={{ color: '#64748b' }}>
-                              ...
-                            </Typography>
-                            <Chip 
-                              label={document.pages}
-                              size="small"
-                              variant="outlined"
-                              onClick={() => {}}
-                              sx={{ cursor: 'pointer' }}
-                            />
-                          </>
-                        )}
-                      </Box>
-                      
-                      <Button 
-                        variant="outlined" 
-                        size="small"
-                      >
-                        Siguiente →
-                      </Button>
-                    </Stack>
-                  )}
+                        </>
+                      )}
+                    </Box>
+                    
+                    <Button 
+                      variant="outlined" 
+                      size="small"
+                    >
+                      Siguiente →
+                    </Button>
+                  </Stack>
                 </Box>
               </motion.div>
             )}
@@ -1066,7 +892,7 @@ const DocumentReview = () => {
                 <Typography variant="subtitle1" sx={{ mb: 3, fontWeight: 600, color: '#2c3e50' }}>
                   {tabs[activeTab].label}
                 </Typography>
-                {/* Contenido de otras pestañas - se mantiene igual */}
+                {/* Contenido de otras pestañas */}
                 {activeTab === 1 && (
                   <Box>
                     <Typography variant="body2" color="text.secondary">
@@ -1093,7 +919,7 @@ const DocumentReview = () => {
           </Box>
         </Paper>
 
-        {/* Panel Derecho - Evaluación (40%) - Se mantiene exactamente igual */}
+        {/* Panel Derecho - Evaluación (40%) */}
         <Paper 
           elevation={1}
           sx={{ 
@@ -1115,7 +941,7 @@ const DocumentReview = () => {
               <GavelIcon /> EVALUACIÓN TÉCNICA
             </Typography>
             <Typography variant="caption" sx={{ opacity: 0.9 }}>
-              Dictamen individual • {document.relatedCertification.type}
+              Dictamen individual • {document.relatedCertification?.type || 'CURSO'}
             </Typography>
           </Box>
 
@@ -1210,7 +1036,7 @@ const DocumentReview = () => {
               </Typography>
               
               <List dense sx={{ bgcolor: '#f8fafc', borderRadius: 1, p: 1 }}>
-                {document.requirements.map((req) => (
+                {document.requirements && document.requirements.map((req) => (
                   <ListItem 
                     key={req.id}
                     sx={{ 
@@ -1443,7 +1269,7 @@ const DocumentReview = () => {
                     Comentarios comunes:
                   </Typography>
                   <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                    {document.commonIssues.slice(0, 4).map((issue) => (
+                    {document.commonIssues && document.commonIssues.slice(0, 4).map((issue) => (
                       <Chip
                         key={issue.id}
                         label={issue.issue}

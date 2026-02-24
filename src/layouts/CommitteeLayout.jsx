@@ -87,7 +87,7 @@ const CommitteeLayout = () => {
   // MENÚ PRINCIPAL - Solo rutas que existen
   const menuItems = [
     { 
-      text: 'DASHBOARD', 
+      text: 'PANEL DE CONTROL', 
       icon: <DashboardIcon />, 
       path: '/committee/dashboard',
       description: 'Panel de control general',
@@ -637,7 +637,7 @@ const CommitteeLayout = () => {
                   fontSize: '0.8rem',
                 }}
               >
-                {menuItems.find(item => isActivePath(item.path))?.text || 'Dashboard'}
+                {menuItems.find(item => isActivePath(item.path))?.text || 'Panel de Control'}
               </Typography>
             </Box>
           </Box>
