@@ -444,11 +444,11 @@ const UserDashboard = () => {
           {/* Alertas y Notificaciones - MODIFICADO CON CSS PARA SER MÁS ANCHO */}
           <Grid item xs={12} md={5} sx={{
             // Hacemos que este Grid item ocupe más espacio proporcional
-            flexBasis: '40%', // Aumentamos el ancho base
-            maxWidth: '40%',   // Aumentamos el ancho máximo
+            flexBasis: '42.6%', // Aumentamos el ancho base
+            maxWidth: '42.6%',   // Aumentamos el ancho máximo
             flexGrow: 1,
             paddingLeft: '16px',
-            paddingRight: '16px'
+            paddingRight: '0px'
           }}>
             <Card sx={{ 
               borderRadius: 2,
