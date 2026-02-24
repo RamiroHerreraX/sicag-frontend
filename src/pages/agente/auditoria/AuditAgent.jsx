@@ -1486,10 +1486,7 @@ const AuditAgent = () => {
                 <HistoryIcon sx={{ mr: 1 }} />
                 Mi Auditoría
               </ToggleButton>
-              <ToggleButton value="trazabilidad" sx={{ textTransform: 'none' }}>
-                <TimelineIcon sx={{ mr: 1 }} />
-                Trazabilidad
-              </ToggleButton>
+              
             </ToggleButtonGroup>
             <Button
               variant="contained"

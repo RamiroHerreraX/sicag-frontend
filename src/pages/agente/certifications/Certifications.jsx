@@ -1006,12 +1006,7 @@ const Certifications = () => {
                 
                 <Grid item xs={4}>
                   <Box sx={{ textAlign: 'center' }}>
-                    <Typography variant="caption" sx={{ color: colors.text.secondary, fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      Vencimiento
-                    </Typography>
-                    <Typography variant="body2" sx={{ fontWeight: '600', mt: 0.5, fontSize: '0.85rem', color: colors.status.warning }}>
-                      {previewCert.expirationDate}
-                    </Typography>
+                    
                   </Box>
                 </Grid>
               </Grid>
@@ -1084,12 +1079,7 @@ const Certifications = () => {
                     </Box>
                     
                     <Box sx={{ mb: 2 }}>
-                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.3px', mb: 0.5 }}>
-                        Vigencia
-                      </Typography>
-                      <Typography variant="body2" sx={{ fontSize: '0.9rem' }}>
-                        {previewCert.vigencia}
-                      </Typography>
+                    
                     </Box>
                     
                     <Box>
@@ -1299,15 +1289,7 @@ const Certifications = () => {
                 />
               </Grid>
               <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Fecha de vencimiento"
-                  type="date"
-                  defaultValue={editCert.expirationDate.split('/').reverse().join('-')}
-                  size="small"
-                  margin="normal"
-                  InputLabelProps={{ shrink: true }}
-                />
+               
               </Grid>
               <Grid item xs={12} md={6}>
                 <TextField
@@ -1689,9 +1671,7 @@ const Certifications = () => {
                       <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
                         Emisión: {cert.issueDate}
                       </Typography>
-                      <Typography variant="caption" sx={{ color: colors.status.warning, display: 'block' }}>
-                        Vence: {cert.expirationDate}
-                      </Typography>
+                      
                     </Box>
                   </TableCell>
                   <TableCell>
@@ -1815,10 +1795,10 @@ const Certifications = () => {
               Resumen de Horas
             </Typography>
             <Typography variant="body2" sx={{ color: colors.text.secondary }}>
-              • <strong style={{ color: colors.accents.blue }}>Formación Ética:</strong> 20/20 horas <CheckCircleIcon sx={{ color: colors.status.success, fontSize: 14, verticalAlign: 'middle', ml: 1 }} /><br />
-              • <strong style={{ color: colors.secondary.main }}>Actualización Técnica:</strong> 80/80 horas <CheckCircleIcon sx={{ color: colors.status.success, fontSize: 14, verticalAlign: 'middle', ml: 1 }} /><br />
-              • <strong>Total:</strong> 100 horas requeridas completadas<br />
-              • <strong style={{ color: colors.status.success }}>Estado general: CUMPLE</strong>
+              • <strong style={{ color: colors.accents.blue }}>Formación Ética:</strong> 0/20 horas <CheckCircleIcon sx={{ color: colors.status.success, fontSize: 14, verticalAlign: 'middle', ml: 1 }} /><br />
+              • <strong style={{ color: colors.secondary.main }}>Actualización Técnica:</strong> 0/80 horas <CheckCircleIcon sx={{ color: colors.status.success, fontSize: 14, verticalAlign: 'middle', ml: 1 }} /><br />
+              • <strong>Total:</strong> 100 horas requeridas <br />
+              • <strong style={{ color: colors.status.success }}>Estado general: En proceso</strong>
             </Typography>
           </Grid>
         </Grid>
