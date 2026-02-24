@@ -447,7 +447,7 @@ const handleDownloadCertificate = async () => {
               }
             }}
           >
-            Ver Certificado
+            Ver Reconocimiento
           </Button>
           
           {/* Región */}

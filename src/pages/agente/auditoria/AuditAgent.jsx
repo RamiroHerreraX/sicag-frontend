@@ -177,7 +177,7 @@ const AuditAgent = () => {
   const auditLogs = [
     {
       id: 1,
-      timestamp: '24/02/2026 10:30:15',
+      timestamp: '24/02/2026 10:38:15',
       user: { name: 'Luis Rodríguez', role: 'agente', avatar: 'LR' },
       action: 'LOGIN_SUCCESS',
       actionName: 'Inicio de sesión exitoso',
@@ -193,7 +193,7 @@ const AuditAgent = () => {
     },
     {
       id: 2,
-      timestamp: '24/02/2026 09:45:22',
+      timestamp: '24/02/2026 10:45:22',
       user: { name: 'Luis Rodríguez', role: 'agente', avatar: 'LR' },
       action: 'CERTIFICATION_CREATE',
       actionName: 'Certificación creada',
@@ -209,7 +209,7 @@ const AuditAgent = () => {
     },
     {
       id: 3,
-      timestamp: '24/02/2026 08:20:18',
+      timestamp: '24/02/2026 10:48:18',
       user: { name: 'Luis Rodríguez', role: 'agente', avatar: 'LR' },
       action: 'CERTIFICATION_CREATE',
       actionName: 'Certificación creada',
