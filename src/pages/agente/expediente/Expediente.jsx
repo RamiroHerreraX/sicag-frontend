@@ -1690,12 +1690,7 @@ const Expediente = () => {
                   <TextField fullWidth type="number" size="small" value={addDialog.horas} onChange={(e) => setAddDialog({...addDialog, horas: e.target.value})} placeholder="Ej: 20" required inputProps={{ min: 1 }} />
                 </Grid>
 
-                <Grid item xs={12} md={6}>
-                  <Typography variant="subtitle2" sx={{ color: colors.text.primary, mb: 1, fontWeight: '600' }}>
-                    Fecha de Expedición
-                  </Typography>
-                  <TextField fullWidth type="date" size="small" value={addDialog.fecha} onChange={(e) => setAddDialog({...addDialog, fecha: e.target.value})} InputLabelProps={{ shrink: true }} />
-                </Grid>
+                
               </>
             )}
 

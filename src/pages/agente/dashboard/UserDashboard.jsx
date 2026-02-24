@@ -82,7 +82,7 @@ const UserDashboard = () => {
 
       {/* Estatus Global - AUMENTADO EL ESPACIO ABAJO */}
       <Card sx={{ 
-        mb: 8,  // Cambiado de mb: 6 a mb: 8 para más espacio vertical
+        mb: 8,
         bgcolor: '#d4e3fd',
         borderRadius: 2,
         boxShadow: '0 4px 12px rgba(19, 59, 107, 0.1)',
@@ -244,22 +244,22 @@ const UserDashboard = () => {
                 Sin certificaciones
               </Typography>
               <Button 
-  component={Link}
-  to="/expediente"
-  sx={{ 
-    color: colors.text.secondary,
-    fontSize: '0.85rem',
-    fontWeight: '600',
-    textTransform: 'none',
-    textDecoration: 'underline',
-    '&:hover': {
-      color: colors.primary.main,
-      textDecoration: 'underline'
-    }
-  }}
->
-  Comienza tu progreso
-</Button>
+                component={Link}
+                to="/expediente"
+                sx={{ 
+                  color: colors.text.secondary,
+                  fontSize: '0.85rem',
+                  fontWeight: '600',
+                  textTransform: 'none',
+                  textDecoration: 'underline',
+                  '&:hover': {
+                    color: colors.primary.main,
+                    textDecoration: 'underline'
+                  }
+                }}
+              >
+                Comienza tu progreso
+              </Button>
             </Box>
             
           </Box>
@@ -268,7 +268,7 @@ const UserDashboard = () => {
 
       {/* Estadísticas - Expandidas al ancho del Estatus Global */}
       <Box sx={{ 
-        mb: 8,  // Cambiado de mb: 5 a mb: 8 para más espacio vertical
+        mb: 8,
         maxWidth: '1050px',
         width: '100%',
         margin: '20px auto'
@@ -330,12 +330,13 @@ const UserDashboard = () => {
       <Box sx={{ 
         maxWidth: '1050px',
         margin: '0 auto',
-        width: '100%'
+        width: '100%',
+        position: 'relative' // Añadido para posicionamiento relativo
       }}>
-        <Grid container spacing={4}>  {/* Cambiado de spacing={3} a spacing={4} para más separación */}
+        <Grid container spacing={4}>
           
-          {/* Resumen de Certificaciones - Expandido */}
-          <Grid item xs={12} md={6}>  {/* Cambiado de md={8} a md={6} para hacerlo más ancho */}
+          {/* Resumen de Certificaciones - SIN CAMBIOS */}
+          <Grid item xs={12} md={6}>
             <Card sx={{ 
               borderRadius: 2,
               boxShadow: `0 4px 12px ${colors.primary.main}15`,
@@ -372,7 +373,6 @@ const UserDashboard = () => {
                 </Box>
                 
                 <Stack spacing={2.5}>
-                  {/* Mensaje de vacío */}
                   <Paper 
                     variant="outlined" 
                     sx={{ 
@@ -441,13 +441,27 @@ const UserDashboard = () => {
             </Card>
           </Grid>
 
-          {/* Alertas y Notificaciones - Expandido */}
-          <Grid item xs={12} md={5}>  {/* Cambiado de md={4} a md={6} para hacerlo más ancho y que quede a la misma altura */}
+          {/* Alertas y Notificaciones - MODIFICADO CON CSS PARA SER MÁS ANCHO */}
+          <Grid item xs={12} md={5} sx={{
+            // Hacemos que este Grid item ocupe más espacio proporcional
+            flexBasis: '45%', // Aumentamos el ancho base
+            maxWidth: '45%',   // Aumentamos el ancho máximo
+            flexGrow: 1,
+            paddingLeft: '16px',
+            paddingRight: '16px'
+          }}>
             <Card sx={{ 
               borderRadius: 2,
               boxShadow: `0 4px 12px ${colors.primary.main}15`,
               height: '100%',
-              width: '100%'
+              width: '100%',
+              // Hacemos el card más ancho expandiéndolo
+              minWidth: '100%',
+              transform: 'scale(1)', // Sin escala
+              '& .MuiCardContent-root': {
+                p: 3,
+                width: '100%'
+              }
             }}>
               <CardContent sx={{ p: 3 }}>
                 <Box sx={{ 
@@ -455,7 +469,8 @@ const UserDashboard = () => {
                   alignItems: 'center', 
                   mb: 3,
                   pb: 2,
-                  borderBottom: `1px solid ${colors.primary.main}20`
+                  borderBottom: `1px solid ${colors.primary.main}20`,
+                  width: '100%'
                 }}>
                   <NotificationsIcon sx={{ 
                     mr: 1.5, 
@@ -482,8 +497,8 @@ const UserDashboard = () => {
                   />
                 </Box>
 
-                <Stack spacing={3}>
-                  <Box>
+                <Stack spacing={3} sx={{ width: '100%' }}>
+                  <Box sx={{ width: '100%' }}>
                     <Typography variant="subtitle2" sx={{ 
                       color: colors.primary.dark, 
                       mb: 1.5, 
@@ -501,7 +516,8 @@ const UserDashboard = () => {
                       bgcolor: '#fffde7',
                       borderRadius: 1.5,
                       border: '1px solid #fff3e0',
-                      textAlign: 'center'
+                      textAlign: 'center',
+                      width: '100%'
                     }}>
                       <Typography variant="body2" sx={{ 
                         color: colors.text.secondary,
@@ -513,7 +529,7 @@ const UserDashboard = () => {
                     </Paper>
                   </Box>
 
-                  <Box>
+                  <Box sx={{ width: '100%' }}>
                     <Typography variant="subtitle2" sx={{ 
                       color: colors.primary.dark, 
                       mb: 1.5, 
@@ -531,7 +547,8 @@ const UserDashboard = () => {
                       bgcolor: '#fffde7',
                       borderRadius: 1.5,
                       border: '1px solid #fff3e0',
-                      textAlign: 'center'
+                      textAlign: 'center',
+                      width: '100%'
                     }}>
                       <Typography variant="body2" sx={{ 
                         color: colors.text.secondary,
@@ -543,7 +560,7 @@ const UserDashboard = () => {
                     </Paper>
                   </Box>
 
-                  <Box>
+                  <Box sx={{ width: '100%' }}>
                     <Typography variant="subtitle2" sx={{ 
                       color: colors.primary.dark, 
                       mb: 1.5, 
@@ -556,7 +573,8 @@ const UserDashboard = () => {
                       p: 2.5, 
                       borderRadius: 1.5,
                       border: `1px solid ${colors.primary.main}20`,
-                      textAlign: 'center'
+                      textAlign: 'center',
+                      width: '100%'
                     }}>
                       <Typography variant="body2" sx={{ 
                         color: colors.text.secondary,
