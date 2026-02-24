@@ -1,18 +1,18 @@
 {
   "files": {
     "main.css": "/sicag-frontend/static/css/main.c1dc0443.css",
-    "main.js": "/sicag-frontend/static/js/main.c9abe150.js",
+    "main.js": "/sicag-frontend/static/js/main.bf81cbf1.js",
     "static/js/977.46fb2eec.chunk.js": "/sicag-frontend/static/js/977.46fb2eec.chunk.js",
     "static/js/455.182159cb.chunk.js": "/sicag-frontend/static/js/455.182159cb.chunk.js",
     "static/media/Imagen_2.png": "/sicag-frontend/static/media/Imagen_2.1b745e5f285e9c8bf41c.png",
     "index.html": "/sicag-frontend/index.html",
     "main.c1dc0443.css.map": "/sicag-frontend/static/css/main.c1dc0443.css.map",
-    "main.c9abe150.js.map": "/sicag-frontend/static/js/main.c9abe150.js.map",
+    "main.bf81cbf1.js.map": "/sicag-frontend/static/js/main.bf81cbf1.js.map",
     "977.46fb2eec.chunk.js.map": "/sicag-frontend/static/js/977.46fb2eec.chunk.js.map",
     "455.182159cb.chunk.js.map": "/sicag-frontend/static/js/455.182159cb.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.c1dc0443.css",
-    "static/js/main.c9abe150.js"
+    "static/js/main.bf81cbf1.js"
   ]
 }
