@@ -33,6 +33,7 @@ import PaginaLegalCompleta from './pages/Pagina_Principal/pagina_legal';
 
 // Dashboard Pages (diferentes por rol)
 import UserDashboard from "./pages/agente/dashboard/UserDashboard";
+import UserDashboard2 from "./pages/agente/dashboard/DashboarDos";
 import CommitteeDashboard from "./pages/committee/CommitteeDashboard";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
 // NUEVO DASHBOARD
@@ -133,6 +134,7 @@ function App() {
               }
             >
               <Route path="/dashboard" element={<UserDashboard />} />
+              <Route path="/dashboards" element={<UserDashboard2 />} />
               <Route path="/certifications" element={<Certifications />} />
               <Route
                 path="/certifications/new"
