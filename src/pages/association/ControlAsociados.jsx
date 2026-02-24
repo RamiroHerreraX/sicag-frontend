@@ -140,21 +140,21 @@ const initialUsers = [
     department: "Operaciones",
     joinDate: "2023-01-15", // Fecha de ingreso a la asociación
     // El permiso lo da el usuario desde su dispositivo
-    uploadPermission: "no-permitido", // Estado inicial: no se puede subir documentos
+    uploadPermission: "permitido", // Estado inicial: no se puede subir documentos
     associationCertifications: [
       {
         id: 1,
-        name: "Certificación Aduanal Básica",
+        name: "Curso de ética profesional y código de conducta",
         description: "Certificación para operaciones básicas de importación",
         type: "operativa",
-        issueDate: "2024-01-20",
-        expiryDate: "2025-01-20",
+        issueDate: "2026-01-20",
+        expiryDate: "2027-01-20",
         status: "active",
         documents: [
           {
             id: 101,
             name: "certificado_aduanal_basico.pdf",
-            url: "/documentos/cert1.pdf",
+            url: "src\assets\Curso de ética profesional y código de conducta.pdf",
             type: "application/pdf",
             size: 245760, // 240KB
             uploadDate: "2024-01-20T10:30:00",
@@ -164,11 +164,11 @@ const initialUsers = [
       },
       {
         id: 2,
-        name: "Certificación SAT Nivel 2",
+        name: "Diplomado en Comercio Exterior y Legislación Aduanera",
         description: "Certificación para declaraciones de valor",
         type: "fiscal",
-        issueDate: "2024-03-15",
-        expiryDate: "2025-03-15",
+        issueDate: "2025-03-15",
+        expiryDate: "2026-03-15",
         status: "active",
         documents: [],
       },
@@ -2424,7 +2424,6 @@ const UserManagement = () => {
                             },
                           }}
                         />
-                        
                       </Box>
                     )}
 
@@ -2699,38 +2698,6 @@ const UserManagement = () => {
                                     spacing={0.5}
                                     justifyContent="flex-end"
                                   >
-                                    <Tooltip title="Subir documentos">
-                                      <span>
-                                        <IconButton
-                                          size="small"
-                                          onClick={() =>
-                                            handleUploadDocuments(
-                                              selectedUser,
-                                              cert,
-                                            )
-                                          }
-                                          disabled={
-                                            selectedUser.uploadPermission !==
-                                            "permitido"
-                                          }
-                                          sx={{
-                                            color:
-                                              selectedUser.uploadPermission ===
-                                              "permitido"
-                                                ? institutionalColors.success
-                                                : institutionalColors.textSecondary,
-                                            opacity:
-                                              selectedUser.uploadPermission ===
-                                              "permitido"
-                                                ? 1
-                                                : 0.5,
-                                          }}
-                                        >
-                                          <UploadIcon fontSize="small" />
-                                        </IconButton>
-                                      </span>
-                                    </Tooltip>
-
                                     <Tooltip title="Editar certificación">
                                       <span>
                                         <IconButton
@@ -2982,17 +2949,6 @@ const UserManagement = () => {
             </DialogContent>
 
             <DialogActions>
-              {selectedUser?.uploadPermission === "permitido" && (
-                <Button
-                  startIcon={<UploadIcon />}
-                  onClick={() => {
-                    setOpenDocumentDialog(false);
-                    handleUploadDocuments(selectedUser, selectedCertification);
-                  }}
-                >
-                  Subir más documentos
-                </Button>
-              )}
               <Button onClick={() => setOpenDocumentDialog(false)}>
                 Cerrar
               </Button>
