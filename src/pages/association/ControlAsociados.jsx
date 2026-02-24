@@ -154,7 +154,7 @@ const initialUsers = [
           {
             id: 101,
             name: "certificado_aduanal_basico.pdf",
-            url: "src\assets\Curso de ética profesional y código de conducta.pdf",
+            url: "/assets/Curso de ética profesional y código de conducta.pdf",
             type: "application/pdf",
             size: 245760, // 240KB
             uploadDate: "2024-01-20T10:30:00",
@@ -170,10 +170,21 @@ const initialUsers = [
         issueDate: "2025-03-15",
         expiryDate: "2026-03-15",
         status: "active",
-        documents: [],
+        documents: [
+          {
+            id: 102,
+            name: "Diplomado en Comercio Exterior y Legislación Aduanera.pdf",
+            url: "/assets/Diplomado en Comercio Exterior y Legislación Aduanera.pdf",
+            type: "application/pdf",
+            size: 245760, // 240KB
+            uploadDate: "2024-01-20T10:30:00",
+            uploadedBy: "admin@asociacion.com",
+          },
+        ],
       },
     ],
   },
+
   {
     id: 2,
     name: "María González López",
@@ -2864,15 +2875,6 @@ const UserManagement = () => {
                       key={doc.id}
                       secondaryAction={
                         <Stack direction="row" spacing={1}>
-                          <Tooltip title="Descargar">
-                            <IconButton
-                              edge="end"
-                              onClick={() => handleDownloadDocument(doc)}
-                              sx={{ color: institutionalColors.primary }}
-                            >
-                              <DownloadIcon />
-                            </IconButton>
-                          </Tooltip>
                           {selectedUser?.uploadPermission === "permitido" && (
                             <Tooltip title="Eliminar">
                               <IconButton
