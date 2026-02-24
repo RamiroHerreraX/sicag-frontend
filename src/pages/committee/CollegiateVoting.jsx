@@ -10,23 +10,22 @@ import {
   Button,
   Chip,
   Stack,
-  TextField,
-  IconButton,
-  Tooltip,
   Avatar,
   Divider,
-  LinearProgress,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   Alert,
-  Badge,
   Radio,
   RadioGroup,
   FormControlLabel,
   FormControl,
-  FormLabel
+  TextField,
+  IconButton,
+  Drawer,
+  Badge,
+  Tooltip
 } from '@mui/material';
 import {
   HowToVote as HowToVoteIcon,
@@ -34,208 +33,95 @@ import {
   Cancel as CancelIcon,
   ThumbUp as ThumbUpIcon,
   ThumbDown as ThumbDownIcon,
-  Gavel as GavelIcon,
-  Schedule as ScheduleIcon,
-  Timer as TimerIcon,
-  Verified as VerifiedIcon,
-  Visibility as VisibilityIcon,
-  Assignment as AssignmentIcon,
-  Warning as WarningIcon,
-  Info as InfoIcon,
-  Lock as LockIcon,
-  LockOpen as LockOpenIcon
+  Description as DescriptionIcon,
+  Close as CloseIcon,
+  Menu as MenuIcon,
+  ChevronLeft as ChevronLeftIcon,
+  ChevronRight as ChevronRightIcon
 } from '@mui/icons-material';
-import { useAuth } from '../../context/AuthContext';
 
 const colors = {
-  primary: {
-    dark: '#0D2A4D',
-    main: '#133B6B',
-    light: '#3A6EA5'
-  },
-  secondary: {
-    main: '#00A8A8',
-    light: '#00C2D1'
-  },
-  accents: {
-    blue: '#0099FF',
-    purple: '#6C5CE7'
-  },
-  status: {
-    success: '#00A8A8',
-    warning: '#00C2D1',
-    error: '#0099FF',
-    info: '#3A6EA5'
-  },
-  text: {
-    primary: '#0D2A4D',
-    secondary: '#3A6EA5'
+  primary: { main: '#133B6B', dark: '#0D2A4D', light: '#3A6EA5' },
+  status: { success: '#00A8A8', error: '#0099FF', warning: '#00C2D1' }
+};
+
+// Miembros del comité
+const committeeMembers = [
+  { id: 1, name: 'María González', role: 'Presidente', avatar: 'MG', color: '#133B6B' },
+  { id: 2, name: 'Juan Pérez', role: 'Vocal', avatar: 'JP', color: '#00A8A8' },
+  { id: 3, name: 'Laura Sánchez', role: 'Vocal', avatar: 'LS', color: '#6C5CE7' }
+];
+
+// Función para convertir enlaces de Google Drive a formato de vista previa
+const getGoogleDrivePreviewUrl = (url) => {
+  const fileIdMatch = url.match(/\/d\/(.+?)\/view/);
+  if (fileIdMatch && fileIdMatch[1]) {
+    const fileId = fileIdMatch[1];
+    return `https://drive.google.com/file/d/${fileId}/preview`;
   }
+  return url;
 };
 
 const CollegiateVoting = () => {
-  const { user, canVote } = useAuth();
-  const [votingItems, setVotingItems] = useState([
-    {
-      id: 1,
-      certification: 'PA-2026-00145',
-      type: 'PATENTE ADUANAL',
-      applicant: 'Luis Rodríguez',
-      region: 'Norte',
-      priority: 'ALTA',
-      technicalReview: {
-        completed: true,
-        reviewer: 'Carlos Ruiz',
-        date: '15/01/2026',
-        comments: 'Documentación completa, autenticidad verificada'
-      },
-      votes: {
-        presidente: { status: null, comment: '', votedAt: null },
-        vocalA: { status: null, comment: '', votedAt: null },
-        vocalB: { status: null, comment: '', votedAt: null }
-      },
-      status: 'pending',
-      expiresAt: '17/01/2026 18:00'
-    },
-    {
-      id: 2,
-      certification: 'OS-2025-03421',
-      type: 'OPINIÓN SAT',
-      applicant: 'Carlos Martínez',
-      region: 'Sur',
-      priority: 'ALTA',
-      technicalReview: {
-        completed: true,
-        reviewer: 'Carlos Ruiz',
-        date: '14/01/2026',
-        comments: 'Revisión técnica completada, pendiente validación colegiada'
-      },
-      votes: {
-        presidente: { status: 'approve', comment: 'Cumple con todos los requisitos', votedAt: '14/01/2026 16:30' },
-        vocalA: { status: null, comment: '', votedAt: null },
-        vocalB: { status: 'reject', comment: 'Fechas inconsistentes', votedAt: '14/01/2026 17:15' }
-      },
-      status: 'voting',
-      expiresAt: '16/01/2026 18:00'
-    },
-    {
-      id: 3,
-      certification: 'CP-2024-56789',
-      type: 'CÉDULA PROFESIONAL',
-      applicant: 'Ana López',
-      region: 'Centro',
-      priority: 'MEDIA',
-      technicalReview: {
-        completed: true,
-        reviewer: 'Carlos Ruiz',
-        date: '13/01/2026',
-        comments: 'Documentos verificados, procede validación colegiada'
-      },
-      votes: {
-        presidente: { status: 'approve', comment: 'Procede', votedAt: '13/01/2026 15:20' },
-        vocalA: { status: 'approve', comment: 'De acuerdo', votedAt: '13/01/2026 16:00' },
-        vocalB: { status: 'approve', comment: 'Sin observaciones', votedAt: '13/01/2026 16:45' }
-      },
-      status: 'approved',
-      result: 'approved',
-      completedAt: '13/01/2026 17:00'
-    },
-    {
-      id: 4,
-      certification: 'PN-2025-12345',
-      type: 'PODER NOTARIAL',
-      applicant: 'Pedro Sánchez',
-      region: 'Metropolitana',
-      priority: 'ALTA',
-      technicalReview: {
-        completed: true,
-        reviewer: 'Carlos Ruiz',
-        date: '12/01/2026',
-        comments: 'Documentación incompleta, se recomienda revisión colegiada'
-      },
-      votes: {
-        presidente: { status: 'reject', comment: 'Falta documentación notarial', votedAt: '12/01/2026 12:10' },
-        vocalA: { status: 'reject', comment: 'No cumple requisitos', votedAt: '12/01/2026 13:30' },
-        vocalB: { status: 'reject', comment: 'Documento no válido', votedAt: '12/01/2026 14:45' }
-      },
-      status: 'rejected',
-      result: 'rejected',
-      completedAt: '12/01/2026 15:00'
-    }
-  ]);
-
   const [selectedItem, setSelectedItem] = useState(null);
   const [voteDialog, setVoteDialog] = useState(false);
   const [voteValue, setVoteValue] = useState('');
   const [voteComment, setVoteComment] = useState('');
   const [notification, setNotification] = useState({ show: false, type: '', message: '' });
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  const pendingVotes = votingItems.filter(item => {
-    if (item.status !== 'pending' && item.status !== 'voting') return false;
-    
-    // Verificar si el usuario ya votó
-    if (user?.subRole === 'presidente' && item.votes.presidente.status !== null) return false;
-    if (user?.subRole === 'vocal' && user?.name?.includes('Juan') && item.votes.vocalA.status !== null) return false;
-    if (user?.subRole === 'vocal' && user?.name?.includes('Laura') && item.votes.vocalB.status !== null) return false;
-    
-    return true;
-  });
-
-  const completedVotes = votingItems.filter(item => item.status === 'approved' || item.status === 'rejected');
+  // Datos mock de certificaciones para votar
+  const [votingItems, setVotingItems] = useState([
+    {
+      id: 1,
+      certification: 'CUR-ET-2026-001',
+      type: 'CURSO DE ÉTICA PROFESIONAL',
+      displayName: 'CURSO DE ÉTICA PROFESIONAL Y CÓDIGO DE CONDUCTA',
+      applicant: 'Luis Rodríguez',
+      pdfPath: 'https://drive.google.com/file/d/1Pocj7S4sMPGJuE8_pzVUELsYetlfmEB5/view?usp=sharing',
+      technicalReview: 'Documentación completa, autenticidad verificada',
+      votes: [
+        { memberId: 1, status: null },
+        { memberId: 2, status: null },
+        { memberId: 3, status: null }
+      ],
+      status: 'pending'
+    },
+    {
+      id: 2,
+      certification: 'DIP-CE-2026-001',
+      type: 'DIPLOMADO COMERCIO EXTERIOR',
+      displayName: 'DIPLOMADO EN COMERCIO EXTERIOR Y LEGISLACIÓN ADUANERA',
+      applicant: 'Luis Rodríguez',
+      pdfPath: 'https://drive.google.com/file/d/1_LeeJr9dDka0hTRdDXJItZdduuHip8XT/view?usp=sharing',
+      technicalReview: 'Documentos verificados, pendiente validación',
+      votes: [
+        { memberId: 1, status: 'approve' },
+        { memberId: 2, status: null },
+        { memberId: 3, status: 'reject' }
+      ],
+      status: 'voting'
+    }
+  ]);
 
   const handleVote = () => {
-    if (!voteValue) return;
+    if (!voteValue || !selectedItem) return;
 
     const updatedItems = votingItems.map(item => {
       if (item.id === selectedItem.id) {
-        const updatedVotes = { ...item.votes };
-        
-        if (user?.subRole === 'presidente') {
-          updatedVotes.presidente = { 
-            status: voteValue, 
-            comment: voteComment, 
-            votedAt: new Date().toLocaleString() 
-          };
-        } else if (user?.subRole === 'vocal' && user?.name?.includes('Juan')) {
-          updatedVotes.vocalA = { 
-            status: voteValue, 
-            comment: voteComment, 
-            votedAt: new Date().toLocaleString() 
-          };
-        } else if (user?.subRole === 'vocal' && user?.name?.includes('Laura')) {
-          updatedVotes.vocalB = { 
-            status: voteValue, 
-            comment: voteComment, 
-            votedAt: new Date().toLocaleString() 
-          };
-        }
+        const updatedVotes = item.votes.map(vote => 
+          vote.memberId === 1 
+            ? { ...vote, status: voteValue }
+            : vote
+        );
 
-        // Verificar si todos votaron
-        const allVoted = 
-          updatedVotes.presidente.status !== null &&
-          updatedVotes.vocalA.status !== null &&
-          updatedVotes.vocalB.status !== null;
-
-        if (allVoted) {
-          const approveCount = [
-            updatedVotes.presidente.status,
-            updatedVotes.vocalA.status,
-            updatedVotes.vocalB.status
-          ].filter(s => s === 'approve').length;
-
-          return {
-            ...item,
-            votes: updatedVotes,
-            status: 'completed',
-            result: approveCount >= 2 ? 'approved' : 'rejected',
-            completedAt: new Date().toLocaleString()
-          };
-        }
+        const allVoted = updatedVotes.every(v => v.status !== null);
 
         return {
           ...item,
           votes: updatedVotes,
-          status: 'voting'
+          status: allVoted ? 'completed' : 'voting'
         };
       }
       return item;
@@ -245,426 +131,248 @@ const CollegiateVoting = () => {
     setVoteDialog(false);
     setVoteValue('');
     setVoteComment('');
-    
-    setNotification({
-      show: true,
-      type: 'success',
-      message: 'Voto registrado exitosamente'
-    });
+    setNotification({ show: true, type: 'success', message: 'Voto registrado' });
     setTimeout(() => setNotification({ show: false, type: '', message: '' }), 3000);
   };
 
-  const getVoteProgress = (item) => {
-    const votes = [
-      item.votes.presidente.status,
-      item.votes.vocalA.status,
-      item.votes.vocalB.status
-    ];
-    const voted = votes.filter(v => v !== null).length;
-    return (voted / 3) * 100;
+  const getVoteStatus = (status) => {
+    if (status === 'approve') return { label: 'Aprobado', color: 'success', icon: <CheckCircleIcon fontSize="small" /> };
+    if (status === 'reject') return { label: 'Rechazado', color: 'error', icon: <CancelIcon fontSize="small" /> };
+    return { label: 'Pendiente', color: 'default', icon: null };
   };
-
-  const getVoteResult = (item) => {
-    if (item.status === 'approved') return 'APROBADA';
-    if (item.status === 'rejected') return 'RECHAZADA';
-    
-    const votes = [
-      item.votes.presidente.status,
-      item.votes.vocalA.status,
-      item.votes.vocalB.status
-    ].filter(v => v !== null);
-    
-    if (votes.length < 3) return 'EN VOTACIÓN';
-    
-    const approveCount = votes.filter(v => v === 'approve').length;
-    return approveCount >= 2 ? 'APROBADA (Mayoría)' : 'RECHAZADA (Mayoría)';
-  };
-
-  // Si no tiene permisos de votación
-  if (!canVote()) {
-    return (
-      <Box sx={{ p: 4, textAlign: 'center' }}>
-        <LockIcon sx={{ fontSize: 60, color: colors.primary.light, mb: 2 }} />
-        <Typography variant="h6" sx={{ color: colors.text.secondary, mb: 1 }}>
-          Acceso restringido
-        </Typography>
-        <Typography variant="body2" sx={{ color: colors.primary.light }}>
-          Solo los miembros con derecho a voto (Presidente y Vocales) pueden acceder a este panel.
-        </Typography>
-      </Box>
-    );
-  }
 
   return (
-    <Box sx={{ 
-      height: 'calc(100vh - 64px)',
-      overflow: 'hidden',
-      display: 'flex',
-      flexDirection: 'column',
-      p: 2,
-      bgcolor: '#f8fafc'
-    }}>
-      {/* Header */}
-      <Box sx={{ mb: 2 }}>
-        <Typography variant="h5" sx={{ color: colors.primary.dark, fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
-          <HowToVoteIcon sx={{ color: colors.primary.main }} />
-          Votación Colegiada
-        </Typography>
-        <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-          Emite tu voto en las certificaciones validadas técnicamente
-        </Typography>
-      </Box>
+    <Box sx={{ height: 'calc(100vh - 64px)', display: 'flex', flexDirection: 'column', bgcolor: '#f0f2f5' }}>
+      {/* Header simplificado */}
+      <Paper sx={{ p: 1.5, display: 'flex', alignItems: 'center', gap: 2, borderRadius: 0, bgcolor: colors.primary.main, color: 'white' }}>
+        <IconButton 
+          onClick={() => setSidebarOpen(!sidebarOpen)} 
+          sx={{ color: 'white', display: { xs: 'flex', md: 'none' } }}
+        >
+          <MenuIcon />
+        </IconButton>
+        <IconButton 
+          onClick={() => setSidebarCollapsed(!sidebarCollapsed)} 
+          sx={{ color: 'white', display: { xs: 'none', md: 'flex' } }}
+        >
+          {sidebarCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+        </IconButton>
+        <HowToVoteIcon />
+        <Typography variant="h6" fontWeight="bold">Votación Colegiada</Typography>
+        {selectedItem && (
+          <Chip 
+            label={selectedItem.certification}
+            size="small"
+            sx={{ ml: 'auto', bgcolor: 'rgba(255,255,255,0.2)', color: 'white' }}
+          />
+        )}
+      </Paper>
 
-      {/* Notificación */}
       {notification.show && (
-        <Alert severity={notification.type} sx={{ mb: 2 }}>
-          {notification.message}
-        </Alert>
+        <Alert severity={notification.type} sx={{ m: 2 }}>{notification.message}</Alert>
       )}
 
-      {/* Grid de dos columnas */}
-      <Grid container spacing={2} sx={{ flex: 1, overflow: 'hidden' }}>
-        {/* Columna izquierda - Pendientes de votar */}
-        <Grid item xs={12} md={6} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-          <Paper elevation={1} sx={{ 
-            flex: 1, 
-            display: 'flex', 
-            flexDirection: 'column',
-            overflow: 'hidden',
-            border: `1px solid ${colors.primary.light}20`
-          }}>
-            <Box sx={{ 
-              p: 2, 
-              borderBottom: `1px solid ${colors.primary.light}`,
-              bgcolor: colors.background.subtle
-            }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: colors.primary.dark, display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Badge badgeContent={pendingVotes.length} color="error">
-                  <GavelIcon sx={{ color: colors.primary.main }} />
-                </Badge>
-                Pendientes de Votación
-              </Typography>
-            </Box>
+      {/* Sidebar móvil */}
+      <Drawer
+        anchor="left"
+        open={sidebarOpen && window.innerWidth < 900}
+        onClose={() => setSidebarOpen(false)}
+        PaperProps={{ sx: { width: 280 } }}
+      >
+        <Box sx={{ p: 2 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Typography variant="h6">Certificaciones</Typography>
+            <IconButton onClick={() => setSidebarOpen(false)}><CloseIcon /></IconButton>
+          </Box>
+          <CertificationList items={votingItems} selectedItem={selectedItem} onSelect={setSelectedItem} />
+        </Box>
+      </Drawer>
 
-            <Box sx={{ flex: 1, overflow: 'auto', p: 2 }}>
-              <Stack spacing={2}>
-                {pendingVotes.map((item) => (
+      {/* Contenido principal */}
+      <Box sx={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+        {/* Sidebar desktop - colapsable */}
+        <Box sx={{ 
+          width: sidebarCollapsed ? 80 : 280, 
+          transition: 'width 0.2s',
+          borderRight: 1, 
+          borderColor: 'divider', 
+          bgcolor: 'white',
+          display: { xs: 'none', md: 'block' },
+          overflow: 'hidden'
+        }}>
+          {sidebarCollapsed ? (
+            <Box sx={{ p: 1 }}>
+              {votingItems.map(item => (
+                <Tooltip key={item.id} title={item.type} placement="right">
                   <Card 
-                    key={item.id}
-                    variant="outlined"
                     sx={{ 
-                      borderColor: selectedItem?.id === item.id ? colors.primary.main : colors.primary.light,
-                      bgcolor: selectedItem?.id === item.id ? 'rgba(19, 59, 107, 0.04)' : 'transparent',
-                      cursor: 'pointer'
+                      mb: 1, 
+                      cursor: 'pointer',
+                      bgcolor: selectedItem?.id === item.id ? 'rgba(19,59,107,0.08)' : 'transparent',
+                      border: selectedItem?.id === item.id ? 1 : 0,
+                      borderColor: colors.primary.main
                     }}
                     onClick={() => setSelectedItem(item)}
                   >
-                    <CardContent>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-                        <Box>
-                          <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
-                            {item.certification}
-                          </Typography>
-                          <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                            {item.type} • {item.applicant}
-                          </Typography>
-                        </Box>
-                        <Chip 
-                          label={item.priority}
-                          size="small"
-                          sx={{ 
-                            bgcolor: item.priority === 'ALTA' ? colors.status.error : colors.status.warning,
-                            color: 'white',
-                            fontWeight: 600
-                          }}
-                        />
-                      </Box>
+                    <CardContent sx={{ p: 1, textAlign: 'center' }}>
+                      <Avatar sx={{ width: 40, height: 40, mx: 'auto', bgcolor: colors.primary.light, fontSize: '0.8rem' }}>
+                        {item.type.substring(0, 3)}
+                      </Avatar>
+                      <Badge 
+                        badgeContent={item.votes.filter(v => v.status !== null).length} 
+                        color="primary"
+                        sx={{ mt: 1 }}
+                      >
+                        <HowToVoteIcon fontSize="small" sx={{ color: colors.primary.main }} />
+                      </Badge>
+                    </CardContent>
+                  </Card>
+                </Tooltip>
+              ))}
+            </Box>
+          ) : (
+            <Box sx={{ p: 2 }}>
+              <Typography variant="subtitle1" fontWeight="bold" gutterBottom>Certificaciones</Typography>
+              <CertificationList items={votingItems} selectedItem={selectedItem} onSelect={setSelectedItem} />
+            </Box>
+          )}
+        </Box>
 
-                      <Box sx={{ mb: 2 }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                          <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                            Progreso de votación
-                          </Typography>
-                          <Typography variant="caption" sx={{ fontWeight: 'bold', color: colors.primary.main }}>
-                            {Object.values(item.votes).filter(v => v.status !== null).length}/3 votos
-                          </Typography>
-                        </Box>
-                        <LinearProgress 
-                          variant="determinate" 
-                          value={getVoteProgress(item)}
-                          sx={{ 
-                            height: 6, 
-                            borderRadius: 3,
-                            bgcolor: colors.primary.light,
-                            '& .MuiLinearProgress-bar': {
-                              bgcolor: colors.primary.main
-                            }
-                          }}
-                        />
-                      </Box>
+        {/* Visor PDF - Ocupa el máximo espacio */}
+        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          {selectedItem ? (
+            <Paper sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', m: 2, borderRadius: 2 }}>
+              {/* Título compacto */}
+              <Box sx={{ p: 1.5, borderBottom: 1, borderColor: 'divider', bgcolor: '#f8f9fa' }}>
+                <Typography variant="subtitle1" fontWeight="bold" noWrap>{selectedItem.displayName}</Typography>
+              </Box>
 
-                      <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-                        <Tooltip title="Presidenta">
-                          <Avatar 
-                            sx={{ 
-                              width: 28, 
-                              height: 28, 
-                              bgcolor: item.votes.presidente.status === 'approve' ? colors.status.success :
-                                       item.votes.presidente.status === 'reject' ? colors.status.error :
-                                       colors.primary.light
-                            }}
-                          >
-                            MG
-                          </Avatar>
-                        </Tooltip>
-                        <Tooltip title="Vocal A">
-                          <Avatar 
-                            sx={{ 
-                              width: 28, 
-                              height: 28, 
-                              bgcolor: item.votes.vocalA.status === 'approve' ? colors.status.success :
-                                       item.votes.vocalA.status === 'reject' ? colors.status.error :
-                                       colors.primary.light
-                            }}
-                          >
-                            JP
-                          </Avatar>
-                        </Tooltip>
-                        <Tooltip title="Vocal B">
-                          <Avatar 
-                            sx={{ 
-                              width: 28, 
-                              height: 28, 
-                              bgcolor: item.votes.vocalB.status === 'approve' ? colors.status.success :
-                                       item.votes.vocalB.status === 'reject' ? colors.status.error :
-                                       colors.primary.light
-                            }}
-                          >
-                            LS
-                          </Avatar>
-                        </Tooltip>
-                      </Box>
+              {/* Visor PDF - Tamaño completo */}
+              <Box sx={{ flex: 1, overflow: 'auto', bgcolor: '#525659' }}>
+                <Box sx={{ display: 'flex', justifyContent: 'center', p: 2, minHeight: '100%' }}>
+                  <iframe
+                    src={getGoogleDrivePreviewUrl(selectedItem.pdfPath)}
+                    title={selectedItem.displayName}
+                    width="100%"
+                    height="900px"
+                    style={{ border: 'none', maxWidth: '1200px' }}
+                  />
+                </Box>
+              </Box>
 
+              {/* Panel de votación compacto */}
+              <Box sx={{ p: 1.5, borderTop: 1, borderColor: 'divider', bgcolor: 'white' }}>
+                <Grid container spacing={2} alignItems="center">
+                  {/* Avatares de votación */}
+                  <Grid item xs={12} md={5}>
+                    <Stack direction="row" spacing={2} justifyContent="center">
+                      {selectedItem.votes.map((vote, idx) => {
+                        const member = committeeMembers[idx];
+                        const status = getVoteStatus(vote.status);
+                        return (
+                          <Box key={idx} sx={{ textAlign: 'center' }}>
+                            <Badge
+                              overlap="circular"
+                              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                              badgeContent={
+                                status.icon ? (
+                                  <Avatar sx={{ width: 20, height: 20, bgcolor: status.color === 'success' ? colors.status.success : colors.status.error }}>
+                                    {status.icon}
+                                  </Avatar>
+                                ) : null
+                              }
+                            >
+                              <Avatar sx={{ bgcolor: member.color, width: 48, height: 48 }}>
+                                {member.avatar}
+                              </Avatar>
+                            </Badge>
+                            <Typography variant="caption" display="block" fontWeight="bold">{member.name}</Typography>
+                            <Typography variant="caption" color="text.secondary">{member.role}</Typography>
+                          </Box>
+                        );
+                      })}
+                    </Stack>
+                  </Grid>
+
+                  {/* Información y botón */}
+                  <Grid item xs={12} md={7}>
+                    <Stack direction="row" spacing={2} alignItems="center" justifyContent="flex-end">
+                      <Box sx={{ maxWidth: 300 }}>
+                        <Typography variant="caption" color="text.secondary" display="block">
+                          <strong>Revisión:</strong> {selectedItem.technicalReview}
+                        </Typography>
+                      </Box>
                       <Button
-                        fullWidth
                         variant="contained"
+                        size="large"
                         startIcon={<HowToVoteIcon />}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedItem(item);
-                          setVoteDialog(true);
-                        }}
-                        disabled={(
-                          (user?.subRole === 'presidente' && item.votes.presidente.status !== null) ||
-                          (user?.subRole === 'vocal' && user?.name?.includes('Juan') && item.votes.vocalA.status !== null) ||
-                          (user?.subRole === 'vocal' && user?.name?.includes('Laura') && item.votes.vocalB.status !== null)
-                        )}
+                        onClick={() => setVoteDialog(true)}
+                        disabled={selectedItem.votes[0]?.status !== null}
                         sx={{ 
                           bgcolor: colors.primary.main,
                           '&:hover': { bgcolor: colors.primary.dark },
-                          '&.Mui-disabled': {
-                            bgcolor: colors.primary.light
-                          }
+                          '&.Mui-disabled': { bgcolor: colors.primary.light },
+                          minWidth: 150
                         }}
                       >
-                        {(
-                          (user?.subRole === 'presidente' && item.votes.presidente.status !== null) ||
-                          (user?.subRole === 'vocal' && user?.name?.includes('Juan') && item.votes.vocalA.status !== null) ||
-                          (user?.subRole === 'vocal' && user?.name?.includes('Laura') && item.votes.vocalB.status !== null)
-                        ) ? 'Ya has votado' : 'Emitir Voto'}
+                        {selectedItem.votes[0]?.status ? 'Ya votaste' : 'Votar'}
                       </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </Stack>
-            </Box>
-          </Paper>
-        </Grid>
-
-        {/* Columna derecha - Completadas */}
-        <Grid item xs={12} md={6} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-          <Paper elevation={1} sx={{ 
-            flex: 1, 
-            display: 'flex', 
-            flexDirection: 'column',
-            overflow: 'hidden',
-            border: `1px solid ${colors.primary.light}20`
-          }}>
-            <Box sx={{ 
-              p: 2, 
-              borderBottom: `1px solid ${colors.primary.light}`,
-              bgcolor: colors.background.subtle
-            }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: colors.primary.dark, display: 'flex', alignItems: 'center', gap: 1 }}>
-                <VerifiedIcon sx={{ color: colors.status.success }} />
-                Votaciones Completadas
-              </Typography>
-            </Box>
-
-            <Box sx={{ flex: 1, overflow: 'auto', p: 2 }}>
-              <Stack spacing={2}>
-                {completedVotes.map((item) => (
-                  <Card key={item.id} variant="outlined" sx={{ borderColor: colors.primary.light }}>
-                    <CardContent>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-                        <Box>
-                          <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
-                            {item.certification}
-                          </Typography>
-                          <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                            {item.type} • {item.applicant}
-                          </Typography>
-                        </Box>
-                        <Chip 
-                          label={item.result === 'approved' ? 'APROBADA' : 'RECHAZADA'}
-                          size="small"
-                          sx={{ 
-                            bgcolor: item.result === 'approved' ? colors.status.success : colors.status.error,
-                            color: 'white',
-                            fontWeight: 600
-                          }}
-                          icon={item.result === 'approved' ? <CheckCircleIcon /> : <CancelIcon />}
-                        />
-                      </Box>
-
-                      <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
-                        <Box>
-                          <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
-                            Presidente
-                          </Typography>
-                          <Avatar 
-                            sx={{ 
-                              width: 32, 
-                              height: 32,
-                              bgcolor: item.votes.presidente.status === 'approve' ? colors.status.success : colors.status.error
-                            }}
-                          >
-                            MG
-                          </Avatar>
-                          <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mt: 0.5 }}>
-                            {item.votes.presidente.status === 'approve' ? 'A favor' : 'En contra'}
-                          </Typography>
-                        </Box>
-                        <Box>
-                          <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
-                            Vocal A
-                          </Typography>
-                          <Avatar 
-                            sx={{ 
-                              width: 32, 
-                              height: 32,
-                              bgcolor: item.votes.vocalA.status === 'approve' ? colors.status.success : colors.status.error
-                            }}
-                          >
-                            JP
-                          </Avatar>
-                          <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mt: 0.5 }}>
-                            {item.votes.vocalA.status === 'approve' ? 'A favor' : 'En contra'}
-                          </Typography>
-                        </Box>
-                        <Box>
-                          <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
-                            Vocal B
-                          </Typography>
-                          <Avatar 
-                            sx={{ 
-                              width: 32, 
-                              height: 32,
-                              bgcolor: item.votes.vocalB.status === 'approve' ? colors.status.success : colors.status.error
-                            }}
-                          >
-                            LS
-                          </Avatar>
-                          <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mt: 0.5 }}>
-                            {item.votes.vocalB.status === 'approve' ? 'A favor' : 'En contra'}
-                          </Typography>
-                        </Box>
-                      </Box>
-
-                      <Divider sx={{ mb: 2 }} />
-
-                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
-                        Completada: {item.completedAt}
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
-                        Resultado: {getVoteResult(item)}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                ))}
-              </Stack>
-            </Box>
-          </Paper>
-        </Grid>
-      </Grid>
-
-      {/* Diálogo de votación */}
-      <Dialog open={voteDialog} onClose={() => setVoteDialog(false)} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ color: colors.primary.dark }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <HowToVoteIcon sx={{ color: colors.primary.main }} />
-            Emitir Voto
-          </Box>
-        </DialogTitle>
-        <DialogContent>
-          {selectedItem && (
-            <>
-              <Card variant="outlined" sx={{ p: 2, mb: 3, borderColor: colors.primary.light }}>
-                <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: colors.primary.dark, mb: 1 }}>
-                  {selectedItem.certification} - {selectedItem.type}
-                </Typography>
-                <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
-                  Solicitante: {selectedItem.applicant}
-                </Typography>
-                <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
-                  Revisión técnica: {selectedItem.technicalReview.comments}
-                </Typography>
-              </Card>
-
-              <FormControl component="fieldset" sx={{ mb: 3, width: '100%' }}>
-                <FormLabel component="legend" sx={{ color: colors.primary.dark, mb: 1 }}>
-                  Sentido de tu voto:
-                </FormLabel>
-                <RadioGroup value={voteValue} onChange={(e) => setVoteValue(e.target.value)}>
-                  <FormControlLabel 
-                    value="approve" 
-                    control={<Radio />} 
-                    label={
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <ThumbUpIcon sx={{ color: colors.status.success }} />
-                        <Typography>A FAVOR</Typography>
-                      </Box>
-                    } 
-                  />
-                  <FormControlLabel 
-                    value="reject" 
-                    control={<Radio />} 
-                    label={
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <ThumbDownIcon sx={{ color: colors.status.error }} />
-                        <Typography>EN CONTRA</Typography>
-                      </Box>
-                    } 
-                  />
-                </RadioGroup>
-              </FormControl>
-
-              <TextField
-                fullWidth
-                multiline
-                rows={3}
-                label="Fundamentación del voto"
-                placeholder="Explica las razones de tu voto (opcional)"
-                value={voteComment}
-                onChange={(e) => setVoteComment(e.target.value)}
-                sx={{ mb: 2 }}
-              />
-
-              <Alert severity="info">
-                Tu voto quedará registrado en el historial de auditoría y será parte del acta colegiada.
-              </Alert>
-            </>
+                    </Stack>
+                  </Grid>
+                </Grid>
+              </Box>
+            </Paper>
+          ) : (
+            <Paper sx={{ height: '100%', m: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Typography color="text.secondary">Selecciona una certificación para votar</Typography>
+            </Paper>
           )}
+        </Box>
+      </Box>
+
+      {/* Diálogo de votación simplificado */}
+      <Dialog open={voteDialog} onClose={() => setVoteDialog(false)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ bgcolor: colors.primary.main, color: 'white' }}>
+          Votar como Presidente
+        </DialogTitle>
+        <DialogContent sx={{ pt: 3 }}>
+          <FormControl component="fieldset" sx={{ width: '100%', mb: 2 }}>
+            <RadioGroup value={voteValue} onChange={(e) => setVoteValue(e.target.value)}>
+              <Paper variant="outlined" sx={{ p: 1.5, mb: 1, cursor: 'pointer' }} onClick={() => setVoteValue('approve')}>
+                <FormControlLabel 
+                  value="approve" 
+                  control={<Radio />} 
+                  label={
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <ThumbUpIcon sx={{ color: colors.status.success }} /> A FAVOR
+                    </Box>
+                  } 
+                  sx={{ width: '100%' }}
+                />
+              </Paper>
+              <Paper variant="outlined" sx={{ p: 1.5, cursor: 'pointer' }} onClick={() => setVoteValue('reject')}>
+                <FormControlLabel 
+                  value="reject" 
+                  control={<Radio />} 
+                  label={
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <ThumbDownIcon sx={{ color: colors.status.error }} /> EN CONTRA
+                    </Box>
+                  } 
+                  sx={{ width: '100%' }}
+                />
+              </Paper>
+            </RadioGroup>
+          </FormControl>
+
+          <TextField
+            fullWidth
+            multiline
+            rows={2}
+            label="Comentario (opcional)"
+            value={voteComment}
+            onChange={(e) => setVoteComment(e.target.value)}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setVoteDialog(false)}>Cancelar</Button>
@@ -681,5 +389,51 @@ const CollegiateVoting = () => {
     </Box>
   );
 };
+
+// Componente de lista de certificaciones
+const CertificationList = ({ items, selectedItem, onSelect }) => (
+  <Stack spacing={1.5}>
+    {items.map(item => (
+      <Card 
+        key={item.id} 
+        variant="outlined"
+        sx={{ 
+          cursor: 'pointer',
+          borderColor: selectedItem?.id === item.id ? colors.primary.main : 'divider',
+          borderWidth: selectedItem?.id === item.id ? 2 : 1,
+          bgcolor: selectedItem?.id === item.id ? 'rgba(19,59,107,0.04)' : 'white'
+        }}
+        onClick={() => onSelect(item)}
+      >
+        <CardContent sx={{ p: 1.5 }}>
+          <Typography variant="subtitle2" fontWeight="bold" noWrap>{item.type}</Typography>
+          <Typography variant="caption" display="block" color="text.secondary" noWrap>
+            {item.certification}
+          </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
+            <Stack direction="row" spacing={0.5}>
+              {item.votes.map((vote, idx) => {
+                const member = committeeMembers[idx];
+                const status = vote.status === 'approve' ? 'success' : vote.status === 'reject' ? 'error' : 'default';
+                return (
+                  <Tooltip key={idx} title={`${member.name}: ${vote.status || 'Pendiente'}`}>
+                    <Avatar sx={{ width: 24, height: 24, bgcolor: status === 'success' ? colors.status.success : status === 'error' ? colors.status.error : colors.primary.light }}>
+                      {member.avatar}
+                    </Avatar>
+                  </Tooltip>
+                );
+              })}
+            </Stack>
+            <Chip 
+              label={`${item.votes.filter(v => v.status !== null).length}/3`}
+              size="small"
+              color={item.votes.filter(v => v.status !== null).length === 3 ? 'success' : 'default'}
+            />
+          </Box>
+        </CardContent>
+      </Card>
+    ))}
+  </Stack>
+);
 
 export default CollegiateVoting;

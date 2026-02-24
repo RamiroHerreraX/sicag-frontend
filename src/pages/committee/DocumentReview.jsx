@@ -94,43 +94,14 @@ import {
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 
-// Paleta de colores corporativa CAAAREM (versión clara)
-const colors = {
-  primary: {
-    dark: '#0D2A4D',
-    main: '#133B6B',
-    light: '#3A6EA5'
-  },
-  secondary: {
-    main: '#00A8A8',
-    light: '#00C2D1',
-    lighter: '#35D0FF'
-  },
-  accents: {
-    blue: '#0099FF',
-    purple: '#6C5CE7'
-  },
-  status: {
-    warning: '#00C2D1',      // Advertencias en cyan
-    error: '#0099FF',         // Errores en azul eléctrico
-    info: '#3A6EA5',          // Información en azul claro
-    success: '#00A8A8',       // Éxito en verde/teal
-    purple: '#6C5CE7'         // Púrpura para énfasis
-  },
-  text: {
-    primary: '#0D2A4D',
-    secondary: '#3A6EA5',
-    light: '#6C5CE7'
-  },
-  background: {
-    default: '#ffffff',
-    paper: '#ffffff',
-    subtle: '#f5f7fa'
-  },
-  gradients: {
-    primary: 'linear-gradient(135deg, #0D2A4D, #3A6EA5)',
-    secondary: 'linear-gradient(135deg, #00A8A8, #00C2D1)',
+// Función para convertir enlaces de Google Drive a formato de vista previa
+const getGoogleDrivePreviewUrl = (url) => {
+  const fileIdMatch = url.match(/\/d\/(.+?)\/view/);
+  if (fileIdMatch && fileIdMatch[1]) {
+    const fileId = fileIdMatch[1];
+    return `https://drive.google.com/file/d/${fileId}/preview`;
   }
+  return url;
 };
 
 const DocumentReview = () => {
@@ -148,7 +119,7 @@ const DocumentReview = () => {
   const [showValidationDialog, setShowValidationDialog] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [showMetadata, setShowMetadata] = useState(false);
-  const [viewMode, setViewMode] = useState('single'); // 'single', 'split', 'grid'
+  const [viewMode, setViewMode] = useState('single');
   const [annotationMode, setAnnotationMode] = useState(false);
   const [annotations, setAnnotations] = useState([]);
   
@@ -162,85 +133,246 @@ const DocumentReview = () => {
     security: { checked: false, comment: '' }
   });
 
-  // Datos mock mejorados
-  const document = {
-    id: docId || '1',
-    name: 'Solicitud_Formal_Certificacion_Patente_Aduanal_2026.pdf',
-    displayName: 'Solicitud Formal de Certificación',
-    type: 'PDF',
-    size: '1.2 MB',
-    uploadDate: '05/12/2025 14:30',
-    uploadBy: { 
-      name: 'Luis Rodríguez', 
-      avatar: 'LR', 
-      role: 'Agente Aduanal',
-      region: 'Norte',
-      level: 'Avanzado'
-    },
-    dueDate: '30/01/2026',
-    validationDate: '15/01/2026',
-    status: 'PENDIENTE DE REVISIÓN',
-    priority: 'ALTA',
-    hash: 'a1b2c3d4e5f6789012345678901234567890123456789012345678901234',
-    pages: 12,
-    security: 'Nivel Alto',
-    version: '1.0',
-    previousVersions: 2,
-    relatedCertification: {
-      id: certId || '1',
-      type: 'PATENTE ADUANAL',
-      code: 'PA-2026-00145',
-      applicant: 'Luis Rodríguez Martínez',
-      region: 'Norte',
-      status: 'En Revisión',
-      totalDocs: 5,
-      reviewedDocs: 2,
-      complianceScore: 85
-    },
-    metadata: {
-      creationDate: '01/12/2025 10:15',
-      lastModified: '05/12/2025 14:30',
-      author: 'Luis Rodríguez',
-      software: 'Adobe Acrobat Pro DC',
-      pageSize: 'A4',
-      dpi: 300,
-      colorProfile: 'CMYK',
-      encryption: 'AES-256'
-    },
-    validationHistory: [
-      { 
-        id: 1,
-        date: '10/12/2025 11:45', 
-        user: { name: 'Carlos Ruiz', role: 'Comité' }, 
-        action: 'Observación: Requiere firma digital', 
-        status: 'warning',
-        comments: 'La firma no es legible en la página 3'
+  // Datos del documento según el certId - Usando los PDFs reales de Google Drive
+  const getDocumentData = () => {
+    // Curso de Ética (certId = 1)
+    if (certId === '1') {
+      return {
+        id: '1',
+        name: 'Curso_Etica_Profesional.pdf',
+        displayName: 'CURSO DE ÉTICA PROFESIONAL Y CÓDIGO DE CONDUCTA',
+        type: 'PDF',
+        size: '1.8 MB',
+        uploadDate: '20/02/2026 10:30',
+        uploadBy: { 
+          name: 'Luis Rodríguez', 
+          avatar: 'LR', 
+          role: 'Agente Aduanal',
+          region: 'Norte',
+          level: 'Avanzado'
+        },
+        dueDate: '15/06/2028',
+        validationDate: '24/02/2026',
+        status: 'PENDIENTE DE REVISIÓN',
+        priority: 'ALTA',
+        hash: 'a1b2c3d4e5f6789012345678901234567890123456789012345678901234',
+        pages: 15,
+        security: 'Nivel Alto',
+        version: '1.0',
+        previousVersions: 0,
+        pdfPath: 'https://drive.google.com/file/d/1Pocj7S4sMPGJuE8_pzVUELsYetlfmEB5/view?usp=sharing',
+        relatedCertification: {
+          id: '1',
+          type: 'CURSO DE ÉTICA',
+          code: 'CUR-ET-2026-001',
+          applicant: 'Luis Rodríguez Martínez',
+          region: 'Norte',
+          status: 'En Revisión',
+          totalDocs: 1,
+          reviewedDocs: 0,
+          complianceScore: 85
+        },
+        metadata: {
+          creationDate: '20/02/2026 09:15',
+          lastModified: '20/02/2026 10:30',
+          author: 'CAAAREM Educación',
+          software: 'Adobe Acrobat Pro DC',
+          pageSize: 'A4',
+          dpi: 300,
+          colorProfile: 'CMYK',
+          encryption: 'AES-256'
+        },
+        validationHistory: [
+          { 
+            id: 1,
+            date: '20/02/2026 10:30', 
+            user: { name: 'Luis Rodríguez', role: 'Agente Aduanal' }, 
+            action: 'Documento cargado', 
+            status: 'info',
+            comments: 'Carga inicial del documento'
+          },
+          { 
+            id: 2,
+            date: '24/02/2026 09:15', 
+            user: { name: 'Sistema', role: 'Automático' }, 
+            action: 'Asignado para revisión', 
+            status: 'info',
+            comments: 'Asignado al comité'
+          },
+        ],
+        commonIssues: [
+          { id: 1, issue: 'Firma ilegible o ausente', frequency: 'Alta', category: 'Formalidad' },
+          { id: 2, issue: 'Fechas inconsistentes', frequency: 'Media', category: 'Consistencia' },
+          { id: 3, issue: 'Datos personales incompletos', frequency: 'Alta', category: 'Completitud' },
+        ],
+        requirements: [
+          { id: 1, requirement: 'Constancia oficial del curso', mandatory: true, met: true },
+          { id: 2, requirement: 'Firma del participante', mandatory: true, met: true },
+          { id: 3, requirement: 'Fecha de emisión vigente', mandatory: true, met: true },
+          { id: 4, requirement: 'Horas de duración (20 hrs)', mandatory: true, met: true },
+          { id: 5, requirement: 'Sello de la institución', mandatory: false, met: true },
+        ]
+      };
+    }
+    
+    // Diplomado (certId = 2)
+    if (certId === '2') {
+      return {
+        id: '2',
+        name: 'Diplomado_Comercio_Exterior.pdf',
+        displayName: 'DIPLOMADO EN COMERCIO EXTERIOR Y LEGISLACIÓN ADUANERA',
+        type: 'PDF',
+        size: '2.4 MB',
+        uploadDate: '15/02/2026 14:30',
+        uploadBy: { 
+          name: 'Luis Rodríguez', 
+          avatar: 'LR', 
+          role: 'Agente Aduanal',
+          region: 'Norte',
+          level: 'Avanzado'
+        },
+        dueDate: '10/02/2028',
+        validationDate: '24/02/2026',
+        status: 'PENDIENTE DE REVISIÓN',
+        priority: 'ALTA',
+        hash: 'b2c3d4e5f67890123456789012345678901234567890123456789012345',
+        pages: 25,
+        security: 'Nivel Alto',
+        version: '1.0',
+        previousVersions: 0,
+        pdfPath: 'https://drive.google.com/file/d/1_LeeJr9dDka0hTRdDXJItZdduuHip8XT/view?usp=sharing',
+        relatedCertification: {
+          id: '2',
+          type: 'DIPLOMADO',
+          code: 'DIP-CE-2026-001',
+          applicant: 'Luis Rodríguez Martínez',
+          region: 'Norte',
+          status: 'En Revisión',
+          totalDocs: 1,
+          reviewedDocs: 0,
+          complianceScore: 85
+        },
+        metadata: {
+          creationDate: '15/02/2026 13:15',
+          lastModified: '15/02/2026 14:30',
+          author: 'CAAAREM Comercio Exterior',
+          software: 'Adobe Acrobat Pro DC',
+          pageSize: 'A4',
+          dpi: 300,
+          colorProfile: 'CMYK',
+          encryption: 'AES-256'
+        },
+        validationHistory: [
+          { 
+            id: 1,
+            date: '15/02/2026 14:30', 
+            user: { name: 'Luis Rodríguez', role: 'Agente Aduanal' }, 
+            action: 'Documento cargado', 
+            status: 'info',
+            comments: 'Carga inicial del documento'
+          },
+          { 
+            id: 2,
+            date: '24/02/2026 09:15', 
+            user: { name: 'Sistema', role: 'Automático' }, 
+            action: 'Asignado para revisión', 
+            status: 'info',
+            comments: 'Asignado al comité'
+          },
+        ],
+        commonIssues: [
+          { id: 1, issue: 'Firma ilegible o ausente', frequency: 'Alta', category: 'Formalidad' },
+          { id: 2, issue: 'Fechas inconsistentes', frequency: 'Media', category: 'Consistencia' },
+          { id: 3, issue: 'Datos personales incompletos', frequency: 'Alta', category: 'Completitud' },
+        ],
+        requirements: [
+          { id: 1, requirement: 'Constancia oficial del diplomado', mandatory: true, met: true },
+          { id: 2, requirement: 'Firma del participante', mandatory: true, met: true },
+          { id: 3, requirement: 'Fecha de emisión vigente', mandatory: true, met: true },
+          { id: 4, requirement: 'Horas de duración (80 hrs)', mandatory: true, met: true },
+          { id: 5, requirement: 'Sello de la institución', mandatory: false, met: true },
+        ]
+      };
+    }
+    
+    // Declaraciones (para otros certId)
+    const declarations = {
+      '3': { title: 'Declaración Artículo 95', desc: 'Principios Rectores del Cumplimiento Aduanero' },
+      '4': { title: 'Declaración Artículo 96', desc: 'Conocimiento del Mandante y Debida Diligencia' },
+      '5': { title: 'Declaración Artículo 97', desc: 'Materialidad' },
+      '6': { title: 'Declaración Artículo 98', desc: 'Reglas Mínimas de Seguridad' },
+      '7': { title: 'Declaración de Conflicto de Interés', desc: 'Conflicto de Interés e Independencia Profesional' }
+    };
+    
+    return {
+      id: certId,
+      name: 'Declaracion.pdf',
+      displayName: declarations[certId]?.title || 'Documento',
+      type: 'Declaración',
+      size: '0.1 MB',
+      uploadDate: '01/02/2026 09:00',
+      uploadBy: { 
+        name: 'Luis Rodríguez', 
+        avatar: 'LR', 
+        role: 'Agente Aduanal',
+        region: 'Norte',
+        level: 'Avanzado'
       },
-      { 
-        id: 2,
-        date: '05/12/2025 14:30', 
-        user: { name: 'Sistema', role: 'Automático' }, 
-        action: 'Documento cargado', 
-        status: 'info',
-        comments: 'Carga inicial del documento'
+      dueDate: '01/02/2027',
+      validationDate: '24/02/2026',
+      status: 'PENDIENTE DE REVISIÓN',
+      priority: 'MEDIA',
+      hash: 'declaracion-hash-123456',
+      pages: 1,
+      security: 'Nivel Básico',
+      version: '1.0',
+      previousVersions: 0,
+      pdfPath: null,
+      relatedCertification: {
+        id: certId,
+        type: 'DECLARACIÓN',
+        code: `DEC-${certId}-2026-001`,
+        applicant: 'Luis Rodríguez Martínez',
+        region: 'Norte',
+        status: 'En Revisión',
+        totalDocs: 1,
+        reviewedDocs: 0,
+        complianceScore: 85
       },
-    ],
-    commonIssues: [
-      { id: 1, issue: 'Firma ilegible o ausente', frequency: 'Alta', category: 'Formalidad' },
-      { id: 2, issue: 'Fechas inconsistentes', frequency: 'Media', category: 'Consistencia' },
-      { id: 3, issue: 'Datos personales incompletos', frequency: 'Alta', category: 'Completitud' },
-      { id: 4, issue: 'Sello oficial faltante', frequency: 'Baja', category: 'Formalidad' },
-      { id: 5, issue: 'Documento escaneado con baja calidad', frequency: 'Media', category: 'Calidad' },
-      { id: 6, issue: 'Información desactualizada', frequency: 'Media', category: 'Vigencia' },
-    ],
-    requirements: [
-      { id: 1, requirement: 'Firma original del solicitante', mandatory: true, met: true },
-      { id: 2, requirement: 'Fecha de expedición vigente', mandatory: true, met: true },
-      { id: 3, requirement: 'Datos completos del solicitante', mandatory: true, met: true },
-      { id: 4, requirement: 'Sello de la institución emisora', mandatory: false, met: true },
-      { id: 5, requirement: 'Traducción oficial (si aplica)', mandatory: false, met: false },
-    ]
+      metadata: {
+        creationDate: '01/02/2026 08:45',
+        lastModified: '01/02/2026 09:00',
+        author: 'Luis Rodríguez',
+        software: 'Sistema SICAG',
+        pageSize: 'A4',
+        dpi: 150,
+        colorProfile: 'RGB',
+        encryption: 'Ninguna'
+      },
+      validationHistory: [
+        { 
+          id: 1,
+          date: '01/02/2026 09:00', 
+          user: { name: 'Luis Rodríguez', role: 'Agente Aduanal' }, 
+          action: 'Declaración registrada', 
+          status: 'info',
+          comments: 'Registro de declaración de buena fe'
+        },
+      ],
+      commonIssues: [
+        { id: 1, issue: 'Información incompleta', frequency: 'Media', category: 'Completitud' },
+        { id: 2, issue: 'Fechas incorrectas', frequency: 'Baja', category: 'Consistencia' },
+      ],
+      requirements: [
+        { id: 1, requirement: 'Declaración firmada', mandatory: true, met: true },
+        { id: 2, requirement: 'Fecha de declaración', mandatory: true, met: true },
+      ],
+      description: declarations[certId]?.desc || 'Declaración de buena fe'
+    };
   };
+
+  const document = getDocumentData();
+  const isPdfDocument = certId === '1' || certId === '2';
 
   // Manejo del zoom con slider
   const handleZoomChange = (event, newValue) => {
@@ -317,15 +449,15 @@ const DocumentReview = () => {
       overflow: 'hidden',
       display: 'flex',
       flexDirection: 'column',
-      bgcolor: colors.background.subtle
+      bgcolor: '#f8fafc'
     }}>
       {/* Header Compacto y Elegante */}
       <Paper 
         elevation={0} 
         sx={{ 
           p: 2.5, 
-          borderBottom: `1px solid ${colors.primary.light}`,
-          bgcolor: colors.background.paper,
+          borderBottom: '1px solid #e0e0e0',
+          bgcolor: 'white',
           borderRadius: 0
         }}
       >
@@ -338,9 +470,8 @@ const DocumentReview = () => {
                   to={`/committee/review/${certId}`}
                   size="small"
                   sx={{ 
-                    bgcolor: colors.background.subtle,
-                    color: colors.primary.main,
-                    '&:hover': { bgcolor: 'rgba(58, 110, 165, 0.08)' }
+                    bgcolor: '#f0f4f8',
+                    '&:hover': { bgcolor: '#e3e8f0' }
                   }}
                 >
                   <ArrowBackIcon />
@@ -349,7 +480,7 @@ const DocumentReview = () => {
               
               <Box>
                 <Typography variant="h6" sx={{ 
-                  color: colors.primary.dark, 
+                  color: '#1a237e', 
                   fontWeight: 700,
                   mb: 0.5,
                   fontSize: '1.1rem'
@@ -359,9 +490,9 @@ const DocumentReview = () => {
                 
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <PdfIcon sx={{ color: colors.status.error, fontSize: 20 }} />
+                    <PdfIcon sx={{ color: '#e74c3c', fontSize: 20 }} />
                     <Typography variant="body2" sx={{ 
-                      color: colors.primary.dark, 
+                      color: '#2c3e50', 
                       fontWeight: 500,
                       maxWidth: 300,
                       overflow: 'hidden',
@@ -375,24 +506,17 @@ const DocumentReview = () => {
                   <Chip 
                     label={document.status}
                     size="small"
-                    sx={{
-                      bgcolor: colors.status.warning,
-                      color: colors.primary.dark,
-                      fontWeight: 600,
-                      fontSize: '0.75rem'
-                    }}
-                    icon={<WarningIcon sx={{ color: colors.primary.dark }} />}
+                    color="warning"
+                    icon={<WarningIcon />}
+                    sx={{ fontWeight: 600, fontSize: '0.75rem' }}
                   />
                   
                   <Chip 
                     label={`Prioridad: ${document.priority}`}
                     size="small"
+                    color={document.priority === 'ALTA' ? 'error' : 'warning'}
                     variant="outlined"
-                    sx={{ 
-                      fontSize: '0.7rem',
-                      color: document.priority === 'ALTA' ? colors.status.error : colors.status.warning,
-                      borderColor: document.priority === 'ALTA' ? colors.status.error : colors.status.warning,
-                    }}
+                    sx={{ fontSize: '0.7rem' }}
                   />
                 </Box>
               </Box>
@@ -402,10 +526,10 @@ const DocumentReview = () => {
           <Grid item xs={12} md={6}>
             <Stack direction="row" spacing={1.5} justifyContent="flex-end" alignItems="center">
               <Box sx={{ textAlign: 'right', mr: 2 }}>
-                <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
+                <Typography variant="caption" sx={{ color: '#64748b', display: 'block' }}>
                   Certificación:
                 </Typography>
-                <Typography variant="body2" sx={{ fontWeight: 600, color: colors.primary.dark }}>
+                <Typography variant="body2" sx={{ fontWeight: 600, color: '#1a237e' }}>
                   {document.relatedCertification.code}
                 </Typography>
               </Box>
@@ -415,23 +539,19 @@ const DocumentReview = () => {
                   variant="outlined"
                   size="small"
                   startIcon={<DownloadIcon />}
-                  sx={{ 
-                    minWidth: 'auto', 
-                    px: 1.5,
-                    borderColor: colors.primary.light,
-                    color: colors.primary.main,
-                    '&:hover': {
-                      borderColor: colors.primary.main,
-                      bgcolor: 'rgba(19, 59, 107, 0.04)',
-                    }
-                  }}
+                  component="a"
+                  href={document.pdfPath || '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  disabled={!isPdfDocument}
+                  sx={{ minWidth: 'auto', px: 1.5 }}
                 >
                   Descargar
                 </Button>
               </Tooltip>
               
               <Tooltip title="Más opciones">
-                <IconButton size="small" onClick={handleMenuOpen} sx={{ color: colors.text.secondary }}>
+                <IconButton size="small" onClick={handleMenuOpen}>
                   <MoreVertIcon />
                 </IconButton>
               </Tooltip>
@@ -440,36 +560,31 @@ const DocumentReview = () => {
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={handleMenuClose}
-                PaperProps={{
-                  sx: {
-                    border: `1px solid ${colors.primary.light}`,
-                  }
-                }}
               >
                 <MenuItem onClick={() => {}}>
                   <ListItemIcon>
-                    <CompareIcon fontSize="small" sx={{ color: colors.primary.main }} />
+                    <CompareIcon fontSize="small" />
                   </ListItemIcon>
-                  <ListItemText sx={{ color: colors.primary.dark }}>Comparar versiones</ListItemText>
+                  <ListItemText>Comparar versiones</ListItemText>
                 </MenuItem>
                 <MenuItem onClick={() => {}}>
                   <ListItemIcon>
-                    <NoteAddIcon fontSize="small" sx={{ color: colors.primary.main }} />
+                    <NoteAddIcon fontSize="small" />
                   </ListItemIcon>
-                  <ListItemText sx={{ color: colors.primary.dark }}>Añadir anotación</ListItemText>
+                  <ListItemText>Añadir anotación</ListItemText>
                 </MenuItem>
                 <MenuItem onClick={() => {}}>
                   <ListItemIcon>
-                    <AssessmentIcon fontSize="small" sx={{ color: colors.primary.main }} />
+                    <AssessmentIcon fontSize="small" />
                   </ListItemIcon>
-                  <ListItemText sx={{ color: colors.primary.dark }}>Ver estadísticas</ListItemText>
+                  <ListItemText>Ver estadísticas</ListItemText>
                 </MenuItem>
-                <Divider sx={{ borderColor: colors.primary.light }} />
+                <Divider />
                 <MenuItem onClick={() => navigate(`/committee/review/${certId}`)}>
                   <ListItemIcon>
-                    <DescriptionIcon fontSize="small" sx={{ color: colors.primary.main }} />
+                    <DescriptionIcon fontSize="small" />
                   </ListItemIcon>
-                  <ListItemText sx={{ color: colors.primary.dark }}>Ir a certificación completa</ListItemText>
+                  <ListItemText>Ir a certificación completa</ListItemText>
                 </MenuItem>
               </Menu>
             </Stack>
@@ -484,7 +599,7 @@ const DocumentReview = () => {
         sx={{ 
           height: 3,
           '& .MuiLinearProgress-bar': {
-            bgcolor: validationProgress() === 100 ? colors.status.success : colors.primary.main
+            bgcolor: validationProgress() === 100 ? '#27ae60' : '#3498db'
           }
         }}
       />
@@ -506,34 +621,31 @@ const DocumentReview = () => {
             flexDirection: 'column',
             overflow: 'hidden',
             borderRadius: 2,
-            bgcolor: colors.background.paper,
-            border: `1px solid ${colors.primary.light}20`,
+            bgcolor: 'white'
           }}
         >
           {/* Barra Superior del Visor */}
           <Box sx={{ 
             p: 1.5, 
-            borderBottom: `1px solid ${colors.primary.light}`,
+            borderBottom: '1px solid #e0e0e0',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            bgcolor: colors.background.subtle
+            bgcolor: '#f8fafc'
           }}>
             <Stack direction="row" spacing={1} alignItems="center">
-              <Typography variant="caption" sx={{ color: colors.text.secondary, fontWeight: 600 }}>
+              <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600 }}>
                 VISOR
               </Typography>
               
-              <Divider orientation="vertical" flexItem sx={{ height: 20, borderColor: colors.primary.light }} />
+              <Divider orientation="vertical" flexItem sx={{ height: 20 }} />
               
               {/* Controles de Vista */}
               <Tooltip title="Vista única">
                 <IconButton 
                   size="small" 
                   onClick={() => setViewMode('single')}
-                  sx={{ 
-                    color: viewMode === 'single' ? colors.primary.main : colors.text.secondary,
-                  }}
+                  color={viewMode === 'single' ? 'primary' : 'default'}
                 >
                   <VisibilityIcon fontSize="small" />
                 </IconButton>
@@ -543,9 +655,7 @@ const DocumentReview = () => {
                 <IconButton 
                   size="small" 
                   onClick={() => setViewMode('split')}
-                  sx={{ 
-                    color: viewMode === 'split' ? colors.primary.main : colors.text.secondary,
-                  }}
+                  color={viewMode === 'split' ? 'primary' : 'default'}
                 >
                   <ViewSidebarIcon fontSize="small" />
                 </IconButton>
@@ -555,20 +665,18 @@ const DocumentReview = () => {
                 <IconButton 
                   size="small" 
                   onClick={() => setViewMode('grid')}
-                  sx={{ 
-                    color: viewMode === 'grid' ? colors.primary.main : colors.text.secondary,
-                  }}
+                  color={viewMode === 'grid' ? 'primary' : 'default'}
                 >
                   <GridViewIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
               
-              <Divider orientation="vertical" flexItem sx={{ height: 20, borderColor: colors.primary.light }} />
+              <Divider orientation="vertical" flexItem sx={{ height: 20 }} />
               
               {/* Controles de Zoom */}
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: 200 }}>
                 <Tooltip title="Zoom out">
-                  <IconButton size="small" onClick={handleZoomOut} sx={{ color: colors.text.secondary }}>
+                  <IconButton size="small" onClick={handleZoomOut}>
                     <ZoomOutIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
@@ -579,14 +687,11 @@ const DocumentReview = () => {
                   onChange={handleZoomChange}
                   min={25}
                   max={400}
-                  sx={{ 
-                    mx: 1,
-                    color: colors.primary.main,
-                  }}
+                  sx={{ mx: 1 }}
                 />
                 
                 <Tooltip title="Zoom in">
-                  <IconButton size="small" onClick={handleZoomIn} sx={{ color: colors.text.secondary }}>
+                  <IconButton size="small" onClick={handleZoomIn}>
                     <ZoomInIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
@@ -598,10 +703,7 @@ const DocumentReview = () => {
                   sx={{ 
                     cursor: 'pointer',
                     fontSize: '0.75rem',
-                    fontWeight: 600,
-                    bgcolor: colors.background.subtle,
-                    color: colors.primary.dark,
-                    border: `1px solid ${colors.primary.light}`,
+                    fontWeight: 600
                   }}
                 />
               </Box>
@@ -610,27 +712,25 @@ const DocumentReview = () => {
             <Stack direction="row" spacing={1}>
               {/* Controles de Rotación */}
               <Tooltip title="Rotar izquierda">
-                <IconButton size="small" onClick={handleRotateLeft} sx={{ color: colors.text.secondary }}>
+                <IconButton size="small" onClick={handleRotateLeft}>
                   <RotateLeftIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
               
               <Tooltip title="Rotar derecha">
-                <IconButton size="small" onClick={handleRotateRight} sx={{ color: colors.text.secondary }}>
+                <IconButton size="small" onClick={handleRotateRight}>
                   <RotateRightIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
               
-              <Divider orientation="vertical" flexItem sx={{ height: 20, borderColor: colors.primary.light }} />
+              <Divider orientation="vertical" flexItem sx={{ height: 20 }} />
               
               {/* Modo Anotaciones */}
               <Tooltip title={annotationMode ? "Desactivar anotaciones" : "Activar anotaciones"}>
                 <IconButton 
                   size="small" 
                   onClick={() => setAnnotationMode(!annotationMode)}
-                  sx={{ 
-                    color: annotationMode ? colors.primary.main : colors.text.secondary,
-                  }}
+                  color={annotationMode ? 'primary' : 'default'}
                 >
                   <ChatBubbleIcon fontSize="small" />
                 </IconButton>
@@ -638,7 +738,7 @@ const DocumentReview = () => {
               
               {/* Pantalla Completa */}
               <Tooltip title={fullscreen ? "Salir pantalla completa" : "Pantalla completa"}>
-                <IconButton size="small" onClick={toggleFullscreen} sx={{ color: colors.text.secondary }}>
+                <IconButton size="small" onClick={toggleFullscreen}>
                   {fullscreen ? <FullscreenExitIcon fontSize="small" /> : <FullscreenIcon fontSize="small" />}
                 </IconButton>
               </Tooltip>
@@ -646,7 +746,7 @@ const DocumentReview = () => {
           </Box>
 
           {/* Tabs de Contenido */}
-          <Box sx={{ borderBottom: 1, borderColor: colors.primary.light }}>
+          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs 
               value={activeTab} 
               onChange={(e, newValue) => setActiveTab(newValue)}
@@ -657,14 +757,7 @@ const DocumentReview = () => {
                 '& .MuiTab-root': {
                   minHeight: 48,
                   fontSize: '0.875rem',
-                  fontWeight: 500,
-                  color: colors.text.secondary,
-                  '&.Mui-selected': {
-                    color: colors.primary.main,
-                  }
-                },
-                '& .MuiTabs-indicator': {
-                  backgroundColor: colors.primary.main,
+                  fontWeight: 500
                 }
               }}
             >
@@ -685,7 +778,7 @@ const DocumentReview = () => {
             sx={{ 
               flex: 1,
               overflow: 'auto',
-              bgcolor: colors.background.subtle,
+              bgcolor: '#f5f5f5',
               position: 'relative'
             }}
           >
@@ -695,7 +788,6 @@ const DocumentReview = () => {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
               >
-                {/* Simulación de Documento PDF Mejorada */}
                 <Box sx={{ 
                   display: 'flex',
                   flexDirection: 'column',
@@ -703,322 +795,305 @@ const DocumentReview = () => {
                   p: 4,
                   minHeight: '100%'
                 }}>
-                  <Paper 
-                    elevation={3}
-                    sx={{ 
-                      width: '100%',
-                      maxWidth: '800px',
-                      minHeight: '600px',
-                      bgcolor: colors.background.paper,
-                      borderRadius: 2,
-                      overflow: 'hidden',
-                      position: 'relative',
-                      transform: `rotate(${rotation}deg)`,
-                      transition: 'transform 0.3s ease',
-                      transformOrigin: 'center center',
-                      border: `1px solid ${colors.primary.light}20`,
-                    }}
-                  >
-                    {/* Encabezado del Documento */}
-                    <Box sx={{ 
-                      p: 3, 
-                      bgcolor: colors.primary.dark,
-                      color: 'white',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between'
-                    }}>
-                      <Box>
-                        <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                          SOLICITUD FORMAL DE CERTIFICACIÓN
-                        </Typography>
-                        <Typography variant="caption" sx={{ opacity: 0.9 }}>
-                          Patente Aduanal - {document.relatedCertification.code}
-                        </Typography>
-                      </Box>
-                      <Chip 
-                        label="ORIGINAL"
-                        size="small"
-                        sx={{ 
-                          bgcolor: 'white',
-                          color: colors.primary.dark,
-                          fontWeight: 700
-                        }}
+                  {isPdfDocument ? (
+                    // Visor de PDF real desde Google Drive
+                    <Paper 
+                      elevation={3}
+                      sx={{ 
+                        width: '100%',
+                        maxWidth: '1000px',
+                        minHeight: '700px',
+                        bgcolor: 'white',
+                        borderRadius: 2,
+                        overflow: 'hidden',
+                        transform: `rotate(${rotation}deg) scale(${zoom/100})`,
+                        transition: 'transform 0.3s ease',
+                        transformOrigin: 'center center'
+                      }}
+                    >
+                      <iframe
+                        src={getGoogleDrivePreviewUrl(document.pdfPath)}
+                        title={document.displayName}
+                        width="100%"
+                        height="700px"
+                        style={{ border: 'none' }}
                       />
-                    </Box>
-                    
-                    {/* Contenido del Documento */}
-                    <Box sx={{ p: 4 }}>
-                      {/* Información del Solicitante */}
-                      <Grid container spacing={3} sx={{ mb: 4 }}>
-                        <Grid item xs={12}>
-                          <Typography variant="subtitle1" sx={{ 
-                            mb: 2, 
-                            color: colors.primary.dark,
-                            fontWeight: 600,
-                            borderBottom: `2px solid ${colors.primary.light}`,
-                            pb: 1
-                          }}>
-                            DATOS DEL SOLICITANTE
-                          </Typography>
-                        </Grid>
-                        
-                        <Grid item xs={12} md={6}>
-                          <Box sx={{ mb: 2 }}>
-                            <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mb: 0.5 }}>
-                              Nombre Completo
-                            </Typography>
-                            <Typography variant="body1" sx={{ fontWeight: 500, color: colors.primary.dark }}>
-                              {document.uploadBy.name}
-                            </Typography>
-                          </Box>
-                          
-                          <Box sx={{ mb: 2 }}>
-                            <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mb: 0.5 }}>
-                              Tipo de Usuario
-                            </Typography>
-                            <Typography variant="body1" sx={{ color: colors.primary.dark }}>
-                              {document.uploadBy.role}
-                            </Typography>
-                          </Box>
-                        </Grid>
-                        
-                        <Grid item xs={12} md={6}>
-                          <Box sx={{ mb: 2 }}>
-                            <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mb: 0.5 }}>
-                              Región
-                            </Typography>
-                            <Typography variant="body1" sx={{ color: colors.primary.dark }}>
-                              {document.uploadBy.region}
-                            </Typography>
-                          </Box>
-                          
-                          <Box sx={{ mb: 2 }}>
-                            <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mb: 0.5 }}>
-                              Nivel de Reconocimiento
-                            </Typography>
-                            <Chip 
-                              label={document.uploadBy.level}
-                              size="small"
-                              sx={{ 
-                                bgcolor: colors.status.success,
-                                color: 'white',
-                                fontWeight: 600 
-                              }}
-                            />
-                          </Box>
-                        </Grid>
-                      </Grid>
-                      
-                      {/* Sección de Firma */}
+                    </Paper>
+                  ) : (
+                    // Simulación de documento para declaraciones
+                    <Paper 
+                      elevation={3}
+                      sx={{ 
+                        width: '100%',
+                        maxWidth: '800px',
+                        minHeight: '600px',
+                        bgcolor: 'white',
+                        borderRadius: 2,
+                        overflow: 'hidden',
+                        position: 'relative',
+                        transform: `rotate(${rotation}deg)`,
+                        transition: 'transform 0.3s ease',
+                        transformOrigin: 'center center'
+                      }}
+                    >
+                      {/* Encabezado del Documento */}
                       <Box sx={{ 
-                        mt: 8, 
-                        pt: 6, 
-                        borderTop: `2px solid ${colors.primary.dark}`,
+                        p: 3, 
+                        bgcolor: '#1a237e',
+                        color: 'white',
                         display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'flex-start'
+                        alignItems: 'center',
+                        justifyContent: 'space-between'
                       }}>
-                        <Box sx={{ flex: 1 }}>
+                        <Box>
+                          <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                            {document.displayName}
+                          </Typography>
+                          <Typography variant="caption">
+                            {document.relatedCertification.code}
+                          </Typography>
+                        </Box>
+                        <Chip 
+                          label="DECLARACIÓN"
+                          size="small"
+                          sx={{ 
+                            bgcolor: 'white',
+                            color: '#1a237e',
+                            fontWeight: 700
+                          }}
+                        />
+                      </Box>
+                      
+                      {/* Contenido del Documento */}
+                      <Box sx={{ p: 4 }}>
+                        {/* Información del Solicitante */}
+                        <Grid container spacing={3} sx={{ mb: 4 }}>
+                          <Grid item xs={12}>
+                            <Typography variant="subtitle1" sx={{ 
+                              mb: 2, 
+                              color: '#2c3e50',
+                              fontWeight: 600,
+                              borderBottom: '2px solid #e0e0e0',
+                              pb: 1
+                            }}>
+                              DATOS DEL SOLICITANTE
+                            </Typography>
+                          </Grid>
+                          
+                          <Grid item xs={12} md={6}>
+                            <Box sx={{ mb: 2 }}>
+                              <Typography variant="caption" sx={{ color: '#64748b', display: 'block', mb: 0.5 }}>
+                                Nombre Completo
+                              </Typography>
+                              <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                                {document.uploadBy.name}
+                              </Typography>
+                            </Box>
+                            
+                            <Box sx={{ mb: 2 }}>
+                              <Typography variant="caption" sx={{ color: '#64748b', display: 'block', mb: 0.5 }}>
+                                Tipo de Usuario
+                              </Typography>
+                              <Typography variant="body1">
+                                {document.uploadBy.role}
+                              </Typography>
+                            </Box>
+                          </Grid>
+                          
+                          <Grid item xs={12} md={6}>
+                            <Box sx={{ mb: 2 }}>
+                              <Typography variant="caption" sx={{ color: '#64748b', display: 'block', mb: 0.5 }}>
+                                Región
+                              </Typography>
+                              <Typography variant="body1">
+                                {document.uploadBy.region}
+                              </Typography>
+                            </Box>
+                            
+                            <Box sx={{ mb: 2 }}>
+                              <Typography variant="caption" sx={{ color: '#64748b', display: 'block', mb: 0.5 }}>
+                                Nivel de Reconocimiento
+                              </Typography>
+                              <Chip 
+                                label={document.uploadBy.level}
+                                size="small"
+                                color="success"
+                                sx={{ fontWeight: 600 }}
+                              />
+                            </Box>
+                          </Grid>
+                        </Grid>
+                        
+                        {/* Sección de Declaración */}
+                        <Box sx={{ 
+                          mt: 8, 
+                          pt: 6, 
+                          borderTop: '2px solid #2c3e50'
+                        }}>
                           <Typography variant="caption" sx={{ 
-                            color: colors.text.secondary, 
+                            color: '#64748b', 
                             display: 'block', 
                             mb: 2,
                             fontWeight: 600
                           }}>
-                            FIRMA DEL SOLICITANTE
+                            TEXTO DE LA DECLARACIÓN
                           </Typography>
+                          <Typography variant="body2" paragraph sx={{ fontStyle: 'italic' }}>
+                            "Por medio de la presente, el suscrito manifiesta bajo protesta de decir verdad que ha cumplido 
+                            con todas las disposiciones aplicables durante el período correspondiente, actuando con 
+                            transparencia, legalidad y debida diligencia en el ejercicio de sus funciones como Agente Aduanal."
+                          </Typography>
+                          
                           <Box sx={{ 
-                            width: '80%', 
-                            height: 100, 
-                            bgcolor: colors.background.subtle,
-                            border: `2px dashed ${colors.primary.light}`,
-                            borderRadius: 1,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
+                            mt: 4,
+                            p: 2,
+                            bgcolor: '#f8fafc',
+                            border: '1px solid #e2e8f0',
+                            borderRadius: 1
                           }}>
-                            {validationChecks.signed.checked ? (
-                              <Box sx={{ textAlign: 'center' }}>
-                                <VerifiedIcon sx={{ color: colors.status.success, fontSize: 40, mb: 1 }} />
-                                <Typography variant="caption" sx={{ color: colors.status.success, fontWeight: 600 }}>
-                                  FIRMA VERIFICADA
-                                </Typography>
-                              </Box>
-                            ) : (
-                              <Typography variant="caption" sx={{ color: colors.text.secondary, textAlign: 'center' }}>
-                                <WarningIcon sx={{ fontSize: 20, mb: 0.5, display: 'block', mx: 'auto', color: colors.status.warning }} />
-                                ÁREA DE FIRMA<br />
-                                (Revisar legibilidad)
-                              </Typography>
-                            )}
+                            <Typography variant="caption" sx={{ color: '#64748b', display: 'block' }}>
+                              <strong>Descripción:</strong> {document.description}
+                            </Typography>
                           </Box>
                         </Box>
                         
-                        <Box sx={{ flex: 1, textAlign: 'right' }}>
-                          <Typography variant="caption" sx={{ 
-                            color: colors.text.secondary, 
-                            display: 'block', 
-                            mb: 2,
-                            fontWeight: 600
-                          }}>
-                            FECHA DE EXPEDICIÓN
-                          </Typography>
+                        {/* Fecha */}
+                        <Box sx={{ 
+                          mt: 4,
+                          display: 'flex',
+                          justifyContent: 'flex-end'
+                        }}>
                           <Box sx={{ 
                             p: 2,
-                            bgcolor: colors.background.subtle,
-                            border: `1px solid ${colors.primary.light}`,
+                            bgcolor: '#f8fafc',
+                            border: '1px solid #e2e8f0',
                             borderRadius: 1,
                             display: 'inline-block'
                           }}>
-                            <Typography variant="body1" sx={{ fontWeight: 600, color: colors.primary.dark }}>
+                            <Typography variant="caption" sx={{ color: '#64748b', display: 'block', mb: 0.5 }}>
+                              FECHA DE DECLARACIÓN
+                            </Typography>
+                            <Typography variant="body1" sx={{ fontWeight: 600, color: '#1a237e' }}>
                               {document.uploadDate.split(' ')[0]}
                             </Typography>
                           </Box>
                         </Box>
                       </Box>
                       
-                      {/* Anotaciones (si están activas) */}
-                      {annotationMode && (
-                        <Fade in={annotationMode}>
-                          <Box sx={{
-                            position: 'absolute',
-                            top: 200,
-                            right: 50,
-                            bgcolor: 'rgba(0, 194, 209, 0.1)',
-                            borderLeft: `4px solid ${colors.status.warning}`,
-                            p: 2,
-                            borderRadius: 1,
-                            maxWidth: 300,
-                            boxShadow: 3,
-                            border: `1px solid ${colors.primary.light}`,
-                          }}>
-                            <Typography variant="caption" sx={{ fontWeight: 700, color: colors.status.warning, display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                              <WarningIcon fontSize="small" /> OBSERVACIÓN
-                            </Typography>
-                            <Typography variant="caption" sx={{ color: colors.primary.dark, display: 'block', mt: 0.5 }}>
-                              Verificar claridad y autenticidad de la firma digital en página 3.
-                            </Typography>
-                            <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mt: 1, fontStyle: 'italic' }}>
-                              — Revisor anterior
-                            </Typography>
-                          </Box>
-                        </Fade>
-                      )}
-                    </Box>
-                    
-                    {/* Pie de Página */}
-                    <Box sx={{ 
-                      p: 2, 
-                      bgcolor: colors.background.subtle,
-                      borderTop: `1px solid ${colors.primary.light}`,
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
-                    }}>
-                      <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                        Página 1 de {document.pages} • Documento ID: {docId}
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: colors.text.secondary, fontFamily: 'monospace' }}>
-                        Hash: {document.hash.substring(0, 16)}...
-                      </Typography>
-                    </Box>
-                  </Paper>
+                      {/* Pie de Página */}
+                      <Box sx={{ 
+                        p: 2, 
+                        bgcolor: '#f8fafc',
+                        borderTop: '1px solid #e2e8f0',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
+                      }}>
+                        <Typography variant="caption" sx={{ color: '#64748b' }}>
+                          Documento de declaración • Folio: {document.relatedCertification.code}
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: '#64748b', fontFamily: 'monospace' }}>
+                          Hash: {document.hash.substring(0, 16)}...
+                        </Typography>
+                      </Box>
+                    </Paper>
+                  )}
                   
-                  {/* Navegación de Páginas */}
-                  <Stack 
-                    direction="row" 
-                    spacing={1} 
-                    sx={{ 
-                      mt: 3,
-                      p: 1.5,
-                      bgcolor: colors.background.paper,
-                      borderRadius: 2,
-                      boxShadow: 1,
-                      border: `1px solid ${colors.primary.light}`,
-                    }}
-                  >
-                    <Button 
-                      variant="outlined" 
-                      size="small"
-                      disabled
-                      sx={{
-                        borderColor: colors.primary.light,
-                        color: colors.text.secondary,
+                  {/* Navegación de Páginas (solo para PDFs) */}
+                  {isPdfDocument && (
+                    <Stack 
+                      direction="row" 
+                      spacing={1} 
+                      sx={{ 
+                        mt: 3,
+                        p: 1.5,
+                        bgcolor: 'white',
+                        borderRadius: 2,
+                        boxShadow: 1
                       }}
                     >
-                      ← Anterior
-                    </Button>
-                    
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      {Array.from({ length: Math.min(document.pages, 6) }).map((_, idx) => (
-                        <Chip 
-                          key={idx}
-                          label={idx + 1}
-                          size="small"
-                          variant={idx === 0 ? 'filled' : 'outlined'}
-                          onClick={() => {}}
-                          sx={{ 
-                            cursor: 'pointer',
-                            bgcolor: idx === 0 ? colors.primary.main : 'transparent',
-                            color: idx === 0 ? 'white' : colors.primary.dark,
-                            borderColor: colors.primary.light,
-                          }}
-                        />
-                      ))}
-                      {document.pages > 6 && (
-                        <>
-                          <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                            ...
-                          </Typography>
+                      <Button 
+                        variant="outlined" 
+                        size="small"
+                        disabled
+                      >
+                        ← Anterior
+                      </Button>
+                      
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        {Array.from({ length: Math.min(document.pages, 6) }).map((_, idx) => (
                           <Chip 
-                            label={document.pages}
+                            key={idx}
+                            label={idx + 1}
                             size="small"
-                            variant="outlined"
+                            variant={idx === 0 ? 'filled' : 'outlined'}
+                            color="primary"
                             onClick={() => {}}
-                            sx={{ 
-                              cursor: 'pointer',
-                              borderColor: colors.primary.light,
-                              color: colors.primary.dark,
-                            }}
+                            sx={{ cursor: 'pointer' }}
                           />
-                        </>
-                      )}
-                    </Box>
-                    
-                    <Button 
-                      variant="outlined" 
-                      size="small"
-                      sx={{
-                        borderColor: colors.primary.light,
-                        color: colors.primary.main,
-                        '&:hover': {
-                          borderColor: colors.primary.main,
-                          bgcolor: 'rgba(19, 59, 107, 0.04)',
-                        }
-                      }}
-                    >
-                      Siguiente →
-                    </Button>
-                  </Stack>
+                        ))}
+                        {document.pages > 6 && (
+                          <>
+                            <Typography variant="caption" sx={{ color: '#64748b' }}>
+                              ...
+                            </Typography>
+                            <Chip 
+                              label={document.pages}
+                              size="small"
+                              variant="outlined"
+                              onClick={() => {}}
+                              sx={{ cursor: 'pointer' }}
+                            />
+                          </>
+                        )}
+                      </Box>
+                      
+                      <Button 
+                        variant="outlined" 
+                        size="small"
+                      >
+                        Siguiente →
+                      </Button>
+                    </Stack>
+                  )}
                 </Box>
               </motion.div>
             )}
             
-            {/* Otras pestañas... (mantener similar estructura) */}
+            {/* Otras pestañas */}
             {activeTab !== 0 && (
               <Box sx={{ p: 3 }}>
-                {/* Contenido de otras pestañas manteniendo consistencia */}
-                <Typography variant="subtitle1" sx={{ mb: 3, fontWeight: 600, color: colors.primary.dark }}>
+                <Typography variant="subtitle1" sx={{ mb: 3, fontWeight: 600, color: '#2c3e50' }}>
                   {tabs[activeTab].label}
                 </Typography>
-                {/* Contenido específico de cada tab */}
+                {/* Contenido de otras pestañas - se mantiene igual */}
+                {activeTab === 1 && (
+                  <Box>
+                    <Typography variant="body2" color="text.secondary">
+                      Contenido de validación...
+                    </Typography>
+                  </Box>
+                )}
+                {activeTab === 2 && (
+                  <Box>
+                    <Typography variant="body2" color="text.secondary">
+                      Metadatos del documento...
+                    </Typography>
+                  </Box>
+                )}
+                {activeTab === 3 && (
+                  <Box>
+                    <Typography variant="body2" color="text.secondary">
+                      Historial del documento...
+                    </Typography>
+                  </Box>
+                )}
               </Box>
             )}
           </Box>
         </Paper>
 
-        {/* Panel Derecho - Evaluación (40%) */}
+        {/* Panel Derecho - Evaluación (40%) - Se mantiene exactamente igual */}
         <Paper 
           elevation={1}
           sx={{ 
@@ -1027,14 +1102,13 @@ const DocumentReview = () => {
             flexDirection: 'column',
             overflow: 'hidden',
             borderRadius: 2,
-            bgcolor: colors.background.paper,
-            border: `1px solid ${colors.primary.light}20`,
+            bgcolor: 'white'
           }}
         >
           {/* Header del Panel de Evaluación */}
           <Box sx={{ 
             p: 2.5, 
-            bgcolor: colors.primary.dark,
+            bgcolor: '#1a237e',
             color: 'white'
           }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -1052,16 +1126,12 @@ const DocumentReview = () => {
             p: 2.5
           }}>
             {/* Progreso de Validación */}
-            <Card variant="outlined" sx={{ 
-              p: 2, 
-              mb: 3,
-              borderColor: colors.primary.light,
-            }}>
+            <Card variant="outlined" sx={{ p: 2, mb: 3 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="subtitle2" sx={{ fontWeight: 600, color: colors.primary.dark }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#2c3e50' }}>
                   📋 PROGRESO DE VALIDACIÓN
                 </Typography>
-                <Typography variant="caption" sx={{ color: colors.text.secondary, fontWeight: 600 }}>
+                <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600 }}>
                   {Math.round(validationProgress())}% completado
                 </Typography>
               </Box>
@@ -1073,10 +1143,9 @@ const DocumentReview = () => {
                   height: 8,
                   borderRadius: 4,
                   mb: 2,
-                  bgcolor: colors.primary.light,
                   '& .MuiLinearProgress-bar': {
                     borderRadius: 4,
-                    bgcolor: validationProgress() === 100 ? colors.status.success : colors.primary.main
+                    bgcolor: validationProgress() === 100 ? '#27ae60' : '#3498db'
                   }
                 }}
               />
@@ -1102,11 +1171,11 @@ const DocumentReview = () => {
                         p: 1.5,
                         borderRadius: 1,
                         cursor: 'pointer',
-                        bgcolor: check.checked ? 'rgba(0, 168, 168, 0.08)' : colors.background.subtle,
-                        border: `1px solid ${check.checked ? colors.status.success : colors.primary.light}`,
+                        bgcolor: check.checked ? '#e8f5e9' : '#f8fafc',
+                        border: `1px solid ${check.checked ? '#27ae60' : '#e2e8f0'}`,
                         transition: 'all 0.2s',
                         '&:hover': { 
-                          borderColor: check.checked ? colors.status.success : colors.primary.main,
+                          borderColor: check.checked ? '#27ae60' : '#cbd5e1',
                           transform: 'translateY(-1px)',
                           boxShadow: 1
                         }
@@ -1114,19 +1183,19 @@ const DocumentReview = () => {
                       onClick={() => handleValidationCheck(key)}
                     >
                       {check.checked ? (
-                        <CheckCircleIcon sx={{ color: colors.status.success, mr: 1.5 }} />
+                        <CheckCircleIcon sx={{ color: '#27ae60', mr: 1.5 }} />
                       ) : (
-                        <CancelIcon sx={{ color: colors.primary.light, mr: 1.5 }} />
+                        <CancelIcon sx={{ color: '#cbd5e1', mr: 1.5 }} />
                       )}
                       <Typography variant="body2" sx={{ 
                         flex: 1, 
                         fontWeight: check.checked ? 600 : 400,
-                        color: check.checked ? colors.status.success : colors.primary.dark
+                        color: check.checked ? '#27ae60' : '#475569'
                       }}>
                         {labels[key]}
                       </Typography>
                       {check.checked && (
-                        <VerifiedIcon sx={{ color: colors.status.success, fontSize: 16 }} />
+                        <VerifiedIcon sx={{ color: '#27ae60', fontSize: 16 }} />
                       )}
                     </Box>
                   );
@@ -1135,36 +1204,32 @@ const DocumentReview = () => {
             </Card>
 
             {/* Checklist de Requisitos */}
-            <Card variant="outlined" sx={{ 
-              p: 2, 
-              mb: 3,
-              borderColor: colors.primary.light,
-            }}>
-              <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: colors.primary.dark }}>
+            <Card variant="outlined" sx={{ p: 2, mb: 3 }}>
+              <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: '#2c3e50' }}>
                 📋 CHECKLIST DE REQUISITOS
               </Typography>
               
-              <List dense sx={{ bgcolor: colors.background.subtle, borderRadius: 1, p: 1 }}>
+              <List dense sx={{ bgcolor: '#f8fafc', borderRadius: 1, p: 1 }}>
                 {document.requirements.map((req) => (
                   <ListItem 
                     key={req.id}
                     sx={{ 
-                      borderBottom: `1px solid ${colors.primary.light}`,
+                      borderBottom: '1px solid #e2e8f0',
                       '&:last-child': { borderBottom: 'none' }
                     }}
                   >
                     <ListItemIcon sx={{ minWidth: 40 }}>
                       {req.mandatory ? (
                         req.met ? (
-                          <CheckCircleIcon sx={{ color: colors.status.success }} />
+                          <CheckCircleIcon sx={{ color: '#27ae60' }} />
                         ) : (
-                          <ErrorOutlineIcon sx={{ color: colors.status.error }} />
+                          <ErrorOutlineIcon sx={{ color: '#e74c3c' }} />
                         )
                       ) : (
                         req.met ? (
-                          <CheckCircleIcon sx={{ color: colors.primary.light }} />
+                          <CheckCircleIcon sx={{ color: '#95a5a6' }} />
                         ) : (
-                          <CancelIcon sx={{ color: colors.primary.light }} />
+                          <CancelIcon sx={{ color: '#95a5a6' }} />
                         )
                       )}
                     </ListItemIcon>
@@ -1172,27 +1237,21 @@ const DocumentReview = () => {
                       primary={req.requirement}
                       primaryTypographyProps={{
                         variant: 'body2',
-                        sx: { 
-                          color: req.mandatory && !req.met ? colors.status.error : colors.primary.dark,
-                          fontWeight: req.mandatory ? 500 : 400
-                        }
+                        color: req.mandatory && !req.met ? 'error' : 'textPrimary',
+                        fontWeight: req.mandatory ? 500 : 400
                       }}
                       secondary={req.mandatory ? 'Obligatorio' : 'Opcional'}
                       secondaryTypographyProps={{
                         variant: 'caption',
-                        sx: { color: colors.text.secondary }
+                        color: 'textSecondary'
                       }}
                     />
                     {req.mandatory && (
                       <Chip 
                         label={req.met ? 'CUMPLE' : 'NO CUMPLE'}
                         size="small"
-                        sx={{ 
-                          fontWeight: 600, 
-                          fontSize: '0.7rem',
-                          bgcolor: req.met ? colors.status.success : colors.status.error,
-                          color: 'white',
-                        }}
+                        color={req.met ? 'success' : 'error'}
+                        sx={{ fontWeight: 600, fontSize: '0.7rem' }}
                       />
                     )}
                   </ListItem>
@@ -1201,12 +1260,8 @@ const DocumentReview = () => {
             </Card>
 
             {/* Dictamen del Documento */}
-            <Card variant="outlined" sx={{ 
-              p: 2, 
-              mb: 3,
-              borderColor: colors.primary.light,
-            }}>
-              <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: colors.primary.dark }}>
+            <Card variant="outlined" sx={{ p: 2, mb: 3 }}>
+              <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: '#2c3e50' }}>
                 ⚖️ DICTAMEN DEL DOCUMENTO
               </Typography>
               
@@ -1222,13 +1277,13 @@ const DocumentReview = () => {
                       variant={approvalStatus === 'approve' ? 'elevation' : 'outlined'}
                       sx={{ 
                         p: 2.5,
-                        border: `2px solid ${approvalStatus === 'approve' ? colors.status.success : colors.primary.light}`,
-                        bgcolor: approvalStatus === 'approve' ? 'rgba(0, 168, 168, 0.04)' : colors.background.paper,
+                        border: `2px solid ${approvalStatus === 'approve' ? '#27ae60' : '#e2e8f0'}`,
+                        bgcolor: approvalStatus === 'approve' ? '#f0f9f0' : 'white',
                         cursor: 'pointer',
                         transition: 'all 0.2s',
                         '&:hover': { 
-                          borderColor: colors.status.success,
-                          bgcolor: 'rgba(0, 168, 168, 0.04)',
+                          borderColor: '#27ae60',
+                          bgcolor: '#f0f9f0'
                         }
                       }}
                       onClick={() => setApprovalStatus('approve')}
@@ -1237,12 +1292,13 @@ const DocumentReview = () => {
                         value="approve"
                         control={
                           <Radio 
+                            color="success" 
                             checkedIcon={
                               <Box sx={{
                                 width: 24,
                                 height: 24,
                                 borderRadius: '50%',
-                                bgcolor: colors.status.success,
+                                bgcolor: '#27ae60',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center'
@@ -1250,11 +1306,6 @@ const DocumentReview = () => {
                                 <CheckCircleIcon sx={{ color: 'white', fontSize: 16 }} />
                               </Box>
                             }
-                            sx={{
-                              '& .MuiSvgIcon-root': {
-                                color: colors.status.success,
-                              }
-                            }}
                           />
                         }
                         label={
@@ -1263,7 +1314,7 @@ const DocumentReview = () => {
                               width: 40,
                               height: 40,
                               borderRadius: '50%',
-                              bgcolor: colors.status.success,
+                              bgcolor: '#27ae60',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center'
@@ -1271,10 +1322,10 @@ const DocumentReview = () => {
                               <ThumbUpIcon sx={{ color: 'white' }} />
                             </Box>
                             <Box>
-                              <Typography variant="body1" sx={{ fontWeight: 700, color: colors.status.success }}>
+                              <Typography variant="body1" sx={{ fontWeight: 700, color: '#27ae60' }}>
                                 DOCUMENTO CONFORME
                               </Typography>
-                              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+                              <Typography variant="caption" sx={{ color: '#64748b' }}>
                                 Cumple con todos los requisitos establecidos
                               </Typography>
                             </Box>
@@ -1291,13 +1342,13 @@ const DocumentReview = () => {
                       variant={approvalStatus === 'reject' ? 'elevation' : 'outlined'}
                       sx={{ 
                         p: 2.5,
-                        border: `2px solid ${approvalStatus === 'reject' ? colors.status.error : colors.primary.light}`,
-                        bgcolor: approvalStatus === 'reject' ? 'rgba(0, 153, 255, 0.04)' : colors.background.paper,
+                        border: `2px solid ${approvalStatus === 'reject' ? '#e74c3c' : '#e2e8f0'}`,
+                        bgcolor: approvalStatus === 'reject' ? '#fef0f0' : 'white',
                         cursor: 'pointer',
                         transition: 'all 0.2s',
                         '&:hover': { 
-                          borderColor: colors.status.error,
-                          bgcolor: 'rgba(0, 153, 255, 0.04)',
+                          borderColor: '#e74c3c',
+                          bgcolor: '#fef0f0'
                         }
                       }}
                       onClick={() => setApprovalStatus('reject')}
@@ -1306,12 +1357,13 @@ const DocumentReview = () => {
                         value="reject"
                         control={
                           <Radio 
+                            color="error"
                             checkedIcon={
                               <Box sx={{
                                 width: 24,
                                 height: 24,
                                 borderRadius: '50%',
-                                bgcolor: colors.status.error,
+                                bgcolor: '#e74c3c',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center'
@@ -1319,11 +1371,6 @@ const DocumentReview = () => {
                                 <CancelIcon sx={{ color: 'white', fontSize: 16 }} />
                               </Box>
                             }
-                            sx={{
-                              '& .MuiSvgIcon-root': {
-                                color: colors.status.error,
-                              }
-                            }}
                           />
                         }
                         label={
@@ -1332,7 +1379,7 @@ const DocumentReview = () => {
                               width: 40,
                               height: 40,
                               borderRadius: '50%',
-                              bgcolor: colors.status.error,
+                              bgcolor: '#e74c3c',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center'
@@ -1340,10 +1387,10 @@ const DocumentReview = () => {
                               <ThumbDownIcon sx={{ color: 'white' }} />
                             </Box>
                             <Box>
-                              <Typography variant="body1" sx={{ fontWeight: 700, color: colors.status.error }}>
+                              <Typography variant="body1" sx={{ fontWeight: 700, color: '#e74c3c' }}>
                                 DOCUMENTO NO CONFORME
                               </Typography>
-                              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+                              <Typography variant="caption" sx={{ color: '#64748b' }}>
                                 Requiere observaciones específicas obligatorias
                               </Typography>
                             </Box>
@@ -1359,19 +1406,16 @@ const DocumentReview = () => {
               {/* Comentarios y Observaciones */}
               <Box sx={{ mb: 3 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 600, color: colors.primary.dark }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#2c3e50' }}>
                     📝 OBSERVACIONES TÉCNICAS
                   </Typography>
                   {approvalStatus === 'reject' && (
                     <Chip 
                       label="OBLIGATORIO"
                       size="small"
-                      sx={{
-                        bgcolor: colors.status.error,
-                        color: 'white',
-                        fontWeight: 700
-                      }}
-                      icon={<WarningIcon sx={{ color: 'white' }} />}
+                      color="error"
+                      icon={<WarningIcon />}
+                      sx={{ fontWeight: 700 }}
                     />
                   )}
                 </Box>
@@ -1388,20 +1432,14 @@ const DocumentReview = () => {
                   helperText={approvalStatus === 'reject' && !comments ? 'Las observaciones son obligatorias para rechazar un documento' : 'Se recomienda ser específico y claro'}
                   sx={{ 
                     '& .MuiOutlinedInput-root': {
-                      bgcolor: colors.background.subtle,
-                      '& fieldset': {
-                        borderColor: colors.primary.light,
-                      },
-                      '&:hover fieldset': {
-                        borderColor: colors.primary.main,
-                      },
-                    },
+                      bgcolor: '#f8fafc'
+                    }
                   }}
                 />
                 
                 {/* Comentarios Rápidos */}
                 <Box sx={{ mt: 2 }}>
-                  <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mb: 1, fontWeight: 600 }}>
+                  <Typography variant="caption" sx={{ color: '#64748b', display: 'block', mb: 1, fontWeight: 600 }}>
                     Comentarios comunes:
                   </Typography>
                   <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
@@ -1414,16 +1452,14 @@ const DocumentReview = () => {
                         onClick={() => handleQuickComment(issue.issue)}
                         sx={{ 
                           mb: 1,
-                          borderColor: colors.primary.light,
-                          color: colors.primary.dark,
-                          '&:hover': { bgcolor: colors.background.subtle }
+                          '&:hover': { bgcolor: '#e2e8f0' }
                         }}
                         icon={
                           issue.frequency === 'Alta' ? 
-                            <WarningIcon sx={{ color: colors.status.error }} fontSize="small" /> : 
+                            <WarningIcon color="error" fontSize="small" /> : 
                           issue.frequency === 'Media' ? 
-                            <WarningIcon sx={{ color: colors.status.warning }} fontSize="small" /> : 
-                            <InfoIcon sx={{ color: colors.primary.light }} fontSize="small" />
+                            <WarningIcon color="warning" fontSize="small" /> : 
+                            <InfoIcon fontSize="small" />
                         }
                       />
                     ))}
@@ -1440,13 +1476,7 @@ const DocumentReview = () => {
                   onClick={() => navigate(`/committee/review/${certId}`)}
                   sx={{ 
                     py: 1.5,
-                    fontWeight: 600,
-                    borderColor: colors.primary.light,
-                    color: colors.primary.main,
-                    '&:hover': {
-                      borderColor: colors.primary.main,
-                      bgcolor: 'rgba(19, 59, 107, 0.04)',
-                    }
+                    fontWeight: 600
                   }}
                 >
                   VOLVER
@@ -1461,13 +1491,13 @@ const DocumentReview = () => {
                   sx={{ 
                     py: 1.5,
                     fontWeight: 700,
-                    bgcolor: approvalStatus === 'reject' ? colors.status.error : colors.primary.main,
+                    bgcolor: approvalStatus === 'reject' ? '#e74c3c' : '#1a237e',
                     '&:hover': {
-                      bgcolor: approvalStatus === 'reject' ? colors.accents.blue : colors.primary.dark,
+                      bgcolor: approvalStatus === 'reject' ? '#c0392b' : '#283593'
                     },
                     '&.Mui-disabled': {
-                      bgcolor: colors.primary.light,
-                      color: colors.text.secondary
+                      bgcolor: '#cbd5e1',
+                      color: '#94a3b8'
                     }
                   }}
                 >
@@ -1477,60 +1507,53 @@ const DocumentReview = () => {
             </Card>
             
             {/* Información Contextual */}
-            <Card variant="outlined" sx={{ 
-              p: 2,
-              borderColor: colors.primary.light,
-            }}>
-              <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: colors.primary.dark }}>
+            <Card variant="outlined" sx={{ p: 2 }}>
+              <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: '#2c3e50' }}>
                 ℹ️ INFORMACIÓN CONTEXTUAL
               </Typography>
               
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                    <Avatar sx={{ width: 48, height: 48, bgcolor: colors.primary.main, fontWeight: 700 }}>
+                    <Avatar sx={{ width: 48, height: 48, bgcolor: '#1a237e', fontWeight: 700 }}>
                       {document.uploadBy.avatar}
                     </Avatar>
                     <Box>
-                      <Typography variant="body2" sx={{ fontWeight: 700, color: colors.primary.dark }}>
+                      <Typography variant="body2" sx={{ fontWeight: 700, color: '#2c3e50' }}>
                         {document.uploadBy.name}
                       </Typography>
-                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
+                      <Typography variant="caption" sx={{ color: '#64748b', display: 'block' }}>
                         {document.uploadBy.role} • {document.uploadBy.region}
                       </Typography>
                       <Chip 
                         label={document.uploadBy.level}
                         size="small"
-                        sx={{ 
-                          mt: 0.5, 
-                          fontSize: '0.7rem',
-                          bgcolor: colors.status.success,
-                          color: 'white',
-                        }}
+                        color="success"
+                        sx={{ mt: 0.5, fontSize: '0.7rem' }}
                       />
                     </Box>
                   </Box>
                 </Grid>
                 
                 <Grid item xs={6}>
-                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: colors.background.subtle, borderRadius: 1 }}>
-                    <EventIcon sx={{ color: colors.text.secondary, mb: 0.5 }} />
-                    <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
+                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: '#f8fafc', borderRadius: 1 }}>
+                    <EventIcon sx={{ color: '#64748b', mb: 0.5 }} />
+                    <Typography variant="caption" sx={{ color: '#64748b', display: 'block' }}>
                       Subido
                     </Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 600, color: colors.primary.dark }}>
+                    <Typography variant="body2" sx={{ fontWeight: 600, color: '#2c3e50' }}>
                       {document.uploadDate.split(' ')[0]}
                     </Typography>
                   </Box>
                 </Grid>
                 
                 <Grid item xs={6}>
-                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: 'rgba(0, 153, 255, 0.08)', borderRadius: 1 }}>
-                    <TimerIcon sx={{ color: colors.status.error, mb: 0.5 }} />
-                    <Typography variant="caption" sx={{ color: colors.status.error, display: 'block' }}>
+                  <Box sx={{ textAlign: 'center', p: 1.5, bgcolor: '#fef0f0', borderRadius: 1 }}>
+                    <TimerIcon sx={{ color: '#e74c3c', mb: 0.5 }} />
+                    <Typography variant="caption" sx={{ color: '#e74c3c', display: 'block' }}>
                       Vence
                     </Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 700, color: colors.status.error }}>
+                    <Typography variant="body2" sx={{ fontWeight: 700, color: '#e74c3c' }}>
                       {document.dueDate}
                     </Typography>
                   </Box>
@@ -1547,24 +1570,15 @@ const DocumentReview = () => {
         onClose={() => setShowValidationDialog(false)}
         maxWidth="sm"
         fullWidth
-        PaperProps={{
-          sx: {
-            border: `1px solid ${colors.primary.light}`,
-          }
-        }}
       >
-        <DialogTitle sx={{ 
-          bgcolor: approvalStatus === 'reject' ? 'rgba(0, 153, 255, 0.08)' : 'rgba(0, 168, 168, 0.08)'
-        }}>
+        <DialogTitle sx={{ bgcolor: approvalStatus === 'reject' ? '#fef0f0' : '#f0f9f0' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
             {approvalStatus === 'reject' ? (
-              <CancelIcon sx={{ color: colors.status.error }} />
+              <CancelIcon sx={{ color: '#e74c3c' }} />
             ) : (
-              <CheckCircleIcon sx={{ color: colors.status.success }} />
+              <CheckCircleIcon sx={{ color: '#27ae60' }} />
             )}
-            <Typography variant="h6" sx={{ 
-              color: approvalStatus === 'reject' ? colors.status.error : colors.status.success 
-            }}>
+            <Typography variant="h6" sx={{ color: approvalStatus === 'reject' ? '#e74c3c' : '#27ae60' }}>
               Confirmar {approvalStatus === 'reject' ? 'Rechazo' : 'Aprobación'} del Documento
             </Typography>
           </Box>
@@ -1573,36 +1587,28 @@ const DocumentReview = () => {
         <DialogContent sx={{ pt: 3 }}>
           <Alert 
             severity={approvalStatus === 'reject' ? 'warning' : 'success'}
-            sx={{ 
-              mb: 3,
-              bgcolor: approvalStatus === 'reject' ? 'rgba(0, 153, 255, 0.08)' : 'rgba(0, 168, 168, 0.08)',
-              color: approvalStatus === 'reject' ? colors.status.error : colors.status.success,
-            }}
+            sx={{ mb: 3 }}
           >
             <Typography variant="body2">
               <strong>¿Está seguro de que desea {approvalStatus === 'reject' ? 'RECHAZAR' : 'APROBAR'} este documento?</strong>
             </Typography>
-            <Typography variant="caption" sx={{ display: 'block', mt: 1, color: colors.text.secondary }}>
+            <Typography variant="caption" sx={{ display: 'block', mt: 1 }}>
               Esta acción será registrada en el historial de auditoría y afectará el estatus de la certificación.
             </Typography>
           </Alert>
           
           {comments && (
-            <Card variant="outlined" sx={{ 
-              p: 2, 
-              mb: 2,
-              borderColor: colors.primary.light,
-            }}>
-              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600, color: colors.primary.dark }}>
+            <Card variant="outlined" sx={{ p: 2, mb: 2 }}>
+              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
                 Observaciones registradas:
               </Typography>
-              <Typography variant="body2" sx={{ color: colors.primary.dark, whiteSpace: 'pre-wrap' }}>
+              <Typography variant="body2" sx={{ color: '#5a6c7d', whiteSpace: 'pre-wrap' }}>
                 {comments}
               </Typography>
             </Card>
           )}
           
-          <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
+          <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
             {Object.entries(validationChecks)
               .filter(([_, check]) => check.checked)
               .map(([key]) => (
@@ -1610,10 +1616,7 @@ const DocumentReview = () => {
                   key={key}
                   label={key}
                   size="small"
-                  sx={{
-                    bgcolor: colors.status.success,
-                    color: 'white',
-                  }}
+                  color="success"
                   variant="outlined"
                 />
               ))}
@@ -1624,27 +1627,14 @@ const DocumentReview = () => {
           <Button 
             onClick={() => setShowValidationDialog(false)}
             variant="outlined"
-            sx={{
-              borderColor: colors.primary.light,
-              color: colors.primary.main,
-              '&:hover': {
-                borderColor: colors.primary.main,
-                bgcolor: 'rgba(19, 59, 107, 0.04)',
-              }
-            }}
           >
             Cancelar
           </Button>
           <Button 
             onClick={confirmEvaluation}
             variant="contained"
+            color={approvalStatus === 'reject' ? 'error' : 'success'}
             startIcon={<GavelIcon />}
-            sx={{
-              bgcolor: approvalStatus === 'reject' ? colors.status.error : colors.status.success,
-              '&:hover': {
-                bgcolor: approvalStatus === 'reject' ? colors.accents.blue : colors.secondary.main,
-              }
-            }}
           >
             Confirmar {approvalStatus === 'reject' ? 'Rechazo' : 'Aprobación'}
           </Button>

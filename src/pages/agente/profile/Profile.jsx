@@ -1324,7 +1324,7 @@ const handleDownloadCertificate = async () => {
               position: 'relative',
               zIndex: 1
             }}>
-              C E R T I F I C A D O
+              R E C O N O C I M I E N T O
             </Typography>
 
             <Typography variant="h5" align="center" sx={{ 

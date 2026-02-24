@@ -172,11 +172,7 @@ const Certifications = () => {
   const handleAssociationConsent = (consent) => {
     setAssociationConsent(consent);
     setAssociationDialog(false);
-    setSnackbar({
-      open: true,
-      message: consent ? '✅ Autorización concedida a la asociación' : '❌ Autorización rechazada',
-      severity: consent ? 'success' : 'info'
-    });
+   
   };
 
   // Datos de certificaciones - SOLO LAS DOS SOLICITADAS
@@ -185,12 +181,12 @@ const Certifications = () => {
       id: 1, 
       type: 'CURSO DE ÉTICA PROFESIONAL Y CÓDIGO DE CONDUCTA', 
       number: 'CET-2025-001', 
-      issueDate: '15/06/2025', 
-      expirationDate: '15/06/2028', 
+      issueDate: '20/02/2026', 
+      expirationDate: '20/02/2028', 
       status: 'En revisión',
       progress: 100,
       documents: 1,
-      lastUpdate: '15/06/2025',
+      lastUpdate: '24/02/2026',
       subseccion: 'Formación Ética y Cumplimiento',
       horas: 20,
       tipo: 'Curso de Ética',
@@ -210,12 +206,12 @@ const Certifications = () => {
       id: 2, 
       type: 'DIPLOMADO EN COMERCIO EXTERIOR Y LEGISLACIÓN ADUANERA', 
       number: 'DCE-2025-002', 
-      issueDate: '10/02/2025', 
+      issueDate: '10/02/2026', 
       expirationDate: '10/02/2028', 
       status: 'En revisión',
       progress: 100,
       documents: 1,
-      lastUpdate: '10/02/2025',
+      lastUpdate: '24/02/2026',
       subseccion: 'Actualización Técnica y Aduanera',
       horas: 80,
       tipo: 'Diplomado',
@@ -379,11 +375,7 @@ const Certifications = () => {
 
       setCertifications([...certifications, nuevaCert]);
       
-      setSnackbar({
-        open: true,
-        message: `✅ Certificación "${nuevaCertificacion.tipoDocumento}" agregada correctamente`,
-        severity: 'success'
-      });
+     
 
       handleCloseAdd();
     } else {
@@ -398,11 +390,7 @@ const Certifications = () => {
   // Función para guardar cambios en edición
   const handleSaveEdit = () => {
     // Simular guardado
-    setSnackbar({
-      open: true,
-      message: '✅ Cambios guardados correctamente',
-      severity: 'success'
-    });
+    
     handleCloseEdit();
   };
 
@@ -410,11 +398,7 @@ const Certifications = () => {
   const handleConfirmDelete = () => {
     if (deleteCert) {
       setCertifications(certifications.filter(c => c.id !== deleteCert.id));
-      setSnackbar({
-        open: true,
-        message: '✅ Certificación eliminada correctamente',
-        severity: 'success'
-      });
+      
       handleCloseDelete();
     }
   };
