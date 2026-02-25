@@ -80,7 +80,8 @@ import {
   Close as CloseIcon,
   PictureAsPdf as PdfIcon,
   Image as ImageIcon,
-  InsertDriveFile as FileIcon
+  InsertDriveFile as FileIcon,
+  Downloading as DownloadingIcon
 } from '@mui/icons-material';
 
 // Paleta corporativa del UserManagement
@@ -118,7 +119,6 @@ const AuditAgent = () => {
   const [filterEntity, setFilterEntity] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
   const [page, setPage] = useState(1);
-  const [viewMode, setViewMode] = useState('auditoria'); // 'auditoria' o 'trazabilidad'
   const rowsPerPage = 10;
 
   // Estados para modales
@@ -173,11 +173,11 @@ const AuditAgent = () => {
     }
   };
 
-  // Datos de auditoría específicos para AGENTE ADUANAL - SOLO INICIO DE SESIÓN Y LAS DOS CERTIFICACIONES
+  // Datos de auditoría específicos para AGENTE ADUANAL - CON NUEVOS LOGS Y FECHAS AJUSTADAS
   const auditLogs = [
     {
       id: 1,
-      timestamp: '24/02/2026 10:38:15',
+      timestamp: '26/02/2026 12:26:00',
       user: { name: 'Luis Rodríguez', role: 'agente', avatar: 'LR' },
       action: 'LOGIN_SUCCESS',
       actionName: 'Inicio de sesión exitoso',
@@ -189,11 +189,25 @@ const AuditAgent = () => {
       severity: 'info',
       status: 'Aceptados',
       icon: <LoginIcon />,
-      
     },
     {
       id: 2,
-      timestamp: '24/02/2026 10:45:22',
+      timestamp: '26/02/2026 12:27:00',
+      user: { name: 'Luis Rodríguez', role: 'agente', avatar: 'LR' },
+      action: 'DOCUMENT_UPLOAD',
+      actionName: 'Documento subido',
+      entity: 'Expediente',
+      entityId: 'DOC-2026-001',
+      details: 'Se subió el acta de nacimiento al expediente digital',
+      ipAddress: '192.168.1.105',
+      device: 'Chrome / Windows',
+      severity: 'success',
+      status: 'Aceptados',
+      icon: <CloudUploadIcon />,
+    },
+     {
+      id: 3,
+      timestamp: '26/02/2026 12:29:22',
       user: { name: 'Luis Rodríguez', role: 'agente', avatar: 'LR' },
       action: 'CERTIFICATION_CREATE',
       actionName: 'Certificación creada',
@@ -205,25 +219,114 @@ const AuditAgent = () => {
       severity: 'success',
       status: 'En revisión',
       icon: <AddIcon />,
-      
     },
     {
-      id: 3,
-      timestamp: '24/02/2026 10:48:18',
+      id: 4,
+      timestamp: '26/02/2026 12:30:22',
       user: { name: 'Luis Rodríguez', role: 'agente', avatar: 'LR' },
       action: 'CERTIFICATION_CREATE',
       actionName: 'Certificación creada',
       entity: 'Certificación',
-      entityId: 'DCE-2025-002',
-      details: 'Diplomado en Comercio Exterior y Legislación Aduanera creado en el sistema',
+      entityId: 'CET-2025-001',
+      details: 'Diplomado en Comercio Exterior y Legislación Aduanera',
       ipAddress: '192.168.1.105',
       device: 'Chrome / Windows',
       severity: 'success',
       status: 'En revisión',
       icon: <AddIcon />,
-      
+    },
+    {
+      id: 5,
+      timestamp: '26/02/2026 12:32:00',
+      user: { name: 'Luis Rodríguez', role: 'agente', avatar: 'LR' },
+      action: 'DECLARACION_ACCEPTED',
+      actionName: 'Declaración aceptada',
+      entity: 'Cumplimiento',
+      entityId: 'DEC-2026-001',
+      details: 'Se aceptó la declaración de buena fe y veracidad',
+      ipAddress: '192.168.1.105',
+      device: 'Chrome / Windows',
+      severity: 'success',
+      status: 'Aceptados',
+      icon: <VerifiedIcon />,
+    },
+    {
+      id: 6,
+      timestamp: '26/02/2026 12:34:50',
+      user: { name: 'Luis Rodríguez', role: 'agente', avatar: 'LR' },
+      action: 'CONFLICTO_INTERESES_COMPLETED',
+      actionName: 'Declaración completada',
+      entity: 'Cumplimiento',
+      entityId: 'ART-92-2026',
+      details: 'Se completó la declaración de conflicto de intereses (Artículo 92)',
+      ipAddress: '192.168.1.105',
+      device: 'Chrome / Windows',
+      severity: 'success',
+      status: 'Aceptados',
+      icon: <GavelIcon />,
+    },
+    {
+      id: 7,
+      timestamp: '26/02/2026 12:36:00',
+      user: { name: 'Luis Rodríguez', role: 'agente', avatar: 'LR' },
+      action: 'AUTORIZACION_ASOCIACION',
+      actionName: 'Autorización otorgada',
+      entity: 'Documentos',
+      entityId: 'AUT-2026-001',
+      details: 'Se aceptó que la asociación suba los documentos al sistema',
+      ipAddress: '192.168.1.105',
+      device: 'Chrome / Windows',
+      severity: 'info',
+      status: 'Aceptados',
+      icon: <AssignmentTurnedInIcon />,
     },
    
+    {
+      id: 8,
+      timestamp: '26/02/2026 12:36:15',
+      user: { name: 'Luis Rodríguez', role: 'agente', avatar: 'LR' },
+      action: 'LOGOUT',
+      actionName: 'Cierre de sesión',
+      entity: 'Sistema',
+      entityId: 'N/A',
+      details: 'Cierre de sesión exitoso',
+      ipAddress: '192.168.1.105',
+      device: 'Chrome / Windows',
+      severity: 'info',
+      status: 'Aceptados',
+      icon: <LogoutIcon />,
+    },
+    {
+      id: 9,
+      timestamp: '26/02/2026 10:43:49',
+      user: { name: 'Luis Rodríguez', role: 'agente', avatar: 'LR' },
+      action: 'LOGIN_SUCCESS',
+      actionName: 'Inicio de sesión exitoso',
+      entity: 'Sistema',
+      entityId: 'N/A',
+      details: 'Inicio de sesión desde dispositivo principal',
+      ipAddress: '192.168.1.105',
+      device: 'Chrome / Windows',
+      severity: 'info',
+      status: 'Aceptados',
+      icon: <LoginIcon />,
+    },
+  
+     {
+      id: 10,
+      timestamp: '26/02/2026 12:44:12',
+      user: { name: 'Luis Rodríguez', role: 'agente', avatar: 'LR' },
+      action: 'RECONOCIMIENTO_DOWNLOAD',
+      actionName: 'Documento descargado',
+      entity: 'Certificaciones',
+      entityId: 'REC-2026-001',
+      details: 'Se descargó el reconocimiento de nivel gremial',
+      ipAddress: '192.168.1.105',
+      device: 'Chrome / Windows',
+      severity: 'info',
+      status: 'Aceptados',
+      icon: <DownloadingIcon />,
+    },
   ];
 
   // Acciones específicas que puede realizar el AGENTE
@@ -233,6 +336,7 @@ const AuditAgent = () => {
     { value: 'CERTIFICATION', label: 'Gestión de Certificaciones' },
     { value: 'DOCUMENT', label: 'Documentos y Expediente' },
     { value: 'SECURITY', label: 'Seguridad' },
+    { value: 'DECLARACION', label: 'Declaraciones' },
   ];
 
   // Entidades específicas del AGENTE
@@ -240,6 +344,9 @@ const AuditAgent = () => {
     { value: 'all', label: 'Todas las entidades' },
     { value: 'Certificación', label: 'Certificaciones' },
     { value: 'Sistema', label: 'Sistema SICAG' },
+    { value: 'Cumplimiento', label: 'Cumplimiento' },
+    { value: 'Expediente', label: 'Expediente' },
+    { value: 'Documentos', label: 'Documentos' },
   ];
 
   // Estados para filtro
@@ -268,6 +375,11 @@ const AuditAgent = () => {
     if (action.includes('DOCUMENT')) return <DescriptionIcon />;
     if (action.includes('LOGIN')) return <LoginIcon />;
     if (action.includes('SECURITY')) return <SecurityIcon />;
+    if (action.includes('DECLARACION')) return <GavelIcon />;
+    if (action.includes('LOGOUT')) return <LogoutIcon />;
+    if (action.includes('RECONOCIMIENTO')) return <DownloadingIcon />;
+    if (action.includes('AUTORIZACION')) return <AssignmentTurnedInIcon />;
+    if (action.includes('CONFLICTO')) return <GavelIcon />;
     return <DescriptionIcon />;
   };
 
@@ -347,10 +459,10 @@ const AuditAgent = () => {
   // Estadísticas específicas para AGENTE
   const stats = {
     total: auditLogs.length,
-    today: auditLogs.filter(log => log.timestamp.includes('15/01/2026')).length,
+    today: auditLogs.filter(log => log.timestamp.includes('26/02/2026')).length,
     thisWeek: auditLogs.filter(log => {
       const date = parseInt(log.timestamp.split('/')[0]);
-      return date >= 10 && date <= 15;
+      return date >= 24 && date <= 26;
     }).length,
     bySeverity: {
       success: auditLogs.filter(log => log.severity === 'success').length,
@@ -369,6 +481,9 @@ const AuditAgent = () => {
     byEntity: {
       certificaciones: auditLogs.filter(log => log.entity === 'Certificación').length,
       sistema: auditLogs.filter(log => log.entity === 'Sistema').length,
+      cumplimiento: auditLogs.filter(log => log.entity === 'Cumplimiento').length,
+      expediente: auditLogs.filter(log => log.entity === 'Expediente').length,
+      documentos: auditLogs.filter(log => log.entity === 'Documentos').length,
     }
   };
 
@@ -1341,116 +1456,6 @@ const AuditAgent = () => {
     </>
   );
 
-  const renderTraceabilityView = () => (
-    <Box>
-      <Alert severity="info" sx={{ mb: 3, backgroundColor: `${colors.primary.main}10` }}>
-        <Typography variant="body2" sx={{ color: colors.text.primary }}>
-          <strong>Trazabilidad de Certificaciones:</strong> Seguimiento completo del ciclo de vida de cada certificación, desde su creación hasta su estado actual.
-        </Typography>
-      </Alert>
-
-      {certificationTrace.map((cert) => (
-        <Paper key={cert.id} sx={{ p: 3, mb: 3, borderLeft: `4px solid ${statusConfig[cert.status]?.color || colors.primary.main}` }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
-            <Box>
-              <Typography variant="h6" sx={{ color: colors.text.primary, fontWeight: 'bold', mb: 1 }}>
-                {cert.certification}
-              </Typography>
-              {getStatusChip(cert.status)}
-              <Typography variant="caption" sx={{ display: 'block', mt: 1, color: colors.primary.main }}>
-                {cert.horas} horas • {cert.subseccion}
-              </Typography>
-            </Box>
-            <Button
-              variant="outlined"
-              size="small"
-              startIcon={<VisibilityIcon />}
-              onClick={() => handleOpenCertModal(cert)}
-              sx={{
-                color: colors.primary.main,
-                borderColor: colors.primary.main
-              }}
-            >
-              Ver Certificación
-            </Button>
-          </Box>
-
-          <Typography variant="subtitle2" sx={{ color: colors.text.secondary, mb: 2, fontWeight: 'bold' }}>
-            📋 Historial de Trazabilidad
-          </Typography>
-
-          <Box sx={{ pl: 2 }}>
-            {cert.timeline.map((step, index) => (
-              <Box key={index} sx={{ mb: 2.5, position: 'relative', pl: 3 }}>
-                {/* Línea vertical */}
-                {index < cert.timeline.length - 1 && (
-                  <Box sx={{
-                    position: 'absolute',
-                    left: 8,
-                    top: 24,
-                    bottom: -24,
-                    width: '2px',
-                    backgroundColor: '#e0e0e0'
-                  }} />
-                )}
-                
-                {/* Punto */}
-                <Box sx={{
-                  position: 'absolute',
-                  left: 3,
-                  top: 4,
-                  width: 12,
-                  height: 12,
-                  borderRadius: '50%',
-                  backgroundColor: statusConfig[step.status]?.color || colors.primary.main,
-                  border: '2px solid white',
-                  boxShadow: '0 0 0 2px #e0e0e0'
-                }} />
-                
-                {/* Contenido */}
-                <Box>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                    <Typography variant="body2" sx={{ fontWeight: 'bold', color: colors.text.primary }}>
-                      {step.action}
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                      {step.date}
-                    </Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Avatar 
-                      sx={{ 
-                        width: 20, 
-                        height: 20, 
-                        fontSize: '0.7rem',
-                        bgcolor: step.user === 'Luis Rodríguez' ? colors.primary.main : colors.status.success
-                      }}
-                    >
-                      {step.user.split(' ').map(n => n[0]).join('')}
-                    </Avatar>
-                    <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                      {step.user}
-                    </Typography>
-                    {step.user === 'Luis Rodríguez' && (
-                      <Chip 
-                        label="Tú"
-                        size="small"
-                        sx={{ height: 16, fontSize: '0.6rem', bgcolor: colors.primary.main, color: 'white' }}
-                      />
-                    )}
-                    <Box sx={{ ml: 1 }}>
-                      {getStatusChip(step.status)}
-                    </Box>
-                  </Box>
-                </Box>
-              </Box>
-            ))}
-          </Box>
-        </Paper>
-      ))}
-    </Box>
-  );
-
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
@@ -1458,36 +1463,14 @@ const AuditAgent = () => {
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
           <Box>
             <Typography variant="h5" sx={{ color: colors.primary.dark, fontWeight: 'bold', mb: 0.5 }}>
-              Auditoría y Trazabilidad - Agente Aduanal
+              Auditoría - Agente Aduanal
             </Typography>
             <Typography variant="body2" sx={{ color: colors.text.secondary }}>
-              Registro de tus accesos al sistema y tus dos certificaciones principales
+              Registro completo de tus accesos y actividades en el sistema
             </Typography>
           </Box>
           
           <Stack direction="row" spacing={1}>
-            <ToggleButtonGroup
-              value={viewMode}
-              exclusive
-              onChange={(e, newMode) => newMode && setViewMode(newMode)}
-              size="small"
-              sx={{
-                '& .MuiToggleButton-root': {
-                  color: colors.text.secondary,
-                  '&.Mui-selected': {
-                    color: colors.primary.main,
-                    backgroundColor: `${colors.primary.main}15`,
-                    borderColor: colors.primary.main
-                  }
-                }
-              }}
-            >
-              <ToggleButton value="auditoria" sx={{ textTransform: 'none' }}>
-                <HistoryIcon sx={{ mr: 1 }} />
-                Mi Auditoría
-              </ToggleButton>
-              
-            </ToggleButtonGroup>
             <Button
               variant="contained"
               startIcon={<RefreshIcon />}
@@ -1533,7 +1516,7 @@ const AuditAgent = () => {
               <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                 <Chip 
                   icon={<CheckCircleIcon />}
-                  label="2 certificaciones"
+                  label={`${stats.byStatus.aceptados} aceptados`}
                   size="small"
                   sx={{ 
                     bgcolor: '#e8f5e9',
@@ -1544,7 +1527,7 @@ const AuditAgent = () => {
                 />
                 <Chip 
                   icon={<LoginIcon />}
-                  label="1 acceso"
+                  label={`${stats.today} accesos hoy`}
                   size="small"
                   sx={{ 
                     color: colors.primary.main,
@@ -1561,7 +1544,7 @@ const AuditAgent = () => {
 
       {/* Contenido principal */}
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        {viewMode === 'auditoria' ? renderAuditView() : renderTraceabilityView()}
+        {renderAuditView()}
 
         {/* Información adicional */}
         <Paper elevation={0} sx={{ mt: 2, p: 2, bgcolor: '#f8f9fa' }}>
@@ -1624,25 +1607,25 @@ const AuditAgent = () => {
             <Grid item xs={12} md={6}>
               <Box sx={{ mb: 2 }}>
                 <Typography variant="caption" sx={{ color: colors.text.secondary, mb: 0.5, display: 'block' }}>
-                  Registro:
+                  Eventos hoy:
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Typography variant="caption" sx={{ minWidth: 140, color: colors.text.primary }}>
-                    Nuevos registros:
+                    26 de febrero 2026:
                   </Typography>
                   <LinearProgress 
                     variant="determinate" 
-                    value={(stats.byStatus.registro / stats.total) * 100}
+                    value={(stats.today / stats.total) * 100}
                     sx={{ 
                       flex: 1,
                       height: 8,
                       borderRadius: 4,
                       backgroundColor: '#e0e0e0',
-                      '& .MuiLinearProgress-bar': { bgcolor: colors.primary.light }
+                      '& .MuiLinearProgress-bar': { bgcolor: colors.primary.main }
                     }}
                   />
                   <Typography variant="caption" sx={{ fontWeight: 'bold', minWidth: 30, color: colors.text.primary }}>
-                    {stats.byStatus.registro}
+                    {stats.today}
                   </Typography>
                 </Box>
               </Box>
@@ -1666,8 +1649,7 @@ const AuditAgent = () => {
           <Divider sx={{ my: 2, borderColor: `${colors.primary.main}20` }} />
           
           <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
-            <strong>Nota:</strong> Esta auditoría registra tus accesos al sistema y las dos certificaciones principales que has agregado: 
-            Curso de Ética Profesional (20 hrs) y Diplomado en Comercio Exterior (80 hrs). Los registros se mantienen por 5 años según normativa vigente.
+            <strong>Nota:</strong> Esta auditoría registra todas tus actividades en el sistema. Los registros se mantienen por 5 años según normativa vigente.
           </Typography>
         </Paper>
       </Box>

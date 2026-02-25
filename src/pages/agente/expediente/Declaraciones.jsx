@@ -484,9 +484,15 @@ V. Plan de respuesta a incidentes y contingencias`,
   };
 
   // Función para manejar el cierre del modal sin aceptar
-  const handleCerrarDeclaracion = () => {
-    alert('Debe aceptar la declaración de buena fe para continuar con el proceso de declaraciones.');
-  };
+  // Función para manejar el cierre del modal sin aceptar
+const handleCerrarDeclaracion = () => {
+  // Cerrar el modal primero
+  setDeclaracionModalOpen(false);
+  // Mostrar el alert y luego redirigir
+  setTimeout(() => {
+   
+  }, 100);
+};
 
   const handleAccordionChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);

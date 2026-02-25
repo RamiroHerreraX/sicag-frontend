@@ -49,11 +49,10 @@ const CHART_COLORS = {
   navy:   C.primary.main,
   light:  C.primary.light,
   teal:   C.secondary.light,
-  // Colores específicos para el semáforo de la primera gráfica
   semaforo: {
-    verde: '#4CAF50',    // Verde estándar
-    amarillo: '#FFC107', // Amarillo ámbar
-    rojo: '#F44336'      // Rojo estándar
+    verde: '#4CAF50',
+    amarillo: '#FFC107',
+    rojo: '#F44336'
   }
 };
 
@@ -287,9 +286,7 @@ const ComplianceBarChart = ({ data }) => {
         </Grid>
       </Grid>
 
-      {/* Usamos flexbox en lugar de Grid para garantizar que cada mitad tenga ancho real */}
       <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
-        {/* Barras apiladas semáforo - SOLO ESTA PARTE TIENE LOS COLORES MODIFICADOS */}
         <Box sx={{ flex: '1 1 380px', minWidth: 0 }}>
           <Typography variant="body2" sx={{ color: C.text.secondary, mb: 1, fontWeight: 600 }}>
             Distribución Semáforo por Región
@@ -313,7 +310,6 @@ const ComplianceBarChart = ({ data }) => {
                 <YAxis tick={{ fontSize: 11, fill: C.text.secondary }} width={38} />
                 <ReTooltip content={<CustomTooltip />} />
                 <Legend wrapperStyle={{ fontSize: 11, paddingTop: 4 }} />
-                {/* AQUÍ ESTÁ EL CAMBIO: Usando los colores de semáforo */}
                 <Bar dataKey="verde"    name="Verde (Cumple)"       stackId="a" fill={CHART_COLORS.semaforo.verde} />
                 <Bar dataKey="amarillo" name="Amarillo (Pendiente)" stackId="a" fill={CHART_COLORS.semaforo.amarillo} />
                 <Bar dataKey="rojo"     name="Rojo (Incumple)"      stackId="a" fill={CHART_COLORS.semaforo.rojo} radius={[4,4,0,0]} />
@@ -322,12 +318,10 @@ const ComplianceBarChart = ({ data }) => {
           </Box>
         </Box>
 
-        {/* Barras horizontales % cumplimiento - ESTA PARTE CONSERVA LOS COLORES ORIGINALES */}
         <Box sx={{ flex: '1 1 300px', minWidth: 0 }}>
           <Typography variant="body2" sx={{ color: C.text.secondary, mb: 1, fontWeight: 600 }}>
             % Cumplimiento por Región
           </Typography>
-          {/* Altura dinámica: 46px por región + márgenes */}
           <Box sx={{ width: '100%', height: Math.max(260, data.length * 46 + 60) }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
@@ -415,7 +409,6 @@ const CertificationsChart = ({ barData, trendData }) => {
       </Grid>
 
       <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
-        {/* Estado por certificación — necesita altura generosa para 5 labels rotados */}
         <Box sx={{ flex: '1 1 380px', minWidth: 0 }}>
           <Typography variant="body2" sx={{ color: C.text.secondary, mb: 1, fontWeight: 600 }}>Estado por Certificación</Typography>
           <Box sx={{ width: '100%', height: 440 }}>
@@ -445,7 +438,6 @@ const CertificationsChart = ({ barData, trendData }) => {
           </Box>
         </Box>
 
-        {/* Tendencia mensual */}
         <Box sx={{ flex: '1 1 300px', minWidth: 0 }}>
           <Typography variant="body2" sx={{ color: C.text.secondary, mb: 1, fontWeight: 600 }}>Tendencia Mensual de Certificaciones</Typography>
           <Box sx={{ width: '100%', height: 400 }}>
@@ -620,7 +612,6 @@ const CommitteeChart = ({ trendData, memberData }) => {
 // ─── GRÁFICA 6: ASOCIACIONES ──────────────────────────────────────────────────
 const AssociationsChart = ({ assocData, trendData }) => {
   const asociacionesSobreMeta = assocData.filter(a => a.cumplimiento >= 90).length;
-  // Altura dinámica: al menos 300px, 44px por ítem para la barra horizontal
   const barHeight = Math.max(300, assocData.length * 48 + 80);
 
   return (
@@ -704,7 +695,8 @@ const loadScript = (src) => new Promise((res, rej) => {
   document.head.appendChild(s);
 });
 
-const exportToPdf = async (selectedIds, filters, dateRanges, onProgress) => {
+// Función mejorada para expandir temporalmente las secciones durante la exportación
+const exportToPdf = async (selectedIds, filters, dateRanges, onProgress, expandedState, setExpandedState) => {
   await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
   await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
 
@@ -716,6 +708,19 @@ const exportToPdf = async (selectedIds, filters, dateRanges, onProgress) => {
   const now    = new Date().toLocaleString('es-MX');
   const periodLabel = dateRanges.find(d => d.value === filters.dateRange)?.label || '';
   const regionLabel = filters.region === 'all' ? 'Todas las regiones' : filters.region;
+
+  // Guardar el estado original de expansión
+  const originalExpanded = new Set(expandedState);
+  
+  // Expandir temporalmente TODAS las secciones seleccionadas
+  // Esto asegura que aunque estén contraídas, se capturen en el PDF
+  const newExpanded = new Set(selectedIds);
+  
+  // Aplicar la expansión temporal
+  setExpandedState(newExpanded);
+
+  // Dar tiempo para que React actualice el DOM y los componentes se rendericen
+  await new Promise(resolve => setTimeout(resolve, 300));
 
   // Portada
   pdf.setFillColor(13, 42, 77);
@@ -776,62 +781,78 @@ const exportToPdf = async (selectedIds, filters, dateRanges, onProgress) => {
   let pageCount = 0;
   for (const sectionId of selectedIds) {
     onProgress && onProgress(sectionId);
+    
+    // Buscar el elemento por su data-chart-id
     const el = document.querySelector(`[data-chart-id="${sectionId}"]`);
-    if (!el) continue;
-
-    // Capturar con scale=2 para nitidez
-    const canvas = await window.html2canvas(el, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#ffffff',
-      logging: false,
-      // Forzar que capture todo el contenido sin recortar
-      scrollX: 0,
-      scrollY: -window.scrollY,
-      windowWidth: document.documentElement.scrollWidth,
-      windowHeight: el.scrollHeight + 100,
-    });
-
-    pdf.addPage();
-    pageCount++;
-
-    // Header de página
-    pdf.setFillColor(13, 42, 77);
-    pdf.rect(0, 0, pW, 10, 'F');
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(7.5);
-    pdf.setFont('helvetica', 'bold');
-    const sectionLabel = EXPORT_OPTIONS.find(o => o.id === sectionId)?.label || sectionId;
-    pdf.text(`SICAG · ${sectionLabel}`, margin, 6.8);
-    pdf.setFont('helvetica', 'normal');
-    pdf.text(now, pW - margin, 6.8, { align: 'right' });
-
-    // Calcular dimensiones manteniendo aspect ratio
-    const contentW = pW - margin * 2;
-    const contentH = pH - margin - 18; // descontar header + footer
-    const imgAspect = canvas.width / canvas.height;
-    const boxAspect = contentW / contentH;
-
-    let finalW, finalH;
-    if (imgAspect > boxAspect) {
-      // imagen más ancha → ajustar por ancho
-      finalW = contentW;
-      finalH = contentW / imgAspect;
-    } else {
-      // imagen más alta → ajustar por alto
-      finalH = contentH;
-      finalW = contentH * imgAspect;
+    if (!el) {
+      console.warn(`Elemento con chart-id ${sectionId} no encontrado`);
+      continue;
     }
 
-    // Centrar horizontalmente
-    const xOffset = margin + (contentW - finalW) / 2;
+    // Asegurar que el elemento sea visible
+    el.style.display = 'block';
+    
+    // Scroll al elemento para asegurar que está en el viewport
+    el.scrollIntoView({ behavior: 'instant', block: 'start' });
+    
+    // Pequeña pausa para que el scroll se complete
+    await new Promise(resolve => setTimeout(resolve, 100));
 
-    pdf.addImage(canvas.toDataURL('image/png'), 'PNG', xOffset, 14, finalW, finalH, '', 'FAST');
+    try {
+      const canvas = await window.html2canvas(el, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        allowTaint: false,
+        foreignObjectRendering: false,
+        onclone: (clonedDoc, element) => {
+          // Asegurar que el elemento clonado sea visible
+          const clonedEl = element;
+          if (clonedEl) {
+            clonedEl.style.display = 'block';
+            clonedEl.style.visibility = 'visible';
+          }
+        }
+      });
 
-    // Footer
-    pdf.setTextColor(150, 150, 150);
-    pdf.setFontSize(7);
-    pdf.text(`Página ${pageCount + 1}`, pW - margin, pH - 4, { align: 'right' });
+      pdf.addPage();
+      pageCount++;
+
+      pdf.setFillColor(13, 42, 77);
+      pdf.rect(0, 0, pW, 10, 'F');
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(7.5);
+      pdf.setFont('helvetica', 'bold');
+      const sectionLabel = EXPORT_OPTIONS.find(o => o.id === sectionId)?.label || sectionId;
+      pdf.text(`SICAG · ${sectionLabel}`, margin, 6.8);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(now, pW - margin, 6.8, { align: 'right' });
+
+      const contentW = pW - margin * 2;
+      const contentH = pH - margin - 18;
+      const imgAspect = canvas.width / canvas.height;
+      const boxAspect = contentW / contentH;
+
+      let finalW, finalH;
+      if (imgAspect > boxAspect) {
+        finalW = contentW;
+        finalH = contentW / imgAspect;
+      } else {
+        finalH = contentH;
+        finalW = contentH * imgAspect;
+      }
+
+      const xOffset = margin + (contentW - finalW) / 2;
+
+      pdf.addImage(canvas.toDataURL('image/png'), 'PNG', xOffset, 14, finalW, finalH, undefined, 'FAST');
+
+      pdf.setTextColor(150, 150, 150);
+      pdf.setFontSize(7);
+      pdf.text(`Página ${pageCount + 1}`, pW - margin, pH - 4, { align: 'right' });
+    } catch (error) {
+      console.error(`Error capturando sección ${sectionId}:`, error);
+    }
   }
 
   pdf.setPage(1);
@@ -839,6 +860,9 @@ const exportToPdf = async (selectedIds, filters, dateRanges, onProgress) => {
   pdf.setFontSize(7);
   pdf.text('Página 1', pW - margin, pH - 4, { align: 'right' });
   pdf.save(`Reporte_SICAG_${new Date().toISOString().slice(0, 10)}.pdf`);
+
+  // Restaurar el estado original de expansión
+  setExpandedState(originalExpanded);
 };
 
 // ─── DIALOG EXPORTAR PDF ──────────────────────────────────────────────────────
@@ -846,17 +870,37 @@ const ExportDialog = ({ open, onClose, onExport, globalFilters, dateRanges }) =>
   const [sel, setSel]           = useState(new Set(EXPORT_OPTIONS.map(o => o.id)));
   const [loading, setLoading]   = useState(false);
   const [progress, setProgress] = useState('');
+  const [error, setError]       = useState('');
 
   if (!open) return null;
-  const toggle = (id) => setSel(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
+
+  const toggle = (id) => {
+    setError('');
+    setSel(prev => { 
+      const n = new Set(prev); 
+      n.has(id) ? n.delete(id) : n.add(id); 
+      return n; 
+    });
+  };
 
   const handleDownload = async () => {
+    // Validación: al menos una categoría seleccionada
+    if (sel.size === 0) {
+      setError('Debes seleccionar al menos una categoría para exportar');
+      return;
+    }
+
     setLoading(true);
+    setError('');
     try {
       await onExport([...sel], (id) => {
         const label = EXPORT_OPTIONS.find(o => o.id === id)?.label || id;
         setProgress(`Procesando: ${label}...`);
       });
+      onClose(); // Cerrar el diálogo después de exportar exitosamente
+    } catch (err) {
+      setError('Error al generar el PDF. Intenta nuevamente.');
+      console.error('Export error:', err);
     } finally {
       setLoading(false);
       setProgress('');
@@ -868,7 +912,7 @@ const ExportDialog = ({ open, onClose, onExport, globalFilters, dateRanges }) =>
       <Paper sx={{ p: 3, width: 440, borderRadius: '12px', maxHeight: '88vh', overflowY: 'auto' }}>
         <Typography variant="h6" sx={{ color: C.primary.dark, fontWeight: 'bold', mb: 0.5 }}>Exportar Reporte PDF</Typography>
         <Typography variant="body2" sx={{ color: C.text.secondary, mb: 2 }}>
-          Las gráficas visibles se capturan tal como se ven. Cada sección ocupa una página A4 horizontal.
+          Las gráficas se capturarán automáticamente aunque estén contraídas en la vista.
         </Typography>
         <Paper elevation={0} sx={{ p: 1.5, bgcolor: '#f8f9fa', mb: 2, borderRadius: '8px' }}>
           <Typography variant="caption" sx={{ color: C.text.secondary }}>
@@ -879,8 +923,8 @@ const ExportDialog = ({ open, onClose, onExport, globalFilters, dateRanges }) =>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
           <Typography variant="subtitle2" sx={{ color: C.primary.dark }}>Secciones a incluir</Typography>
           <Stack direction="row" spacing={1}>
-            <Button size="small" sx={{ color: C.primary.main, fontSize: '0.74rem' }} onClick={() => setSel(new Set(EXPORT_OPTIONS.map(o => o.id)))}>Todo</Button>
-            <Button size="small" sx={{ color: C.text.secondary, fontSize: '0.74rem' }} onClick={() => setSel(new Set())}>Ninguno</Button>
+            <Button size="small" sx={{ color: C.primary.main, fontSize: '0.74rem' }} onClick={() => { setSel(new Set(EXPORT_OPTIONS.map(o => o.id))); setError(''); }}>Todo</Button>
+            <Button size="small" sx={{ color: C.text.secondary, fontSize: '0.74rem' }} onClick={() => { setSel(new Set()); setError(''); }}>Ninguno</Button>
           </Stack>
         </Box>
         <Stack spacing={0.5} sx={{ mb: 3 }}>
@@ -895,6 +939,12 @@ const ExportDialog = ({ open, onClose, onExport, globalFilters, dateRanges }) =>
           ))}
         </Stack>
 
+        {error && (
+          <Alert severity="error" sx={{ mb: 2, py: 0.5, fontSize: '0.85rem' }}>
+            {error}
+          </Alert>
+        )}
+
         {loading && (
           <Paper elevation={0} sx={{ p: 1.5, bgcolor: '#e8f0fe', mb: 2, borderRadius: '8px' }}>
             <Typography variant="caption" sx={{ color: C.primary.main }}>
@@ -908,9 +958,17 @@ const ExportDialog = ({ open, onClose, onExport, globalFilters, dateRanges }) =>
           <Typography variant="caption" sx={{ color: C.text.secondary }}>{sel.size} sección(es) · PDF A4 horizontal</Typography>
           <Stack direction="row" spacing={1}>
             <Button onClick={onClose} disabled={loading} sx={{ color: C.text.secondary }}>Cancelar</Button>
-            <Button variant="contained" startIcon={<DownloadIcon />} disabled={sel.size === 0 || loading}
+            <Button 
+              variant="contained" 
+              startIcon={<DownloadIcon />} 
+              disabled={sel.size === 0 || loading}
               onClick={handleDownload}
-              sx={{ bgcolor: C.primary.main, '&:hover': { bgcolor: C.primary.dark } }}>
+              sx={{ 
+                bgcolor: C.primary.main, 
+                '&:hover': { bgcolor: C.primary.dark },
+                opacity: sel.size === 0 ? 0.6 : 1
+              }}
+            >
               {loading ? 'Generando...' : 'Descargar PDF'}
             </Button>
           </Stack>
@@ -949,13 +1007,11 @@ const REGION_OPTIONS = [
 // ─── COMPONENTE PRINCIPAL ─────────────────────────────────────────────────────
 const Reports = () => {
   const [dateRange, setDateRange]   = useState('month');
-  // [] = todas; array con valores = regiones específicas seleccionadas
   const [selectedRegions, setSelectedRegions] = useState([]);
   const [activeSections, setActive] = useState(new Set(['compliance', 'certs', 'decl', 'committee', 'assoc']));
   const [expanded, setExpanded]     = useState(new Set(['compliance', 'certs', 'decl', 'committee', 'assoc']));
   const [exportOpen, setExportOpen] = useState(false);
 
-  // [] significa "todas"; si hay seleccionadas, filtrar
   const isAllRegions = selectedRegions.length === 0;
 
   const filteredCompliance = useMemo(() =>
@@ -978,24 +1034,40 @@ const Reports = () => {
 
   const handleRegionChange = (e) => {
     const val = e.target.value;
-    // MUI Select multiple devuelve un array
     setSelectedRegions(val);
   };
 
   const toggleSection = (id) => {
     setActive(prev => {
       const n = new Set(prev);
-      if (n.has(id)) { n.delete(id); setExpanded(e => { const ne = new Set(e); ne.delete(id); return ne; }); }
-      else { n.add(id); setExpanded(e => new Set([...e, id])); }
+      if (n.has(id)) { 
+        n.delete(id); 
+        setExpanded(e => { 
+          const ne = new Set(e); 
+          ne.delete(id); 
+          return ne; 
+        }); 
+      } else { 
+        n.add(id); 
+        setExpanded(e => new Set([...e, id])); 
+      }
       return n;
     });
   };
-  const toggleExpand = (id) => setExpanded(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
+
+  const toggleExpand = (id) => setExpanded(prev => { 
+    const n = new Set(prev); 
+    n.has(id) ? n.delete(id) : n.add(id); 
+    return n; 
+  });
+
   const handleExport = (selectedIds, onProgress) => exportToPdf(
     selectedIds,
     { dateRange, region: isAllRegions ? 'all' : selectedRegions.join(', ') },
     DATE_RANGES,
-    onProgress
+    onProgress,
+    expanded,
+    setExpanded
   );
 
   const totalUsers  = filteredCompliance.reduce((s, r) => s + r.total, 0);
@@ -1067,7 +1139,6 @@ const Reports = () => {
                   }}
                   MenuProps={{ PaperProps: { style: { maxHeight: 280 } } }}
                 >
-                  {/* Opción "Todas" para limpiar selección */}
                   <MenuItem
                     onClick={() => setSelectedRegions([])}
                     sx={{ fontStyle: 'italic', color: C.text.secondary }}
@@ -1087,7 +1158,6 @@ const Reports = () => {
                   ))}
                 </Select>
               </FormControl>
-              {/* Chips de regiones seleccionadas */}
               {selectedRegions.length > 0 && (
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 0.8 }}>
                   {selectedRegions.map(r => (
@@ -1143,13 +1213,12 @@ const Reports = () => {
           </Grid>
         </Paper>
 
-        {/* ── KPI CARDS: una sola fila fija, sin Grid que rompa a nueva línea ── */}
+        {/* ── KPI CARDS ── */}
         <Box sx={{
           display: 'flex',
           flexDirection: 'row',
           gap: 1,
           mb: 2,
-          // Evitar que se rompan en varias filas
           flexWrap: 'nowrap',
           overflow: 'hidden',
         }}>
