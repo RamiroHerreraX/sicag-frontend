@@ -89,7 +89,7 @@ const UserDashboard = () => {
           mb: 1.5,
           fontSize: { xs: '1.75rem', sm: '2rem' }
         }}>
-          Pantalla de Cumplimiento
+          Panel de control
         </Typography>
         
       </Box>
