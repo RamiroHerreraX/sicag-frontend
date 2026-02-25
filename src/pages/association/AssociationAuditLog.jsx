@@ -49,18 +49,18 @@ import * as XLSX from "xlsx";
 
 // Colores institucionales
 const institutionalColors = {
-  primary: '#133B6B',      // Azul oscuro principal
-  secondary: '#1a4c7a',    // Azul medio
-  accent: '#e9e9e9',       // Color para acentos (gris claro)
-  background: '#f8fafc',   // Fondo claro
-  lightBlue: 'rgba(19, 59, 107, 0.08)',  // Azul transparente para hover
-  darkBlue: '#0D2A4D',     // Azul más oscuro
-  textPrimary: '#2c3e50',  // Texto principal
-  textSecondary: '#7f8c8d', // Texto secundario
-  success: '#27ae60',      // Verde para éxito
-  warning: '#f39c12',      // Naranja para advertencias
-  error: '#e74c3c',        // Rojo para errores
-  info: '#3498db',         // Azul para información
+  primary: "#133B6B", // Azul oscuro principal
+  secondary: "#1a4c7a", // Azul medio
+  accent: "#e9e9e9", // Color para acentos (gris claro)
+  background: "#f8fafc", // Fondo claro
+  lightBlue: "rgba(19, 59, 107, 0.08)", // Azul transparente para hover
+  darkBlue: "#0D2A4D", // Azul más oscuro
+  textPrimary: "#2c3e50", // Texto principal
+  textSecondary: "#7f8c8d", // Texto secundario
+  success: "#27ae60", // Verde para éxito
+  warning: "#f39c12", // Naranja para advertencias
+  error: "#e74c3c", // Rojo para errores
+  info: "#3498db", // Azul para información
 };
 
 const AuditLog = () => {
@@ -81,6 +81,25 @@ const AuditLog = () => {
   const auditLogs = [
     {
       id: 1,
+      timestamp: "15/01/2026 10:45:10",
+      user: {
+        name: "Yo",
+        role: "admin",
+        avatar: "YO",
+        email: "yo@institucion.edu",
+      },
+      action: "CERTIFICATION_ASSIGN",
+      actionName: "Certificación subida",
+      entity: "Certificación",
+      entityId: "CERT-2026-00145",
+      details: "Subí una certificación al usuario Luis Rodríguez",
+      ip: "192.168.1.150",
+      severity: "success",
+      icon: <AssignmentIcon />,
+      instanceName: "Instancia Principal",
+    },
+    {
+      id: 2,
       timestamp: "15/01/2026 10:30:15",
       user: {
         name: "Yo",
@@ -89,53 +108,36 @@ const AuditLog = () => {
         email: "yo@institucion.edu",
       },
       action: "LOGIN_SUCCESS",
-      actionName: "Inicio de sesión exitoso",
+      actionName: "Inicio de sesión",
       entity: "Sistema",
       entityId: "N/A",
-      details: "Inicié sesión en el sistema desde IP 192.168.1.100",
+      details: "Inicié sesión en el sistema correctamente",
       ip: "192.168.1.100",
       severity: "info",
       icon: <LoginIcon />,
       instanceName: "Instancia Principal",
     },
     {
-      id: 2,
-      timestamp: "15/01/2026 09:45:22",
-      user: {
-        name: "Yo",
-        role: "admin",
-        avatar: "YO",
-        email: "yo@institucion.edu",
-      },
-      action: "CERTIFICATION_ASSIGN",
-      actionName: "Certificado asignado",
-      entity: "Certificación",
-      entityId: "CERT-2026-00145",
-      details: "Le agregué un certificado al usuario Luis Rodríguez",
-      ip: "192.168.1.150",
-      severity: "success",
-      icon: <AssignmentIcon />,
-      instanceName: "Instancia Principal",
-    },
-    {
       id: 3,
-      timestamp: "15/01/2026 09:30:10",
+      timestamp: "15/01/2026 10:20:05",
       user: {
-        name: "Fernanda López",
-        role: "comite",
-        avatar: "FL",
-        email: "fernanda.lopez@institucion.edu",
+        name: "Luis Rodríguez",
+        role: "agente",
+        avatar: "LR",
+        email: "luis.rodriguez@institucion.edu",
       },
       action: "PERMISSION_GRANT",
-      actionName: "Permisos otorgados",
+      actionName: "Permiso otorgado",
       entity: "Permisos",
-      entityId: "PERM-001",
-      details: "Fernanda me dio permisos para subir certificados",
-      ip: "192.168.1.120",
+      entityId: "PERM-003",
+      details:
+        "Luis Rodríguez me dio permiso para subir documentos en su nombre",
+      ip: "192.168.1.160",
       severity: "success",
       icon: <LockIcon />,
-      instanceName: "Instancia de Comité",
+      instanceName: "Instancia Principal",
     },
+
     {
       id: 4,
       timestamp: "15/01/2026 08:20:18",
@@ -550,7 +552,14 @@ const AuditLog = () => {
   };
 
   return (
-    <Box sx={{ height: "100%", display: "flex", flexDirection: "column", bgcolor: institutionalColors.background }}>
+    <Box
+      sx={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        bgcolor: institutionalColors.background,
+      }}
+    >
       {/* Header */}
       <Box sx={{ mb: 3 }}>
         <Box
@@ -564,11 +573,18 @@ const AuditLog = () => {
           <Box>
             <Typography
               variant="h5"
-              sx={{ color: institutionalColors.primary, fontWeight: "bold", mb: 0.5 }}
+              sx={{
+                color: institutionalColors.primary,
+                fontWeight: "bold",
+                mb: 0.5,
+              }}
             >
               Mis Actividades y Acciones
             </Typography>
-            <Typography variant="body2" sx={{ color: institutionalColors.textSecondary }}>
+            <Typography
+              variant="body2"
+              sx={{ color: institutionalColors.textSecondary }}
+            >
               Registro personal de todas las acciones que he realizado y
               recibido
             </Typography>
@@ -583,10 +599,10 @@ const AuditLog = () => {
               sx={{
                 borderColor: institutionalColors.primary,
                 color: institutionalColors.primary,
-                '&:hover': {
+                "&:hover": {
                   borderColor: institutionalColors.secondary,
                   bgcolor: institutionalColors.lightBlue,
-                }
+                },
               }}
             >
               Exportar a Excel
@@ -598,9 +614,9 @@ const AuditLog = () => {
               onClick={handleRefresh}
               sx={{
                 bgcolor: institutionalColors.primary,
-                '&:hover': {
+                "&:hover": {
                   bgcolor: institutionalColors.secondary,
-                }
+                },
               }}
             >
               Actualizar
@@ -617,21 +633,39 @@ const AuditLog = () => {
           }}
         >
           <Grid item sx={{ flex: 1 }}>
-            <Card sx={{ borderLeft: `4px solid ${institutionalColors.success}`, height: "100%" }}>
+            <Card
+              sx={{
+                borderLeft: `4px solid ${institutionalColors.success}`,
+                height: "100%",
+              }}
+            >
               <CardContent sx={{ p: 2, textAlign: "center" }}>
                 <Typography
                   variant="h4"
-                  sx={{ color: institutionalColors.success, fontWeight: "bold" }}
+                  sx={{
+                    color: institutionalColors.success,
+                    fontWeight: "bold",
+                  }}
                 >
                   {stats.misAcciones}
                 </Typography>
-                <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>Mis Acciones</Typography>
+                <Typography
+                  variant="caption"
+                  sx={{ color: institutionalColors.textSecondary }}
+                >
+                  Mis Acciones
+                </Typography>
               </CardContent>
             </Card>
           </Grid>
 
           <Grid item sx={{ flex: 1 }}>
-            <Card sx={{ borderLeft: `4px solid ${institutionalColors.info}`, height: "100%" }}>
+            <Card
+              sx={{
+                borderLeft: `4px solid ${institutionalColors.info}`,
+                height: "100%",
+              }}
+            >
               <CardContent sx={{ p: 2, textAlign: "center" }}>
                 <Typography
                   variant="h4"
@@ -639,21 +673,37 @@ const AuditLog = () => {
                 >
                   {stats.today}
                 </Typography>
-                <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>Hoy</Typography>
+                <Typography
+                  variant="caption"
+                  sx={{ color: institutionalColors.textSecondary }}
+                >
+                  Hoy
+                </Typography>
               </CardContent>
             </Card>
           </Grid>
 
           <Grid item sx={{ flex: 1 }}>
-            <Card sx={{ borderLeft: `4px solid ${institutionalColors.primary}`, height: "100%" }}>
+            <Card
+              sx={{
+                borderLeft: `4px solid ${institutionalColors.primary}`,
+                height: "100%",
+              }}
+            >
               <CardContent sx={{ p: 2, textAlign: "center" }}>
                 <Typography
                   variant="h4"
-                  sx={{ color: institutionalColors.primary, fontWeight: "bold" }}
+                  sx={{
+                    color: institutionalColors.primary,
+                    fontWeight: "bold",
+                  }}
                 >
                   {stats.certificadosAsignados}
                 </Typography>
-                <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
+                <Typography
+                  variant="caption"
+                  sx={{ color: institutionalColors.textSecondary }}
+                >
                   Certificados Asignados
                 </Typography>
               </CardContent>
@@ -661,49 +711,95 @@ const AuditLog = () => {
           </Grid>
 
           <Grid item sx={{ flex: 1 }}>
-            <Card sx={{ borderLeft: `4px solid ${institutionalColors.warning}`, height: "100%" }}>
+            <Card
+              sx={{
+                borderLeft: `4px solid ${institutionalColors.warning}`,
+                height: "100%",
+              }}
+            >
               <CardContent sx={{ p: 2, textAlign: "center" }}>
                 <Typography
                   variant="h4"
-                  sx={{ color: institutionalColors.warning, fontWeight: "bold" }}
+                  sx={{
+                    color: institutionalColors.warning,
+                    fontWeight: "bold",
+                  }}
                 >
                   {stats.permisosRecibidos}
                 </Typography>
-                <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>Permisos Recibidos</Typography>
+                <Typography
+                  variant="caption"
+                  sx={{ color: institutionalColors.textSecondary }}
+                >
+                  Permisos Recibidos
+                </Typography>
               </CardContent>
             </Card>
           </Grid>
 
           <Grid item sx={{ flex: 1 }}>
-            <Card sx={{ borderLeft: `4px solid ${institutionalColors.success}`, height: "100%" }}>
+            <Card
+              sx={{
+                borderLeft: `4px solid ${institutionalColors.success}`,
+                height: "100%",
+              }}
+            >
               <CardContent sx={{ p: 2, textAlign: "center" }}>
                 <Typography
                   variant="h4"
-                  sx={{ color: institutionalColors.success, fontWeight: "bold" }}
+                  sx={{
+                    color: institutionalColors.success,
+                    fontWeight: "bold",
+                  }}
                 >
                   {stats.documentosSubidos}
                 </Typography>
-                <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>Documentos Subidos</Typography>
+                <Typography
+                  variant="caption"
+                  sx={{ color: institutionalColors.textSecondary }}
+                >
+                  Documentos Subidos
+                </Typography>
               </CardContent>
             </Card>
           </Grid>
 
           <Grid item sx={{ flex: 1 }}>
-            <Card sx={{ borderLeft: `4px solid ${institutionalColors.primary}`, height: "100%" }}>
+            <Card
+              sx={{
+                borderLeft: `4px solid ${institutionalColors.primary}`,
+                height: "100%",
+              }}
+            >
               <CardContent sx={{ p: 2, textAlign: "center" }}>
                 <Typography
                   variant="h4"
-                  sx={{ color: institutionalColors.primary, fontWeight: "bold" }}
+                  sx={{
+                    color: institutionalColors.primary,
+                    fontWeight: "bold",
+                  }}
                 >
                   {stats.total}
                 </Typography>
-                <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>Total de Eventos</Typography>
+                <Typography
+                  variant="caption"
+                  sx={{ color: institutionalColors.textSecondary }}
+                >
+                  Total de Eventos
+                </Typography>
               </CardContent>
             </Card>
           </Grid>
         </Grid>
         {/* Filtros */}
-        <Paper elevation={0} sx={{ p: 2, bgcolor: "white", border: `1px solid ${institutionalColors.lightBlue}` }}>
+        <Paper
+          elevation={0}
+          sx={{
+            p: 2,
+            bgcolor: "white",
+            border: `1px solid ${institutionalColors.lightBlue}`,
+          }}
+        >
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} md={4}>
               <TextField
@@ -715,7 +811,10 @@ const AuditLog = () => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon fontSize="small" sx={{ color: institutionalColors.textSecondary }} />
+                      <SearchIcon
+                        fontSize="small"
+                        sx={{ color: institutionalColors.textSecondary }}
+                      />
                     </InputAdornment>
                   ),
                 }}
@@ -724,15 +823,21 @@ const AuditLog = () => {
 
             <Grid item xs={12} md={3}>
               <FormControl fullWidth size="small">
-                <InputLabel sx={{ '&.Mui-focused': { color: institutionalColors.primary } }}>Tipo de Acción</InputLabel>
+                <InputLabel
+                  sx={{
+                    "&.Mui-focused": { color: institutionalColors.primary },
+                  }}
+                >
+                  Tipo de Acción
+                </InputLabel>
                 <Select
                   value={filterType}
                   label="Tipo de Acción"
                   onChange={(e) => setFilterType(e.target.value)}
                   sx={{
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                       borderColor: institutionalColors.primary,
-                    }
+                    },
                   }}
                 >
                   {actionTypes.map((type) => (
@@ -746,15 +851,21 @@ const AuditLog = () => {
 
             <Grid item xs={12} md={3}>
               <FormControl fullWidth size="small">
-                <InputLabel sx={{ '&.Mui-focused': { color: institutionalColors.primary } }}>Filtrar por Usuario</InputLabel>
+                <InputLabel
+                  sx={{
+                    "&.Mui-focused": { color: institutionalColors.primary },
+                  }}
+                >
+                  Filtrar por Usuario
+                </InputLabel>
                 <Select
                   value={filterUser}
                   label="Filtrar por Usuario"
                   onChange={(e) => setFilterUser(e.target.value)}
                   sx={{
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                       borderColor: institutionalColors.primary,
-                    }
+                    },
                   }}
                 >
                   {users.map((user) => (
@@ -781,10 +892,10 @@ const AuditLog = () => {
                   sx={{
                     borderColor: institutionalColors.primary,
                     color: institutionalColors.primary,
-                    '&:hover': {
+                    "&:hover": {
                       borderColor: institutionalColors.secondary,
                       bgcolor: institutionalColors.lightBlue,
-                    }
+                    },
                   }}
                 >
                   Limpiar Filtros
@@ -819,7 +930,10 @@ const AuditLog = () => {
           >
             <Typography
               variant="subtitle1"
-              sx={{ fontWeight: "bold", color: institutionalColors.textPrimary }}
+              sx={{
+                fontWeight: "bold",
+                color: institutionalColors.textPrimary,
+              }}
             >
               Registro de Mis Actividades - {filteredLogs.length} eventos
               encontrados
@@ -853,23 +967,57 @@ const AuditLog = () => {
             <Table stickyHeader>
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: "bold", width: "15%", color: institutionalColors.primary }}>
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      width: "15%",
+                      color: institutionalColors.primary,
+                    }}
+                  >
                     Fecha y Hora
                   </TableCell>
-                  <TableCell sx={{ fontWeight: "bold", width: "20%", color: institutionalColors.primary }}>
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      width: "20%",
+                      color: institutionalColors.primary,
+                    }}
+                  >
                     Usuario
                   </TableCell>
-                  <TableCell sx={{ fontWeight: "bold", width: "20%", color: institutionalColors.primary }}>
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      width: "20%",
+                      color: institutionalColors.primary,
+                    }}
+                  >
                     Acción
                   </TableCell>
-                  <TableCell sx={{ fontWeight: "bold", width: "15%", color: institutionalColors.primary }}>
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      width: "15%",
+                      color: institutionalColors.primary,
+                    }}
+                  >
                     Entidad
                   </TableCell>
-                  <TableCell sx={{ fontWeight: "bold", width: "25%", color: institutionalColors.primary }}>
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      width: "25%",
+                      color: institutionalColors.primary,
+                    }}
+                  >
                     Detalles
                   </TableCell>
                   <TableCell
-                    sx={{ fontWeight: "bold", width: "5%", color: institutionalColors.primary }}
+                    sx={{
+                      fontWeight: "bold",
+                      width: "5%",
+                      color: institutionalColors.primary,
+                    }}
                   ></TableCell>
                 </TableRow>
               </TableHead>
@@ -887,11 +1035,17 @@ const AuditLog = () => {
                       <Box>
                         <Typography
                           variant="body2"
-                          sx={{ fontWeight: "bold", color: institutionalColors.textPrimary }}
+                          sx={{
+                            fontWeight: "bold",
+                            color: institutionalColors.textPrimary,
+                          }}
                         >
                           {log.timestamp.split(" ")[0]}
                         </Typography>
-                        <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
+                        <Typography
+                          variant="caption"
+                          sx={{ color: institutionalColors.textSecondary }}
+                        >
                           {log.timestamp.split(" ")[1]}
                         </Typography>
                       </Box>
@@ -915,7 +1069,10 @@ const AuditLog = () => {
                         <Box>
                           <Typography
                             variant="body2"
-                            sx={{ fontWeight: "medium", color: institutionalColors.textPrimary }}
+                            sx={{
+                              fontWeight: "medium",
+                              color: institutionalColors.textPrimary,
+                            }}
                           >
                             {log.user.name}
                           </Typography>
@@ -945,7 +1102,10 @@ const AuditLog = () => {
                         <Box>
                           <Typography
                             variant="body2"
-                            sx={{ fontWeight: "medium", color: institutionalColors.textPrimary }}
+                            sx={{
+                              fontWeight: "medium",
+                              color: institutionalColors.textPrimary,
+                            }}
                           >
                             {log.actionName}
                           </Typography>
@@ -968,11 +1128,17 @@ const AuditLog = () => {
                       <Box>
                         <Typography
                           variant="body2"
-                          sx={{ fontWeight: "medium", color: institutionalColors.textPrimary }}
+                          sx={{
+                            fontWeight: "medium",
+                            color: institutionalColors.textPrimary,
+                          }}
                         >
                           {log.entity}
                         </Typography>
-                        <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
+                        <Typography
+                          variant="caption"
+                          sx={{ color: institutionalColors.textSecondary }}
+                        >
                           ID: {log.entityId}
                         </Typography>
                       </Box>
@@ -980,7 +1146,10 @@ const AuditLog = () => {
 
                     <TableCell>
                       <Box>
-                        <Typography variant="body2" sx={{ color: institutionalColors.textSecondary }}>
+                        <Typography
+                          variant="body2"
+                          sx={{ color: institutionalColors.textSecondary }}
+                        >
                           {log.details}
                         </Typography>
                         <Box
@@ -1029,7 +1198,10 @@ const AuditLog = () => {
               bgcolor: "white",
             }}
           >
-            <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
+            <Typography
+              variant="caption"
+              sx={{ color: institutionalColors.textSecondary }}
+            >
               Mostrando {(page - 1) * rowsPerPage + 1} -{" "}
               {Math.min(page * rowsPerPage, filteredLogs.length)} de{" "}
               {filteredLogs.length} eventos
@@ -1041,29 +1213,44 @@ const AuditLog = () => {
               size="small"
               color="primary"
               sx={{
-                '& .MuiPaginationItem-root.Mui-selected': {
+                "& .MuiPaginationItem-root.Mui-selected": {
                   bgcolor: institutionalColors.primary,
-                  color: 'white',
-                  '&:hover': {
+                  color: "white",
+                  "&:hover": {
                     bgcolor: institutionalColors.secondary,
-                  }
-                }
+                  },
+                },
               }}
             />
           </Box>
         </Paper>
 
         {/* Información de auditoría */}
-        <Paper elevation={0} sx={{ mt: 2, p: 2, bgcolor: "white", border: `1px solid ${institutionalColors.lightBlue}` }}>
+        <Paper
+          elevation={0}
+          sx={{
+            mt: 2,
+            p: 2,
+            bgcolor: "white",
+            border: `1px solid ${institutionalColors.lightBlue}`,
+          }}
+        >
           <Typography
             variant="subtitle1"
-            sx={{ color: institutionalColors.primary, mb: 2, fontWeight: "bold" }}
+            sx={{
+              color: institutionalColors.primary,
+              mb: 2,
+              fontWeight: "bold",
+            }}
           >
             Resumen de Mis Actividades Recientes
           </Typography>
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
-              <Typography variant="subtitle2" sx={{ color: institutionalColors.textPrimary, mb: 1 }}>
+              <Typography
+                variant="subtitle2"
+                sx={{ color: institutionalColors.textPrimary, mb: 1 }}
+              >
                 Distribución de Mis Acciones
               </Typography>
               <Stack spacing={1}>
@@ -1088,7 +1275,10 @@ const AuditLog = () => {
                       justifyContent: "space-between",
                     }}
                   >
-                    <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
+                    <Typography
+                      variant="caption"
+                      sx={{ color: institutionalColors.textSecondary }}
+                    >
                       {type}:
                     </Typography>
                     <Box
@@ -1107,14 +1297,18 @@ const AuditLog = () => {
                           height: 6,
                           borderRadius: 3,
                           bgcolor: "#e0e0e0",
-                          '& .MuiLinearProgress-bar': {
+                          "& .MuiLinearProgress-bar": {
                             bgcolor: institutionalColors.primary,
-                          }
+                          },
                         }}
                       />
                       <Typography
                         variant="caption"
-                        sx={{ fontWeight: "bold", minWidth: 24, color: institutionalColors.primary }}
+                        sx={{
+                          fontWeight: "bold",
+                          minWidth: 24,
+                          color: institutionalColors.primary,
+                        }}
                       >
                         {count}
                       </Typography>
@@ -1125,7 +1319,10 @@ const AuditLog = () => {
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <Typography variant="subtitle2" sx={{ color: institutionalColors.textPrimary, mb: 1 }}>
+              <Typography
+                variant="subtitle2"
+                sx={{ color: institutionalColors.textPrimary, mb: 1 }}
+              >
                 Acciones de Otros Usuarios Relacionadas Conmigo
               </Typography>
               <Stack spacing={1}>
@@ -1151,7 +1348,10 @@ const AuditLog = () => {
                       justifyContent: "space-between",
                     }}
                   >
-                    <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
+                    <Typography
+                      variant="caption"
+                      sx={{ color: institutionalColors.textSecondary }}
+                    >
                       {type}:
                     </Typography>
                     <Box
@@ -1172,14 +1372,18 @@ const AuditLog = () => {
                           height: 6,
                           borderRadius: 3,
                           bgcolor: "#e0e0e0",
-                          '& .MuiLinearProgress-bar': {
+                          "& .MuiLinearProgress-bar": {
                             bgcolor: institutionalColors.info,
-                          }
+                          },
                         }}
                       />
                       <Typography
                         variant="caption"
-                        sx={{ fontWeight: "bold", minWidth: 24, color: institutionalColors.info }}
+                        sx={{
+                          fontWeight: "bold",
+                          minWidth: 24,
+                          color: institutionalColors.info,
+                        }}
                       >
                         {count}
                       </Typography>

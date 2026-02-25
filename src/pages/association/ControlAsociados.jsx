@@ -145,10 +145,8 @@ const initialUsers = [
       {
         id: 1,
         name: "Curso de ética profesional y código de conducta",
-        description: "Certificación para operaciones básicas de importación",
         type: "operativa",
-        issueDate: "2026-01-20",
-        expiryDate: "2027-01-20",
+        hoursValue: 20, // Horas que vale la certificación
         status: "active",
         documents: [
           {
@@ -165,10 +163,8 @@ const initialUsers = [
       {
         id: 2,
         name: "Diplomado en Comercio Exterior y Legislación Aduanera",
-        description: "Certificación para declaraciones de valor",
         type: "fiscal",
-        issueDate: "2025-03-15",
-        expiryDate: "2026-03-15",
+        hoursValue: 40, // Horas que vale la certificación
         status: "active",
         documents: [
           {
@@ -202,10 +198,8 @@ const initialUsers = [
       {
         id: 1,
         name: "Certificación de Comité",
-        description: "Certificación para miembros del comité directivo",
         type: "administrativa",
-        issueDate: "2024-04-01",
-        expiryDate: "2025-04-01",
+        hoursValue: 15, // Horas que vale la certificación
         status: "active",
         documents: [],
       },
@@ -243,10 +237,8 @@ const initialUsers = [
       {
         id: 1,
         name: "Certificación de Auditor",
-        description: "Certificación para auditoría aduanal",
         type: "legal",
-        issueDate: "2024-05-01",
-        expiryDate: "2025-05-01",
+        hoursValue: 30, // Horas que vale la certificación
         status: "active",
         documents: [
           {
@@ -331,13 +323,11 @@ const UserManagement = () => {
 
   const [users, setUsers] = useState(initialUsers);
 
-  // Estados para el formulario de nueva certificación
+  // Estados para el formulario de nueva certificación - MODIFICADO: quitamos fechas y descripción, agregamos hoursValue
   const [newCertification, setNewCertification] = useState({
     name: "",
-    description: "",
     type: "operativa",
-    issueDate: new Date().toISOString().split("T")[0],
-    expiryDate: addMonths(new Date(), 12).toISOString().split("T")[0],
+    hoursValue: "", // Horas que vale la certificación
   });
 
   // Estados para subida de documentos en certificación
@@ -353,13 +343,32 @@ const UserManagement = () => {
 
   // Tipos de certificaciones
   const certificationTypes = [
+    // NUEVAS certificaciones de formación
+    {
+      value: "etica_cumplimiento",
+      label: "Formación ética y cumplimiento",
+      color: "#455a64", // azul gris institucional
+    },
+    {
+      value: "actualizacion_aduanera",
+      label: "Actualización técnica aduanera",
+      color: "#1565c0", // azul técnico
+    },
     {
       value: "operativa",
       label: "Operativa",
       color: institutionalColors.primary,
     },
-    { value: "fiscal", label: "Fiscal", color: institutionalColors.success },
-    { value: "legal", label: "Legal", color: "#9c27b0" },
+    {
+      value: "fiscal",
+      label: "Fiscal",
+      color: institutionalColors.success,
+    },
+    {
+      value: "legal",
+      label: "Legal",
+      color: "#9c27b0",
+    },
     {
       value: "administrativa",
       label: "Administrativa",
@@ -371,17 +380,6 @@ const UserManagement = () => {
       color: institutionalColors.error,
     },
   ];
-
-  // Regiones disponibles
-  const regions = [
-    "Norte",
-    "Centro",
-    "Sur",
-    "Metropolitana",
-    "Occidente",
-    "Noreste",
-  ];
-
   // Calcular estadísticas para las tabs
   const stats = useMemo(() => {
     const total = users.length;
@@ -584,10 +582,8 @@ const UserManagement = () => {
     setSelectedUser(user);
     setNewCertification({
       name: "",
-      description: "",
       type: "operativa",
-      issueDate: new Date().toISOString().split("T")[0],
-      expiryDate: addMonths(new Date(), 12).toISOString().split("T")[0],
+      hoursValue: "", // Horas que vale la certificación
     });
     setCertificationFiles([]);
     setOpenCertificationDialog(true);
@@ -658,6 +654,10 @@ const UserManagement = () => {
       const certification = {
         id: Date.now(),
         ...newCertification,
+        // Convertir hoursValue a número, si está vacío poner 0
+        hoursValue: newCertification.hoursValue
+          ? parseInt(newCertification.hoursValue)
+          : 0,
         status: "active",
         documents: documents,
       };
@@ -717,10 +717,8 @@ const UserManagement = () => {
     setSelectedCertification(certification);
     setNewCertification({
       name: certification.name,
-      description: certification.description,
       type: certification.type,
-      issueDate: certification.issueDate,
-      expiryDate: certification.expiryDate,
+      hoursValue: certification.hoursValue || "",
     });
     setCertificationFiles([]); // No cargamos los documentos existentes para edición
     setOpenCertificationDialog(true);
@@ -884,7 +882,7 @@ const UserManagement = () => {
     setOpenDocumentDialog(true);
   };
 
-  // Eliminar documento
+  // Eliminar documento - CORREGIDO: eliminada la coma después de return user
   const handleDeleteDocument = async (documentId) => {
     if (!selectedUser || !selectedCertification) return;
 
@@ -912,7 +910,7 @@ const UserManagement = () => {
               ),
             };
           }
-          return user;
+          return user; // ← AQUÍ ESTABA EL ERROR (había una coma después de return user)
         }),
       );
 
@@ -936,24 +934,6 @@ const UserManagement = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  // Descargar documento
-  const handleDownloadDocument = (document) => {
-    // En una implementación real, esto descargaría el archivo del servidor
-    // Por ahora, simulamos una descarga
-    const link = document.createElement("a");
-    link.href = document.url;
-    link.download = document.name;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    setSnackbar({
-      open: true,
-      message: `Descargando ${document.name}`,
-      severity: "info",
-    });
   };
 
   const getRoleColor = (role) => {
@@ -1746,7 +1726,7 @@ const UserManagement = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Diálogo para agregar/editar certificación CON CARGA DE ARCHIVOS */}
+      {/* Diálogo para agregar/editar certificación CON CARGA DE ARCHIVOS - MODIFICADO */}
       <Dialog
         open={openCertificationDialog}
         onClose={() =>
@@ -1790,7 +1770,7 @@ const UserManagement = () => {
               </Alert>
             ) : (
               <>
-                {/* Datos de la certificación */}
+                {/* Datos de la certificación - MODIFICADO: quitamos fechas y descripción, agregamos hoursValue */}
                 <TextField
                   label="Nombre de la certificación"
                   value={newCertification.name}
@@ -1802,21 +1782,6 @@ const UserManagement = () => {
                   }
                   fullWidth
                   required
-                  disabled={certificationUploading}
-                />
-
-                <TextField
-                  label="Descripción"
-                  value={newCertification.description}
-                  onChange={(e) =>
-                    setNewCertification({
-                      ...newCertification,
-                      description: e.target.value,
-                    })
-                  }
-                  fullWidth
-                  multiline
-                  rows={2}
                   disabled={certificationUploading}
                 />
 
@@ -1862,40 +1827,24 @@ const UserManagement = () => {
                   </Select>
                 </FormControl>
 
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <TextField
-                      label="Fecha de emisión"
-                      type="date"
-                      value={newCertification.issueDate}
-                      onChange={(e) =>
-                        setNewCertification({
-                          ...newCertification,
-                          issueDate: e.target.value,
-                        })
-                      }
-                      fullWidth
-                      InputLabelProps={{ shrink: true }}
-                      disabled={certificationUploading}
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      label="Fecha de vencimiento"
-                      type="date"
-                      value={newCertification.expiryDate}
-                      onChange={(e) =>
-                        setNewCertification({
-                          ...newCertification,
-                          expiryDate: e.target.value,
-                        })
-                      }
-                      fullWidth
-                      InputLabelProps={{ shrink: true }}
-                      disabled={certificationUploading}
-                    />
-                  </Grid>
-                </Grid>
+                <TextField
+                  label="Horas que vale"
+                  type="number"
+                  value={newCertification.hoursValue}
+                  onChange={(e) =>
+                    setNewCertification({
+                      ...newCertification,
+                      hoursValue: e.target.value,
+                    })
+                  }
+                  fullWidth
+                  disabled={certificationUploading}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">horas</InputAdornment>
+                    ),
+                  }}
+                />
 
                 <Divider sx={{ my: 1 }}>
                   <Chip label="DOCUMENTOS" size="small" />
@@ -2083,12 +2032,12 @@ const UserManagement = () => {
       <Dialog
         open={openDetailsDialog}
         onClose={() => setOpenDetailsDialog(false)}
-        maxWidth="md" // CAMBIADO de md → lg
+
         fullWidth
         PaperProps={{
           sx: {
             width: "100%",
-            maxWidth: "700px", // controla el ancho real
+           maxWidth: "1100px", 
             minHeight: "80vh",
             maxHeight: "90vh",
           },
@@ -2166,7 +2115,7 @@ const UserManagement = () => {
             <DialogContent dividers sx={{ p: 3 }}>
               <Grid container spacing={3}>
                 {/* ================= INFO PERSONAL ================= */}
-                <Grid item xs={12} md={6}>
+               <Grid item xs={12}>
                   <Typography
                     variant="subtitle2"
                     sx={{
@@ -2177,7 +2126,16 @@ const UserManagement = () => {
                   >
                     Información Personal
                   </Typography>
-                  <Paper variant="outlined" sx={{ p: 2, bgcolor: "#f9fafb" }}>
+
+                  <Paper
+                    variant="outlined"
+                    sx={{
+                      p: 2,
+                      bgcolor: "#f9fafb",
+                      width: "100%",
+                      boxSizing: "border-box",
+                    }}
+                  >
                     <List dense disablePadding>
                       <ListItem sx={{ px: 0 }}>
                         <ListItemIcon sx={{ minWidth: 40 }}>
@@ -2292,166 +2250,87 @@ const UserManagement = () => {
                           }}
                         />
                       </ListItem>
-                    </List>
-                  </Paper>
-                </Grid>
-
-                {/* ================= NIVEL DE RECONOCIMIENTO ================= */}
-                <Grid item xs={12} md={6}>
-                  <Typography
-                    variant="subtitle2"
-                    sx={{
-                      color: institutionalColors.textSecondary,
-                      mb: 1,
-                      fontWeight: 600,
-                    }}
-                  >
-                    Nivel de Reconocimiento
-                  </Typography>
-                  <Paper
-                    variant="outlined"
-                    sx={{
-                      p: 2,
-                      bgcolor: `${getRecognitionLevelInfo(getRecognitionLevel(selectedUser)).color}08`,
-                      borderColor: getRecognitionLevelInfo(
-                        getRecognitionLevel(selectedUser),
-                      ).color,
-                      height: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <Stack
-                      direction="row"
-                      spacing={2}
-                      alignItems="center"
-                      sx={{ mb: 2 }}
-                    >
-                      <Avatar
-                        sx={{
-                          width: 56,
-                          height: 56,
-                          bgcolor: getRecognitionLevelInfo(
-                            getRecognitionLevel(selectedUser),
-                          ).color,
-                          fontSize: "1.5rem",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {
-                          getRecognitionLevelInfo(
-                            getRecognitionLevel(selectedUser),
-                          ).icon
-                        }
-                      </Avatar>
-                      <Box sx={{ flex: 1 }}>
-                        <Typography
-                          variant="h6"
-                          sx={{
-                            color: getRecognitionLevelInfo(
-                              getRecognitionLevel(selectedUser),
-                            ).color,
-                            fontWeight: 600,
-                          }}
-                        >
-                          {
-                            getRecognitionLevelInfo(
-                              getRecognitionLevel(selectedUser),
-                            ).label
-                          }
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          sx={{ color: institutionalColors.textSecondary }}
-                        >
-                          {selectedUser.associationCertifications?.length || 0}{" "}
-                          certificaciones obtenidas
-                        </Typography>
-                      </Box>
-                    </Stack>
-
-                    <Box
-                      sx={{ display: "flex", justifyContent: "center", mb: 2 }}
-                    >
-                      <Rating
-                        value={getRecognitionLevel(selectedUser)}
-                        max={3}
-                        readOnly
-                        icon={
-                          <StarIcon
+                      <ListItem sx={{ px: 0, alignItems: "flex-start" }}>
+                        {/* Icono izquierdo */}
+                        <ListItemIcon sx={{ minWidth: 40, mt: 0.5 }}>
+                          <VerifiedIcon
                             sx={{
-                              color: getRecognitionLevelInfo(
-                                getRecognitionLevel(selectedUser),
-                              ).color,
+                              color: institutionalColors.textSecondary,
+                              fontSize: 20,
                             }}
                           />
-                        }
-                        emptyIcon={
-                          <StarBorderIcon
-                            sx={{ color: institutionalColors.textSecondary }}
-                          />
-                        }
-                      />
-                    </Box>
+                        </ListItemIcon>
 
-                    {/* Barra de progreso hacia el siguiente nivel */}
-                    {getRecognitionLevel(selectedUser) < 3 && (
-                      <Box sx={{ mt: "auto" }}>
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            color: institutionalColors.textSecondary,
-                            fontWeight: 500,
-                          }}
-                        >
-                          Próximo nivel:{" "}
-                          {
-                            getRecognitionLevelInfo(
-                              getRecognitionLevel(selectedUser) + 1,
-                            ).label
-                          }
-                        </Typography>
+                        {/* Contenido */}
+                        <Box sx={{ width: "100%" }}>
+                          {/* Título */}
+                          <Typography
+                            sx={{
+                              color: institutionalColors.textSecondary,
+                              fontSize: "0.75rem",
+                              mb: 0.5,
+                            }}
+                          >
+                            Nivel de asociado
+                          </Typography>
 
-                        <LinearProgress
-                          variant="determinate"
-                          value={Math.min(
-                            ((selectedUser.associationCertifications?.length ||
-                              0) /
-                              getRecognitionLevelInfo(
-                                getRecognitionLevel(selectedUser) + 1,
-                              ).minCertifications) *
-                              100,
-                            100,
-                          )}
-                          sx={{
-                            mt: 0.5,
-                            height: 8,
-                            borderRadius: 4,
-                            bgcolor: institutionalColors.accent,
-                            "& .MuiLinearProgress-bar": {
-                              bgcolor: getRecognitionLevelInfo(
-                                getRecognitionLevel(selectedUser) + 1,
-                              ).color,
-                            },
-                          }}
-                        />
-                      </Box>
-                    )}
+                          {/* Nivel */}
+                          <Stack
+                            direction="row"
+                            spacing={1.5}
+                            alignItems="center"
+                          >
+                            <Avatar
+                              sx={{
+                                width: 40,
+                                height: 40,
+                                bgcolor: getRecognitionLevelInfo(
+                                  getRecognitionLevel(selectedUser),
+                                ).color,
+                                fontSize: "1.2rem",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {
+                                getRecognitionLevelInfo(
+                                  getRecognitionLevel(selectedUser),
+                                ).icon
+                              }
+                            </Avatar>
 
-                    {getRecognitionLevel(selectedUser) === 3 && (
-                      <Box sx={{ mt: 2, textAlign: "center" }}>
-                        <Chip
-                          icon={<TrophyIcon />}
-                          label="¡Máximo nivel alcanzado!"
-                          sx={{
-                            bgcolor: `${institutionalColors.level3}15`,
-                            color: institutionalColors.level3,
-                            fontWeight: "bold",
-                            border: `1px solid ${institutionalColors.level3}30`,
-                          }}
-                        />
-                      </Box>
-                    )}
+                            <Box>
+                              <Typography
+                                sx={{
+                                  color: getRecognitionLevelInfo(
+                                    getRecognitionLevel(selectedUser),
+                                  ).color,
+                                  fontWeight: 600,
+                                  fontSize: "0.95rem",
+                                  lineHeight: 1.2,
+                                }}
+                              >
+                                {
+                                  getRecognitionLevelInfo(
+                                    getRecognitionLevel(selectedUser),
+                                  ).label
+                                }
+                              </Typography>
+
+                              <Typography
+                                sx={{
+                                  color: institutionalColors.textSecondary,
+                                  fontSize: "0.75rem",
+                                }}
+                              >
+                                {selectedUser.associationCertifications
+                                  ?.length || 0}{" "}
+                                certificaciones
+                              </Typography>
+                            </Box>
+                          </Stack>
+                        </Box>
+                      </ListItem>
+                    </List>
                   </Paper>
                 </Grid>
 
@@ -2548,15 +2427,7 @@ const UserManagement = () => {
                                 fontWeight: 600,
                               }}
                             >
-                              Emisión
-                            </TableCell>
-                            <TableCell
-                              sx={{
-                                color: institutionalColors.primary,
-                                fontWeight: 600,
-                              }}
-                            >
-                              Vencimiento
+                              Horas
                             </TableCell>
                             <TableCell
                               align="center"
@@ -2567,6 +2438,8 @@ const UserManagement = () => {
                             >
                               Documentos
                             </TableCell>
+
+                            
                             <TableCell
                               align="right"
                               sx={{
@@ -2624,47 +2497,11 @@ const UserManagement = () => {
                                     variant="body2"
                                     sx={{
                                       color: institutionalColors.textPrimary,
+                                      fontWeight: 500,
                                     }}
                                   >
-                                    {format(
-                                      parseISO(cert.issueDate),
-                                      "dd/MM/yyyy",
-                                      { locale: es },
-                                    )}
+                                    {cert.hoursValue || 0} horas
                                   </Typography>
-                                </TableCell>
-
-                                <TableCell>
-                                  <Stack direction="column" spacing={0.5}>
-                                    <Typography
-                                      variant="body2"
-                                      sx={{
-                                        color: institutionalColors.textPrimary,
-                                      }}
-                                    >
-                                      {format(
-                                        parseISO(cert.expiryDate),
-                                        "dd/MM/yyyy",
-                                        { locale: es },
-                                      )}
-                                    </Typography>
-                                    {isAfter(
-                                      new Date(),
-                                      parseISO(cert.expiryDate),
-                                    ) && (
-                                      <Chip
-                                        label="Vencida"
-                                        size="small"
-                                        sx={{
-                                          height: 20,
-                                          fontSize: "0.65rem",
-                                          bgcolor: `${institutionalColors.error}10`,
-                                          color: institutionalColors.error,
-                                          fontWeight: 600,
-                                        }}
-                                      />
-                                    )}
-                                  </Stack>
                                 </TableCell>
 
                                 <TableCell align="center">
