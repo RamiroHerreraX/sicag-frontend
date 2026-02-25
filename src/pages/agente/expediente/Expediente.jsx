@@ -208,6 +208,23 @@ const Expediente = () => {
     itemIndex: null
   });
 
+  // Definición de documentos únicos (solo se permite uno) - SOLO PARA LÓGICA INTERNA
+  const documentosUnicos = [
+    'Identificación oficial (INE, pasaporte)',
+    'Comprobante de domicilio (reciente)',
+    'Acta de nacimiento',
+    'Fotografía digital reciente',
+    'CV Actualizado',
+    'Constancia de Situación Fiscal',
+    'Opinión de Cumplimiento',
+    'Certificado de Antecedentes',
+    'Declaración Patrimonial',
+    'Constancia de No Inhabilitación',
+    'Firma Digital',
+    'Certificado Digital SAT',
+    'Tokens de Seguridad'
+  ];
+
   const handleAccordionChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
@@ -286,9 +303,10 @@ const Expediente = () => {
 
       // Actualizar según la sección
       const sectionId = addDialog.sectionId;
+      const itemName = addDialog.itemName;
       
       if (sectionId === 'certificados') {
-        // Manejar certificados
+        // Manejar certificados (múltiples documentos permitidos)
         if (addDialog.subseccion === 'formacionEtica') {
           setCertificadosData(prev => ({
             ...prev,
@@ -309,7 +327,7 @@ const Expediente = () => {
           }));
         }
       } else if (sectionId === 'cumplimiento_organizacional') {
-        // Manejar cumplimiento organizacional
+        // Manejar cumplimiento organizacional (únicos por tipo)
         if (addDialog.subseccion === 'seguridadCadenaSuministro') {
           setCumplimientoData(prev => ({
             ...prev,
@@ -335,10 +353,57 @@ const Expediente = () => {
         }
       } else {
         // Otras secciones
-        setDocumentosData(prev => ({
-          ...prev,
-          [sectionId]: [...(prev[sectionId] || []), nuevoDocumento]
-        }));
+        // Verificar si es un documento único (solo para lógica interna)
+        const esUnico = documentosUnicos.includes(itemName);
+        
+        if (esUnico) {
+          // Para documentos únicos, reemplazar el existente
+          const documentosExistentes = documentosData[sectionId]?.filter(doc => doc.nombre === itemName) || [];
+          
+          if (documentosExistentes.length > 0) {
+            // Preguntar si desea reemplazar
+            if (window.confirm(`Ya existe un documento para "${itemName}". ¿Desea reemplazarlo?`)) {
+              // Eliminar el documento existente
+              const nuevosDocumentos = documentosData[sectionId]?.filter(doc => doc.nombre !== itemName) || [];
+              // Agregar el nuevo
+              setDocumentosData(prev => ({
+                ...prev,
+                [sectionId]: [...nuevosDocumentos, nuevoDocumento]
+              }));
+            } else {
+              setSnackbar({
+                open: true,
+                message: 'Operación cancelada',
+                severity: 'info'
+              });
+              setAddDialog({
+                open: false,
+                sectionId: '',
+                subseccion: '',
+                tipoDocumento: '',
+                archivo: null,
+                nombreArchivo: '',
+                fecha: new Date().toISOString().split('T')[0],
+                horas: '',
+                institucion: '',
+                itemName: ''
+              });
+              return;
+            }
+          } else {
+            // No existe documento, agregar normalmente
+            setDocumentosData(prev => ({
+              ...prev,
+              [sectionId]: [...(prev[sectionId] || []), nuevoDocumento]
+            }));
+          }
+        } else {
+          // Para documentos múltiples, siempre agregar
+          setDocumentosData(prev => ({
+            ...prev,
+            [sectionId]: [...(prev[sectionId] || []), nuevoDocumento]
+          }));
+        }
 
         // Actualizar el status del item en informacionComplementaria
         const updatedSections = informacionComplementaria.map(section => {
@@ -474,21 +539,22 @@ const Expediente = () => {
         [seccion]: (prev[seccion] || []).filter((_, idx) => idx !== itemIndex)
       }));
 
-      // Actualizar el status del item en informacionComplementaria a pendiente si no quedan documentos
+      // Verificar si quedan documentos para este item
+      const documentosRestantes = documentosData[seccion]?.filter((_, idx) => idx !== itemIndex).filter(doc => doc.nombre === itemName) || [];
+      
+      // Actualizar el status del item en informacionComplementaria
       const updatedSections = informacionComplementaria.map(section => {
         if (section.id === seccion && itemName) {
-          const documentosRestantes = documentosData[seccion]?.length || 0;
-          if (documentosRestantes <= 1) {
-            return {
-              ...section,
-              items: section.items.map(item => {
-                if (item.name === itemName) {
-                  return { ...item, status: 'pendiente' };
-                }
-                return item;
-              })
-            };
-          }
+          return {
+            ...section,
+            items: section.items.map(item => {
+              if (item.name === itemName) {
+                // Si no quedan documentos, poner status pendiente
+                return { ...item, status: documentosRestantes.length === 0 ? 'pendiente' : 'completo' };
+              }
+              return item;
+            })
+          };
         }
         return section;
       });
@@ -802,6 +868,11 @@ const Expediente = () => {
     return documentosData[sectionId]?.filter(doc => doc.nombre === itemName) || [];
   };
 
+  // Función para verificar si un documento es único (solo para lógica interna)
+  const esDocumentoUnico = (itemName) => {
+    return documentosUnicos.includes(itemName);
+  };
+
   // Función para renderizar Certificados
   const renderCertificados = () => {
     const section = informacionComplementaria.find(s => s.id === 'certificados');
@@ -924,13 +995,11 @@ const Expediente = () => {
                             <DownloadIcon fontSize="small" />
                           </IconButton>
                         </Tooltip>
-                        {editMode && (
-                          <Tooltip title="Eliminar">
-                            <IconButton size="small" onClick={() => handleEliminarDocumento('formacionEtica', cert.id, cert, cert.nombre, cert.horas)} sx={{ color: colors.status.error, backgroundColor: '#ffebee', '&:hover': { backgroundColor: '#ffcdd2' } }}>
-                              <DeleteIcon fontSize="small" />
-                            </IconButton>
-                          </Tooltip>
-                        )}
+                        <Tooltip title="Eliminar">
+                          <IconButton size="small" onClick={() => handleEliminarDocumento('formacionEtica', cert.id, cert, cert.nombre, cert.horas)} sx={{ color: colors.status.error, backgroundColor: '#ffebee', '&:hover': { backgroundColor: '#ffcdd2' } }}>
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
                       </Stack>
                     }
                   >
@@ -1001,13 +1070,11 @@ const Expediente = () => {
                             <DownloadIcon fontSize="small" />
                           </IconButton>
                         </Tooltip>
-                        {editMode && (
-                          <Tooltip title="Eliminar">
-                            <IconButton size="small" onClick={() => handleEliminarDocumento('actualizacionTecnica', cert.id, cert, cert.nombre, cert.horas)} sx={{ color: colors.status.error, backgroundColor: '#ffebee', '&:hover': { backgroundColor: '#ffcdd2' } }}>
-                              <DeleteIcon fontSize="small" />
-                            </IconButton>
-                          </Tooltip>
-                        )}
+                        <Tooltip title="Eliminar">
+                          <IconButton size="small" onClick={() => handleEliminarDocumento('actualizacionTecnica', cert.id, cert, cert.nombre, cert.horas)} sx={{ color: colors.status.error, backgroundColor: '#ffebee', '&:hover': { backgroundColor: '#ffcdd2' } }}>
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
                       </Stack>
                     }
                   >
@@ -1046,20 +1113,20 @@ const Expediente = () => {
                   Validación de Certificaciones
                 </Typography>
                 <Typography variant="body2" sx={{ color: colors.text.secondary }}>
-                  Una vez completadas las certificaciones requeridas, envíelas para revisión por el comité
+                  Envíe las certificaciones para revisión por el comité
                 </Typography>
               </Box>
               
               <Button variant="contained" startIcon={<SendIcon />} onClick={() => handleAbrirValidacionDialog(section.id, section.title)}
-                disabled={estadoValidacion.enviado || !formacionCompleta || !tecnicaCompleta}
+                disabled={estadoValidacion.enviado || certificadosData.formacionEtica.certificaciones.length === 0 && certificadosData.actualizacionTecnica.certificaciones.length === 0}
                 sx={{ textTransform: 'none', px: 3, py: 1, bgcolor: colors.primary.main, '&:hover': { bgcolor: colors.primary.dark }, '&.Mui-disabled': { bgcolor: '#e0e0e0', color: '#9e9e9e' } }}>
-                {estadoValidacion.enviado ? 'Enviado para Revisión' : (!formacionCompleta || !tecnicaCompleta) ? 'Completar certificaciones' : 'Enviar para Validación'}
+                {estadoValidacion.enviado ? 'Enviado para Revisión' : 'Enviar para Validación'}
               </Button>
             </Box>
             
-            {(!formacionCompleta || !tecnicaCompleta) && !estadoValidacion.enviado && (
+            {(certificadosData.formacionEtica.certificaciones.length === 0 && certificadosData.actualizacionTecnica.certificaciones.length === 0) && !estadoValidacion.enviado && (
               <Alert severity="warning" sx={{ mt: 2, py: 1 }}>
-                <Typography variant="body2">Complete todas las certificaciones requeridas antes de enviar para validación</Typography>
+                <Typography variant="body2">Agregue al menos una certificación antes de enviar para validación</Typography>
               </Alert>
             )}
           </Box>
@@ -1173,9 +1240,9 @@ const Expediente = () => {
                             <VisibilityIcon fontSize="small" />
                           </IconButton>
                         </Tooltip>
-                        <Tooltip title="Reemplazar">
-                          <IconButton size="small" onClick={() => handleOpenUploadDialog('seguridadCadenaSuministro', 'Sistema de seguridad de Cadena de Suministros')} sx={{ color: colors.status.warning, backgroundColor: '#fff3e0', '&:hover': { backgroundColor: '#ffe0b2' } }}>
-                            <CloudUploadIcon fontSize="small" />
+                        <Tooltip title="Descargar">
+                          <IconButton size="small" onClick={() => handleDescargarDocumento({ nombreArchivo: cumplimientoData.seguridadCadenaSuministro.nombreDocumento })} sx={{ color: colors.status.success, backgroundColor: '#e8f5e9', '&:hover': { backgroundColor: '#c8e6c9' } }}>
+                            <DownloadIcon fontSize="small" />
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="Eliminar">
@@ -1233,9 +1300,9 @@ const Expediente = () => {
                             <VisibilityIcon fontSize="small" />
                           </IconButton>
                         </Tooltip>
-                        <Tooltip title="Reemplazar">
-                          <IconButton size="small" onClick={() => handleOpenUploadDialog('antisobornos', 'Políticas Antisobornos')} sx={{ color: colors.status.warning, backgroundColor: '#fff3e0', '&:hover': { backgroundColor: '#ffe0b2' } }}>
-                            <CloudUploadIcon fontSize="small" />
+                        <Tooltip title="Descargar">
+                          <IconButton size="small" onClick={() => handleDescargarDocumento({ nombreArchivo: cumplimientoData.antisobornos.nombreDocumento })} sx={{ color: colors.status.success, backgroundColor: '#e8f5e9', '&:hover': { backgroundColor: '#c8e6c9' } }}>
+                            <DownloadIcon fontSize="small" />
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="Eliminar">
@@ -1262,16 +1329,22 @@ const Expediente = () => {
                   Validación de Documentos
                 </Typography>
                 <Typography variant="body2" sx={{ color: colors.text.secondary }}>
-                  Una vez completados los documentos, envíelos para revisión por el comité
+                  Envíe los documentos para revisión por el comité
                 </Typography>
               </Box>
               
               <Button variant="contained" startIcon={<SendIcon />} onClick={() => handleAbrirValidacionDialog(section.id, section.title)}
-                disabled={estadoValidacion.enviado || !seguridadCompleta || !antisobornosCompleto}
+                disabled={estadoValidacion.enviado || (!seguridadCompleta && !antisobornosCompleto)}
                 sx={{ textTransform: 'none', px: 3, py: 1, bgcolor: colors.primary.main, '&:hover': { bgcolor: colors.primary.dark }, '&.Mui-disabled': { bgcolor: '#e0e0e0', color: '#9e9e9e' } }}>
-                {estadoValidacion.enviado ? 'Enviado para Revisión' : (!seguridadCompleta || !antisobornosCompleto) ? 'Completar documentos' : 'Enviar para Validación'}
+                {estadoValidacion.enviado ? 'Enviado para Revisión' : 'Enviar para Validación'}
               </Button>
             </Box>
+            
+            {(!seguridadCompleta && !antisobornosCompleto) && !estadoValidacion.enviado && (
+              <Alert severity="warning" sx={{ mt: 2, py: 1 }}>
+                <Typography variant="body2">Agregue al menos un documento antes de enviar para validación</Typography>
+              </Alert>
+            )}
           </Box>
         </AccordionDetails>
       </Accordion>
@@ -1369,6 +1442,7 @@ const Expediente = () => {
             {section.items.map((item, index) => {
               const documentosItem = getDocumentosPorItem(section.id, item.name);
               const tieneDoc = documentosItem.length > 0;
+              // Solo usar esDocumentoUnico para lógica interna, no para mostrar
               
               return (
                 <ListItem 
@@ -1397,27 +1471,36 @@ const Expediente = () => {
                       )}
                     </ListItemIcon>
                     <ListItemText 
-                      primary={item.name}
-                      primaryTypographyProps={{
-                        color: tieneDoc ? colors.text.primary : colors.text.secondary,
-                        fontWeight: tieneDoc ? '600' : '500',
-                        fontSize: '0.95rem',
-                        lineHeight: 1.4
-                      }}
+                      primary={
+                        <Typography sx={{
+                          color: tieneDoc ? colors.text.primary : colors.text.secondary,
+                          fontWeight: tieneDoc ? '600' : '500',
+                          fontSize: '0.95rem',
+                          lineHeight: 1.4
+                        }}>
+                          {item.name}
+                        </Typography>
+                      }
                     />
                     
-                    {/* Botón para agregar documento */}
+                    {/* Botón para agregar documento - la lógica de único se aplica internamente */}
                     <Button
                       startIcon={<AddIcon />}
                       size="small"
                       variant="outlined"
                       onClick={() => handleOpenAddDialog(section.id, item.name)}
+                      disabled={esDocumentoUnico(item.name) && tieneDoc}
                       sx={{ 
                         fontSize: '0.75rem', 
                         textTransform: 'none',
                         ml: 2,
                         color: colors.primary.main,
-                        borderColor: colors.primary.main
+                        borderColor: colors.primary.main,
+                        '&.Mui-disabled': {
+                          backgroundColor: '#f5f5f5',
+                          color: '#bdbdbd',
+                          borderColor: '#e0e0e0'
+                        }
                       }}
                     >
                       {tieneDoc ? 'Agregar otro' : 'Agregar'}
@@ -1451,13 +1534,11 @@ const Expediente = () => {
                                 <DownloadIcon fontSize="small" />
                               </IconButton>
                             </Tooltip>
-                            {editMode && (
-                              <Tooltip title="Eliminar">
-                                <IconButton size="small" onClick={() => handleEliminarDocumento(section.id, doc.id, doc, item.name, 0, docIndex)} sx={{ color: colors.status.error }}>
-                                  <DeleteIcon fontSize="small" />
-                                </IconButton>
-                              </Tooltip>
-                            )}
+                            <Tooltip title="Eliminar">
+                              <IconButton size="small" onClick={() => handleEliminarDocumento(section.id, doc.id, doc, item.name, 0, docIndex)} sx={{ color: colors.status.error }}>
+                                <DeleteIcon fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
                           </Box>
                         </Paper>
                       ))}
@@ -1475,20 +1556,20 @@ const Expediente = () => {
                   Validación de Documentos
                 </Typography>
                 <Typography variant="body2" sx={{ color: colors.text.secondary }}>
-                  Una vez completados todos los documentos, envíelos para revisión por el comité
+                  Envíe los documentos para revisión por el comité
                 </Typography>
               </Box>
               
               <Button variant="contained" startIcon={<SendIcon />} onClick={() => handleAbrirValidacionDialog(section.id, section.title)}
-                disabled={estadoValidacion.enviado || completedItems < totalItems}
+                disabled={estadoValidacion.enviado || completedItems === 0}
                 sx={{ textTransform: 'none', px: 3, py: 1, bgcolor: colors.primary.main, '&:hover': { bgcolor: colors.primary.dark } }}>
                 {estadoValidacion.enviado ? 'Enviado para Revisión' : 'Enviar para Validación'}
               </Button>
             </Box>
             
-            {completedItems < totalItems && !estadoValidacion.enviado && (
+            {completedItems === 0 && !estadoValidacion.enviado && (
               <Alert severity="warning" sx={{ mt: 2, py: 1 }}>
-                <Typography variant="body2">Complete todos los documentos ({completedItems}/{totalItems}) antes de enviar para validación</Typography>
+                <Typography variant="body2">Agregue al menos un documento antes de enviar para validación</Typography>
               </Alert>
             )}
           </Box>
@@ -1689,8 +1770,6 @@ const Expediente = () => {
                   </Typography>
                   <TextField fullWidth type="number" size="small" value={addDialog.horas} onChange={(e) => setAddDialog({...addDialog, horas: e.target.value})} placeholder="Ej: 20" required inputProps={{ min: 1 }} />
                 </Grid>
-
-                
               </>
             )}
 

@@ -84,7 +84,12 @@ import {
   VerifiedUser as VerifiedUserIcon,
   Gavel as LawIcon,
   AssignmentInd as MandateIcon,
-  Policy as PolicyIcon
+  Policy as PolicyIcon,
+  PrivacyTip as PrivacyTipIcon,
+  Handshake as HandshakeIcon,
+  AssignmentLate as AssignmentLateIcon,
+  FactCheck as FactCheckIcon,
+  Inventory as InventoryIcon
 } from '@mui/icons-material';
 
 // Paleta corporativa del UserManagement
@@ -120,156 +125,261 @@ const DeclaracionesCumplimientoAduanero = () => {
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState('panel1');
   const [activeStep, setActiveStep] = useState(0);
-  const [observacionDialog, setObservacionDialog] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
+  
+  // Estado para el modal de declaración de buena fe
+  const [declaracionModalOpen, setDeclaracionModalOpen] = useState(true);
+  const [declaracionAceptada, setDeclaracionAceptada] = useState(false);
 
-  // Definir la estructura base de los apartados con PUNTOS ASIGNADOS
+  // Definir la estructura base de los apartados con PUNTOS ASIGNADOS (ocultos para el usuario)
+  // REORDENADO: Artículo 92 (Conflictos de Interés) al principio
   const estructuraBaseApartados = {
-    principios_rectores: {
-      id: 'principios_rectores',
-      titulo: 'ARTÍCULO 95 - PRINCIPIOS RECTORES',
-      descripcion: 'Responsabilidades éticas y profesionales del agente aduanal',
-      articulo: '95',
-      preguntas: [
+    conflictos_intereses: {
+      id: 'conflictos_intereses',
+      titulo: 'ARTÍCULO 92 - CONFLICTOS DE INTERÉS E INDEPENDENCIA PROFESIONAL',
+      descripcion: 'Declaración anual de conflictos de interés e independencia profesional',
+      articulo: '92',
+      contenido: `I. Definición.
+Se entiende que existe conflicto de interés: la posible afectación del desempeño imparcial,
+objetivo y ético de las funciones gremiales en razón de intereses personales o de negocios.
+
+II. Principio de independencia profesional.
+El agente aduanal deberá mantener absoluta independencia en su actuación profesional,
+evitando cualquier relación o vínculo que pueda comprometer la imparcialidad en el
+cumplimiento de sus funciones, ya sea en el ámbito operativo o gremial.
+
+III. Obligación de declaración y actualización.
+Todos los asociados deberán presentar anualmente una Declaración de Conflicto de Interés
+en la que manifiesten bajo protesta de decir verdad no encontrarse en los supuestos
+previstos en las disposiciones de autorregulación gremial.
+
+IV. Gestión y medidas preventivas.
+El Comité de Cumplimiento y Autorregulación evaluará las declaraciones, a fin de detectar
+posibles conflictos o incompatibilidades.
+
+V. Confidencialidad y transparencia.
+Las declaraciones serán tratadas con estricta confidencialidad y sólo podrán hacerse
+públicas por resolución fundada del Comité de Cumplimiento y Autorregulación.`,
+      checks: [
         {
           id: 1,
-          texto: '¿Actúo con diligencia, probidad y buena fe en todas las operaciones aduaneras que realizo?',
-          respuesta: null,
-          explicacion: '',
-          puntos: 20, // AÑADIDO
-          responsabilidad: 'Diligencia y Probidad'
+          texto: 'Declaro que no tengo intereses personales o de negocios que puedan afectar el desempeño imparcial, objetivo y ético de mis funciones gremiales.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 92, fracción I - Definición de conflicto de interés'
         },
         {
           id: 2,
-          texto: '¿Mantengo la confidencialidad de la información de mis clientes según lo establecido por la ley?',
-          respuesta: null,
-          explicacion: '',
-          puntos: 20, // AÑADIDO
-          responsabilidad: 'Confidencialidad'
+          texto: 'Manifiesto que mantengo absoluta independencia en mi actuación profesional, evitando cualquier relación o vínculo que pueda comprometer la imparcialidad en el cumplimiento de mis funciones, y me comprometo a informar a CAAAREM cuando exista interacción con alguna autoridad federal que afecte el interés gremial.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 92, fracción II - Principio de independencia profesional'
         },
         {
           id: 3,
-          texto: '¿Evito conflictos de interés y declaro cualquier situación que pueda afectar mi imparcialidad?',
-          respuesta: null,
-          explicacion: '',
-          puntos: 20, // AÑADIDO
-          responsabilidad: 'Prevención de Conflictos'
+          texto: 'Declaro bajo protesta de decir verdad que no me encuentro en los supuestos previstos en las disposiciones de autorregulación gremial que pudieran generar conflicto de interés, cumpliendo con mi obligación de declaración anual.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 92, fracción III - Obligación de declaración'
         },
         {
           id: 4,
-          texto: '¿Capacito adecuadamente a mi personal auxiliar en principios éticos y normativos?',
-          respuesta: null,
-          explicacion: '',
-          puntos: 20, // AÑADIDO
-          responsabilidad: 'Capacitación del Personal'
+          texto: 'Acepto que el Comité de Cumplimiento y Autorregulación evalúe mi declaración a fin de detectar posibles conflictos o incompatibilidades, así como la falta de declaración, el ocultamiento de información o la participación en actos o decisiones estando en conflicto de interés.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 92, fracción IV - Gestión y medidas preventivas'
         },
         {
           id: 5,
-          texto: '¿Rechazo cualquier operación que pueda constituir evasión fiscal o contrabando?',
-          respuesta: null,
-          explicacion: '',
-          puntos: 20, // AÑADIDO
-          responsabilidad: 'Integridad Operativa'
+          texto: 'Entiendo que mi declaración será tratada con estricta confidencialidad y solo podrá hacerse pública por resolución fundada del Comité de Cumplimiento y Autorregulación, y que se llevará un Registro de Conflictos de Interés garantizando la protección de mis datos personales.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 92, fracción V - Confidencialidad y transparencia'
         }
       ],
       estado: 'pendiente',
       guardado: false,
       puntuacionTotal: 0,
-      maxPuntos: 100,
+      maxPuntos: 100, // 5 checks de 20 puntos cada uno
+      color: colors.status.error
+    },
+
+    principios_rectores: {
+      id: 'principios_rectores',
+      titulo: 'ARTÍCULO 95 - PRINCIPIOS RECTORES DEL CUMPLIMIENTO ADUANERO',
+      descripcion: 'Principios que rigen el cumplimiento aduanero del agente aduanal',
+      articulo: '95',
+      contenido: `El agente aduanal, o las organizaciones mediante las cuales haga ejercicio de su patente
+deberán regirse por los siguientes principios:
+I. Legalidad reforzada
+II. Materialidad
+III. Trazabilidad
+IV. Independencia profesional
+V. Debida diligencia
+VI. Responsabilidad profesional y transparencia`,
+      checks: [
+        {
+          id: 1,
+          texto: 'Aplico de manera estricta y proactiva la legislación aduanera y fiscal, superando los mínimos legales mediante controles internos preventivos.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 95, fracción I - Legalidad reforzada'
+        },
+        {
+          id: 2,
+          texto: 'Acredito la existencia real, legítima y verificable de cada operación, asegurando la correspondencia entre mercancía, documentos y mandante.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 95, fracción II - Materialidad'
+        },
+        {
+          id: 3,
+          texto: 'Conservo y mantengo disponible evidencia documental y digital completa que verifique la materialidad de cada despacho aduanero.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 95, fracción III - Trazabilidad'
+        },
+        {
+          id: 4,
+          texto: 'Actúo libre de intereses o vínculos que comprometan la imparcialidad del agente aduanal.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 95, fracción IV - Independencia profesional'
+        },
+        {
+          id: 5,
+          texto: 'Identifico, evalúo, comunico y gestiono los riesgos de mandantes, productos, países y operaciones.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 95, fracción V - Debida diligencia'
+        },
+        {
+          id: 6,
+          texto: 'Aseguro la integridad, exactitud y licitud de toda información transmitida a la autoridad.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 95, fracción VI - Responsabilidad profesional y transparencia'
+        }
+      ],
+      estado: 'pendiente',
+      guardado: false,
+      puntuacionTotal: 0,
+      maxPuntos: 120, // 6 checks de 20 puntos cada uno
       color: colors.primary.main
     },
 
     conocimiento_mandato: {
       id: 'conocimiento_mandato',
-      titulo: 'ARTÍCULO 96 - CONOCIMIENTO DEL MANDATO',
-      descripcion: 'Responsabilidades respecto al mandato recibido del importador/exportador',
+      titulo: 'ARTÍCULO 96 - CONOCIMIENTO DEL MANDANTE Y DEBIDA DILIGENCIA',
+      descripcion: 'Lineamiento de Conocimiento del Cliente para prevención de riesgos',
       articulo: '96',
-      preguntas: [
+      contenido: `El agente aduanal deberá aplicar en su despacho un lineamiento de Conocimiento del
+Cliente, como herramienta esencial para la prevención de riesgos y la verificación de
+operaciones legítimas.
+Este lineamiento incluirá, como mínimo:
+I. Identificación plena del cliente y sus beneficiarios finales
+II. Verificación de antecedentes legales, fiscales y aduaneros
+III. Evaluación del riesgo operativo
+IV. Clasificación del cliente en niveles de riesgo
+V. Monitoreo continuo de clientes y operaciones
+VI. Negativa de servicio o suspensión de representación`,
+      checks: [
         {
           id: 1,
-          texto: '¿Verifico que el mandato otorgado por el cliente esté debidamente formalizado y sea vigente?',
-          respuesta: null,
-          explicacion: '',
-          puntos: 25, // AÑADIDO (4 preguntas * 25 = 100)
-          responsabilidad: 'Formalización del Mandato'
+          texto: 'Identifico de manera plena a mis clientes y sus beneficiarios finales, mediante documentación oficial, registro fiscal y acreditación de actividad económica.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 96, fracción I - Identificación plena del cliente'
         },
         {
           id: 2,
-          texto: '¿Confirmo que actúo dentro de los límites del mandato conferido por mi cliente?',
-          respuesta: null,
-          explicacion: '',
-          puntos: 25, // AÑADIDO
-          responsabilidad: 'Límites del Mandato'
+          texto: 'Verifico los antecedentes legales, fiscales y aduaneros del cliente y de sus representantes.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 96, fracción II - Verificación de antecedentes'
         },
         {
           id: 3,
-          texto: '¿Mantengo comunicación clara con el cliente sobre el alcance de mis facultades como agente?',
-          respuesta: null,
-          explicacion: '',
-          puntos: 25, // AÑADIDO
-          responsabilidad: 'Comunicación con el Cliente'
+          texto: 'Evalúo el riesgo operativo considerando la naturaleza de la mercancía, país de origen, destino y comportamiento histórico.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 96, fracción III - Evaluación del riesgo operativo'
         },
         {
           id: 4,
-          texto: '¿Documento adecuadamente las instrucciones específicas recibidas del mandante?',
-          respuesta: null,
-          explicacion: '',
-          puntos: 25, // AÑADIDO
-          responsabilidad: 'Documentación de Instrucciones'
+          texto: 'Clasifico a mis clientes en niveles de riesgo (bajo, medio, alto) y aplico medidas específicas para los casos de mayor exposición.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 96, fracción IV - Clasificación del cliente'
+        },
+        {
+          id: 5,
+          texto: 'Realizo monitoreo continuo de clientes y operaciones, con actualización de datos periódica.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 96, fracción V - Monitoreo continuo'
+        },
+        {
+          id: 6,
+          texto: 'Me abstengo de prestar servicio o suspendo la representación cuando existan elementos que comprometan la legalidad o la reputación del gremio.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 96, fracción VI - Negativa de servicio'
         }
       ],
       estado: 'pendiente',
       guardado: false,
       puntuacionTotal: 0,
-      maxPuntos: 100,
+      maxPuntos: 120,
       color: colors.status.success
     },
 
     materialidad: {
       id: 'materialidad',
       titulo: 'ARTÍCULO 97 - MATERIALIDAD',
-      descripcion: 'Responsabilidades técnicas sobre información material en declaraciones',
+      descripcion: 'Acreditación de la existencia real, legítima y comprobable de las operaciones',
       articulo: '97',
-      preguntas: [
+      contenido: `Se entiende por materialidad la existencia real, legítima y comprobable de los elementos
+que sustentan una operación de comercio exterior, incluyendo:
+I. La existencia física y legal del mandante
+II. El vínculo legal entre el agente aduanal y el mandante
+III. La acreditación de la legítima posesión, propiedad o tenencia
+IV. La congruencia entre descripción, clasificación arancelaria, valor, origen o destino
+V. La comprobación del cumplimiento de las regulaciones y restricciones no arancelarias`,
+      checks: [
         {
           id: 1,
-          texto: '¿Verifico personalmente la exactitud de la información material en las declaraciones que presento?',
-          respuesta: null,
-          explicacion: '',
-          puntos: 20, // AÑADIDO (5 preguntas * 20 = 100)
-          responsabilidad: 'Exactitud de la Información'
+          texto: 'Verifico la existencia física y legal del mandante en cada operación de comercio exterior.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 97, fracción I - Existencia física y legal del mandante'
         },
         {
           id: 2,
-          texto: '¿Confirmo la correcta clasificación arancelaria de todas las mercancías que declaro?',
-          respuesta: null,
-          explicacion: '',
-          puntos: 20, // AÑADIDO
-          responsabilidad: 'Clasificación Arancelaria'
+          texto: 'Compruebo el vínculo legal existente entre el agente aduanal y el mandante para cada operación.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 97, fracción II - Vínculo legal'
         },
         {
           id: 3,
-          texto: '¿Valido el valor en aduana declarado con la documentación comercial correspondiente?',
-          respuesta: null,
-          explicacion: '',
-          puntos: 20, // AÑADIDO
-          responsabilidad: 'Valor en Aduana'
+          texto: 'Acredito la legítima posesión, propiedad o tenencia entre la instrucción otorgada y la documentación soporte.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 97, fracción III - Legítima posesión'
         },
         {
           id: 4,
-          texto: '¿Verifico el origen de las mercancías y aplico correctamente los tratados comerciales?',
-          respuesta: null,
-          explicacion: '',
-          puntos: 20, // AÑADIDO
-          responsabilidad: 'Origen Preferencial'
+          texto: 'Verifico la congruencia entre descripción, clasificación arancelaria, valor, origen o destino de las mercancías.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 97, fracción IV - Congruencia'
         },
         {
           id: 5,
-          texto: '¿Reporto inmediatamente cualquier error o omisión material que detecte en las declaraciones?',
-          respuesta: null,
-          explicacion: '',
-          puntos: 20, // AÑADIDO
-          responsabilidad: 'Reporte de Errores'
+          texto: 'Compruebo el cumplimiento de las regulaciones y restricciones no arancelarias y contribuciones aplicables.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 97, fracción V - Cumplimiento normativo'
         }
       ],
       estado: 'pendiente',
@@ -281,49 +391,50 @@ const DeclaracionesCumplimientoAduanero = () => {
 
     reglas_minimas_seguridad: {
       id: 'reglas_minimas_seguridad',
-      titulo: 'ARTÍCULO 98 - REGLAS MÍNIMAS DE SEGURIDAD',
-      descripcion: 'Responsabilidades de seguridad en operaciones aduaneras',
+      titulo: 'ARTÍCULO 98 - REGLAS MÍNIMAS DE SEGURIDAD Y CONTROL DEL DESPACHO ADUANAL',
+      descripcion: 'Políticas y procedimientos de seguridad en el despacho aduanal',
       articulo: '98',
-      preguntas: [
+      contenido: `Cada operación en la que intervenga el agente aduanal cumplirá con políticas y procedimientos escritos que incluyan:
+I. Recepción formal de instrucciones y documentos
+II. Validación jurídica y documental previa a la transmisión
+III. Bitácora digital de control
+IV. Auditoría interna de cumplimiento anual
+V. Plan de respuesta a incidentes y contingencias`,
+      checks: [
         {
           id: 1,
-          texto: '¿Verifico la integridad de los precintos aduaneros en las operaciones que manejo?',
-          respuesta: null,
-          explicacion: '',
-          puntos: 20, // AÑADIDO (5 preguntas * 20 = 100)
-          responsabilidad: 'Control de Precintos'
+          texto: 'Realizo recepción formal de instrucciones y documentos, mediante firma física o digital del mandante.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 98, fracción I - Recepción formal'
         },
         {
           id: 2,
-          texto: '¿Confirmo que las mercancías bajo mi responsabilidad estén almacenadas en áreas seguras?',
-          respuesta: null,
-          explicacion: '',
-          puntos: 20, // AÑADIDO
-          responsabilidad: 'Almacenamiento Seguro'
+          texto: 'Efectúo validación jurídica y documental previa a la transmisión del pedimento.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 98, fracción II - Validación previa'
         },
         {
           id: 3,
-          texto: '¿Reporto inmediatamente cualquier irregularidad o incidente de seguridad detectado?',
-          respuesta: null,
-          explicacion: '',
-          puntos: 20, // AÑADIDO
-          responsabilidad: 'Reporte de Incidentes'
+          texto: 'Mantengo una bitácora digital de control que registra cada etapa de la operación.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 98, fracción III - Bitácora digital'
         },
         {
           id: 4,
-          texto: '¿Aplico los procedimientos de seguridad establecidos durante el transporte de mercancías?',
-          respuesta: null,
-          explicacion: '',
-          puntos: 20, // AÑADIDO
-          responsabilidad: 'Procedimientos de Transporte'
+          texto: 'Realizo auditoría interna de cumplimiento anual, con reporte al Comité de Cumplimiento y Autorregulación de CAAAREM.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 98, fracción IV - Auditoría interna'
         },
         {
           id: 5,
-          texto: '¿Verifico la identidad de las personas autorizadas para el manejo de mercancías?',
-          respuesta: null,
-          explicacion: '',
-          puntos: 20, // AÑADIDO
-          responsabilidad: 'Control de Accesos'
+          texto: 'Cuento con un plan de respuesta a incidentes y contingencias, que contempla corrección inmediata y comunicación a la autoridad cuando corresponda.',
+          checked: false,
+          puntos: 20,
+          fundamento: 'Art. 98, fracción V - Plan de respuesta'
         }
       ],
       estado: 'pendiente',
@@ -331,96 +442,51 @@ const DeclaracionesCumplimientoAduanero = () => {
       puntuacionTotal: 0,
       maxPuntos: 100,
       color: colors.accents.purple
-    },
-
-    // NUEVO: Añadir apartado de conflictos intereses aquí
-    conflictos_intereses: {
-      id: 'conflictos_intereses',
-      titulo: 'DECLARACIÓN DE CONFLICTO DE INTERESES',
-      descripcion: 'Evaluación de posibles conflictos de intereses en operaciones aduaneras',
-      articulo: 'CONFLICTOS',
-      preguntas: [
-        { 
-          id: 1, 
-          texto: "¿Tiene intereses comerciales directos con proveedores o clientes de la organización?", 
-          respuesta: null,
-          explicacion: '',
-          puntos: 20, // AÑADIDO (5 preguntas * 20 = 100)
-          responsabilidad: 'Intereses Comerciales'
-        },
-        { 
-          id: 2, 
-          texto: "¿Participa en decisiones que puedan beneficiar a familiares cercanos?", 
-          respuesta: null,
-          explicacion: '',
-          puntos: 20, // AÑADIDO
-          responsabilidad: 'Beneficio Familiar'
-        },
-        { 
-          id: 3, 
-          texto: "¿Recibe compensaciones adicionales de terceros relacionados con la organización?", 
-          respuesta: null,
-          explicacion: '',
-          puntos: 20, // AÑADIDO
-          responsabilidad: 'Compensaciones Externas'
-        },
-        { 
-          id: 4, 
-          texto: "¿Participa en empresas competidoras o proveedores alternativos?", 
-          respuesta: null,
-          explicacion: '',
-          puntos: 20, // AÑADIDO
-          responsabilidad: 'Competencia Directa'
-        },
-        { 
-          id: 5, 
-          texto: "¿Tiene acceso a información privilegiada que podría usar para beneficio personal?", 
-          respuesta: null,
-          explicacion: '',
-          puntos: 20, // AÑADIDO
-          responsabilidad: 'Información Privilegiada'
-        },
-      ],
-      estado: 'pendiente',
-      guardado: false,
-      puntuacionTotal: 0,
-      maxPuntos: 100,
-      color: colors.status.error
     }
   };
 
-  // Estados para los apartados principales según artículos 95-98 + conflictos de intereses
+  // Estados para los apartados principales
   const [apartadosData, setApartadosData] = useState(estructuraBaseApartados);
 
   // Indicadores para la tabla superior
   const [indicadoresSuperiores, setIndicadoresSuperiores] = useState({
+    conflictosIntereses: {
+      declaracionIntegra: { valor: 0, meta: 100 },
+      independencia: { valor: 0, meta: 100 },
+      gestionConflictos: { valor: 0, meta: 95 }
+    },
     principiosRectores: {
-      responsabilidadEtica: { valor: 0, meta: 90 },
-      conocimientoNormativo: { valor: 0, meta: 85 },
-      supervisionPersonal: { valor: 0, meta: 85 }
+      legalidadReforzada: { valor: 0, meta: 90 },
+      trazabilidad: { valor: 0, meta: 85 },
+      debidaDiligencia: { valor: 0, meta: 85 }
     },
     conocimientoMandato: {
-      formalizacionMandato: { valor: 0, meta: 95 },
-      comunicacionCliente: { valor: 0, meta: 90 },
-      limitesFacultades: { valor: 0, meta: 85 }
+      identificacionCliente: { valor: 0, meta: 95 },
+      evaluacionRiesgos: { valor: 0, meta: 90 },
+      monitoreoContinuo: { valor: 0, meta: 85 }
     },
     materialidad: {
-      exactitudInformacion: { valor: 0, meta: 80 },
-      clasificacionArancelaria: { valor: 0, meta: 85 },
-      valoracionMercancias: { valor: 0, meta: 90 }
+      existenciaMandante: { valor: 0, meta: 80 },
+      congruencia: { valor: 0, meta: 85 },
+      cumplimientoRRNA: { valor: 0, meta: 90 }
     },
     reglasMinimasSeguridad: {
-      integridadOperaciones: { valor: 0, meta: 95 },
-      reporteIncidentes: { valor: 0, meta: 90 },
-      cumplimientoProcedimientos: { valor: 0, meta: 90 }
-    },
-    // NUEVO: Indicadores para conflictos de intereses
-    conflictosIntereses: {
-      transparencia: { valor: 0, meta: 100 },
-      declaracionOportuna: { valor: 0, meta: 95 },
-      gestionConflictos: { valor: 0, meta: 90 }
+      validacionPrevia: { valor: 0, meta: 95 },
+      bitacoraDigital: { valor: 0, meta: 90 },
+      auditoriaInterna: { valor: 0, meta: 90 }
     }
   });
+
+  // Función para manejar la aceptación de la declaración de buena fe
+  const handleAceptarDeclaracion = () => {
+    setDeclaracionAceptada(true);
+    setDeclaracionModalOpen(false);
+  };
+
+  // Función para manejar el cierre del modal sin aceptar
+  const handleCerrarDeclaracion = () => {
+    alert('Debe aceptar la declaración de buena fe para continuar con el proceso de declaraciones.');
+  };
 
   const handleAccordionChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -434,107 +500,53 @@ const DeclaracionesCumplimientoAduanero = () => {
     setActiveStep((prevStep) => prevStep - 1);
   };
 
-  // Función CORREGIDA con protección contra undefined
-  const handleRespuestaChange = (apartadoId, preguntaId, respuesta) => {
+  // Función para manejar el cambio de checkboxes
+  const handleCheckChange = (apartadoId, checkId, checked) => {
     setApartadosData(prev => {
-      // Verificar que el apartado exista
       const apartadoActual = prev[apartadoId];
-      if (!apartadoActual) {
+      if (!apartadoActual || !apartadoActual.checks) {
         console.error(`Apartado ${apartadoId} no encontrado`);
         return prev;
       }
 
-      // Verificar que las preguntas existan
-      if (!apartadoActual.preguntas || !Array.isArray(apartadoActual.preguntas)) {
-        console.error(`Preguntas del apartado ${apartadoId} no válidas`);
-        return prev;
-      }
-
-      // Mapear las preguntas y actualizar la correspondiente
-      const nuevasPreguntas = apartadoActual.preguntas.map(p => {
-        if (p && p.id === preguntaId) {
-          return { ...p, respuesta: respuesta };
+      const nuevosChecks = apartadoActual.checks.map(check => {
+        if (check && check.id === checkId) {
+          return { ...check, checked };
         }
-        return p;
+        return check;
       });
 
       return {
         ...prev,
         [apartadoId]: {
           ...apartadoActual,
-          preguntas: nuevasPreguntas
+          checks: nuevosChecks
         }
       };
     });
   };
 
-  // Función CORREGIDA con protección contra undefined
-  const handleExplicacionChange = (apartadoId, preguntaId, explicacion) => {
-    setApartadosData(prev => {
-      const apartadoActual = prev[apartadoId];
-      if (!apartadoActual || !apartadoActual.preguntas) {
-        console.error(`Apartado ${apartadoId} o preguntas no encontrados`);
-        return prev;
-      }
-
-      const nuevasPreguntas = apartadoActual.preguntas.map(p => {
-        if (p && p.id === preguntaId) {
-          return { ...p, explicacion };
-        }
-        return p;
-      });
-
-      return {
-        ...prev,
-        [apartadoId]: {
-          ...apartadoActual,
-          preguntas: nuevasPreguntas
-        }
-      };
-    });
-  };
-
-  // Función para calcular puntuación y guardar apartado con protección - AHORA USA LOS PUNTOS
+  // Función para guardar apartado
   const handleGuardarApartado = (apartadoId) => {
     const apartado = apartadosData[apartadoId];
     
-    // Verificar que el apartado exista
-    if (!apartado) {
+    if (!apartado || !apartado.checks) {
       alert(`Error: No se encontró el apartado ${apartadoId}`);
       return;
     }
 
-    // Verificar que las preguntas existan
-    if (!apartado.preguntas || !Array.isArray(apartado.preguntas)) {
-      alert(`Error: Las preguntas del apartado ${apartadoId} no son válidas`);
-      return;
-    }
-
-    const preguntasContestadas = apartado.preguntas.filter(p => p && p.respuesta !== null);
+    const checksMarcados = apartado.checks.filter(check => check && check.checked === true).length;
     
-    if (preguntasContestadas.length === 0) {
-      alert('Por favor responda al menos una pregunta antes de guardar');
+    if (checksMarcados === 0) {
+      alert('Por favor marque al menos una declaración antes de guardar');
       return;
     }
 
-    // Calcular puntuación de manera segura - AHORA USA LOS PUNTOS ASIGNADOS
+    // Calcular puntuación (oculta para el usuario)
     let puntuacionTotal = 0;
-    apartado.preguntas.forEach(pregunta => {
-      if (pregunta) {
-        // Asegurarse de que puntos tenga un valor por defecto si no está definido (por si acaso)
-        const puntosPregunta = pregunta.puntos || 0; 
-        
-        if (apartadoId === 'conflictos_intereses') {
-          // Para conflictos de intereses: "No" (false) es bueno y suma puntos
-          if (pregunta.respuesta === false) {
-            puntuacionTotal += puntosPregunta;
-          }
-        } else {
-          // Para los artículos 95-98: "Sí" (true) es bueno y suma puntos
-          if (pregunta.respuesta === true) {
-            puntuacionTotal += puntosPregunta;
-          }
-        }
+    apartado.checks.forEach(check => {
+      if (check && check.checked && check.puntos) {
+        puntuacionTotal += check.puntos;
       }
     });
 
@@ -544,7 +556,7 @@ const DeclaracionesCumplimientoAduanero = () => {
 
     // Determinar estado
     let estado = 'pendiente';
-    if (preguntasContestadas.length === apartado.preguntas.length) {
+    if (checksMarcados > 0) {
       estado = porcentaje >= 80 ? 'cumple_totalmente' : 
                porcentaje >= 60 ? 'cumple_parcialmente' : 'no_cumple';
     }
@@ -560,10 +572,10 @@ const DeclaracionesCumplimientoAduanero = () => {
       }
     }));
 
-    // Actualizar indicadores superiores según el apartado
+    // Actualizar indicadores superiores
     actualizarIndicadoresSuperiores(apartadoId, porcentaje);
 
-    alert(`Evaluación ${apartado.titulo} guardada exitosamente. Puntuación: ${puntuacionTotal}/${maxPuntos} (${porcentaje}%)`);
+    alert(`Declaración del ${apartado.titulo} guardada exitosamente.`);
   };
 
   // Función para actualizar indicadores superiores
@@ -572,30 +584,30 @@ const DeclaracionesCumplimientoAduanero = () => {
       const nuevosIndicadores = { ...prev };
       
       switch(apartadoId) {
+        case 'conflictos_intereses':
+          nuevosIndicadores.conflictosIntereses.declaracionIntegra.valor = porcentaje;
+          nuevosIndicadores.conflictosIntereses.independencia.valor = Math.min(porcentaje + 5, 100);
+          nuevosIndicadores.conflictosIntereses.gestionConflictos.valor = Math.min(porcentaje + 3, 100);
+          break;
         case 'principios_rectores':
-          nuevosIndicadores.principiosRectores.responsabilidadEtica.valor = porcentaje;
-          nuevosIndicadores.principiosRectores.conocimientoNormativo.valor = Math.min(porcentaje + 5, 100);
-          nuevosIndicadores.principiosRectores.supervisionPersonal.valor = Math.min(porcentaje + 8, 100);
+          nuevosIndicadores.principiosRectores.legalidadReforzada.valor = porcentaje;
+          nuevosIndicadores.principiosRectores.trazabilidad.valor = Math.min(porcentaje + 8, 100);
+          nuevosIndicadores.principiosRectores.debidaDiligencia.valor = Math.min(porcentaje + 5, 100);
           break;
         case 'conocimiento_mandato':
-          nuevosIndicadores.conocimientoMandato.formalizacionMandato.valor = porcentaje;
-          nuevosIndicadores.conocimientoMandato.comunicacionCliente.valor = Math.min(porcentaje + 10, 100);
-          nuevosIndicadores.conocimientoMandato.limitesFacultades.valor = Math.min(porcentaje + 5, 100);
+          nuevosIndicadores.conocimientoMandato.identificacionCliente.valor = porcentaje;
+          nuevosIndicadores.conocimientoMandato.evaluacionRiesgos.valor = Math.min(porcentaje + 10, 100);
+          nuevosIndicadores.conocimientoMandato.monitoreoContinuo.valor = Math.min(porcentaje + 8, 100);
           break;
         case 'materialidad':
-          nuevosIndicadores.materialidad.exactitudInformacion.valor = porcentaje;
-          nuevosIndicadores.materialidad.clasificacionArancelaria.valor = Math.min(porcentaje + 8, 100);
-          nuevosIndicadores.materialidad.valoracionMercancias.valor = Math.min(porcentaje + 12, 100);
+          nuevosIndicadores.materialidad.existenciaMandante.valor = porcentaje;
+          nuevosIndicadores.materialidad.congruencia.valor = Math.min(porcentaje + 12, 100);
+          nuevosIndicadores.materialidad.cumplimientoRRNA.valor = Math.min(porcentaje + 8, 100);
           break;
         case 'reglas_minimas_seguridad':
-          nuevosIndicadores.reglasMinimasSeguridad.integridadOperaciones.valor = porcentaje;
-          nuevosIndicadores.reglasMinimasSeguridad.reporteIncidentes.valor = Math.min(porcentaje + 15, 100);
-          nuevosIndicadores.reglasMinimasSeguridad.cumplimientoProcedimientos.valor = Math.min(porcentaje + 5, 100);
-          break;
-        case 'conflictos_intereses':
-          nuevosIndicadores.conflictosIntereses.transparencia.valor = porcentaje;
-          nuevosIndicadores.conflictosIntereses.declaracionOportuna.valor = Math.min(porcentaje + 10, 100);
-          nuevosIndicadores.conflictosIntereses.gestionConflictos.valor = Math.min(porcentaje + 5, 100);
+          nuevosIndicadores.reglasMinimasSeguridad.validacionPrevia.valor = porcentaje;
+          nuevosIndicadores.reglasMinimasSeguridad.bitacoraDigital.valor = Math.min(porcentaje + 15, 100);
+          nuevosIndicadores.reglasMinimasSeguridad.auditoriaInterna.valor = Math.min(porcentaje + 10, 100);
           break;
       }
       
@@ -603,7 +615,7 @@ const DeclaracionesCumplimientoAduanero = () => {
     });
   };
 
-  // Calcular cumplimiento general de manera segura
+  // Calcular cumplimiento general
   const calcularCumplimientoGeneral = () => {
     try {
       const apartados = Object.values(apartadosData);
@@ -622,7 +634,7 @@ const DeclaracionesCumplimientoAduanero = () => {
 
   const cumplimientoGeneral = calcularCumplimientoGeneral();
 
-  // Calcular cumplimiento por apartado de manera segura
+  // Calcular cumplimiento por apartado
   const calcularCumplimientoApartado = (apartado) => {
     if (!apartado || !apartado.guardado) return 0;
     
@@ -632,14 +644,15 @@ const DeclaracionesCumplimientoAduanero = () => {
     return maxPuntos > 0 ? Math.round((puntuacionTotal / maxPuntos) * 100) : 0;
   };
 
-  // Obtener texto del estado según el porcentaje de manera segura
+  // Obtener texto del estado
   const obtenerTextoEstado = (apartado) => {
     if (!apartado || !apartado.guardado) return 'PENDIENTE';
     
-    const preguntas = apartado.preguntas || [];
-    const preguntasContestadas = preguntas.filter(p => p && p.respuesta !== null).length;
+    const checks = apartado.checks || [];
+    const checksMarcados = checks.filter(check => check && check.checked === true).length;
     
-    if (preguntasContestadas < preguntas.length) return 'EN PROCESO';
+    if (checksMarcados === 0) return 'PENDIENTE';
+    if (checksMarcados < checks.length) return 'EN PROCESO';
     
     const porcentaje = calcularCumplimientoApartado(apartado);
     if (porcentaje >= 80) return 'CUMPLE TOTALMENTE';
@@ -647,14 +660,15 @@ const DeclaracionesCumplimientoAduanero = () => {
     return 'NO CUMPLE';
   };
 
-  // Obtener color del estado de manera segura
+  // Obtener color del estado
   const obtenerColorEstado = (apartado) => {
     if (!apartado || !apartado.guardado) return 'default';
     
-    const preguntas = apartado.preguntas || [];
-    const preguntasContestadas = preguntas.filter(p => p && p.respuesta !== null).length;
+    const checks = apartado.checks || [];
+    const checksMarcados = checks.filter(check => check && check.checked === true).length;
     
-    if (preguntasContestadas < preguntas.length) return 'warning';
+    if (checksMarcados === 0) return 'default';
+    if (checksMarcados < checks.length) return 'warning';
     
     const porcentaje = calcularCumplimientoApartado(apartado);
     if (porcentaje >= 80) return 'success';
@@ -665,46 +679,113 @@ const DeclaracionesCumplimientoAduanero = () => {
   // Función para obtener el icono según el apartado
   const obtenerIcono = (apartadoId) => {
     switch(apartadoId) {
+      case 'conflictos_intereses':
+        return <PolicyIcon />;
       case 'principios_rectores':
         return <BalanceIcon />;
       case 'conocimiento_mandato':
-        return <MandateIcon />;
+        return <PersonIcon />;
       case 'materialidad':
-        return <AssessmentIcon />;
+        return <FactCheckIcon />;
       case 'reglas_minimas_seguridad':
         return <SecurityIcon />;
-      case 'conflictos_intereses':
-        return <PolicyIcon />;
       default:
         return <AssignmentIcon />;
     }
   };
 
-  // Función para obtener instrucciones según el tipo de apartado
-  const obtenerInstrucciones = (apartado) => {
-    if (apartado.id === 'conflictos_intereses') {
-      return (
-        <>
-          <strong>Instrucciones:</strong> Evalúe cada situación según su experiencia actual. Seleccione "Sí" si se aplica a su situación o "No" si no se aplica. En conflictos de intereses, es preferible marcar "No" (no se aplica).
-        </>
-      );
+  // Función para obtener el icono de fundamento
+  const obtenerIconoFundamento = (fundamento) => {
+    if (fundamento.includes('Definición') || fundamento.includes('Principio')) {
+      return <GavelIcon fontSize="small" />;
+    } else if (fundamento.includes('Obligación')) {
+      return <AssignmentLateIcon fontSize="small" />;
+    } else if (fundamento.includes('Confidencialidad')) {
+      return <PrivacyTipIcon fontSize="small" />;
+    } else if (fundamento.includes('Identificación') || fundamento.includes('Verificación')) {
+      return <PersonIcon fontSize="small" />;
+    } else if (fundamento.includes('Evaluación') || fundamento.includes('Clasificación')) {
+      return <AssessmentIcon fontSize="small" />;
+    } else if (fundamento.includes('Monitoreo')) {
+      return <TimelineIcon fontSize="small" />;
+    } else if (fundamento.includes('Existencia') || fundamento.includes('Vínculo')) {
+      return <HandshakeIcon fontSize="small" />;
+    } else if (fundamento.includes('Congruencia')) {
+      return <BalanceIcon fontSize="small" />;
+    } else if (fundamento.includes('Validación') || fundamento.includes('Bitácora')) {
+      return <DescriptionIcon fontSize="small" />;
+    } else if (fundamento.includes('Auditoría')) {
+      return <RateReviewIcon fontSize="small" />;
     } else {
-      return (
-        <>
-          <strong>Instrucciones:</strong> Evalúe cada una de sus responsabilidades según el Artículo {apartado.articulo || ''}. Seleccione "Sí" si cumple consistentemente con la responsabilidad o "No" si identifica áreas de mejora.
-        </>
-      );
+      return <CheckCircleIcon fontSize="small" />;
     }
   };
 
-  // Función para renderizar cada apartado con preguntas de manera segura
+  // Calcular indicadores para la parte superior
+  const calcularIndicadoresSuperioresResumen = () => {
+    try {
+      const apartados = Object.values(apartadosData);
+      if (!apartados) return {
+        totalApartados: 0,
+        guardados: 0,
+        altoCumplimiento: 0,
+        areasMejora: 0,
+        totalChecks: 0,
+        checksMarcados: 0,
+        cumplimientoGeneral: 0
+      };
+      
+      const guardados = apartados.filter(a => a && a.guardado).length;
+      
+      const altoCumplimiento = apartados.filter(a => {
+        if (!a || !a.guardado) return false;
+        const cumplimiento = calcularCumplimientoApartado(a);
+        return cumplimiento >= 80;
+      }).length;
+      
+      const totalChecks = apartados.reduce((total, apartado) => {
+        if (!apartado || !apartado.checks) return total;
+        return total + apartado.checks.length;
+      }, 0);
+      
+      const checksMarcados = apartados.reduce((total, apartado) => {
+        if (!apartado || !apartado.checks) return total;
+        return total + apartado.checks.filter(check => check && check.checked === true).length;
+      }, 0);
+      
+      return {
+        totalApartados: apartados.length,
+        guardados,
+        altoCumplimiento,
+        areasMejora: totalChecks - checksMarcados,
+        totalChecks,
+        checksMarcados,
+        cumplimientoGeneral
+      };
+    } catch (error) {
+      console.error('Error calculando indicadores:', error);
+      return {
+        totalApartados: 0,
+        guardados: 0,
+        altoCumplimiento: 0,
+        areasMejora: 0,
+        totalChecks: 0,
+        checksMarcados: 0,
+        cumplimientoGeneral: 0
+      };
+    }
+  };
+
+  const indicadoresCalculados = calcularIndicadoresSuperioresResumen();
+
+  // Función para renderizar cada apartado con checks (SIN CAMPOS DE COMENTARIOS Y SIN PUNTOS VISIBLES)
   const renderApartado = (apartado) => {
     if (!apartado) return null;
     
     const cumplimiento = calcularCumplimientoApartado(apartado);
-    const preguntas = apartado.preguntas || [];
-    const preguntasContestadas = preguntas.filter(p => p && p.respuesta !== null).length;
-    const preguntasTotales = preguntas.length;
+    const checks = apartado.checks || [];
+    const checksMarcados = checks.filter(check => check && check.checked === true).length;
+    const checksTotales = checks.length;
     const textoEstado = obtenerTextoEstado(apartado);
     const colorEstado = obtenerColorEstado(apartado);
     
@@ -790,30 +871,48 @@ const DeclaracionesCumplimientoAduanero = () => {
           <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
               <Typography variant="h6" sx={{ color: colors.text.primary, display: 'flex', alignItems: 'center', gap: 1 }}>
-                {apartado.id === 'conflictos_intereses' ? <PolicyIcon sx={{ color: apartado.color || colors.status.error }} /> : <LawIcon sx={{ color: apartado.color || colors.primary.main }} />}
-                {apartado.id === 'conflictos_intereses' ? 'Declaración de Conflicto de Intereses' : `Evaluación del Artículo ${apartado.articulo || ''} - Responsabilidades del Agente Aduanal`}
+                {obtenerIcono(apartado.id)}
+                {apartado.titulo}
               </Typography>
               
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <VerifiedUserIcon fontSize="small" sx={{ color: colors.text.secondary }} />
+                <CheckCircleIcon fontSize="small" sx={{ color: colors.status.success }} />
                 <Typography variant="body2" sx={{ color: colors.text.secondary }}>
-                  {preguntasContestadas}/{preguntasTotales} {apartado.id === 'conflictos_intereses' ? 'situaciones evaluadas' : 'responsabilidades evaluadas'}
+                  {checksMarcados}/{checksTotales} declaraciones afirmativas
                 </Typography>
               </Box>
             </Box>
             
-            <Alert severity="info" sx={{ mb: 3, backgroundColor: `${apartado.color || colors.primary.main}10` }}>
+            {/* Contenido del artículo */}
+            {apartado.contenido && (
+              <Alert severity="info" sx={{ mb: 3, backgroundColor: `${apartado.color || colors.primary.main}10`, whiteSpace: 'pre-line' }}>
+                <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>
+                  {apartado.contenido}
+                </Typography>
+              </Alert>
+            )}
+            
+            <Alert severity="success" sx={{ mb: 3, backgroundColor: `${colors.status.success}10` }}>
               <Typography variant="body2">
-                {obtenerInstrucciones(apartado)}
+                <strong>Instrucciones:</strong> Marque cada declaración que aplique a su situación actual. 
+                {apartado.id === 'conflictos_intereses' 
+                  ? ' En conflictos de intereses, debe declarar bajo protesta de decir verdad.'
+                  : ' Todas las declaraciones deben ser verificables y estar soportadas documentalmente.'}
               </Typography>
             </Alert>
             
-            {preguntas.map((pregunta, index) => {
-              if (!pregunta) return null;
+            {checks.map((check, index) => {
+              if (!check) return null;
               
               return (
-                <Box key={pregunta.id || index} sx={{ mb: 3, p: 2.5, border: `1px solid ${colors.primary.main}20`, borderRadius: 2 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 2 }}>
+                <Box key={check.id || index} sx={{ 
+                  mb: 2, 
+                  p: 2, 
+                  border: `1px solid ${colors.primary.main}20`, 
+                  borderRadius: 2,
+                  backgroundColor: 'white'
+                }}>
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
                     <Box sx={{ 
                       display: 'flex',
                       alignItems: 'center',
@@ -830,193 +929,47 @@ const DeclaracionesCumplimientoAduanero = () => {
                     </Box>
                     
                     <Box sx={{ flex: 1 }}>
-                      <Typography variant="subtitle1" sx={{ fontWeight: '500', color: colors.text.primary, mb: 0.5 }}>
-                        {pregunta.texto || 'Pregunta no disponible'}
-                      </Typography>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={check.checked || false}
+                            onChange={(e) => handleCheckChange(apartado.id, check.id, e.target.checked)}
+                            sx={{
+                              color: apartado.color || colors.primary.main,
+                              '&.Mui-checked': {
+                                color: apartado.color || colors.primary.main,
+                              },
+                            }}
+                          />
+                        }
+                        label={
+                          <Typography variant="subtitle1" sx={{ 
+                            fontWeight: check.checked ? '600' : '400', 
+                            color: colors.text.primary 
+                          }}>
+                            {check.texto}
+                          </Typography>
+                        }
+                        sx={{ alignItems: 'flex-start', m: 0 }}
+                      />
                       
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1, ml: 5 }}>
                         <Chip 
-                          label={pregunta.responsabilidad || 'Responsabilidad'}
+                          icon={obtenerIconoFundamento(check.fundamento)}
+                          label={check.fundamento || 'Fundamento legal'}
                           size="small"
                           sx={{ 
                             backgroundColor: `${apartado.color || colors.primary.main}20`,
                             color: apartado.color || colors.primary.main,
-                            fontWeight: '500'
+                            fontWeight: '500',
+                            '& .MuiChip-icon': {
+                              color: apartado.color || colors.primary.main
+                            }
                           }}
                         />
-                        {/* Mostrar los puntos de la pregunta (opcional, para depuración) */}
-                        {/* <Chip 
-                          label={`${pregunta.puntos || 0} pts`}
-                          size="small"
-                          variant="outlined"
-                          sx={{ fontWeight: '500' }}
-                        /> */}
                       </Box>
-                      
-                      {/* Estado de la respuesta */}
-                      {pregunta.respuesta !== null && (
-                        <Box sx={{ 
-                          display: 'inline-flex', 
-                          alignItems: 'center', 
-                          gap: 1,
-                          p: 1,
-                          borderRadius: 1,
-                          backgroundColor: apartado.id === 'conflictos_intereses' 
-                            ? (pregunta.respuesta === false ? '#e8f5e9' : '#ffebee') 
-                            : (pregunta.respuesta === true ? '#e8f5e9' : '#ffebee'),
-                          border: apartado.id === 'conflictos_intereses'
-                            ? `1px solid ${pregunta.respuesta === false ? colors.status.success : colors.status.error}`
-                            : `1px solid ${pregunta.respuesta === true ? colors.status.success : colors.status.error}`,
-                          mb: 1
-                        }}>
-                          {apartado.id === 'conflictos_intereses' ? (
-                            pregunta.respuesta === false ? (
-                              <>
-                                <CheckCircleIcon sx={{ color: colors.status.success, fontSize: 20 }} />
-                                <Typography variant="body2" sx={{ color: colors.status.success, fontWeight: '500' }}>
-                                  No se aplica a mi situación
-                                </Typography>
-                              </>
-                            ) : (
-                              <>
-                                <CloseIcon sx={{ color: colors.status.error, fontSize: 20 }} />
-                                <Typography variant="body2" sx={{ color: colors.status.error, fontWeight: '500' }}>
-                                  Se aplica a mi situación
-                                </Typography>
-                              </>
-                            )
-                          ) : (
-                            pregunta.respuesta === true ? (
-                              <>
-                                <CheckCircleIcon sx={{ color: colors.status.success, fontSize: 20 }} />
-                                <Typography variant="body2" sx={{ color: colors.status.success, fontWeight: '500' }}>
-                                  Cumple con esta responsabilidad
-                                </Typography>
-                              </>
-                            ) : (
-                              <>
-                                <CloseIcon sx={{ color: colors.status.error, fontSize: 20 }} />
-                                <Typography variant="body2" sx={{ color: colors.status.error, fontWeight: '500' }}>
-                                  No cumple completamente
-                                </Typography>
-                              </>
-                            )
-                          )}
-                        </Box>
-                      )}
                     </Box>
                   </Box>
-                  
-                  <FormControl component="fieldset" sx={{ mb: 2, width: '100%' }}>
-                    <FormLabel component="legend" sx={{ fontWeight: '500', color: colors.text.primary, mb: 1 }}>
-                      {apartado.id === 'conflictos_intereses' ? '¿Esta situación se aplica a usted?' : 'Mi nivel de cumplimiento:'}
-                    </FormLabel>
-                    <RadioGroup
-                      row
-                      value={pregunta.respuesta === null ? '' : pregunta.respuesta.toString()}
-                      onChange={(e) => {
-                        const valor = e.target.value === 'true';
-                        handleRespuestaChange(apartado.id, pregunta.id, valor);
-                      }}
-                      sx={{ gap: 2 }}
-                    >
-                      <FormControlLabel 
-                        value="true" 
-                        control={<Radio />} 
-                        label={
-                          <Box sx={{ 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            gap: 1,
-                            p: 1,
-                            borderRadius: 1,
-                            backgroundColor: pregunta.respuesta === true ? 
-                              (apartado.id === 'conflictos_intereses' ? '#ffebee' : '#e8f5e9') 
-                              : 'transparent',
-                            border: pregunta.respuesta === true ? 
-                              (apartado.id === 'conflictos_intereses' ? `2px solid ${colors.status.error}` : `2px solid ${colors.status.success}`) 
-                              : `1px solid ${colors.primary.main}20`
-                          }}>
-                            {apartado.id === 'conflictos_intereses' ? (
-                              <CloseIcon sx={{ color: pregunta.respuesta === true ? colors.status.error : colors.text.secondary }} />
-                            ) : (
-                              <CheckCircleIcon sx={{ color: pregunta.respuesta === true ? colors.status.success : colors.text.secondary }} />
-                            )}
-                            <Typography sx={{ 
-                              color: pregunta.respuesta === true ? 
-                                (apartado.id === 'conflictos_intereses' ? colors.status.error : colors.status.success) 
-                                : colors.text.secondary,
-                              fontWeight: pregunta.respuesta === true ? '600' : '400'
-                            }}>
-                              {apartado.id === 'conflictos_intereses' ? 'Sí, se aplica' : 'Sí, cumplo con esta responsabilidad'}
-                            </Typography>
-                          </Box>
-                        } 
-                        sx={{ m: 0 }}
-                      />
-                      <FormControlLabel 
-                        value="false" 
-                        control={<Radio />} 
-                        label={
-                          <Box sx={{ 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            gap: 1,
-                            p: 1,
-                            borderRadius: 1,
-                            backgroundColor: pregunta.respuesta === false ? 
-                              (apartado.id === 'conflictos_intereses' ? '#e8f5e9' : '#ffebee') 
-                              : 'transparent',
-                            border: pregunta.respuesta === false ? 
-                              (apartado.id === 'conflictos_intereses' ? `2px solid ${colors.status.success}` : `2px solid ${colors.status.error}`) 
-                              : `1px solid ${colors.primary.main}20`
-                          }}>
-                            {apartado.id === 'conflictos_intereses' ? (
-                              <CheckCircleIcon sx={{ color: pregunta.respuesta === false ? colors.status.success : colors.text.secondary }} />
-                            ) : (
-                              <CloseIcon sx={{ color: pregunta.respuesta === false ? colors.status.error : colors.text.secondary }} />
-                            )}
-                            <Typography sx={{ 
-                              color: pregunta.respuesta === false ? 
-                                (apartado.id === 'conflictos_intereses' ? colors.status.success : colors.status.error) 
-                                : colors.text.secondary,
-                              fontWeight: pregunta.respuesta === false ? '600' : '400'
-                            }}>
-                              {apartado.id === 'conflictos_intereses' ? 'No, no se aplica' : 'No, necesito mejorar en esta área'}
-                            </Typography>
-                          </Box>
-                        } 
-                        sx={{ m: 0 }}
-                      />
-                    </RadioGroup>
-                  </FormControl>
-                  
-                  <Collapse in={pregunta.respuesta === (apartado.id === 'conflictos_intereses' ? true : false)}>
-                    <Box sx={{ mt: 2, p: 2, backgroundColor: '#fff8e1', borderRadius: 1, border: `1px solid ${colors.status.warning}` }}>
-                      <Typography variant="body2" sx={{ mb: 1, color: colors.status.warning, fontWeight: '500', display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <ArrowForwardIcon sx={{ fontSize: 16 }} />
-                        {apartado.id === 'conflictos_intereses' 
-                          ? 'Situación identificada - Información adicional:' 
-                          : 'Área de mejora identificada - Plan de acción:'}
-                      </Typography>
-                      <TextField
-                        fullWidth
-                        multiline
-                        rows={3}
-                        placeholder={apartado.id === 'conflictos_intereses'
-                          ? "Proporcione detalles adicionales sobre esta situación de conflicto de intereses..."
-                          : "Describa las acciones específicas que tomará para mejorar en esta responsabilidad..."}
-                        value={pregunta.explicacion || ''}
-                        onChange={(e) => handleExplicacionChange(apartado.id, pregunta.id, e.target.value)}
-                        variant="outlined"
-                        size="small"
-                        sx={{ backgroundColor: 'white' }}
-                        helperText={apartado.id === 'conflictos_intereses'
-                          ? "Esta información será registrada para fines de seguimiento"
-                          : "Este plan de mejora será registrado para seguimiento"}
-                      />
-                    </Box>
-                  </Collapse>
                 </Box>
               );
             })}
@@ -1026,26 +979,18 @@ const DeclaracionesCumplimientoAduanero = () => {
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Box>
                 <Typography variant="body1" sx={{ fontWeight: '600', color: colors.text.primary, mb: 1 }}>
-                  {apartado.id === 'conflictos_intereses' 
-                    ? 'Resumen de su declaración:' 
-                    : `Resumen del Artículo ${apartado.articulo || ''}:`}
+                  Resumen de la declaración:
                 </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
                   <Box>
                     <Typography variant="body2" sx={{ color: colors.text.secondary }}>
-                      {apartado.id === 'conflictos_intereses' ? 'Situaciones evaluadas:' : 'Responsabilidades evaluadas:'} {preguntasContestadas}/{preguntasTotales}
+                      Declaraciones afirmativas: {checksMarcados}/{checksTotales}
                     </Typography>
-                  
-                    {apartado.guardado && (
-                      <Typography variant="body2" sx={{ color: apartado.color || colors.primary.main, fontWeight: '600', mt: 0.5 }}>
-                        Nivel de cumplimiento: {cumplimiento}%
-                      </Typography>
-                    )}
                   </Box>
                   
                   {apartado.guardado && (
                     <Box sx={{ 
-                      p: 2, 
+                      p: 1.5, 
                       borderRadius: 2,
                       backgroundColor: cumplimiento >= 80 ? '#e8f5e9' : 
                                      cumplimiento >= 60 ? '#fff3e0' : '#ffebee',
@@ -1057,9 +1002,9 @@ const DeclaracionesCumplimientoAduanero = () => {
                         color: cumplimiento >= 80 ? colors.status.success : 
                                cumplimiento >= 60 ? colors.status.warning : colors.status.error
                       }}>
-                        {cumplimiento >= 80 ? ' Excelente cumplimiento' :
-                         cumplimiento >= 60 ? ' Cumplimiento aceptable' :
-                         ' Necesita mejorar significativamente'}
+                        {cumplimiento >= 80 ? 'Nivel de cumplimiento: Óptimo' :
+                         cumplimiento >= 60 ? 'Nivel de cumplimiento: Aceptable' :
+                         'Nivel de cumplimiento: Requiere atención'}
                       </Typography>
                     </Box>
                   )}
@@ -1078,10 +1023,10 @@ const DeclaracionesCumplimientoAduanero = () => {
                   }
                 }}
                 onClick={() => handleGuardarApartado(apartado.id)}
-                disabled={preguntasContestadas === 0}
+                disabled={checksMarcados === 0}
                 startIcon={<AssignmentTurnedInIcon />}
               >
-                {apartado.guardado ? 'Actualizar Evaluación' : 'Guardar Evaluación'}
+                {apartado.guardado ? 'Actualizar Declaración' : 'Guardar Declaración'}
               </Button>
             </Box>
           </Paper>
@@ -1090,316 +1035,385 @@ const DeclaracionesCumplimientoAduanero = () => {
     );
   };
 
-  // Calcular indicadores para la parte superior de manera segura
-  const calcularIndicadoresSuperiores = () => {
-    try {
-      const apartados = Object.values(apartadosData);
-      if (!apartados) return {
-        totalApartados: 0,
-        guardados: 0,
-        altoCumplimiento: 0,
-        areasMejora: 0,
-        totalResponsabilidades: 0,
-        responsabilidadesEvaluadas: 0,
-        cumplimientoGeneral: 0
-      };
-      
-      // Apartados guardados
-      const guardados = apartados.filter(a => a && a.guardado).length;
-      
-      // Apartados con alto cumplimiento (≥80%)
-      const altoCumplimiento = apartados.filter(a => {
-        if (!a || !a.guardado) return false;
-        const cumplimiento = calcularCumplimientoApartado(a);
-        return cumplimiento >= 80;
-      }).length;
-      
-      // Preguntas con respuesta "no" (áreas de mejora)
-      const areasMejora = apartados.reduce((total, apartado) => {
-        if (!apartado || !apartado.preguntas) return total;
-        return total + apartado.preguntas.filter(p => p && p.respuesta === false).length;
-      }, 0);
-      
-      // Total de responsabilidades
-      const totalResponsabilidades = apartados.reduce((total, apartado) => {
-        if (!apartado || !apartado.preguntas) return total;
-        return total + apartado.preguntas.length;
-      }, 0);
-      
-      // Responsabilidades evaluadas
-      const responsabilidadesEvaluadas = apartados.reduce((total, apartado) => {
-        if (!apartado || !apartado.preguntas) return total;
-        return total + apartado.preguntas.filter(p => p && p.respuesta !== null).length;
-      }, 0);
-      
-      return {
-        totalApartados: apartados.length,
-        guardados,
-        altoCumplimiento,
-        areasMejora,
-        totalResponsabilidades,
-        responsabilidadesEvaluadas,
-        cumplimientoGeneral
-      };
-    } catch (error) {
-      console.error('Error calculando indicadores:', error);
-      return {
-        totalApartados: 0,
-        guardados: 0,
-        altoCumplimiento: 0,
-        areasMejora: 0,
-        totalResponsabilidades: 0,
-        responsabilidadesEvaluadas: 0,
-        cumplimientoGeneral: 0
-      };
-    }
-  };
-
-  const indicadoresCalculados = calcularIndicadoresSuperiores();
-
   return (
     <Box sx={{ p: 3 }}>
-      {/* Header */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Box>
-          <Typography variant="h4" sx={{ color: colors.primary.dark, fontWeight: 'bold', mb: 1 }}>
-            Declaración de Cumplimiento Aduanero
-          </Typography>
-          <Typography variant="body1" sx={{ color: colors.text.secondary }}>
-            Evaluación de responsabilidades según Artículos 95, 96, 97 y 98 + Declaración de Conflictos de Intereses
-          </Typography>
-        </Box>
-        
-        <Stack direction="row" spacing={2}>
+      {/* Modal de Declaración de Buena Fe */}
+      <Dialog 
+        open={declaracionModalOpen} 
+        onClose={handleCerrarDeclaracion}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 2,
+            border: `2px solid ${colors.primary.main}`
+          }
+        }}
+      >
+        <DialogTitle sx={{ 
+          bgcolor: colors.primary.main, 
+          color: 'white',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1
+        }}>
+          <VerifiedUserIcon />
+          <Typography variant="h6">Declaración de Veracidad y Buena Fe</Typography>
+        </DialogTitle>
+        <DialogContent sx={{ mt: 3 }}>
+          <Alert severity="warning" sx={{ mb: 3 }}>
+            <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+              Lea atentamente la siguiente declaración antes de continuar:
+            </Typography>
+          </Alert>
           
-          <Button
-            variant="contained"
-            startIcon={<VerifiedUserIcon />}
+          <Paper 
+            elevation={0} 
             sx={{ 
-              textTransform: 'none',
+              p: 4, 
+              bgcolor: '#f9f9f9', 
+              border: `1px solid ${colors.primary.light}`,
+              borderRadius: 2,
+              fontStyle: 'italic'
+            }}
+          >
+            <Typography variant="body1" paragraph sx={{ fontWeight: '500', color: colors.text.primary }}>
+              Por medio del presente, declaro que la información que proporcionaré a continuación es verdadera, 
+              completa y ha sido presentada de buena fe, conforme a los Estatutos de CAAAREM y la normativa aduanera aplicable.
+            </Typography>
+            
+            <Typography variant="body1" paragraph sx={{ fontWeight: '500', color: colors.text.primary }}>
+              Estoy consciente de que cualquier omisión, falsedad o alteración en los datos proporcionados 
+              podrá dar lugar a las acciones administrativas y legales correspondientes, conforme a la normativa aplicable, 
+              incluyendo las sanciones previstas en el artículo 63 de los Estatutos.
+            </Typography>
+            
+            <Typography variant="body1" sx={{ fontWeight: '500', color: colors.text.primary }}>
+              Al continuar, confirmo que la información que ingresaré es correcta y asumo la responsabilidad 
+              sobre su veracidad, bajo protesta de decir verdad.
+            </Typography>
+          </Paper>
+          
+          <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+            <Chip 
+              icon={<GavelIcon />}
+              label="Artículo 92, fracción III - Obligación de declaración bajo protesta de decir verdad"
+              sx={{ 
+                bgcolor: `${colors.primary.main}10`,
+                color: colors.primary.main,
+                fontWeight: '500',
+                p: 1
+              }}
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ p: 3, justifyContent: 'center' }}>
+          <Button 
+            onClick={handleCerrarDeclaracion}
+            variant="outlined"
+            sx={{ textTransform: 'none', px: 4 }}
+            startIcon={<CloseIcon />}
+          >
+            No Acepto
+          </Button>
+          <Button 
+            onClick={handleAceptarDeclaracion}
+            variant="contained"
+            sx={{ 
+              textTransform: 'none', 
+              px: 4,
               bgcolor: colors.primary.main,
               '&:hover': { bgcolor: colors.primary.dark }
             }}
-            onClick={() => alert('Declaración enviada para validación')}
+            startIcon={<CheckCircleIcon />}
+            autoFocus
           >
-            Enviar Declaración
+            Acepto y Continúo
           </Button>
-        </Stack>
-      </Box>
+        </DialogActions>
+      </Dialog>
 
-      {/* Stepper de progreso actualizado */}
-      <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
-        <Step>
-          <StepLabel sx={{
-            '& .MuiStepLabel-label': {
-              color: activeStep === 0 ? colors.primary.main : colors.text.secondary
-            }
-          }}>Artículo 95 - Principios Rectores</StepLabel>
-        </Step>
-        <Step>
-          <StepLabel sx={{
-            '& .MuiStepLabel-label': {
-              color: activeStep === 1 ? colors.primary.main : colors.text.secondary
-            }
-          }}>Artículo 96 - Conocimiento del Mandato</StepLabel>
-        </Step>
-        <Step>
-          <StepLabel sx={{
-            '& .MuiStepLabel-label': {
-              color: activeStep === 2 ? colors.primary.main : colors.text.secondary
-            }
-          }}>Artículo 97 - Materialidad</StepLabel>
-        </Step>
-        <Step>
-          <StepLabel sx={{
-            '& .MuiStepLabel-label': {
-              color: activeStep === 3 ? colors.primary.main : colors.text.secondary
-            }
-          }}>Artículo 98 - Reglas de Seguridad</StepLabel>
-        </Step>
-        <Step>
-          <StepLabel sx={{
-            '& .MuiStepLabel-label': {
-              color: activeStep === 4 ? colors.primary.main : colors.text.secondary
-            }
-          }}>Conflictos de Intereses</StepLabel>
-        </Step>
-      </Stepper>
-
-      {/* Nivel de Cumplimiento con indicadores en la parte superior */}
-      <Card sx={{ mb: 4, bgcolor: '#f5f5f5' }}>
-        <CardContent>
-          <Box sx={{ mb: 3 }}>
-            <Typography variant="h5" sx={{ mb: 2, color: colors.text.primary }}>
-              Mi Nivel de Cumplimiento General
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="h2" sx={{ 
-                  color: cumplimientoGeneral >= 70 ? colors.status.success : colors.status.warning,
-                  fontWeight: 'bold'
-                }}>
-                  {cumplimientoGeneral}%
-                </Typography>
-                <Typography variant="body2" sx={{ color: colors.text.secondary }}>
-                  Progreso Total
-                </Typography>
-              </Box>
-              
-              <LinearProgress 
-                variant="determinate" 
-                value={cumplimientoGeneral}
+      {/* Header - Solo visible si aceptó la declaración */}
+      {declaracionAceptada && (
+        <>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+            <Box>
+              <Typography variant="h4" sx={{ color: colors.primary.dark, fontWeight: 'bold', mb: 1 }}>
+                Declaraciones de Cumplimiento Aduanero
+              </Typography>
+              <Typography variant="body1" sx={{ color: colors.text.secondary }}>
+                Evaluación y declaración según Artículos 92, 95, 96, 97 y 98 de los Estatutos
+              </Typography>
+              <Chip 
+                icon={<VerifiedUserIcon />}
+                label="Declaración de Buena Fe Aceptada"
                 sx={{ 
-                  flexGrow: 1,
-                  height: 20,
-                  borderRadius: 10,
-                  backgroundColor: '#e0e0e0',
-                  '& .MuiLinearProgress-bar': {
-                    backgroundColor: cumplimientoGeneral >= 70 ? colors.status.success : colors.status.warning,
-                    borderRadius: 10
-                  }
+                  mt: 1,
+                  bgcolor: colors.status.success,
+                  color: 'white',
+                  fontWeight: '600'
                 }}
               />
-              
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <LawIcon sx={{ color: colors.primary.main, fontSize: 20 }} />
-                  <Typography variant="body2" sx={{ color: colors.text.primary }}>
-                    {indicadoresCalculados.guardados} de {indicadoresCalculados.totalApartados} apartados evaluados
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <CheckCircleIcon sx={{ color: colors.status.success, fontSize: 20 }} />
-                  <Typography variant="body2" sx={{ color: colors.text.primary }}>
-                    {indicadoresCalculados.altoCumplimiento} apartados con excelente cumplimiento
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <WarningIcon sx={{ color: colors.status.warning, fontSize: 20 }} />
-                  <Typography variant="body2" sx={{ color: colors.text.primary }}>
-                    {indicadoresCalculados.areasMejora} áreas identificadas para mejora
-                  </Typography>
+            </Box>
+            
+            <Stack direction="row" spacing={2}>
+              <Button
+                variant="contained"
+                startIcon={<VerifiedUserIcon />}
+                sx={{ 
+                  textTransform: 'none',
+                  bgcolor: colors.primary.main,
+                  '&:hover': { bgcolor: colors.primary.dark }
+                }}
+                onClick={() => {
+                  const todasGuardadas = Object.values(apartadosData).every(a => a.guardado);
+                  if (todasGuardadas) {
+                    alert('Declaración anual enviada exitosamente para validación por el Comité de Cumplimiento y Autorregulación.');
+                  } else {
+                    alert('Debe completar y guardar todas las declaraciones antes de enviar.');
+                  }
+                }}
+              >
+                Enviar Declaración Anual
+              </Button>
+            </Stack>
+          </Box>
+
+          {/* Stepper de progreso actualizado con Artículo 92 primero */}
+          <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
+            <Step>
+              <StepLabel sx={{
+                '& .MuiStepLabel-label': {
+                  color: activeStep === 0 ? colors.primary.main : colors.text.secondary
+                }
+              }}>Artículo 92 - Conflictos de Interés</StepLabel>
+            </Step>
+            <Step>
+              <StepLabel sx={{
+                '& .MuiStepLabel-label': {
+                  color: activeStep === 1 ? colors.primary.main : colors.text.secondary
+                }
+              }}>Artículo 95 - Principios Rectores</StepLabel>
+            </Step>
+            <Step>
+              <StepLabel sx={{
+                '& .MuiStepLabel-label': {
+                  color: activeStep === 2 ? colors.primary.main : colors.text.secondary
+                }
+              }}>Artículo 96 - Conocimiento del Mandante</StepLabel>
+            </Step>
+            <Step>
+              <StepLabel sx={{
+                '& .MuiStepLabel-label': {
+                  color: activeStep === 3 ? colors.primary.main : colors.text.secondary
+                }
+              }}>Artículo 97 - Materialidad</StepLabel>
+            </Step>
+            <Step>
+              <StepLabel sx={{
+                '& .MuiStepLabel-label': {
+                  color: activeStep === 4 ? colors.primary.main : colors.text.secondary
+                }
+              }}>Artículo 98 - Reglas de Seguridad</StepLabel>
+            </Step>
+          </Stepper>
+
+          {/* Nivel de Cumplimiento con indicadores */}
+          <Card sx={{ mb: 4, bgcolor: '#f5f5f5' }}>
+            <CardContent>
+              <Box sx={{ mb: 3 }}>
+                <Typography variant="h5" sx={{ mb: 2, color: colors.text.primary }}>
+                  Mi Nivel de Cumplimiento General
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Typography variant="h2" sx={{ 
+                      color: cumplimientoGeneral >= 70 ? colors.status.success : colors.status.warning,
+                      fontWeight: 'bold'
+                    }}>
+                      {cumplimientoGeneral}%
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: colors.text.secondary }}>
+                      Progreso Total
+                    </Typography>
+                  </Box>
+                  
+                  <LinearProgress 
+                    variant="determinate" 
+                    value={cumplimientoGeneral}
+                    sx={{ 
+                      flexGrow: 1,
+                      height: 20,
+                      borderRadius: 10,
+                      backgroundColor: '#e0e0e0',
+                      '& .MuiLinearProgress-bar': {
+                        backgroundColor: cumplimientoGeneral >= 70 ? colors.status.success : colors.status.warning,
+                        borderRadius: 10
+                      }
+                    }}
+                  />
+                  
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <LawIcon sx={{ color: colors.primary.main, fontSize: 20 }} />
+                      <Typography variant="body2" sx={{ color: colors.text.primary }}>
+                        {indicadoresCalculados.guardados} de {indicadoresCalculados.totalApartados} artículos declarados
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <CheckCircleIcon sx={{ color: colors.status.success, fontSize: 20 }} />
+                      <Typography variant="body2" sx={{ color: colors.text.primary }}>
+                        {indicadoresCalculados.altoCumplimiento} artículos con cumplimiento óptimo
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <WarningIcon sx={{ color: colors.status.warning, fontSize: 20 }} />
+                      <Typography variant="body2" sx={{ color: colors.text.primary }}>
+                        {indicadoresCalculados.areasMejora} declaraciones pendientes
+                      </Typography>
+                    </Box>
+                  </Box>
                 </Box>
               </Box>
-            </Box>
-          </Box>
-          
-          {/* Tabla de indicadores por apartado - CORREGIDA */}
-          <Box sx={{ mt: 3 }}>
-            <Typography variant="h6" sx={{ mb: 2, color: colors.text.primary, display: 'flex', alignItems: 'center', gap: 1 }}>
-              <TrendingUpIcon sx={{ color: colors.primary.main }} /> Mi Cumplimiento por Apartado
-            </Typography>
-            <TableContainer component={Paper} variant="outlined">
-              <Table size="small">
-                <TableHead>
-                  <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-                    <TableCell sx={{ fontWeight: '600', color: colors.text.primary }}>Apartado</TableCell>
-                    <TableCell sx={{ fontWeight: '600', color: colors.text.primary }}>Descripción</TableCell>
-                    <TableCell sx={{ fontWeight: '600', color: colors.text.primary }} align="center">Mi Cumplimiento</TableCell>
-                    <TableCell sx={{ fontWeight: '600', color: colors.text.primary }} align="center">Estado</TableCell>
-                    <TableCell sx={{ fontWeight: '600', color: colors.text.primary }} align="center">Evaluaciones</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {Object.values(apartadosData).map((apartado) => {
-                    if (!apartado) return null;
-                    
-                    const cumplimiento = calcularCumplimientoApartado(apartado);
-                    const preguntas = apartado.preguntas || [];
-                    const preguntasContestadas = preguntas.filter(p => p && p.respuesta !== null).length;
-                    const textoEstado = obtenerTextoEstado(apartado);
-                    
-                    return (
-                      <TableRow key={apartado.id || 'unknown'} sx={{ '&:hover': { backgroundColor: '#fafafa' } }}>
-                        <TableCell>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Box sx={{ color: apartado.color || colors.primary.main }}>
-                              {obtenerIcono(apartado.id)}
-                            </Box>
-                            <Box>
-                              <Typography variant="body2" sx={{ fontWeight: '600', color: colors.text.primary }}>
-                                {apartado.id === 'conflictos_intereses' ? 'Conflictos de Intereses' : `Art. ${apartado.articulo || ''}`}
-                              </Typography>
-                              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                                {apartado.titulo ? apartado.titulo.split(' - ')[1] || apartado.titulo : 'Apartado'}
-                              </Typography>
-                            </Box>
-                          </Box>
-                        </TableCell>
-                        <TableCell>
-                          <Typography variant="body2" sx={{ color: colors.text.primary }}>
-                            {apartado.descripcion || 'Sin descripción'}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align="center">
-                          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
-                            <Typography variant="body2" sx={{ 
-                              color: cumplimiento >= 80 ? colors.status.success : 
-                                     cumplimiento >= 60 ? colors.status.warning : colors.status.error,
-                              fontWeight: '600'
-                            }}>
-                              {cumplimiento}%
-                            </Typography>
-                            <LinearProgress 
-                              variant="determinate" 
-                              value={cumplimiento}
-                              sx={{ 
-                                width: 60,
-                                height: 6,
-                                borderRadius: 3,
-                                backgroundColor: '#e0e0e0',
-                                '& .MuiLinearProgress-bar': {
-                                  backgroundColor: cumplimiento >= 80 ? colors.status.success : 
-                                                 cumplimiento >= 60 ? colors.status.warning : colors.status.error
-                                }
-                              }}
-                            />
-                          </Box>
-                        </TableCell>
-                        <TableCell align="center">
-                          <Chip 
-                            label={textoEstado}
-                            size="small"
-                            color={obtenerColorEstado(apartado)}
-                            sx={{ fontWeight: '500' }}
-                          />
-                        </TableCell>
-                        <TableCell align="center">
-                          <Typography variant="body2" sx={{ color: colors.text.primary }}>
-                            {preguntasContestadas}/{preguntas.length}
-                          </Typography>
-                          <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
-                            {apartado.puntuacionTotal || 0}/{apartado.maxPuntos || 100} pts
-                          </Typography>
-                        </TableCell>
+              
+              {/* Tabla de indicadores por apartado */}
+              <Box sx={{ mt: 3 }}>
+                <Typography variant="h6" sx={{ mb: 2, color: colors.text.primary, display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <TrendingUpIcon sx={{ color: colors.primary.main }} /> Mi Progreso por Artículo
+                </Typography>
+                <TableContainer component={Paper} variant="outlined">
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
+                        <TableCell sx={{ fontWeight: '600', color: colors.text.primary }}>Artículo</TableCell>
+                        <TableCell sx={{ fontWeight: '600', color: colors.text.primary }}>Descripción</TableCell>
+                        <TableCell sx={{ fontWeight: '600', color: colors.text.primary }} align="center">Cumplimiento</TableCell>
+                        <TableCell sx={{ fontWeight: '600', color: colors.text.primary }} align="center">Estado</TableCell>
+                        <TableCell sx={{ fontWeight: '600', color: colors.text.primary }} align="center">Declaraciones</TableCell>
                       </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Box>
-        </CardContent>
-      </Card>
+                    </TableHead>
+                    <TableBody>
+                      {Object.values(apartadosData).map((apartado) => {
+                        if (!apartado) return null;
+                        
+                        const cumplimiento = calcularCumplimientoApartado(apartado);
+                        const checks = apartado.checks || [];
+                        const checksMarcados = checks.filter(check => check && check.checked === true).length;
+                        const checksTotales = checks.length;
+                        const textoEstado = obtenerTextoEstado(apartado);
+                        
+                        return (
+                          <TableRow key={apartado.id || 'unknown'} sx={{ '&:hover': { backgroundColor: '#fafafa' } }}>
+                            <TableCell>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <Box sx={{ color: apartado.color || colors.primary.main }}>
+                                  {obtenerIcono(apartado.id)}
+                                </Box>
+                                <Box>
+                                  <Typography variant="body2" sx={{ fontWeight: '600', color: colors.text.primary }}>
+                                    Art. {apartado.articulo || ''}
+                                  </Typography>
+                                  <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+                                    {apartado.titulo ? apartado.titulo.split(' - ')[1] || apartado.titulo : 'Apartado'}
+                                  </Typography>
+                                </Box>
+                              </Box>
+                            </TableCell>
+                            <TableCell>
+                              <Typography variant="body2" sx={{ color: colors.text.primary }}>
+                                {apartado.descripcion || 'Sin descripción'}
+                              </Typography>
+                            </TableCell>
+                            <TableCell align="center">
+                              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+                                <Typography variant="body2" sx={{ 
+                                  color: cumplimiento >= 80 ? colors.status.success : 
+                                         cumplimiento >= 60 ? colors.status.warning : colors.status.error,
+                                  fontWeight: '600'
+                                }}>
+                                  {cumplimiento}%
+                                </Typography>
+                                <LinearProgress 
+                                  variant="determinate" 
+                                  value={cumplimiento}
+                                  sx={{ 
+                                    width: 60,
+                                    height: 6,
+                                    borderRadius: 3,
+                                    backgroundColor: '#e0e0e0',
+                                    '& .MuiLinearProgress-bar': {
+                                      backgroundColor: cumplimiento >= 80 ? colors.status.success : 
+                                                     cumplimiento >= 60 ? colors.status.warning : colors.status.error
+                                    }
+                                  }}
+                                />
+                              </Box>
+                            </TableCell>
+                            <TableCell align="center">
+                              <Chip 
+                                label={textoEstado}
+                                size="small"
+                                color={obtenerColorEstado(apartado)}
+                                sx={{ fontWeight: '500' }}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Typography variant="body2" sx={{ color: colors.text.primary }}>
+                                {checksMarcados}/{checksTotales}
+                              </Typography>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Box>
+            </CardContent>
+          </Card>
 
-      {/* Apartados principales con cuestionarios */}
-      {Object.values(apartadosData).map((apartado) => (
-        renderApartado(apartado)
-      ))}
+          {/* Apartados principales con cuestionarios */}
+          {Object.values(apartadosData).map((apartado) => (
+            renderApartado(apartado)
+          ))}
 
-      {/* Información adicional */}
-      <Alert 
-        severity="info" 
-        sx={{ mt: 4 }}
-        icon={<HelpIcon />}
-      >
-        <Typography variant="body2">
-          <strong>Instrucciones importantes:</strong> Esta declaración evalúa su cumplimiento como Agente Aduanal según los Artículos 95, 96, 97 y 98, 
-          más la declaración de conflictos de intereses. Responda con sinceridad cada responsabilidad y situación. 
-          En conflictos de intereses, es preferible marcar "No" (no se aplica). Las respuestas que requieren plan de mejora o explicación deben ser detalladas. 
-          La declaración completa será enviada para validación y registro oficial.
-        </Typography>
-      </Alert>
+          {/* Información adicional */}
+          <Alert 
+            severity="info" 
+            sx={{ mt: 4 }}
+            icon={<HelpIcon />}
+          >
+            <Typography variant="body2">
+              <strong>Instrucciones importantes:</strong> Esta declaración anual debe ser presentada conforme a los Artículos 92, 95, 96, 97 y 98 de los Estatutos. 
+              Marque cada declaración que aplique a su situación actual. La información proporcionada está sujeta a verificación por el Comité de Cumplimiento y Autorregulación. 
+              Las declaraciones falsas u omisiones podrán ser sancionadas conforme al artículo 63.
+            </Typography>
+          </Alert>
+        </>
+      )}
+
+      {/* Mensaje si no ha aceptado la declaración */}
+      {!declaracionAceptada && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+          <Card sx={{ maxWidth: 600, p: 4, textAlign: 'center' }}>
+            <VerifiedUserIcon sx={{ fontSize: 80, color: colors.primary.main, mb: 2 }} />
+            <Typography variant="h5" sx={{ color: colors.primary.dark, mb: 2 }}>
+              Declaración de Buena Fe Requerida
+            </Typography>
+            <Typography variant="body1" sx={{ color: colors.text.secondary, mb: 3 }}>
+              Para continuar con el proceso de declaraciones, debe aceptar la Declaración de Veracidad y Buena Fe.
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={() => setDeclaracionModalOpen(true)}
+              sx={{ textTransform: 'none', px: 4 }}
+              startIcon={<VerifiedUserIcon />}
+            >
+              Ver Declaración
+            </Button>
+          </Card>
+        </Box>
+      )}
     </Box>
   );
 };
