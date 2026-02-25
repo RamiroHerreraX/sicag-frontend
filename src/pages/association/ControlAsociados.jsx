@@ -145,7 +145,7 @@ const initialUsers = [
       {
         id: 1,
         name: "Curso de ética profesional y código de conducta",
-        type: "operativa",
+        type: "Formación ética y cumplimiento ",
         hoursValue: 20, // Horas que vale la certificación
         status: "active",
         documents: [
@@ -163,7 +163,7 @@ const initialUsers = [
       {
         id: 2,
         name: "Diplomado en Comercio Exterior y Legislación Aduanera",
-        type: "fiscal",
+        type: "Actualización técnica aduaner",
         hoursValue: 40, // Horas que vale la certificación
         status: "active",
         documents: [
@@ -2037,7 +2037,7 @@ const UserManagement = () => {
         PaperProps={{
           sx: {
             width: "100%",
-           maxWidth: "1100px", 
+           maxWidth: "1200px", 
             minHeight: "80vh",
             maxHeight: "90vh",
           },
