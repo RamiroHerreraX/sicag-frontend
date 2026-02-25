@@ -583,7 +583,7 @@ const AuditLog = () => {
   ];
 
   const getSeverityColor = (severity) => {
-    switch(severity) {
+    switch (severity) {
       case 'success': return colors.status.success;
       case 'info': return colors.status.info;
       case 'warning': return colors.status.warning;
@@ -593,7 +593,7 @@ const AuditLog = () => {
   };
 
   const getSeverityText = (severity) => {
-    switch(severity) {
+    switch (severity) {
       case 'success': return 'Éxito';
       case 'info': return 'Informativo';
       case 'warning': return 'Advertencia';
@@ -603,7 +603,7 @@ const AuditLog = () => {
   };
 
   const getRoleColor = (role) => {
-    switch(role) {
+    switch (role) {
       case 'admin': return colors.primary.dark;
       case 'comite': return colors.accents.purple;
       case 'agente': return colors.secondary.main;
@@ -613,7 +613,7 @@ const AuditLog = () => {
   };
 
   const getRoleText = (role) => {
-    switch(role) {
+    switch (role) {
       case 'admin': return 'Administrador';
       case 'comite': return 'Comité';
       case 'agente': return 'Agente Aduanal';
@@ -624,9 +624,9 @@ const AuditLog = () => {
 
   const getStatusChip = (status) => {
     if (!status) return null;
-    
+
     const config = statusConfig[status] || statusConfig['Aceptados'];
-    
+
     return (
       <Chip
         icon={config.icon}
@@ -649,26 +649,26 @@ const AuditLog = () => {
   };
 
   const filteredLogs = auditLogs.filter(log => {
-    const matchesSearch = 
+    const matchesSearch =
       log.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.actionName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.details.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.entityId.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesType = 
+
+    const matchesType =
       filterType === 'all' ? true : log.action.includes(filterType);
-    
-    const matchesUser = 
+
+    const matchesUser =
       filterUser === 'all' ? true : log.user.role === filterUser;
-    
+
     return matchesSearch && matchesType && matchesUser;
   });
 
-  const paginatedLogs = filteredLogs.slice(
+  const reversedLogs = [...filteredLogs].reverse();
+  const paginatedLogs = reversedLogs.slice(
     (page - 1) * rowsPerPage,
     page * rowsPerPage
   );
-
   // Estadísticas
   const stats = {
     total: auditLogs.length,
@@ -715,10 +715,10 @@ const AuditLog = () => {
 
   const handleExport = async () => {
     setExportLoading(true);
-    
+
     try {
       const dataToExport = exportScope === 'all' ? auditLogs : filteredLogs;
-      
+
       // Preparar datos para exportación
       const exportData = dataToExport.map(log => ({
         'Fecha': log.timestamp.split(' ')[0],
@@ -759,7 +759,7 @@ const AuditLog = () => {
 
   const exportToExcel = (data) => {
     const ws = XLSX.utils.json_to_sheet(data);
-    
+
     const colWidths = [
       { wch: 12 }, { wch: 10 }, { wch: 20 }, { wch: 15 }, { wch: 25 },
       { wch: 12 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 40 }, { wch: 15 }
@@ -805,25 +805,25 @@ const AuditLog = () => {
 
   const exportToPDF = (data, originalData) => {
     const doc = new jsPDF();
-    
+
     doc.setFontSize(18);
     doc.setTextColor(19, 59, 107);
     doc.text('Reporte de Auditoría', 14, 22);
-    
+
     doc.setFontSize(10);
     doc.setTextColor(100, 100, 100);
     doc.text(`Fecha de exportación: ${new Date().toLocaleString()}`, 14, 30);
-    
+
     doc.setFontSize(12);
     doc.setTextColor(13, 42, 77);
     doc.text('Resumen', 14, 40);
-    
+
     doc.setFontSize(10);
     doc.setTextColor(60, 60, 60);
     doc.text(`Total de Eventos: ${stats.total}`, 20, 48);
     doc.text(`Eventos de Hoy: ${stats.today}`, 20, 55);
     doc.text(`Informativos: ${stats.bySeverity.info} | Éxitos: ${stats.bySeverity.success} | Advertencias: ${stats.bySeverity.warning} | Errores: ${stats.bySeverity.error}`, 20, 62);
-    
+
     if (filterType !== 'all' || filterUser !== 'all') {
       doc.text('Filtros aplicados:', 20, 72);
       if (filterType !== 'all') {
@@ -846,7 +846,7 @@ const AuditLog = () => {
       body: tableData,
       startY: filterType !== 'all' || filterUser !== 'all' ? 95 : 72,
       styles: { fontSize: 7, cellPadding: 1.5 },
-      headStyles: { 
+      headStyles: {
         fillColor: [19, 59, 107],
         textColor: 255,
         fontStyle: 'bold'
@@ -875,9 +875,9 @@ const AuditLog = () => {
   };
 
   return (
-    <Box sx={{ 
-      height: '100%', 
-      display: 'flex', 
+    <Box sx={{
+      height: '100%',
+      display: 'flex',
       flexDirection: 'column',
       p: 2.5,
       backgroundColor: '#f5f7fa'
@@ -893,7 +893,7 @@ const AuditLog = () => {
               Registro completo de todas las acciones realizadas en el sistema
             </Typography>
           </Box>
-          
+
           <Stack direction="row" spacing={1}>
             <Button
               variant="outlined"
@@ -916,7 +916,7 @@ const AuditLog = () => {
               startIcon={<RefreshIcon />}
               size="small"
               onClick={handleRefresh}
-              sx={{ 
+              sx={{
                 bgcolor: colors.primary.main,
                 '&:hover': { bgcolor: colors.primary.dark }
               }}
@@ -1006,7 +1006,7 @@ const AuditLog = () => {
                 }}
               />
             </Grid>
-            
+
             <Grid item xs={12} md={3}>
               <FormControl fullWidth size="small">
                 <InputLabel sx={{ color: colors.text.secondary }}>Tipo de Acción</InputLabel>
@@ -1022,7 +1022,7 @@ const AuditLog = () => {
                 </Select>
               </FormControl>
             </Grid>
-            
+
             <Grid item xs={12} md={3}>
               <FormControl fullWidth size="small">
                 <InputLabel sx={{ color: colors.text.secondary }}>Tipo de Usuario</InputLabel>
@@ -1038,7 +1038,7 @@ const AuditLog = () => {
                 </Select>
               </FormControl>
             </Grid>
-            
+
             <Grid item xs={12} md={2}>
               <Stack direction="row" spacing={1}>
                 <Button
@@ -1070,15 +1070,15 @@ const AuditLog = () => {
 
       {/* Contenido principal */}
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <Paper elevation={1} sx={{ 
-          flex: 1, 
-          display: 'flex', 
-          flexDirection: 'column', 
+        <Paper elevation={1} sx={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
           overflow: 'hidden',
           borderRadius: '8px'
         }}>
-          <Box sx={{ 
-            p: 2, 
+          <Box sx={{
+            p: 2,
             borderBottom: `1px solid ${colors.primary.light}`,
             display: 'flex',
             justifyContent: 'space-between',
@@ -1088,14 +1088,14 @@ const AuditLog = () => {
             <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: colors.text.primary }}>
               Registro de Auditoría - {filteredLogs.length} eventos encontrados
             </Typography>
-            
+
             <Stack direction="row" spacing={1}>
-              <Chip 
+              <Chip
                 label={`${stats.today} eventos hoy`}
                 size="small"
                 sx={{ bgcolor: colors.primary.main, color: 'white', fontSize: '0.75rem' }}
               />
-              <Chip 
+              <Chip
                 label={`${paginatedLogs.length} mostrados`}
                 size="small"
                 variant="outlined"
@@ -1121,10 +1121,10 @@ const AuditLog = () => {
               </TableHead>
               <TableBody>
                 {paginatedLogs.map((log) => (
-                  <TableRow 
+                  <TableRow
                     key={log.id}
                     hover
-                    sx={{ 
+                    sx={{
                       '&:hover': { bgcolor: 'rgba(19, 59, 107, 0.04)' },
                       borderLeft: `3px solid ${getSeverityColor(log.severity)}`,
                       '& .MuiTableCell-root': {
@@ -1142,13 +1142,13 @@ const AuditLog = () => {
                         </Typography>
                       </Box>
                     </TableCell>
-                    
+
                     <TableCell>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                        <Avatar 
-                          sx={{ 
-                            width: 32, 
-                            height: 32, 
+                        <Avatar
+                          sx={{
+                            width: 32,
+                            height: 32,
                             bgcolor: getRoleColor(log.user.role),
                             fontSize: '0.85rem',
                             fontWeight: 'bold'
@@ -1160,10 +1160,10 @@ const AuditLog = () => {
                           <Typography variant="body2" sx={{ fontWeight: 'medium', color: colors.text.primary }}>
                             {log.user.name}
                           </Typography>
-                          <Chip 
+                          <Chip
                             label={getRoleText(log.user.role)}
                             size="small"
-                            sx={{ 
+                            sx={{
                               bgcolor: `${getRoleColor(log.user.role)}15`,
                               color: getRoleColor(log.user.role),
                               fontSize: '0.65rem',
@@ -1173,7 +1173,7 @@ const AuditLog = () => {
                         </Box>
                       </Box>
                     </TableCell>
-                    
+
                     <TableCell>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Box sx={{ color: getSeverityColor(log.severity) }}>
@@ -1183,10 +1183,10 @@ const AuditLog = () => {
                           <Typography variant="body2" sx={{ fontWeight: 'medium', color: colors.text.primary }}>
                             {log.actionName}
                           </Typography>
-                          <Chip 
+                          <Chip
                             label={log.severity}
                             size="small"
-                            sx={{ 
+                            sx={{
                               bgcolor: `${getSeverityColor(log.severity)}15`,
                               color: getSeverityColor(log.severity),
                               fontSize: '0.65rem',
@@ -1197,7 +1197,7 @@ const AuditLog = () => {
                         </Box>
                       </Box>
                     </TableCell>
-                    
+
                     <TableCell>
                       <Box>
                         <Typography variant="body2" sx={{ fontWeight: 'medium', color: colors.text.primary }}>
@@ -1208,17 +1208,17 @@ const AuditLog = () => {
                         </Typography>
                       </Box>
                     </TableCell>
-                    
+
                     <TableCell>
                       {getStatusChip(log.status)}
                     </TableCell>
-                    
+
                     <TableCell>
                       <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                         {log.details}
                       </Typography>
                     </TableCell>
-                    
+
                     <TableCell>
                       <Tooltip title="Ver IP">
                         <Chip
@@ -1234,13 +1234,13 @@ const AuditLog = () => {
                         />
                       </Tooltip>
                     </TableCell>
-                    
+
                     <TableCell>
                       <Tooltip title="Ver detalles">
-                        <IconButton 
+                        <IconButton
                           size="small"
                           onClick={() => handleViewDetails(log)}
-                          sx={{ 
+                          sx={{
                             color: colors.primary.main,
                             '&:hover': { bgcolor: 'rgba(19, 59, 107, 0.08)' }
                           }}
@@ -1256,11 +1256,11 @@ const AuditLog = () => {
           </TableContainer>
 
           {/* Paginación */}
-          <Box sx={{ 
-            p: 2, 
-            borderTop: `1px solid ${colors.primary.light}`, 
-            display: 'flex', 
-            justifyContent: 'space-between', 
+          <Box sx={{
+            p: 2,
+            borderTop: `1px solid ${colors.primary.light}`,
+            display: 'flex',
+            justifyContent: 'space-between',
             alignItems: 'center',
             bgcolor: 'white'
           }}>
@@ -1302,10 +1302,10 @@ const AuditLog = () => {
                       {type}:
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '60%' }}>
-                      <LinearProgress 
-                        variant="determinate" 
+                      <LinearProgress
+                        variant="determinate"
                         value={(count / stats.total) * 100}
-                        sx={{ 
+                        sx={{
                           flex: 1,
                           height: 6,
                           borderRadius: 3,
@@ -1321,7 +1321,7 @@ const AuditLog = () => {
                 ))}
               </Stack>
             </Grid>
-            
+
             <Grid item xs={12} md={6}>
               <Typography variant="subtitle2" sx={{ color: colors.text.primary, mb: 1 }}>
                 Distribución por Estado
@@ -1337,18 +1337,18 @@ const AuditLog = () => {
                       {status}:
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '60%' }}>
-                      <LinearProgress 
-                        variant="determinate" 
+                      <LinearProgress
+                        variant="determinate"
                         value={(count / stats.total) * 100}
-                        sx={{ 
+                        sx={{
                           flex: 1,
                           height: 6,
                           borderRadius: 3,
                           bgcolor: '#e0e0e0',
-                          '& .MuiLinearProgress-bar': { 
-                            bgcolor: status === 'Aceptados' ? colors.status.success : 
-                                    status === 'En Revisión' ? colors.status.warning : 
-                                    colors.primary.light 
+                          '& .MuiLinearProgress-bar': {
+                            bgcolor: status === 'Aceptados' ? colors.status.success :
+                              status === 'En Revisión' ? colors.status.warning :
+                                colors.primary.light
                           }
                         }}
                       />
@@ -1359,7 +1359,7 @@ const AuditLog = () => {
                   </Box>
                 ))}
               </Stack>
-              
+
               <Box sx={{ mt: 2 }}>
                 <Typography variant="subtitle2" sx={{ color: colors.text.primary, mb: 1 }}>
                   Distribución por Rol
@@ -1368,15 +1368,15 @@ const AuditLog = () => {
                   <Box key={role} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
                     <Typography variant="caption" sx={{ color: colors.text.secondary }}>
                       {role === 'admin' ? 'Administradores' :
-                       role === 'comite' ? 'Comité' :
-                       role === 'agente' ? 'Agentes Aduanales' :
-                       role === 'asociacion_admin' ? 'Admin. Asociación' : role}:
+                        role === 'comite' ? 'Comité' :
+                          role === 'agente' ? 'Agentes Aduanales' :
+                            role === 'asociacion_admin' ? 'Admin. Asociación' : role}:
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '60%' }}>
-                      <LinearProgress 
-                        variant="determinate" 
+                      <LinearProgress
+                        variant="determinate"
                         value={(count / stats.total) * 100}
-                        sx={{ 
+                        sx={{
                           flex: 1,
                           height: 6,
                           borderRadius: 3,
@@ -1405,8 +1405,8 @@ const AuditLog = () => {
 
       {/* Diálogo de exportación */}
       <Dialog open={exportDialogOpen} onClose={handleExportDialogClose} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ 
-          bgcolor: colors.primary.main, 
+        <DialogTitle sx={{
+          bgcolor: colors.primary.main,
           color: 'white',
           display: 'flex',
           justifyContent: 'space-between',
@@ -1420,32 +1420,32 @@ const AuditLog = () => {
             <CloseIcon />
           </IconButton>
         </DialogTitle>
-        
+
         <DialogContent sx={{ mt: 2 }}>
           <Box sx={{ mb: 3 }}>
             <FormLabel component="legend" sx={{ color: colors.text.primary, fontWeight: 'bold', mb: 1 }}>
               Formato de exportación
             </FormLabel>
             <RadioGroup value={exportFormat} onChange={(e) => setExportFormat(e.target.value)}>
-              <FormControlLabel 
-                value="excel" 
-                control={<Radio sx={{ color: colors.primary.main }} />} 
+              <FormControlLabel
+                value="excel"
+                control={<Radio sx={{ color: colors.primary.main }} />}
                 label={
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <ExcelIcon sx={{ color: colors.status.success }} />
                     <Typography>Excel (.xlsx)</Typography>
                   </Box>
-                } 
+                }
               />
-              <FormControlLabel 
-                value="pdf" 
-                control={<Radio sx={{ color: colors.primary.main }} />} 
+              <FormControlLabel
+                value="pdf"
+                control={<Radio sx={{ color: colors.primary.main }} />}
                 label={
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <PdfIcon sx={{ color: colors.status.error }} />
                     <Typography>PDF (.pdf)</Typography>
                   </Box>
-                } 
+                }
               />
             </RadioGroup>
           </Box>
@@ -1455,15 +1455,15 @@ const AuditLog = () => {
               Alcance de la exportación
             </FormLabel>
             <RadioGroup value={exportScope} onChange={(e) => setExportScope(e.target.value)}>
-              <FormControlLabel 
-                value="filtered" 
-                control={<Radio sx={{ color: colors.primary.main }} />} 
-                label={`Solo resultados filtrados (${filteredLogs.length} registros)`} 
+              <FormControlLabel
+                value="filtered"
+                control={<Radio sx={{ color: colors.primary.main }} />}
+                label={`Solo resultados filtrados (${filteredLogs.length} registros)`}
               />
-              <FormControlLabel 
-                value="all" 
-                control={<Radio sx={{ color: colors.primary.main }} />} 
-                label={`Todos los registros (${auditLogs.length} registros)`} 
+              <FormControlLabel
+                value="all"
+                control={<Radio sx={{ color: colors.primary.main }} />}
+                label={`Todos los registros (${auditLogs.length} registros)`}
               />
             </RadioGroup>
           </Box>
@@ -1474,9 +1474,9 @@ const AuditLog = () => {
             </Alert>
           )}
         </DialogContent>
-        
+
         <DialogActions sx={{ p: 2, borderTop: `1px solid ${colors.primary.light}` }}>
-          <Button 
+          <Button
             onClick={handleExportDialogClose}
             variant="outlined"
             sx={{
@@ -1487,7 +1487,7 @@ const AuditLog = () => {
           >
             Cancelar
           </Button>
-          <Button 
+          <Button
             onClick={handleExport}
             variant="contained"
             disabled={exportLoading}
@@ -1506,10 +1506,10 @@ const AuditLog = () => {
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
-        <Alert 
-          onClose={handleCloseSnackbar} 
+        <Alert
+          onClose={handleCloseSnackbar}
           severity={snackbar.severity}
-          sx={{ 
+          sx={{
             width: '100%',
             bgcolor: snackbar.severity === 'success' ? colors.status.success : colors.status.error,
             color: 'white',
