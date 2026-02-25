@@ -425,7 +425,7 @@ const Expediente = () => {
 
       setSnackbar({
         open: true,
-        message: `✅ Documento agregado correctamente`,
+        message: ` Documento agregado correctamente`,
         severity: 'success'
       });
 
@@ -473,7 +473,7 @@ const Expediente = () => {
     setTimeout(() => {
       setSnackbar({
         open: true,
-        message: `✅ Documento descargado correctamente`,
+        message: ` Documento descargado correctamente`,
         severity: 'success'
       });
     }, 1000);
@@ -563,7 +563,7 @@ const Expediente = () => {
 
     setSnackbar({
       open: true,
-      message: '✅ Documento eliminado correctamente',
+      message: ' Documento eliminado correctamente',
       severity: 'success'
     });
 
@@ -654,7 +654,7 @@ const Expediente = () => {
 
       setSnackbar({
         open: true,
-        message: `✅ Documento "${uploadDialog.nombreArchivo}" subido correctamente`,
+        message: ` Documento "${uploadDialog.nombreArchivo}" subido correctamente`,
         severity: 'success'
       });
 
@@ -715,7 +715,7 @@ const Expediente = () => {
 
     setSnackbar({
       open: true,
-      message: `✅ Documentos de ${validacionDialog.titulo} enviados para validación`,
+      message: ` Documentos de ${validacionDialog.titulo} enviados para validación`,
       severity: 'success'
     });
 
