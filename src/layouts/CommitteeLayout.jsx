@@ -107,14 +107,14 @@ const CommitteeLayout = () => {
       path: '/committee/alerts',
       description: 'Alertas y notificaciones',
       badge: 3 // Alertas no leídas
-    },/*
+    },
     { 
       text: 'AUDITORÍA', 
       icon: <HistoryIcon />, 
       path: '/committee/audit',
       description: 'Historial de revisiones',
       badge: 0
-    },*/ /*
+    }, /*
     { 
     text: 'ASIGNAR', 
     icon: <AssignmentIndIcon />, 
