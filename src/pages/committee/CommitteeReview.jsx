@@ -672,566 +672,359 @@ const CommitteeReview = () => {
         </Paper>
       </Box>
 
-      {/* Contenido Principal */}
+      {/* Contenido Principal - Tabla Expandida */}
       <Box sx={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        <Grid container spacing={2} sx={{ height: '100%' }}>
-          {/* Columna Principal - 70% */}
-          <Grid item xs={12} lg={8} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            {/* KPI Rápidas */}
-            <Grid container spacing={1.5} sx={{ mb: 2 }}>
-              {[
-                { 
-                  label: 'Urgentes', 
-                  value: stats.urgent, 
-                  color: colors.status.error, 
-                  icon: <PriorityHighIcon />,
-                  tooltip: 'Certificaciones con vencimiento en 3 días o menos'
-                },
-                { 
-                  label: 'Pendientes', 
-                  value: stats.pending, 
-                  color: colors.status.warning, 
-                  icon: <TimerIcon />,
-                  tooltip: 'Certificaciones pendientes de revisión'
-                },
-                { 
-                  label: 'Asignadas a mí', 
-                  value: stats.assignedToMe, 
-                  color: colors.primary.main, 
-                  icon: <AssignmentIcon />,
-                  tooltip: 'Certificaciones asignadas a tu usuario'
-                },
-                { 
-                  label: 'Alta Prioridad', 
-                  value: stats.highPriority, 
-                  color: colors.accents.purple, 
-                  icon: <WarningIcon />,
-                  tooltip: 'Certificaciones con prioridad ALTA'
-                },
-                { 
-                  label: 'Tiempo Prom.', 
-                  value: stats.avgReviewTime, 
-                  color: colors.accents.blue, 
-                  icon: <SpeedIcon />,
-                  tooltip: 'Tiempo promedio de revisión'
-                },
-                { 
-                  label: 'Total', 
-                  value: stats.total, 
-                  color: colors.status.success, 
-                  icon: <FolderOpenIcon />,
-                  tooltip: 'Total de certificaciones activas'
-                },
-              ].map((kpi, index) => (
-                <Grid item xs={6} sm={4} md={2} key={index}>
-                  <Tooltip title={kpi.tooltip}>
-                    <Card 
+        {/* KPI Rápidas - Fila superior */}
+        <Grid container spacing={1.5} sx={{ mb: 2 }}>
+          {[
+            { 
+              label: 'Urgentes', 
+              value: stats.urgent, 
+              color: colors.status.error, 
+              icon: <PriorityHighIcon />,
+              tooltip: 'Certificaciones con vencimiento en 3 días o menos'
+            },
+            { 
+              label: 'Pendientes', 
+              value: stats.pending, 
+              color: colors.status.warning, 
+              icon: <TimerIcon />,
+              tooltip: 'Certificaciones pendientes de revisión'
+            },
+            { 
+              label: 'Asignadas a mí', 
+              value: stats.assignedToMe, 
+              color: colors.primary.main, 
+              icon: <AssignmentIcon />,
+              tooltip: 'Certificaciones asignadas a tu usuario'
+            },
+            { 
+              label: 'Alta Prioridad', 
+              value: stats.highPriority, 
+              color: colors.accents.purple, 
+              icon: <WarningIcon />,
+              tooltip: 'Certificaciones con prioridad ALTA'
+            },
+            { 
+              label: 'Tiempo Prom.', 
+              value: stats.avgReviewTime, 
+              color: colors.accents.blue, 
+              icon: <SpeedIcon />,
+              tooltip: 'Tiempo promedio de revisión'
+            },
+            { 
+              label: 'Total', 
+              value: stats.total, 
+              color: colors.status.success, 
+              icon: <FolderOpenIcon />,
+              tooltip: 'Total de certificaciones activas'
+            },
+          ].map((kpi, index) => (
+            <Grid item xs={6} sm={4} md={2} key={index}>
+              <Tooltip title={kpi.tooltip}>
+                <Card 
+                  sx={{ 
+                    p: 1.5, 
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    border: `1px solid ${colors.primary.light}20`,
+                    '&:hover': {
+                      transform: 'translateY(-2px)',
+                      boxShadow: 3,
+                      borderColor: colors.primary.light,
+                    }
+                  }}
+                >
+                  <Box sx={{ color: kpi.color, mb: 1 }}>
+                    {kpi.icon}
+                  </Box>
+                  <Typography variant="h6" sx={{ color: kpi.color, fontWeight: 'bold', lineHeight: 1 }}>
+                    {kpi.value}
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+                    {kpi.label}
+                  </Typography>
+                </Card>
+              </Tooltip>
+            </Grid>
+          ))}
+        </Grid>
+
+        {/* Tabla de Certificaciones - OCUPA TODO EL ESPACIO DISPONIBLE */}
+        <Paper elevation={1} sx={{ 
+          flex: 1, 
+          display: 'flex', 
+          flexDirection: 'column', 
+          overflow: 'hidden',
+          border: `1px solid ${colors.primary.light}20`,
+        }}>
+          <Box sx={{ 
+            p: 2, 
+            borderBottom: `1px solid ${colors.primary.light}`,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            bgcolor: colors.background.subtle
+          }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
+              {sortedCertifications.length} certificaciones para revisión
+            </Typography>
+            
+            <Stack direction="row" spacing={1} alignItems="center">
+              {selectedRows.length > 0 && (
+                <Chip 
+                  label={`${selectedRows.length} seleccionadas`}
+                  size="small"
+                  sx={{
+                    bgcolor: colors.primary.main,
+                    color: 'white',
+                    height: 20,
+                    fontSize: '0.7rem'
+                  }}
+                  onDelete={() => setSelectedRows([])}
+                />
+              )}
+              <IconButton size="small" sx={{ color: colors.text.secondary }}>
+                <MoreVertIcon />
+              </IconButton>
+            </Stack>
+          </Box>
+
+          {/* Tabla - Scroll Interno */}
+          <Box sx={{ flex: 1, overflowY: 'auto' }}>
+            <TableContainer>
+              <Table size="small" stickyHeader>
+                <TableHead>
+                  <TableRow>
+                    <TableCell padding="checkbox" sx={{ width: 40 }}>
+                      <Tooltip title="Seleccionar todo">
+                        <input
+                          type="checkbox"
+                          checked={selectedRows.length === sortedCertifications.length && sortedCertifications.length > 0}
+                          onChange={handleSelectAll}
+                          style={{ cursor: 'pointer' }}
+                        />
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', width: '25%', color: colors.primary.dark }}>Certificación</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', width: '20%', color: colors.primary.dark }}>Solicitante</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', width: '10%', color: colors.primary.dark }}>Estado</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', width: '15%', color: colors.primary.dark }}>Tiempo</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', width: '10%', color: colors.primary.dark }}>Documentos</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', width: '20%', color: colors.primary.dark }} align="right">Acciones</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {sortedCertifications.map((cert) => (
+                    <TableRow 
+                      key={cert.id} 
+                      hover
+                      selected={selectedRows.includes(cert.id)}
+                      onClick={() => handleRowSelect(cert.id)}
                       sx={{ 
-                        p: 1.5, 
-                        textAlign: 'center',
                         cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        border: `1px solid ${colors.primary.light}20`,
-                        '&:hover': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: 3,
-                          borderColor: colors.primary.light,
-                        }
+                        '&:hover': { bgcolor: 'rgba(58, 110, 165, 0.04)' },
+                        borderLeft: `4px solid ${cert.color}`,
+                        bgcolor: selectedRows.includes(cert.id) ? 'rgba(58, 110, 165, 0.08)' : 'transparent'
                       }}
                     >
-                      <Box sx={{ color: kpi.color, mb: 1 }}>
-                        {kpi.icon}
-                      </Box>
-                      <Typography variant="h6" sx={{ color: kpi.color, fontWeight: 'bold', lineHeight: 1 }}>
-                        {kpi.value}
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                        {kpi.label}
-                      </Typography>
-                    </Card>
-                  </Tooltip>
-                </Grid>
-              ))}
-            </Grid>
-
-            {/* Tabla de Certificaciones */}
-            <Paper elevation={1} sx={{ 
-              flex: 1, 
-              display: 'flex', 
-              flexDirection: 'column', 
-              overflow: 'hidden',
-              border: `1px solid ${colors.primary.light}20`,
-            }}>
-              <Box sx={{ 
-                p: 2, 
-                borderBottom: `1px solid ${colors.primary.light}`,
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                bgcolor: colors.background.subtle
-              }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
-                  {sortedCertifications.length} certificaciones para revisión
-                </Typography>
-                
-                <Stack direction="row" spacing={1} alignItems="center">
-                  {selectedRows.length > 0 && (
-                    <Chip 
-                      label={`${selectedRows.length} seleccionadas`}
-                      size="small"
-                      sx={{
-                        bgcolor: colors.primary.main,
-                        color: 'white',
-                        height: 20,
-                        fontSize: '0.7rem'
-                      }}
-                      onDelete={() => setSelectedRows([])}
-                    />
-                  )}
-                  <IconButton size="small" sx={{ color: colors.text.secondary }}>
-                    <MoreVertIcon />
-                  </IconButton>
-                </Stack>
-              </Box>
-
-              {/* Tabla - Scroll Interno */}
-              <Box sx={{ flex: 1, overflowY: 'auto' }}>
-                <TableContainer>
-                  <Table size="small" stickyHeader>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell padding="checkbox" sx={{ width: 40 }}>
-                          <Tooltip title="Seleccionar todo">
-                            <input
-                              type="checkbox"
-                              checked={selectedRows.length === sortedCertifications.length && sortedCertifications.length > 0}
-                              onChange={handleSelectAll}
-                              style={{ cursor: 'pointer' }}
-                            />
-                          </Tooltip>
-                        </TableCell>
-                        <TableCell sx={{ fontWeight: 'bold', width: '25%', color: colors.primary.dark }}>Certificación</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold', width: '20%', color: colors.primary.dark }}>Solicitante</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold', width: '10%', color: colors.primary.dark }}>Estado</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold', width: '15%', color: colors.primary.dark }}>Tiempo</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold', width: '10%', color: colors.primary.dark }}>Documentos</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold', width: '20%', color: colors.primary.dark }} align="right">Acciones</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {sortedCertifications.map((cert) => (
-                        <TableRow 
-                          key={cert.id} 
-                          hover
-                          selected={selectedRows.includes(cert.id)}
-                          onClick={() => handleRowSelect(cert.id)}
-                          sx={{ 
-                            cursor: 'pointer',
-                            '&:hover': { bgcolor: 'rgba(58, 110, 165, 0.04)' },
-                            borderLeft: `4px solid ${cert.color}`,
-                            bgcolor: selectedRows.includes(cert.id) ? 'rgba(58, 110, 165, 0.08)' : 'transparent'
-                          }}
-                        >
-                          <TableCell padding="checkbox">
-                            <input
-                              type="checkbox"
-                              checked={selectedRows.includes(cert.id)}
-                              onChange={() => handleRowSelect(cert.id)}
-                              onClick={(e) => e.stopPropagation()}
-                              style={{ cursor: 'pointer' }}
-                            />
-                          </TableCell>
-                          
-                          <TableCell>
-                            <Box>
-                              <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
-                                {cert.type}
-                              </Typography>
-                              <Stack direction="row" spacing={0.5} alignItems="center" sx={{ mt: 0.5 }}>
-                                <Typography variant="caption" sx={{ color: colors.text.secondary, fontFamily: 'monospace' }}>
-                                  {cert.code}
-                                </Typography>
-                                <Chip 
-                                  label={cert.category}
-                                  size="small"
-                                  variant="outlined"
-                                  sx={{ 
-                                    height: 18, 
-                                    ml: 1,
-                                    color: colors.text.secondary,
-                                    borderColor: colors.primary.light,
-                                  }}
-                                />
-                              </Stack>
-                            </Box>
-                          </TableCell>
-                          
-                          <TableCell>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                              <Avatar 
-                                sx={{ 
-                                  width: 28, 
-                                  height: 28, 
-                                  fontSize: '0.75rem',
-                                  bgcolor: colors.primary.main
-                                }}
-                              >
-                                {cert.applicant.avatar}
-                              </Avatar>
-                              <Box>
-                                <Typography variant="body2" sx={{ fontWeight: 'medium', color: colors.primary.dark }}>
-                                  {cert.applicant.name}
-                                </Typography>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                  <LinearProgress 
-                                    variant="determinate" 
-                                    value={cert.applicant.complianceScore}
-                                    sx={{ 
-                                      width: 40, 
-                                      height: 4,
-                                      borderRadius: 2,
-                                      bgcolor: colors.primary.light,
-                                      '& .MuiLinearProgress-bar': {
-                                        bgcolor: getComplianceColor(cert.applicant.complianceScore)
-                                      }
-                                    }}
-                                  />
-                                  <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                                    {cert.applicant.complianceScore}%
-                                  </Typography>
-                                </Box>
-                              </Box>
-                            </Box>
-                          </TableCell>
-                          
-                          <TableCell>
-                            <Stack spacing={0.5}>
-                              <Chip 
-                                label={cert.status}
-                                size="small"
-                                sx={{
-                                  height: 20,
-                                  bgcolor: cert.status === 'PENDIENTE' ? colors.status.warning :
-                                          cert.status === 'EN REVISIÓN' ? colors.accents.blue :
-                                          cert.status === 'REQUIERE INFO' ? colors.status.error :
-                                          colors.primary.main,
-                                  color: cert.status === 'PENDIENTE' ? colors.primary.dark : 'white',
-                                  fontWeight: 'bold',
-                                }}
-                              />
-                              <Chip 
-                                label={cert.priority}
-                                size="small"
-                                variant="outlined"
-                                sx={{
-                                  height: 18,
-                                  color: cert.priority === 'ALTA' ? colors.status.error :
-                                         cert.priority === 'MEDIA' ? colors.status.warning :
-                                         colors.status.success,
-                                  borderColor: cert.priority === 'ALTA' ? colors.status.error :
-                                              cert.priority === 'MEDIA' ? colors.status.warning :
-                                              colors.status.success,
-                                }}
-                              />
-                            </Stack>
-                          </TableCell>
-                          
-                          <TableCell>
-                            <Box>
-                              <Typography variant="body2" sx={{ 
-                                fontWeight: 'bold',
-                                color: getDaysColor(cert.daysPending)
-                              }}>
-                                {cert.daysPending} días
-                              </Typography>
-                              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                                Vence: {cert.dueDate}
-                              </Typography>
-                              <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
-                                Est: {cert.reviewEstimate}
-                              </Typography>
-                            </Box>
-                          </TableCell>
-                          
-                          <TableCell>
-                            <Tooltip title={`${cert.documents.completed}/${cert.documents.total} documentos`}>
-                              <Box>
-                                <LinearProgress 
-                                  variant="determinate" 
-                                  value={(cert.documents.completed / cert.documents.total) * 100}
-                                  sx={{ 
-                                    height: 6,
-                                    borderRadius: 3,
-                                    mb: 0.5,
-                                    bgcolor: colors.primary.light,
-                                    '& .MuiLinearProgress-bar': {
-                                      bgcolor: colors.primary.main,
-                                    }
-                                  }}
-                                />
-                                <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                                  {cert.documents.completed}/{cert.documents.total}
-                                </Typography>
-                              </Box>
-                            </Tooltip>
-                          </TableCell>
-                          
-                          <TableCell align="right">
-                            <Stack direction="row" spacing={0.5} justifyContent="flex-end">
-                              <Tooltip title="Ver detalles">
-                                <IconButton 
-                                  size="small"
-                                  component={Link}
-                                  to={`/committee/review/${cert.id}`}
-                                  onClick={(e) => e.stopPropagation()}
-                                  sx={{ color: colors.text.secondary }}
-                                >
-                                  <VisibilityIcon fontSize="small" />
-                                </IconButton>
-                              </Tooltip>
-                              <Tooltip title="Revisar certificación">
-                                <Button
-                                  component={Link}
-                                  to={`/committee/review/${cert.id}`}
-                                  variant="contained"
-                                  size="small"
-                                  startIcon={<GavelIcon />}
-                                  onClick={(e) => e.stopPropagation()}
-                                  sx={{ 
-                                    bgcolor: colors.primary.main,
-                                    '&:hover': { bgcolor: colors.primary.dark },
-                                    minWidth: 'auto',
-                                    px: 1.5
-                                  }}
-                                >
-                                  Revisar
-                                </Button>
-                              </Tooltip>
-                            </Stack>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-
-                {sortedCertifications.length === 0 && (
-                  <Box sx={{ p: 8, textAlign: 'center' }}>
-                    <FolderOpenIcon sx={{ fontSize: 60, color: colors.primary.light, mb: 2 }} />
-                    <Typography variant="h6" sx={{ color: colors.text.secondary, mb: 1 }}>
-                      No hay certificaciones que coincidan
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: colors.primary.light }}>
-                      Intenta ajustar los filtros de búsqueda
-                    </Typography>
-                  </Box>
-                )}
-              </Box>
-            </Paper>
-          </Grid>
-
-          {/* Columna Derecha - 30% */}
-          <Grid item xs={12} lg={4} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            {/* Guía Rápida de Revisión */}
-            <Paper elevation={1} sx={{ 
-              p: 2.5, 
-              mb: 2, 
-              flex: 1,
-              border: `1px solid ${colors.primary.light}20`,
-            }}>
-              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: colors.primary.dark, display: 'flex', alignItems: 'center', gap: 1 }}>
-                <InsightsIcon sx={{ color: colors.primary.main }} /> Guía de Revisión
-              </Typography>
-              
-              <Stack spacing={2}>
-                <Card variant="outlined" sx={{ 
-                  p: 1.5,
-                  borderColor: colors.primary.light,
-                }}>
-                  <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold', color: colors.primary.dark }}>
-                    📋 Procedimiento Estándar
-                  </Typography>
-                  <Stack spacing={0.5}>
-                    {[
-                      '1. Verificar completitud documental',
-                      '2. Validar autenticidad y vigencia',
-                      '3. Revisar cumplimiento normativo',
-                      '4. Evaluar fundamentación técnica',
-                      '5. Emitir dictamen individual'
-                    ].map((step, idx) => (
-                      <Typography key={idx} variant="caption" sx={{ color: colors.text.secondary }}>
-                        {step}
-                      </Typography>
-                    ))}
-                  </Stack>
-                </Card>
-                
-                <Card variant="outlined" sx={{ 
-                  p: 1.5,
-                  borderColor: colors.primary.light,
-                }}>
-                  <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold', color: colors.primary.dark }}>
-                    🚨 Criterios de Prioridad
-                  </Typography>
-                  <Stack spacing={1}>
-                    {[
-                      { label: 'ALTA', color: colors.status.error, criteria: 'Vencimiento ≤ 3 días / Crítico' },
-                      { label: 'MEDIA', color: colors.status.warning, criteria: 'Requiere validación adicional' },
-                      { label: 'BAJA', color: colors.status.success, criteria: 'Sin observaciones / Lejano' }
-                    ].map((item, idx) => (
-                      <Box key={idx} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <Chip 
-                          label={item.label}
-                          size="small"
-                          sx={{ 
-                            bgcolor: item.color, 
-                            color: 'white',
-                            fontWeight: 'bold',
-                            height: 20
-                          }}
+                      <TableCell padding="checkbox">
+                        <input
+                          type="checkbox"
+                          checked={selectedRows.includes(cert.id)}
+                          onChange={() => handleRowSelect(cert.id)}
+                          onClick={(e) => e.stopPropagation()}
+                          style={{ cursor: 'pointer' }}
                         />
-                        <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                          {item.criteria}
-                        </Typography>
-                      </Box>
-                    ))}
-                  </Stack>
-                </Card>
-                
-                <Card variant="outlined" sx={{ 
-                  p: 1.5,
-                  borderColor: colors.primary.light,
-                }}>
-                  <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold', color: colors.primary.dark }}>
-                    ⚖️ Consideraciones Clave
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mb: 0.5 }}>
-                    • Revisar cada certificación INDIVIDUALMENTE
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mb: 0.5 }}>
-                    • Fundamentación técnica obligatoria
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mb: 0.5 }}>
-                    • No aprobar expedientes completos
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
-                    • Registrar observaciones específicas
-                  </Typography>
-                </Card>
-              </Stack>
-            </Paper>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <Box>
+                          <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
+                            {cert.type}
+                          </Typography>
+                          <Stack direction="row" spacing={0.5} alignItems="center" sx={{ mt: 0.5 }}>
+                            <Typography variant="caption" sx={{ color: colors.text.secondary, fontFamily: 'monospace' }}>
+                              {cert.code}
+                            </Typography>
+                            <Chip 
+                              label={cert.category}
+                              size="small"
+                              variant="outlined"
+                              sx={{ 
+                                height: 18, 
+                                ml: 1,
+                                color: colors.text.secondary,
+                                borderColor: colors.primary.light,
+                              }}
+                            />
+                          </Stack>
+                        </Box>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Avatar 
+                            sx={{ 
+                              width: 28, 
+                              height: 28, 
+                              fontSize: '0.75rem',
+                              bgcolor: colors.primary.main
+                            }}
+                          >
+                            {cert.applicant.avatar}
+                          </Avatar>
+                          <Box>
+                            <Typography variant="body2" sx={{ fontWeight: 'medium', color: colors.primary.dark }}>
+                              {cert.applicant.name}
+                            </Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                              <LinearProgress 
+                                variant="determinate" 
+                                value={cert.applicant.complianceScore}
+                                sx={{ 
+                                  width: 40, 
+                                  height: 4,
+                                  borderRadius: 2,
+                                  bgcolor: colors.primary.light,
+                                  '& .MuiLinearProgress-bar': {
+                                    bgcolor: getComplianceColor(cert.applicant.complianceScore)
+                                  }
+                                }}
+                              />
+                              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+                                {cert.applicant.complianceScore}%
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </Box>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <Stack spacing={0.5}>
+                          <Chip 
+                            label={cert.status}
+                            size="small"
+                            sx={{
+                              height: 20,
+                              bgcolor: cert.status === 'PENDIENTE' ? colors.status.warning :
+                                      cert.status === 'EN REVISIÓN' ? colors.accents.blue :
+                                      cert.status === 'REQUIERE INFO' ? colors.status.error :
+                                      colors.primary.main,
+                              color: cert.status === 'PENDIENTE' ? colors.primary.dark : 'white',
+                              fontWeight: 'bold',
+                            }}
+                          />
+                          <Chip 
+                            label={cert.priority}
+                            size="small"
+                            variant="outlined"
+                            sx={{
+                              height: 18,
+                              color: cert.priority === 'ALTA' ? colors.status.error :
+                                     cert.priority === 'MEDIA' ? colors.status.warning :
+                                     colors.status.success,
+                              borderColor: cert.priority === 'ALTA' ? colors.status.error :
+                                          cert.priority === 'MEDIA' ? colors.status.warning :
+                                          colors.status.success,
+                            }}
+                          />
+                        </Stack>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <Box>
+                          <Typography variant="body2" sx={{ 
+                            fontWeight: 'bold',
+                            color: getDaysColor(cert.daysPending)
+                          }}>
+                            {cert.daysPending} días
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+                            Vence: {cert.dueDate}
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
+                            Est: {cert.reviewEstimate}
+                          </Typography>
+                        </Box>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <Tooltip title={`${cert.documents.completed}/${cert.documents.total} documentos`}>
+                          <Box>
+                            <LinearProgress 
+                              variant="determinate" 
+                              value={(cert.documents.completed / cert.documents.total) * 100}
+                              sx={{ 
+                                height: 6,
+                                borderRadius: 3,
+                                mb: 0.5,
+                                bgcolor: colors.primary.light,
+                                '& .MuiLinearProgress-bar': {
+                                  bgcolor: colors.primary.main,
+                                }
+                              }}
+                            />
+                            <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+                              {cert.documents.completed}/{cert.documents.total}
+                            </Typography>
+                          </Box>
+                        </Tooltip>
+                      </TableCell>
+                      
+                      <TableCell align="right">
+                        <Stack direction="row" spacing={0.5} justifyContent="flex-end">
+                          <Tooltip title="Ver detalles">
+                            <IconButton 
+                              size="small"
+                              component={Link}
+                              to={`/committee/review/${cert.id}`}
+                              onClick={(e) => e.stopPropagation()}
+                              sx={{ color: colors.text.secondary }}
+                            >
+                              <VisibilityIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Revisar certificación">
+                            <Button
+                              component={Link}
+                              to={`/committee/review/${cert.id}`}
+                              variant="contained"
+                              size="small"
+                              startIcon={<GavelIcon />}
+                              onClick={(e) => e.stopPropagation()}
+                              sx={{ 
+                                bgcolor: colors.primary.main,
+                                '&:hover': { bgcolor: colors.primary.dark },
+                                minWidth: 'auto',
+                                px: 1.5
+                              }}
+                            >
+                              Revisar
+                            </Button>
+                          </Tooltip>
+                        </Stack>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
 
-            {/* Acciones Rápidas y Estadísticas */}
-            <Paper elevation={1} sx={{ 
-              p: 2.5, 
-              flex: 1,
-              border: `1px solid ${colors.primary.light}20`,
-            }}>
-              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: colors.primary.dark, display: 'flex', alignItems: 'center', gap: 1 }}>
-                <AutoAwesomeIcon sx={{ color: colors.accents.purple }} /> Acciones Directas
-              </Typography>
-              
-              <Stack spacing={1.5}>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  startIcon={<GavelIcon />}
-                  component={Link}
-                  to="/committee/review/new"
-                  sx={{ 
-                    justifyContent: 'flex-start', 
-                    bgcolor: colors.primary.main,
-                    '&:hover': { bgcolor: colors.primary.dark }
-                  }}
-                >
-                  Iniciar nueva revisión
-                </Button>
-                
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  startIcon={<CalendarMonthIcon />}
-                  sx={{ 
-                    justifyContent: 'flex-start',
-                    borderColor: colors.primary.light,
-                    color: colors.primary.main,
-                    '&:hover': {
-                      borderColor: colors.primary.main,
-                      bgcolor: 'rgba(19, 59, 107, 0.04)',
-                    }
-                  }}
-                >
-                  Programar revisiones
-                </Button>
-                
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  startIcon={<DownloadIcon />}
-                  sx={{ 
-                    justifyContent: 'flex-start',
-                    borderColor: colors.primary.light,
-                    color: colors.primary.main,
-                    '&:hover': {
-                      borderColor: colors.primary.main,
-                      bgcolor: 'rgba(19, 59, 107, 0.04)',
-                    }
-                  }}
-                >
-                  Descargar checklist
-                </Button>
-                
-                <Divider sx={{ my: 1, borderColor: colors.primary.light }} />
-                
-                <Box>
-                  <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mb: 1 }}>
-                    Tu productividad hoy:
-                  </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                    <Box sx={{ position: 'relative', display: 'inline-flex' }}>
-                      <CircularProgress 
-                        variant="determinate" 
-                        value={75}
-                        size={60}
-                        thickness={4}
-                        sx={{
-                          color: colors.primary.main,
-                          '& .MuiCircularProgress-circle': {
-                            strokeLinecap: 'round',
-                          }
-                        }}
-                      />
-                      <Box
-                        sx={{
-                          top: 0,
-                          left: 0,
-                          bottom: 0,
-                          right: 0,
-                          position: 'absolute',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}
-                      >
-                        <Typography variant="caption" component="div" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
-                          3/4
-                        </Typography>
-                      </Box>
-                    </Box>
-                    <Box>
-                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
-                        Revisiones completadas
-                      </Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
-                        75% de tu meta diaria
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Box>
-              </Stack>
-            </Paper>
-          </Grid>
-        </Grid>
+            {sortedCertifications.length === 0 && (
+              <Box sx={{ p: 8, textAlign: 'center' }}>
+                <FolderOpenIcon sx={{ fontSize: 60, color: colors.primary.light, mb: 2 }} />
+                <Typography variant="h6" sx={{ color: colors.text.secondary, mb: 1 }}>
+                  No hay certificaciones que coincidan
+                </Typography>
+                <Typography variant="body2" sx={{ color: colors.primary.light }}>
+                  Intenta ajustar los filtros de búsqueda
+                </Typography>
+              </Box>
+            )}
+          </Box>
+        </Paper>
       </Box>
 
       {/* Diálogo de Acciones Masivas */}

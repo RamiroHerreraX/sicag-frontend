@@ -76,6 +76,7 @@ import CommitteeAssignments from './pages/committee/CommitteeAssignments';
 import CollegiateVoting from './pages/committee/CollegiateVoting';
 import CommitteeRepository from './pages/committee/CommitteeRepository';
 import CommitteeMinutes from './pages/committee/CommitteeMinutes';
+import AuditCommittee from './pages/committee/AuditCommittee';
 /*import CommitteeAssignments from './pages/committee/CommitteeAssignments';
 import CommitteeMetrics from './pages/committee/CommitteeMetrics';*/
 
@@ -179,7 +180,9 @@ function App() {
   <Route path="repository" element={<CommitteeRepository />} />
   <Route path="minutes" element={<CommitteeMinutes />} />
   <Route path="profile" element={<CommitteeProfile />} />
+  <Route path="audit" element={<AuditCommittee />} />
 </Route>
+
 
             {/* Rutas para ASOCIACIÓN */}
             <Route
