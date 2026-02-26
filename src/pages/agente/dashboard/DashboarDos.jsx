@@ -59,7 +59,7 @@ const UserDashboard = () => {
     { title: 'Certificaciones Vigentes', value: '2', color: colors.status.success, icon: <CheckCircleIcon /> },
     { title: 'Certificaciones por Vencer', value: '0', color: colors.status.warning, icon: <WarningIcon /> },
     { title: 'Certificaciones Rechazadas', value: '0', color: colors.status.error, icon: <ErrorIcon /> },
-    { title: 'Nivel de Cumplimiento', value: '10%', color: colors.primary.main, icon: <TrendingUpIcon /> },
+    { title: 'Nivel de Cumplimiento', value: '33%', color: colors.primary.main, icon: <TrendingUpIcon /> },
   ];
 
   const alerts = [];
