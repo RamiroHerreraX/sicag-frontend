@@ -115,7 +115,7 @@ const AdminLayout = () => {
   // MENÚ PRINCIPAL - INCLUYE PERFIL
   const menuItems = [
     { 
-      text: 'DASHBOARD', 
+      text: 'Panel de control', 
       icon: <DashboardIcon />, 
       path: '/admin/dashboard',
       description: 'Panel de control general',

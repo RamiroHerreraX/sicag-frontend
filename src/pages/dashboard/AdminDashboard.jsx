@@ -170,7 +170,7 @@ const AdminDashboard = () => {
       }}>
         <Box>
           <Typography variant="h5" sx={{ color: colors.primary.dark, fontWeight: 'bold', mb: 0.5 }}>
-            Panel Administrativo
+            Panel de control
           </Typography>
           <Typography variant="caption" sx={{ color: colors.text.secondary }}>
             Resumen del sistema SICAG - Estado actual y control
@@ -334,7 +334,7 @@ const AdminDashboard = () => {
             }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                 <Typography variant="h6" sx={{ color: colors.primary.dark, fontWeight: 'bold', fontSize: '1rem' }}>
-                  Dashboard del Comité
+                  Panel del Comité
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 0.5 }}>
                   <Chip 
