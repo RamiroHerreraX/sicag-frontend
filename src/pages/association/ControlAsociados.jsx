@@ -1936,10 +1936,7 @@ const UserManagement = () => {
                               }
                               disabled={certificationUploading}
                             >
-                              <DeleteIcon
-                                fontSize="small"
-                                sx={{ color: institutionalColors.error }}
-                              />
+                              
                             </IconButton>
                           }
                         >
@@ -2601,7 +2598,7 @@ const UserManagement = () => {
                                                 : 0.5,
                                           }}
                                         >
-                                          <DeleteIcon fontSize="small" />
+                                          
                                         </IconButton>
                                       </span>
                                     </Tooltip>
@@ -2719,7 +2716,7 @@ const UserManagement = () => {
                                 onClick={() => handleDeleteDocument(doc.id)}
                                 sx={{ color: institutionalColors.error }}
                               >
-                                <DeleteIcon />
+                                
                               </IconButton>
                             </Tooltip>
                           )}
@@ -2899,10 +2896,7 @@ const UserManagement = () => {
                           onClick={() => handleRemoveFile(index)}
                           disabled={uploading}
                         >
-                          <DeleteIcon
-                            fontSize="small"
-                            sx={{ color: institutionalColors.error }}
-                          />
+                          
                         </IconButton>
                       }
                     >

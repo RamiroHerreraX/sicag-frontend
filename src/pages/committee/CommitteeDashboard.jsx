@@ -32,7 +32,8 @@ import {
   Tab,
   CircularProgress,
   Switch,
-  FormControlLabel
+  FormControlLabel,
+  alpha
 } from '@mui/material';
 import {
   Search as SearchIcon,
@@ -62,7 +63,9 @@ import {
   BarChart as BarChartIcon,
   FolderOpen as FolderOpenIcon,
   RocketLaunch as RocketLaunchIcon,
-  ArrowForward as ArrowForwardIcon
+  ArrowForward as ArrowForwardIcon,
+  Close as CloseIcon,
+  KeyboardArrowDown as KeyboardArrowDownIcon
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
@@ -110,9 +113,10 @@ const CommitteeDashboard = () => {
   const [filterRegion, setFilterRegion] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterPriority, setFilterPriority] = useState('all');
-  const [activeView, setActiveView] = useState('grid');
   const [sortBy, setSortBy] = useState('priority');
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [showFilters, setShowFilters] = useState(true);
+  const [showStats, setShowStats] = useState(true);
+  const [selectedRows, setSelectedRows] = useState([]);
   const [autoRefresh, setAutoRefresh] = useState(false);
 
   // Datos mock mejorados
@@ -120,6 +124,7 @@ const CommitteeDashboard = () => {
     { 
       id: 1, 
       type: 'PATENTE ADUANAL', 
+      code: 'PA-2026-00145',
       applicant: { name: 'Luis Rodríguez', type: 'agente', avatar: 'LR', complianceScore: 85 }, 
       region: 'Norte', 
       uploadDate: '15/01/2026',
@@ -137,6 +142,7 @@ const CommitteeDashboard = () => {
     { 
       id: 2, 
       type: 'OPINIÓN SAT POSITIVA', 
+      code: 'OS-2025-03421',
       applicant: { name: 'Ana López', type: 'profesionista', avatar: 'AL', complianceScore: 92 }, 
       region: 'Centro', 
       uploadDate: '14/01/2026',
@@ -154,6 +160,7 @@ const CommitteeDashboard = () => {
     { 
       id: 3, 
       type: 'CÉDULA PROFESIONAL', 
+      code: 'CP-2024-56789',
       applicant: { name: 'Carlos Martínez', type: 'empresario', avatar: 'CM', complianceScore: 78 }, 
       region: 'Sur', 
       uploadDate: '13/01/2026',
@@ -171,6 +178,7 @@ const CommitteeDashboard = () => {
     { 
       id: 4, 
       type: 'PODER NOTARIAL', 
+      code: 'PN-2025-12345',
       applicant: { name: 'María González', type: 'agente', avatar: 'MG', complianceScore: 65 }, 
       region: 'Metropolitana', 
       uploadDate: '12/01/2026',
@@ -188,6 +196,7 @@ const CommitteeDashboard = () => {
     { 
       id: 5, 
       type: 'CONSTANCIA FISCAL', 
+      code: 'CF-2025-78901',
       applicant: { name: 'Pedro Sánchez', type: 'profesionista', avatar: 'PS', complianceScore: 88 }, 
       region: 'Norte', 
       uploadDate: '11/01/2026',
@@ -230,6 +239,52 @@ const CommitteeDashboard = () => {
   };
 
   const stats = calculateStats();
+
+  // KPI Items
+  const kpiItems = [
+    { 
+      label: 'Urgentes', 
+      value: stats.urgent, 
+      color: colors.status.error, 
+      icon: <PriorityHighIcon fontSize="small" />,
+      tooltip: 'Vencen en 3 días o menos'
+    },
+    { 
+      label: 'Pendientes', 
+      value: stats.pending, 
+      color: colors.status.warning, 
+      icon: <TimerIcon fontSize="small" />,
+      tooltip: 'Pendientes de revisión'
+    },
+    { 
+      label: 'Asignadas', 
+      value: stats.assignedToMe, 
+      color: colors.primary.main, 
+      icon: <AssignmentIcon fontSize="small" />,
+      tooltip: 'Asignadas a mí'
+    },
+    { 
+      label: 'En Revisión', 
+      value: stats.inReview, 
+      color: colors.accents.blue, 
+      icon: <AssessmentIcon fontSize="small" />,
+      tooltip: 'En proceso de revisión'
+    },
+    { 
+      label: 'Tiempo Prom.', 
+      value: `${stats.avgReviewTime}d`, 
+      color: colors.status.success, 
+      icon: <SpeedIcon fontSize="small" />,
+      tooltip: 'Tiempo promedio'
+    },
+    { 
+      label: 'Total', 
+      value: stats.total, 
+      color: colors.accents.purple, 
+      icon: <FolderOpenIcon fontSize="small" />,
+      tooltip: 'Total activas'
+    },
+  ];
 
   const types = ['PATENTE ADUANAL', 'OPINIÓN SAT', 'CÉDULA PROFESIONAL', 'PODER NOTARIAL', 'CONSTANCIA FISCAL'];
   const regions = ['Norte', 'Centro', 'Sur', 'Metropolitana', 'Occidente'];
@@ -276,7 +331,8 @@ const CommitteeDashboard = () => {
     const matchesSearch = 
       cert.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
       cert.applicant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      cert.category.toLowerCase().includes(searchTerm.toLowerCase());
+      cert.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      cert.code.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesType = filterType === 'all' || cert.type === filterType;
     const matchesRegion = filterRegion === 'all' || cert.region === filterRegion;
@@ -302,296 +358,303 @@ const CommitteeDashboard = () => {
     }
   });
 
+  const handleRowSelect = (id) => {
+    setSelectedRows(prev => 
+      prev.includes(id) 
+        ? prev.filter(rowId => rowId !== id)
+        : [...prev, id]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selectedRows.length === sortedCertifications.length) {
+      setSelectedRows([]);
+    } else {
+      setSelectedRows(sortedCertifications.map(cert => cert.id));
+    }
+  };
+
   return (
     <Box sx={{ 
-      height: 'calc(100vh - 64px)',
-      overflow: 'hidden',
-      display: 'flex',
-      flexDirection: 'column',
+      height: '100vh',
+      bgcolor: colors.background.subtle,
       p: 2,
-      bgcolor: colors.background.subtle
+      display: 'flex',
+      flexDirection: 'column'
     }}>
-      {/* Header Compacto */}
-      <Box sx={{ mb: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-          <Box>
-            <Typography variant="h5" sx={{ 
-              color: colors.primary.dark, 
-              fontWeight: 'bold', 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: 1 
-            }}>
-              <InsightsIcon sx={{ color: colors.primary.main }} />
-              Panel de Control del Comité
-            </Typography>
-            <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-              Gestión y validación de certificaciones individuales
-            </Typography>
-          </Box>
-          
-          <Stack direction="row" spacing={1} alignItems="center">
-            
-            
-            <Button
-              variant="contained"
-              size="small"
-              startIcon={<RocketLaunchIcon />}
-              component={Link}
-              to="/committee/review"
-              sx={{ 
-                bgcolor: colors.primary.main,
-                '&:hover': { 
-                  bgcolor: colors.primary.dark,
-                }
-              }}
-            >
-              Revisión Rápida
-            </Button>
-          </Stack>
+      {/* Header minimalista */}
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box>
+          <Typography variant="h6" sx={{ color: colors.primary.dark, fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
+            <InsightsIcon sx={{ color: colors.primary.main, fontSize: 20 }} />
+            Panel de Control del Comité
+          </Typography>
+          <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+            Gestión y validación de certificaciones · {sortedCertifications.length} registros activos
+          </Typography>
         </Box>
+        
+        <Stack direction="row" spacing={1}>
+          <Tooltip title="Auto-refrescar">
+            <IconButton 
+              size="small" 
+              onClick={() => setAutoRefresh(!autoRefresh)}
+              sx={{ color: autoRefresh ? colors.primary.main : colors.text.secondary }}
+            >
+              <RefreshIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title={showStats ? "Ocultar estadísticas" : "Mostrar estadísticas"}>
+            <IconButton 
+              size="small" 
+              onClick={() => setShowStats(!showStats)}
+              sx={{ color: showStats ? colors.primary.main : colors.text.secondary }}
+            >
+              <BarChartIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title={showFilters ? "Ocultar filtros" : "Mostrar filtros"}>
+            <IconButton 
+              size="small" 
+              onClick={() => setShowFilters(!showFilters)}
+              sx={{ color: showFilters ? colors.primary.main : colors.text.secondary }}
+            >
+              <FilterIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          <Button
+            variant="contained"
+            size="small"
+            startIcon={<RocketLaunchIcon />}
+            component={Link}
+            to="/committee/review"
+            sx={{ 
+              bgcolor: colors.primary.main,
+              '&:hover': { bgcolor: colors.primary.dark },
+              height: 32
+            }}
+          >
+            Revisión Rápida
+          </Button>
+        </Stack>
+      </Box>
 
-        {/* Filtros Rápidos */}
-        <Paper elevation={0} sx={{ 
-          p: 2, 
-          mb: 2, 
-          bgcolor: colors.background.paper,
-          border: `1px solid ${colors.primary.light}20`,
-        }}>
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} md={4}>
-              <TextField
-                fullWidth
-                size="small"
-                placeholder="Buscar certificaciones..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    color: colors.primary.dark,
-                    '& fieldset': {
-                      borderColor: colors.primary.light,
-                    },
-                    '&:hover fieldset': {
-                      borderColor: colors.primary.main,
-                    },
-                    '&.Mui-focused fieldset': {
-                      borderColor: colors.primary.dark,
-                    },
-                  },
-                }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon fontSize="small" sx={{ color: colors.text.secondary }} />
-                    </InputAdornment>
-                  ),
-                  endAdornment: searchTerm && (
-                    <InputAdornment position="end">
-                      <IconButton size="small" onClick={() => setSearchTerm('')} sx={{ color: colors.text.secondary }}>
-                        <RefreshIcon fontSize="small" />
-                      </IconButton>
-                    </InputAdornment>
-                  )
-                }}
-              />
-            </Grid>
+      <Grid container spacing={2} sx={{ flex: 1, minHeight: 0,  }}>
+        {/* Columna Izquierda - Tabla (75% para dar más espacio a la tabla) */}
+        <Grid item xs={12} lg={9} sx={{ height: '100%', display: 'flex', flexDirection: 'column',width: '75%' }}>
+          <Paper elevation={2} sx={{ 
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+            border: `1px solid ${alpha(colors.primary.main, 0.1)}`,
+            borderRadius: 2
+          }}>
             
-            <Grid item xs={12} md={2}>
-              <FormControl fullWidth size="small">
-                <InputLabel sx={{ color: colors.text.secondary }}>Prioridad</InputLabel>
-                <Select
-                  value={filterPriority}
-                  label="Prioridad"
-                  onChange={(e) => setFilterPriority(e.target.value)}
-                  sx={{
-                    color: colors.primary.dark,
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: colors.primary.light,
-                    },
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: colors.primary.main,
-                    },
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderColor: colors.primary.dark,
-                    },
-                  }}
-                >
-                  <MenuItem value="all">Todas</MenuItem>
-                  <MenuItem value="ALTA">Alta</MenuItem>
-                  <MenuItem value="MEDIA">Media</MenuItem>
-                  <MenuItem value="BAJA">Baja</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            
-            <Grid item xs={12} md={2}>
-              <FormControl fullWidth size="small">
-                <InputLabel sx={{ color: colors.text.secondary }}>Estado</InputLabel>
-                <Select
-                  value={filterStatus}
-                  label="Estado"
-                  onChange={(e) => setFilterStatus(e.target.value)}
-                  sx={{
-                    color: colors.primary.dark,
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: colors.primary.light,
-                    },
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: colors.primary.main,
-                    },
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderColor: colors.primary.dark,
-                    },
-                  }}
-                >
-                  <MenuItem value="all">Todos</MenuItem>
-                  <MenuItem value="PENDIENTE">Pendiente</MenuItem>
-                  <MenuItem value="EN REVISIÓN">En Revisión</MenuItem>
-                  <MenuItem value="REQUIERE INFO">Requiere Info</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            
-            <Grid item xs={12} md={2}>
-              <FormControl fullWidth size="small">
-                <InputLabel sx={{ color: colors.text.secondary }}>Región</InputLabel>
-                <Select
-                  value={filterRegion}
-                  label="Región"
-                  onChange={(e) => setFilterRegion(e.target.value)}
-                  sx={{
-                    color: colors.primary.dark,
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: colors.primary.light,
-                    },
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: colors.primary.main,
-                    },
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderColor: colors.primary.dark,
-                    },
-                  }}
-                >
-                  <MenuItem value="all">Todas</MenuItem>
-                  {regions.map(region => (
-                    <MenuItem key={region} value={region}>{region}</MenuItem>
+            {/* SECCIÓN 1: KPI - Integrados */}
+            {showStats && (
+              <Box sx={{ 
+                p: 1.5,
+                borderBottom: `1px solid ${alpha(colors.primary.main, 0.1)}`,
+                bgcolor: alpha(colors.primary.main, 0.02)
+              }}>
+                <Grid container spacing={1}>
+                  {kpiItems.map((kpi, index) => (
+                    <Grid item xs={4} md={2} key={index}>
+                      <Tooltip title={kpi.tooltip} arrow>
+                        <Box sx={{ 
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1,
+                          p: 0.5,
+                          borderRadius: 1,
+                          cursor: 'pointer',
+                          '&:hover': { bgcolor: alpha(kpi.color, 0.1) }
+                        }}>
+                          <Avatar sx={{ 
+                            width: 28, 
+                            height: 28, 
+                            bgcolor: alpha(kpi.color, 0.1),
+                            color: kpi.color
+                          }}>
+                            {kpi.icon}
+                          </Avatar>
+                          <Box>
+                            <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', lineHeight: 1.2 }}>
+                              {kpi.label}
+                            </Typography>
+                            <Typography variant="subtitle2" sx={{ color: kpi.color, fontWeight: 'bold' }}>
+                              {kpi.value}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </Tooltip>
+                    </Grid>
                   ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            
-            <Grid item xs={12} md={2}>
-              <Stack direction="row" spacing={1}>
-                <Tooltip title="Filtros avanzados">
-                  <IconButton 
+                </Grid>
+              </Box>
+            )}
+
+            {/* SECCIÓN 2: Búsqueda y filtros rápidos */}
+            <Box sx={{ 
+              p: 1.5,
+              borderBottom: `1px solid ${alpha(colors.primary.main, 0.1)}`,
+              bgcolor: alpha(colors.primary.main, 0.02)
+            }}>
+              <Grid container spacing={1} alignItems="center">
+                <Grid item xs={12} sm={4}>
+                  <TextField
+                    fullWidth
                     size="small"
-                    onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                    placeholder="Buscar por tipo, código o solicitante..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon fontSize="small" sx={{ color: colors.text.secondary }} />
+                        </InputAdornment>
+                      ),
+                      endAdornment: searchTerm && (
+                        <InputAdornment position="end">
+                          <IconButton size="small" onClick={() => setSearchTerm('')}>
+                            <CloseIcon fontSize="small" />
+                          </IconButton>
+                        </InputAdornment>
+                      )
+                    }}
                     sx={{ 
-                      color: showAdvancedFilters ? colors.primary.main : colors.text.secondary,
-                      '&:hover': {
-                        bgcolor: 'rgba(19, 59, 107, 0.04)',
+                      '& .MuiOutlinedInput-root': {
+                        bgcolor: 'white',
+                        '& fieldset': { borderColor: alpha(colors.primary.main, 0.2) }
                       }
                     }}
-                  >
-                    <FilterIcon />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Ordenar">
-                  <IconButton size="small" sx={{ color: colors.text.secondary }}>
-                    <SortIcon />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Cambiar vista">
-                  <IconButton 
-                    size="small"
-                    onClick={() => setActiveView(activeView === 'grid' ? 'list' : 'grid')}
-                    sx={{ color: colors.text.secondary }}
-                  >
-                    <ViewColumnIcon />
-                  </IconButton>
-                </Tooltip>
-              </Stack>
-            </Grid>
-          </Grid>
-
-          {/* Filtros Avanzados */}
-          {showAdvancedFilters && (
-            <Box sx={{ 
-              mt: 2, 
-              pt: 2, 
-              borderTop: `1px dashed ${colors.primary.light}` 
-            }}>
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={3}>
+                  />
+                </Grid>
+                
+                <Grid item xs={6} sm={2}>
                   <FormControl fullWidth size="small">
-                    <InputLabel sx={{ color: colors.text.secondary }}>Tipo</InputLabel>
                     <Select
-                      value={filterType}
-                      label="Tipo"
-                      onChange={(e) => setFilterType(e.target.value)}
-                      sx={{
-                        color: colors.primary.dark,
-                        '& .MuiOutlinedInput-notchedOutline': {
-                          borderColor: colors.primary.light,
-                        },
+                      value={filterPriority}
+                      onChange={(e) => setFilterPriority(e.target.value)}
+                      displayEmpty
+                      sx={{ bgcolor: 'white' }}
+                      renderValue={(selected) => {
+                        if (selected === 'all') return <Typography color="textSecondary">Prioridad</Typography>;
+                        return selected;
+                      }}
+                    >
+                      <MenuItem value="all">Todas</MenuItem>
+                      <MenuItem value="ALTA">Alta</MenuItem>
+                      <MenuItem value="MEDIA">Media</MenuItem>
+                      <MenuItem value="BAJA">Baja</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                
+                <Grid item xs={6} sm={2}>
+                  <FormControl fullWidth size="small">
+                    <Select
+                      value={filterStatus}
+                      onChange={(e) => setFilterStatus(e.target.value)}
+                      displayEmpty
+                      sx={{ bgcolor: 'white' }}
+                      renderValue={(selected) => {
+                        if (selected === 'all') return <Typography color="textSecondary">Estado</Typography>;
+                        return selected;
                       }}
                     >
                       <MenuItem value="all">Todos</MenuItem>
+                      <MenuItem value="PENDIENTE">Pendiente</MenuItem>
+                      <MenuItem value="EN REVISIÓN">En Revisión</MenuItem>
+                      <MenuItem value="REQUIERE INFO">Requiere Info</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                
+                <Grid item xs={6} sm={2}>
+                  <FormControl fullWidth size="small">
+                    <Select
+                      value={filterRegion}
+                      onChange={(e) => setFilterRegion(e.target.value)}
+                      displayEmpty
+                      sx={{ bgcolor: 'white' }}
+                      renderValue={(selected) => {
+                        if (selected === 'all') return <Typography color="textSecondary">Región</Typography>;
+                        return selected;
+                      }}
+                    >
+                      <MenuItem value="all">Todas</MenuItem>
+                      {regions.map(region => (
+                        <MenuItem key={region} value={region}>{region}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                
+                <Grid item xs={6} sm={2}>
+                  <FormControl fullWidth size="small">
+                    <Select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      displayEmpty
+                      sx={{ bgcolor: 'white' }}
+                      renderValue={(selected) => {
+                        const labels = { priority: 'Prioridad', days: 'Días', date: 'Fecha' };
+                        return `Orden: ${labels[selected]}`;
+                      }}
+                    >
+                      <MenuItem value="priority">Por Prioridad</MenuItem>
+                      <MenuItem value="days">Por Días pendientes</MenuItem>
+                      <MenuItem value="date">Por Fecha de carga</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+              </Grid>
+
+              {/* Filtros expandidos */}
+              {showFilters && (
+                <Box sx={{ 
+                  mt: 1.5,
+                  pt: 1.5,
+                  borderTop: `1px dashed ${alpha(colors.primary.main, 0.2)}`,
+                  display: 'flex',
+                  gap: 1,
+                  alignItems: 'center',
+                  flexWrap: 'wrap'
+                }}>
+                  <FormControl size="small" sx={{ minWidth: 120 }}>
+                    <Select
+                      value={filterType}
+                      onChange={(e) => setFilterType(e.target.value)}
+                      displayEmpty
+                      sx={{ bgcolor: 'white' }}
+                      size="small"
+                    >
+                      <MenuItem value="all">Todos los tipos</MenuItem>
                       {types.map(type => (
                         <MenuItem key={type} value={type}>{type}</MenuItem>
                       ))}
                     </Select>
                   </FormControl>
-                </Grid>
-                
-                <Grid item xs={12} md={3}>
-                  <FormControl fullWidth size="small">
-                    <InputLabel sx={{ color: colors.text.secondary }}>Categoría</InputLabel>
+                  
+                  <FormControl size="small" sx={{ minWidth: 120 }}>
                     <Select
                       value="all"
-                      label="Categoría"
-                      sx={{
-                        color: colors.primary.dark,
-                        '& .MuiOutlinedInput-notchedOutline': {
-                          borderColor: colors.primary.light,
-                        },
-                      }}
+                      displayEmpty
+                      sx={{ bgcolor: 'white' }}
+                      size="small"
                     >
-                      <MenuItem value="all">Todas</MenuItem>
+                      <MenuItem value="all">Todas las categorías</MenuItem>
                       {categories.map(cat => (
                         <MenuItem key={cat} value={cat}>{cat}</MenuItem>
                       ))}
                     </Select>
                   </FormControl>
-                </Grid>
-                
-                <Grid item xs={12} md={3}>
-                  <FormControl fullWidth size="small">
-                    <InputLabel sx={{ color: colors.text.secondary }}>Ordenar por</InputLabel>
-                    <Select
-                      value={sortBy}
-                      label="Ordenar por"
-                      onChange={(e) => setSortBy(e.target.value)}
-                      sx={{
-                        color: colors.primary.dark,
-                        '& .MuiOutlinedInput-notchedOutline': {
-                          borderColor: colors.primary.light,
-                        },
-                      }}
-                    >
-                      <MenuItem value="priority">Prioridad</MenuItem>
-                      <MenuItem value="days">Días pendientes</MenuItem>
-                      <MenuItem value="date">Fecha de carga</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
-                
-                <Grid item xs={12} md={3}>
-                  <Button
-                    fullWidth
-                    size="small"
-                    variant="outlined"
+                  
+                  <Button 
+                    size="small" 
+                    startIcon={<RefreshIcon />}
                     onClick={() => {
                       setFilterType('all');
                       setFilterRegion('all');
@@ -599,696 +662,411 @@ const CommitteeDashboard = () => {
                       setFilterPriority('all');
                       setSearchTerm('');
                     }}
-                    sx={{
-                      borderColor: colors.primary.light,
-                      color: colors.primary.main,
-                      '&:hover': {
-                        borderColor: colors.primary.main,
-                        bgcolor: 'rgba(19, 59, 107, 0.04)',
-                      }
-                    }}
+                    sx={{ color: colors.text.secondary, ml: 'auto' }}
                   >
-                    Limpiar Filtros
+                    Limpiar filtros
                   </Button>
-                </Grid>
-              </Grid>
+                </Box>
+              )}
             </Box>
-          )}
-        </Paper>
-      </Box>
 
-      {/* Contenido Principal */}
-      <Box sx={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        <Grid container spacing={2} sx={{ height: '100%' }}>
-          {/* Columna Principal - 70% */}
-          <Grid item xs={12} lg={8} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            {/* KPI Cards Compactas */}
-            <Grid container spacing={1.5} sx={{ mb: 2 }}>
+            {/* SECCIÓN 3: Tabla de datos */}
+            <Box sx={{ flex: 1, overflow: 'auto' }}>
+              <TableContainer sx={{ height: '100%' }}>
+                <Table size="small" stickyHeader>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell padding="checkbox" sx={{ bgcolor: colors.background.subtle, width: 30 }}>
+                        <input
+                          type="checkbox"
+                          checked={selectedRows.length === sortedCertifications.length && sortedCertifications.length > 0}
+                          onChange={handleSelectAll}
+                          style={{ cursor: 'pointer' }}
+                        />
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, bgcolor: colors.background.subtle }}>Certificación</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, bgcolor: colors.background.subtle }}>Solicitante</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, bgcolor: colors.background.subtle }}>Estado</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, bgcolor: colors.background.subtle }}>Tiempo</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, bgcolor: colors.background.subtle }}>Docs</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, bgcolor: colors.background.subtle }} align="right">Acciones</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {sortedCertifications.map((cert) => (
+                      <TableRow 
+                        key={cert.id} 
+                        hover
+                        selected={selectedRows.includes(cert.id)}
+                        onClick={() => handleRowSelect(cert.id)}
+                        sx={{ 
+                          cursor: 'pointer',
+                          borderLeft: `3px solid ${cert.color}`,
+                          '&.Mui-selected': {
+                            bgcolor: alpha(colors.primary.main, 0.08),
+                            '&:hover': { bgcolor: alpha(colors.primary.main, 0.12) }
+                          }
+                        }}
+                      >
+                        <TableCell padding="checkbox">
+                          <input
+                            type="checkbox"
+                            checked={selectedRows.includes(cert.id)}
+                            onChange={() => handleRowSelect(cert.id)}
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                        </TableCell>
+                        
+                        <TableCell>
+                          <Box>
+                            <Typography variant="body2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
+                              {cert.type}
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: colors.text.secondary, fontFamily: 'monospace' }}>
+                              {cert.code}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        
+                        <TableCell>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Avatar sx={{ width: 24, height: 24, fontSize: '0.7rem', bgcolor: getUserTypeColor(cert.applicant.type) }}>
+                              {cert.applicant.avatar}
+                            </Avatar>
+                            <Box>
+                              <Typography variant="body2" sx={{ color: colors.primary.dark }}>
+                                {cert.applicant.name}
+                              </Typography>
+                              <LinearProgress 
+                                variant="determinate" 
+                                value={cert.applicant.complianceScore}
+                                sx={{ 
+                                  width: 50, 
+                                  height: 3,
+                                  borderRadius: 1,
+                                  bgcolor: alpha(colors.primary.main, 0.1),
+                                  '& .MuiLinearProgress-bar': {
+                                    bgcolor: colors.primary.main,
+                                  }
+                                }}
+                              />
+                            </Box>
+                          </Box>
+                        </TableCell>
+                        
+                        <TableCell>
+                          <Stack spacing={0.5}>
+                            <Chip 
+                              label={cert.status}
+                              size="small"
+                              sx={{
+                                height: 20,
+                                fontSize: '0.7rem',
+                                bgcolor: cert.status === 'PENDIENTE' ? alpha(colors.status.warning, 0.1) :
+                                        cert.status === 'EN REVISIÓN' ? alpha(colors.accents.blue, 0.1) :
+                                        cert.status === 'REQUIERE INFO' ? alpha(colors.status.error, 0.1) :
+                                        alpha(colors.primary.main, 0.1),
+                                color: cert.status === 'PENDIENTE' ? colors.status.warning :
+                                       cert.status === 'EN REVISIÓN' ? colors.accents.blue :
+                                       cert.status === 'REQUIERE INFO' ? colors.status.error :
+                                       colors.primary.main,
+                                fontWeight: 'bold',
+                              }}
+                            />
+                            <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+                              {cert.priority}
+                            </Typography>
+                          </Stack>
+                        </TableCell>
+                        
+                        <TableCell>
+                          <Typography variant="body2" sx={{ fontWeight: 'bold', color: getDaysColor(cert.daysPending) }}>
+                            {cert.daysPending} días
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
+                            Vence: {cert.dueDate}
+                          </Typography>
+                        </TableCell>
+                        
+                        <TableCell>
+                          <Tooltip title={`${cert.documents.completed}/${cert.documents.total} documentos`}>
+                            <Box>
+                              <LinearProgress 
+                                variant="determinate" 
+                                value={(cert.documents.completed / cert.documents.total) * 100}
+                                sx={{ 
+                                  height: 4,
+                                  borderRadius: 2,
+                                  width: 50,
+                                  bgcolor: alpha(colors.primary.main, 0.1),
+                                  '& .MuiLinearProgress-bar': {
+                                    bgcolor: colors.primary.main,
+                                  }
+                                }}
+                              />
+                              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+                                {cert.documents.completed}/{cert.documents.total}
+                              </Typography>
+                            </Box>
+                          </Tooltip>
+                        </TableCell>
+                        
+                        <TableCell align="right">
+                          <Stack direction="row" spacing={0.5} justifyContent="flex-end">
+                            <Tooltip title="Revisar certificación">
+                              <Button
+                                component={Link}
+                                to={`/committee/review/${cert.id}`}
+                                size="small"
+                                variant="contained"
+                                onClick={(e) => e.stopPropagation()}
+                                sx={{ 
+                                  bgcolor: colors.primary.main,
+                                  '&:hover': { bgcolor: colors.primary.dark },
+                                  height: 24,
+                                  fontSize: '0.7rem',
+                                  minWidth: 60
+                                }}
+                              >
+                                Revisar
+                              </Button>
+                            </Tooltip>
+                            <Tooltip title="Más opciones">
+                              <IconButton size="small" onClick={(e) => e.stopPropagation()} sx={{ color: colors.text.secondary }}>
+                                <MoreVertIcon fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                          </Stack>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    
+                    {sortedCertifications.length === 0 && (
+                      <TableRow>
+                        <TableCell colSpan={7} sx={{ py: 6, textAlign: 'center' }}>
+                          <FolderOpenIcon sx={{ fontSize: 40, color: colors.primary.light, mb: 2 }} />
+                          <Typography color="textSecondary">No hay certificaciones que coincidan</Typography>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Box>
+
+            {/* SECCIÓN 4: Footer de la tabla */}
+            <Box sx={{ 
+              p: 1,
+              borderTop: `1px solid ${alpha(colors.primary.main, 0.1)}`,
+              bgcolor: colors.background.subtle,
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+                Mostrando {sortedCertifications.length} de {certifications.length} certificaciones
+              </Typography>
+              
+              <Stack direction="row" spacing={1} alignItems="center">
+                {selectedRows.length > 0 && (
+                  <Typography variant="caption" sx={{ color: colors.primary.main, fontWeight: 'bold' }}>
+                    {selectedRows.length} seleccionadas
+                  </Typography>
+                )}
+                <Divider orientation="vertical" flexItem sx={{ height: 16 }} />
+                <IconButton size="small" sx={{ color: colors.text.secondary }}>
+                  <DownloadIcon fontSize="small" />
+                </IconButton>
+                <IconButton size="small" sx={{ color: colors.text.secondary }}>
+                  <ViewColumnIcon fontSize="small" />
+                </IconButton>
+              </Stack>
+            </Box>
+          </Paper>
+        </Grid>
+
+        {/* Columna Derecha - Solo Notificaciones (25%) */}
+        <Grid item xs={12} lg={3} sx={{ 
+          height: '100%', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: 2,
+          overflow: 'hidden'
+        }}>
+          
+          {/* Alertas Inmediatas - Ocupa toda la altura disponible */}
+          <Paper elevation={2} sx={{ 
+            p: 2,
+            flex: 1,
+            overflow: 'auto',
+            border: `1px solid ${alpha(colors.primary.main, 0.1)}`,
+            borderRadius: 2,
+            bgcolor: colors.background.paper,
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <NotificationsIcon sx={{ color: colors.status.error, fontSize: 20 }} />
+                <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
+                  Alertas Críticas
+                </Typography>
+              </Box>
+              <Badge badgeContent={3} sx={{ 
+                '& .MuiBadge-badge': { 
+                  bgcolor: colors.status.error, 
+                  color: 'white',
+                  fontSize: '0.65rem',
+                  height: 18,
+                  minWidth: 18
+                } 
+              }}>
+                <IconButton size="small" sx={{ color: colors.text.secondary, p: 0.5 }}>
+                  <MoreVertIcon fontSize="small" />
+                </IconButton>
+              </Badge>
+            </Box>
+            
+            <Stack spacing={1.5} sx={{ flex: 1 }}>
               {[
                 { 
-                  label: 'Urgentes', 
-                  value: stats.urgent, 
-                  color: colors.status.error, 
-                  icon: <PriorityHighIcon />,
-                  tooltip: 'Certificaciones con vencimiento en 3 días o menos'
+                  type: 'error', 
+                  title: 'Vencimiento Inminente', 
+                  code: 'PA-2026-00145',
+                  desc: 'Patente Aduanal vence mañana', 
+                  time: '30 min',
+                  priority: 'Alta'
                 },
                 { 
-                  label: 'Pendientes', 
-                  value: stats.pending, 
-                  color: colors.status.warning, 
-                  icon: <TimerIcon />,
-                  tooltip: 'Certificaciones pendientes de revisión'
+                  type: 'warning', 
+                  title: 'Documentación Pendiente', 
+                  code: 'CP-2024-56789',
+                  desc: 'Cédula Profesional - Falta 1 documento', 
+                  time: '2 h',
+                  priority: 'Media'
                 },
                 { 
-                  label: 'Asignadas', 
-                  value: stats.assignedToMe, 
-                  color: colors.primary.main, 
-                  icon: <AssignmentIcon />,
-                  tooltip: 'Certificaciones asignadas a mí'
+                  type: 'info', 
+                  title: 'Nueva Asignación', 
+                  code: 'CF-2025-78901',
+                  desc: 'Constancia Fiscal asignada a ti', 
+                  time: '3 h',
+                  priority: 'Baja'
                 },
                 { 
-                  label: 'En Revisión', 
-                  value: stats.inReview, 
-                  color: colors.accents.blue, 
-                  icon: <AssessmentIcon />,
-                  tooltip: 'Certificaciones en proceso de revisión'
+                  type: 'warning', 
+                  title: 'Revisión Retrasada', 
+                  code: 'OS-2025-03421',
+                  desc: 'Opinión SAT excede tiempo estimado', 
+                  time: '5 h',
+                  priority: 'Media'
                 },
-                { 
-                  label: 'Tiempo Prom.', 
-                  value: `${stats.avgReviewTime}d`, 
-                  color: colors.status.success, 
-                  icon: <SpeedIcon />,
-                  tooltip: 'Tiempo promedio de revisión'
-                },
-                { 
-                  label: 'Total', 
-                  value: stats.total, 
-                  color: colors.accents.purple, 
-                  icon: <FolderOpenIcon />,
-                  tooltip: 'Total de certificaciones activas'
-                },
-              ].map((kpi, index) => (
-                <Grid item xs={6} sm={4} md={2} key={index}>
-                  <Tooltip title={kpi.tooltip}>
-                    <Card 
+              ].map((alert, idx) => (
+                <Card 
+                  key={idx} 
+                  variant="outlined"
+                  sx={{ 
+                    p: 1.5,
+                    borderLeft: `4px solid ${
+                      alert.type === 'error' ? colors.status.error :
+                      alert.type === 'warning' ? colors.status.warning : colors.accents.blue
+                    }`,
+                    '&:hover': { 
+                      bgcolor: alpha(
+                        alert.type === 'error' ? colors.status.error :
+                        alert.type === 'warning' ? colors.status.warning : colors.accents.blue
+                      , 0.04),
+                      cursor: 'pointer'
+                    },
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
+                    <Typography variant="body2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
+                      {alert.title}
+                    </Typography>
+                    <Chip 
+                      label={alert.priority}
+                      size="small"
+                      sx={{
+                        height: 18,
+                        fontSize: '0.6rem',
+                        bgcolor: alert.priority === 'Alta' ? alpha(colors.status.error, 0.1) :
+                                alert.priority === 'Media' ? alpha(colors.status.warning, 0.1) :
+                                alpha(colors.accents.blue, 0.1),
+                        color: alert.priority === 'Alta' ? colors.status.error :
+                               alert.priority === 'Media' ? colors.status.warning :
+                               colors.accents.blue,
+                        fontWeight: 'bold'
+                      }}
+                    />
+                  </Box>
+                  
+                  <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mb: 0.5 }}>
+                    {alert.desc}
+                  </Typography>
+                  
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                      <Typography variant="caption" sx={{ 
+                        fontFamily: 'monospace', 
+                        bgcolor: alpha(colors.primary.main, 0.05),
+                        px: 0.5,
+                        py: 0.25,
+                        borderRadius: 0.5,
+                        color: colors.text.secondary
+                      }}>
+                        {alert.code}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+                        · {alert.time}
+                      </Typography>
+                    </Box>
+                    <Button
+                      size="small"
+                      variant="text"
+                      endIcon={<ArrowForwardIcon sx={{ fontSize: 14 }} />}
                       sx={{ 
-                        p: 1.5, 
-                        textAlign: 'center',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        bgcolor: colors.background.paper,
-                        border: `1px solid ${colors.primary.light}20`,
-                        '&:hover': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: 3,
-                          borderColor: colors.primary.light,
+                        textTransform: 'none',
+                        color: colors.primary.main,
+                        fontSize: '0.7rem',
+                        minWidth: 'auto',
+                        p: 0.5,
+                        '&:hover': { 
+                          color: colors.primary.dark,
+                          bgcolor: 'transparent'
                         }
                       }}
                     >
-                      <Box sx={{ color: kpi.color, mb: 1 }}>
-                        {kpi.icon}
-                      </Box>
-                      <Typography variant="h6" sx={{ color: kpi.color, fontWeight: 'bold', lineHeight: 1 }}>
-                        {kpi.value}
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                        {kpi.label}
-                      </Typography>
-                    </Card>
-                  </Tooltip>
-                </Grid>
-              ))}
-            </Grid>
-
-            {/* Vista de Certificaciones */}
-            <Paper elevation={1} sx={{ 
-              flex: 1, 
-              display: 'flex', 
-              flexDirection: 'column', 
-              overflow: 'hidden',
-              bgcolor: colors.background.paper,
-              border: `1px solid ${colors.primary.light}20`,
-            }}>
-              <Box sx={{ 
-                p: 2, 
-                borderBottom: `1px solid ${colors.primary.light}`,
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
-                  {sortedCertifications.length} certificaciones para revisión
-                </Typography>
-                <Stack direction="row" spacing={1}>
-                  <Chip 
-                    label={`${stats.highPriority} PRIORIDAD ALTA`}
-                    size="small"
-                    sx={{
-                      bgcolor: colors.status.error,
-                      color: 'white',
-                      fontWeight: 'bold',
-                    }}
-                    icon={<PriorityHighIcon sx={{ color: 'white' }} />}
-                  />
-                  <Chip 
-                    label={`${stats.urgent} URGENTES`}
-                    size="small"
-                    sx={{
-                      bgcolor: colors.status.warning,
-                      color: colors.primary.dark,
-                      fontWeight: 'bold',
-                    }}
-                    icon={<WarningIcon sx={{ color: colors.primary.dark }} />}
-                  />
-                </Stack>
-              </Box>
-
-              {/* Tabla de Certificaciones - Scroll Interno */}
-              <Box sx={{ flex: 1, overflowY: 'auto' }}>
-                <TableContainer>
-                  <Table size="small" stickyHeader>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell sx={{ 
-                          fontWeight: 'bold', 
-                          width: '25%',
-                          bgcolor: colors.background.subtle,
-                          color: colors.primary.dark,
-                          borderBottom: `2px solid ${colors.primary.main}`,
-                        }}>Certificación</TableCell>
-                        <TableCell sx={{ 
-                          fontWeight: 'bold', 
-                          width: '20%',
-                          bgcolor: colors.background.subtle,
-                          color: colors.primary.dark,
-                          borderBottom: `2px solid ${colors.primary.main}`,
-                        }}>Solicitante</TableCell>
-                        <TableCell sx={{ 
-                          fontWeight: 'bold', 
-                          width: '10%',
-                          bgcolor: colors.background.subtle,
-                          color: colors.primary.dark,
-                          borderBottom: `2px solid ${colors.primary.main}`,
-                        }}>Estado</TableCell>
-                        <TableCell sx={{ 
-                          fontWeight: 'bold', 
-                          width: '15%',
-                          bgcolor: colors.background.subtle,
-                          color: colors.primary.dark,
-                          borderBottom: `2px solid ${colors.primary.main}`,
-                        }}>Tiempo</TableCell>
-                        <TableCell sx={{ 
-                          fontWeight: 'bold', 
-                          width: '10%',
-                          bgcolor: colors.background.subtle,
-                          color: colors.primary.dark,
-                          borderBottom: `2px solid ${colors.primary.main}`,
-                        }}>Documentos</TableCell>
-                        <TableCell sx={{ 
-                          fontWeight: 'bold', 
-                          width: '20%',
-                          bgcolor: colors.background.subtle,
-                          color: colors.primary.dark,
-                          borderBottom: `2px solid ${colors.primary.main}`,
-                        }} align="right">Acciones</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {sortedCertifications.map((cert) => (
-                        <TableRow 
-                          key={cert.id} 
-                          hover
-                          sx={{ 
-                            '&:hover': { 
-                              bgcolor: 'rgba(58, 110, 165, 0.04)',
-                            },
-                            borderLeft: `4px solid ${cert.color}`,
-                            cursor: 'pointer',
-                            '& td': {
-                              color: colors.primary.dark,
-                              borderBottom: `1px solid ${colors.primary.light}`,
-                            }
-                          }}
-                          onClick={() => window.location.href = `/committee/review/${cert.id}`}
-                        >
-                          <TableCell>
-                            <Box>
-                              <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
-                                {cert.type}
-                              </Typography>
-                              <Stack direction="row" spacing={0.5} alignItems="center" sx={{ mt: 0.5 }}>
-                                <PlaceIcon sx={{ color: colors.text.secondary, fontSize: 12 }} />
-                                <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                                  {cert.region}
-                                </Typography>
-                                <Chip 
-                                  label={cert.category}
-                                  size="small"
-                                  variant="outlined"
-                                  sx={{ 
-                                    height: 18, 
-                                    ml: 1,
-                                    color: colors.text.secondary,
-                                    borderColor: colors.primary.light,
-                                  }}
-                                />
-                              </Stack>
-                            </Box>
-                          </TableCell>
-                          
-                          <TableCell>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                              <Avatar 
-                                sx={{ 
-                                  width: 28, 
-                                  height: 28, 
-                                  fontSize: '0.75rem',
-                                  bgcolor: getUserTypeColor(cert.applicant.type)
-                                }}
-                              >
-                                {cert.applicant.avatar}
-                              </Avatar>
-                              <Box>
-                                <Typography variant="body2" sx={{ fontWeight: 'medium', color: colors.primary.dark }}>
-                                  {cert.applicant.name}
-                                </Typography>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                  <LinearProgress 
-                                    variant="determinate" 
-                                    value={cert.applicant.complianceScore}
-                                    sx={{ 
-                                      width: 40, 
-                                      height: 4,
-                                      borderRadius: 2,
-                                      bgcolor: colors.primary.light,
-                                      '& .MuiLinearProgress-bar': {
-                                        bgcolor: colors.primary.main,
-                                      }
-                                    }}
-                                  />
-                                  <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                                    {cert.applicant.complianceScore}%
-                                  </Typography>
-                                </Box>
-                              </Box>
-                            </Box>
-                          </TableCell>
-                          
-                          <TableCell>
-                            <Stack spacing={0.5}>
-                              <Chip 
-                                label={cert.status}
-                                size="small"
-                                sx={{
-                                  height: 20,
-                                  bgcolor: cert.status === 'PENDIENTE' ? colors.status.warning :
-                                          cert.status === 'EN REVISIÓN' ? colors.accents.blue :
-                                          cert.status === 'REQUIERE INFO' ? colors.status.error :
-                                          colors.primary.main,
-                                  color: cert.status === 'PENDIENTE' ? colors.primary.dark : 'white',
-                                  fontWeight: 'bold',
-                                }}
-                              />
-                              <Chip 
-                                label={cert.priority}
-                                size="small"
-                                variant="outlined"
-                                sx={{
-                                  height: 18,
-                                  color: cert.priority === 'ALTA' ? colors.status.error :
-                                         cert.priority === 'MEDIA' ? colors.status.warning :
-                                         colors.status.success,
-                                  borderColor: cert.priority === 'ALTA' ? colors.status.error :
-                                              cert.priority === 'MEDIA' ? colors.status.warning :
-                                              colors.status.success,
-                                }}
-                              />
-                            </Stack>
-                          </TableCell>
-                          
-                          <TableCell>
-                            <Box>
-                              <Typography variant="body2" sx={{ 
-                                fontWeight: 'bold',
-                                color: getDaysColor(cert.daysPending)
-                              }}>
-                                {cert.daysPending} días
-                              </Typography>
-                              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                                Vence: {cert.dueDate}
-                              </Typography>
-                              <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
-                                Prom: {cert.reviewTime}
-                              </Typography>
-                            </Box>
-                          </TableCell>
-                          
-                          <TableCell>
-                            <Tooltip title={`${cert.documents.completed}/${cert.documents.total} documentos completos`}>
-                              <Box>
-                                <LinearProgress 
-                                  variant="determinate" 
-                                  value={(cert.documents.completed / cert.documents.total) * 100}
-                                  sx={{ 
-                                    height: 6,
-                                    borderRadius: 3,
-                                    mb: 0.5,
-                                    bgcolor: colors.primary.light,
-                                    '& .MuiLinearProgress-bar': {
-                                      bgcolor: colors.primary.main,
-                                    }
-                                  }}
-                                />
-                                <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                                  {cert.documents.completed}/{cert.documents.total}
-                                </Typography>
-                              </Box>
-                            </Tooltip>
-                          </TableCell>
-                          
-                          <TableCell align="right">
-                            <Stack direction="row" spacing={0.5} justifyContent="flex-end">
-                              <Tooltip title="Revisar certificación">
-                                <Button
-                                  component={Link}
-                                  to={`/committee/review/${cert.id}`}
-                                  variant="contained"
-                                  size="small"
-                                  startIcon={<GavelIcon />}
-                                  onClick={(e) => e.stopPropagation()}
-                                  sx={{ 
-                                    bgcolor: colors.primary.main,
-                                    '&:hover': { 
-                                      bgcolor: colors.primary.dark,
-                                    },
-                                    minWidth: 'auto',
-                                    px: 1.5
-                                  }}
-                                >
-                                  Revisar
-                                </Button>
-                              </Tooltip>
-                              <Tooltip title="Más opciones">
-                                <IconButton size="small" onClick={(e) => e.stopPropagation()} sx={{ color: colors.text.secondary }}>
-                                  <MoreVertIcon fontSize="small" />
-                                </IconButton>
-                              </Tooltip>
-                            </Stack>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </Box>
-            </Paper>
-          </Grid>
-
-          {/* Columna Derecha - 30% */}
-          <Grid item xs={12} lg={4} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            {/* Alertas Inmediatas */}
-            <Paper elevation={1} sx={{ 
-              p: 2, 
-              mb: 2, 
-              flex: 1,
-              bgcolor: colors.background.paper,
-              border: `1px solid ${colors.primary.light}20`,
-            }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: colors.primary.dark, display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <NotificationsIcon sx={{ color: colors.status.error }} />
-                  Alertas Críticas
-                </Typography>
-                <Badge badgeContent={3} sx={{ '& .MuiBadge-badge': { bgcolor: colors.status.error, color: 'white' } }}>
-                  <IconButton size="small" sx={{ color: colors.text.secondary }}>
-                    <MoreVertIcon />
-                  </IconButton>
-                </Badge>
-              </Box>
-              
-              <Stack spacing={1.5}>
-                {[
-                  { 
-                    type: 'error', 
-                    title: 'Vencimiento Inminente', 
-                    message: 'Patente Aduanal vence mañana', 
-                    cert: 'PA-2026-00145',
-                    time: 'Hace 30 min',
-                    action: 'revisar'
-                  },
-                  { 
-                    type: 'warning', 
-                    title: 'Documentación Pendiente', 
-                    message: 'Falta 1 documento en Cédula Profesional', 
-                    cert: 'CP-2024-56789',
-                    time: 'Hace 2 horas',
-                    action: 'solicitar'
-                  },
-                  { 
-                    type: 'info', 
-                    title: 'Nueva Asignación', 
-                    message: 'Te han asignado Constancia Fiscal', 
-                    cert: 'CF-2025-78901',
-                    time: 'Hace 3 horas',
-                    action: 'revisar'
-                  },
-                ].map((alert, idx) => (
-                  <Card 
-                    key={idx} 
-                    variant="outlined"
-                    sx={{ 
-                      p: 1.5,
-                      bgcolor: 'transparent',
-                      borderColor: colors.primary.light,
-                      borderLeft: `3px solid ${
-                        alert.type === 'error' ? colors.status.error :
-                        alert.type === 'warning' ? colors.status.warning : colors.accents.blue
-                      }`
-                    }}
-                  >
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-                      <Typography variant="body2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
-                        {alert.title}
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                        {alert.time}
-                      </Typography>
-                    </Box>
-                    <Typography variant="caption" sx={{ color: colors.text.secondary, mb: 1, display: 'block' }}>
-                      {alert.message}
-                    </Typography>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Chip 
-                        label={alert.cert}
-                        size="small"
-                        variant="outlined"
-                        sx={{ 
-                          color: colors.text.secondary,
-                          borderColor: colors.primary.light,
-                        }}
-                      />
-                      <Button
-                        size="small"
-                        variant="text"
-                        endIcon={<ArrowForwardIcon />}
-                        sx={{ 
-                          textTransform: 'none',
-                          color: colors.primary.main,
-                          '&:hover': { color: colors.primary.dark }
-                        }}
-                      >
-                        {alert.action === 'revisar' ? 'Revisar ahora' : 'Solicitar'}
-                      </Button>
-                    </Box>
-                  </Card>
-                ))}
-              </Stack>
-              
-              <Button
-                fullWidth
-                variant="outlined"
-                component={Link}
-                to="/committee/alerts"
-                sx={{ 
-                  mt: 2,
-                  borderColor: colors.primary.light,
-                  color: colors.primary.main,
-                  '&:hover': {
-                    borderColor: colors.primary.main,
-                    bgcolor: 'rgba(19, 59, 107, 0.04)',
-                  }
-                }}
-              >
-                Ver todas las alertas
-              </Button>
-            </Paper>
-
-            {/* Métricas Personales */}
-            <Paper elevation={1} sx={{ 
-              p: 2, 
-              mb: 2, 
-              flex: 1,
-              bgcolor: colors.background.paper,
-              border: `1px solid ${colors.primary.light}20`,
-            }}>
-              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: colors.primary.dark, display: 'flex', alignItems: 'center', gap: 1 }}>
-                <AutoAwesomeIcon sx={{ color: colors.accents.purple }} /> Mi Desempeño
-              </Typography>
-              
-              <Stack spacing={2}>
-                <Box>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                    <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                      Revisadas este mes
-                    </Typography>
-                    <Typography variant="caption" sx={{ fontWeight: 'bold', color: colors.primary.main }}>
-                      15/20 (75%)
-                    </Typography>
+                      Revisar
+                    </Button>
                   </Box>
-                  <LinearProgress 
-                    variant="determinate" 
-                    value={75}
-                    sx={{ 
-                      height: 6, 
-                      borderRadius: 3,
-                      bgcolor: colors.primary.light,
-                      '& .MuiLinearProgress-bar': {
-                        bgcolor: colors.primary.main,
-                      }
-                    }}
-                  />
-                </Box>
-                
-                <Grid container spacing={1}>
-                  <Grid item xs={6}>
-                    <Card variant="outlined" sx={{ 
-                      p: 1.5, 
-                      textAlign: 'center',
-                      bgcolor: 'transparent',
-                      borderColor: colors.primary.light,
-                    }}>
-                      <Typography variant="h6" sx={{ color: colors.status.success, fontWeight: 'bold' }}>
-                        92%
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                        Aprobación
-                      </Typography>
-                    </Card>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Card variant="outlined" sx={{ 
-                      p: 1.5, 
-                      textAlign: 'center',
-                      bgcolor: 'transparent',
-                      borderColor: colors.primary.light,
-                    }}>
-                      <Typography variant="h6" sx={{ color: colors.accents.blue, fontWeight: 'bold' }}>
-                        2.3d
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                        Tiempo promedio
-                      </Typography>
-                    </Card>
-                  </Grid>
-                </Grid>
-                
-                <Box>
-                  <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mb: 1 }}>
-                    Próximas revisiones programadas:
-                  </Typography>
-                  <Stack spacing={0.5}>
-                    {['Hoy - 10:00 AM', 'Hoy - 2:00 PM', 'Mañana - 9:00 AM'].map((time, idx) => (
-                      <Box key={idx} sx={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'space-between', 
-                        p: 1,
-                        borderBottom: idx < 2 ? `1px solid ${colors.primary.light}` : 'none',
-                      }}>
-                        <Typography variant="caption" sx={{ color: colors.primary.dark }}>
-                          {time}
-                        </Typography>
-                        <Chip 
-                          label="Programado"
-                          size="small"
-                          sx={{
-                            bgcolor: 'rgba(0, 168, 168, 0.1)',
-                            color: colors.secondary.main,
-                            borderColor: colors.secondary.main,
-                          }}
-                          variant="outlined"
-                        />
-                      </Box>
-                    ))}
-                  </Stack>
-                </Box>
-              </Stack>
-            </Paper>
-
-            {/* Acciones Rápidas */}
-            <Paper elevation={1} sx={{ 
-              p: 2,
-              bgcolor: colors.background.paper,
-              border: `1px solid ${colors.primary.light}20`,
-            }}>
-              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold', color: colors.primary.dark }}>
-                Acciones Directas
-              </Typography>
-              
-              <Stack spacing={1}>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  startIcon={<GavelIcon />}
-                  component={Link}
-                  to="/committee/review"
-                  sx={{ 
-                    justifyContent: 'flex-start', 
-                    bgcolor: colors.primary.main,
-                    '&:hover': { 
-                      bgcolor: colors.primary.dark,
-                    }
-                  }}
-                >
-                  Iniciar nueva revisión
-                </Button>
-                
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  startIcon={<BarChartIcon />}
-                  sx={{ 
-                    justifyContent: 'flex-start',
-                    borderColor: colors.primary.light,
-                    color: colors.primary.main,
-                    '&:hover': {
-                      borderColor: colors.primary.main,
-                      bgcolor: 'rgba(19, 59, 107, 0.04)',
-                    }
-                  }}
-                >
-                  Ver métricas completas
-                </Button>
-                
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  startIcon={<DownloadIcon />}
-                  sx={{ 
-                    justifyContent: 'flex-start',
-                    borderColor: colors.primary.light,
-                    color: colors.primary.main,
-                    '&:hover': {
-                      borderColor: colors.primary.main,
-                      bgcolor: 'rgba(19, 59, 107, 0.04)',
-                    }
-                  }}
-                >
-                  Descargar reporte
-                </Button>
-                
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  startIcon={<RefreshIcon />}
-                  onClick={() => window.location.reload()}
-                  sx={{ 
-                    justifyContent: 'flex-start',
-                    borderColor: colors.primary.light,
-                    color: colors.primary.main,
-                    '&:hover': {
-                      borderColor: colors.primary.main,
-                      bgcolor: 'rgba(19, 59, 107, 0.04)',
-                    }
-                  }}
-                >
-                  Actualizar datos
-                </Button>
-              </Stack>
-            </Paper>
-          </Grid>
+                </Card>
+              ))}
+            </Stack>
+            
+            <Button
+              fullWidth
+              variant="outlined"
+              size="small"
+              endIcon={<ArrowForwardIcon />}
+              sx={{ 
+                mt: 2,
+                borderColor: alpha(colors.primary.main, 0.2),
+                color: colors.primary.main,
+                fontSize: '0.75rem',
+                py: 0.5,
+                '&:hover': {
+                  borderColor: colors.primary.main,
+                  bgcolor: alpha(colors.primary.main, 0.04),
+                }
+              }}
+            >
+              Ver todas las alertas (8)
+            </Button>
+          </Paper>
         </Grid>
-      </Box>
+      </Grid>
     </Box>
   );
 };

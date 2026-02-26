@@ -37,7 +37,8 @@ import {
   DialogContent,
   DialogActions,
   CircularProgress,
-  Alert
+  Alert,
+  alpha
 } from '@mui/material';
 import {
   Search as SearchIcon,
@@ -64,7 +65,9 @@ import {
   AutoAwesome as AutoAwesomeIcon,
   Insights as InsightsIcon,
   FolderOpen as FolderOpenIcon,
-  CalendarMonth as CalendarMonthIcon
+  CalendarMonth as CalendarMonthIcon,
+  Close as CloseIcon,
+  KeyboardArrowDown as KeyboardArrowDownIcon
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
@@ -114,16 +117,17 @@ const CommitteeReview = () => {
   const [filterRegion, setFilterRegion] = useState('all');
   const [filterType, setFilterType] = useState('all');
   const [sortBy, setSortBy] = useState('priority');
-  const [activeView, setActiveView] = useState('list'); // 'list' o 'grid'
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [activeView, setActiveView] = useState('list');
+  const [showFilters, setShowFilters] = useState(true);
   const [selectedRows, setSelectedRows] = useState([]);
   const [batchActionDialog, setBatchActionDialog] = useState(false);
+  const [showStats, setShowStats] = useState(true);
 
   // Datos mock mejorados para revisión
   const certifications = [
     { 
       id: 1, 
-      type: 'PATENTE ADUANAL', 
+      type: 'FORMACIÓN ETICA Y CUMPLIMIENTO Y ACTUALIZACIÓN TÉCNICA ADUANERA', 
       code: 'PA-2026-00145',
       applicant: { 
         name: 'Luis Rodríguez', 
@@ -245,7 +249,7 @@ const CommitteeReview = () => {
 
   // Estadísticas dinámicas
   const calculateStats = () => {
-    const urgentThreshold = 3; // días para ser considerado urgente
+    const urgentThreshold = 3;
     
     return {
       total: certifications.length,
@@ -255,7 +259,7 @@ const CommitteeReview = () => {
       highPriority: certifications.filter(c => c.priority === 'ALTA').length,
       urgent: certifications.filter(c => c.daysPending <= urgentThreshold).length,
       assignedToMe: certifications.filter(c => c.assignedTo === 'María González').length,
-      avgReviewTime: '1.8 horas'
+      avgReviewTime: '1.8'
     };
   };
 
@@ -265,7 +269,7 @@ const CommitteeReview = () => {
   const statusOptions = ['PENDIENTE', 'EN REVISIÓN', 'REQUIERE INFO', 'APROBADA', 'RECHAZADA'];
   const priorityOptions = ['ALTA', 'MEDIA', 'BAJA'];
   const regionOptions = ['Norte', 'Centro', 'Sur', 'Metropolitana', 'Occidente'];
-  const typeOptions = ['PATENTE ADUANAL', 'OPINIÓN SAT', 'CÉDULA PROFESIONAL', 'PODER NOTARIAL', 'CONSTANCIA FISCAL'];
+  const typeOptions = ['FORMACIÓN ETICA Y CUMPLIMIENTO', 'OPINIÓN SAT', 'CÉDULA PROFESIONAL', 'PODER NOTARIAL', 'CONSTANCIA FISCAL'];
   const categoryOptions = ['Regulatoria', 'Fiscal', 'Legal', 'Profesional'];
 
   const getStatusColor = (status) => {
@@ -311,7 +315,7 @@ const CommitteeReview = () => {
     const matchesStatus = filterStatus === 'all' || cert.status === filterStatus;
     const matchesPriority = filterPriority === 'all' || cert.priority === filterPriority;
     const matchesRegion = filterRegion === 'all' || cert.region === filterRegion;
-    const matchesType = filterType === 'all' || cert.type === filterType;
+    const matchesType = filterType === 'all' || cert.type.includes(filterType);
 
     return matchesSearch && matchesStatus && matchesPriority && matchesRegion && matchesType;
   });
@@ -357,90 +361,177 @@ const CommitteeReview = () => {
     setSelectedRows([]);
   };
 
+  // KPI Items para la cabecera de la tabla
+  const kpiItems = [
+    { 
+      label: 'Urgentes', 
+      value: stats.urgent, 
+      color: colors.status.error, 
+      icon: <PriorityHighIcon fontSize="small" />,
+      tooltip: 'Vencen en 3 días o menos'
+    },
+    { 
+      label: 'Pendientes', 
+      value: stats.pending, 
+      color: colors.status.warning, 
+      icon: <TimerIcon fontSize="small" />,
+      tooltip: 'Pendientes de revisión'
+    },
+    { 
+      label: 'Asignadas a mí', 
+      value: stats.assignedToMe, 
+      color: colors.primary.main, 
+      icon: <AssignmentIcon fontSize="small" />,
+      tooltip: 'Asignadas a tu usuario'
+    },
+    { 
+      label: 'Alta Prioridad', 
+      value: stats.highPriority, 
+      color: colors.accents.purple, 
+      icon: <WarningIcon fontSize="small" />,
+      tooltip: 'Prioridad ALTA'
+    },
+    { 
+      label: 'Tiempo Prom.', 
+      value: stats.avgReviewTime, 
+      color: colors.accents.blue, 
+      icon: <SpeedIcon fontSize="small" />,
+      tooltip: 'Horas promedio'
+    },
+    { 
+      label: 'Total', 
+      value: stats.total, 
+      color: colors.status.success, 
+      icon: <FolderOpenIcon fontSize="small" />,
+      tooltip: 'Total activas'
+    },
+  ];
+
   return (
     <Box sx={{ 
-      height: 'calc(100vh - 64px)',
-      overflow: 'hidden',
+      height: '100vh',
+      bgcolor: colors.background.subtle,
       display: 'flex',
       flexDirection: 'column',
-      p: 2,
-      bgcolor: colors.background.subtle
+      p: 2
     }}>
-      {/* Header Compacto */}
-      <Box sx={{ mb: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-          <Box>
-            <Typography variant="h5" sx={{ color: colors.primary.dark, fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
-              <GavelIcon sx={{ color: colors.primary.main }} />
-              Revisión de Certificaciones
-            </Typography>
-            <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-              Validación individual de certificaciones - Comité de Cumplimiento
-            </Typography>
-          </Box>
-          
-          <Stack direction="row" spacing={1}>
+      {/* Header minimalista */}
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box>
+          <Typography variant="h6" sx={{ color: colors.primary.dark, fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
+            <GavelIcon sx={{ color: colors.primary.main, fontSize: 20 }} />
+            Revisión de Certificaciones
+          </Typography>
+          <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+            Validación individual de certificaciones - Comité de Cumplimiento {sortedCertifications.length} registros
+          </Typography>
+        </Box>
+        
+        <Stack direction="row" spacing={1}>
+          <Tooltip title={showStats ? "Ocultar estadísticas" : "Mostrar estadísticas"}>
+            <IconButton 
+              size="small" 
+              onClick={() => setShowStats(!showStats)}
+              sx={{ color: showStats ? colors.primary.main : colors.text.secondary }}
+            >
+              <InsightsIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title={showFilters ? "Ocultar filtros" : "Mostrar filtros"}>
+            <IconButton 
+              size="small" 
+              onClick={() => setShowFilters(!showFilters)}
+              sx={{ color: showFilters ? colors.primary.main : colors.text.secondary }}
+            >
+              <FilterIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          {selectedRows.length > 0 && (
             <Button
-              variant="outlined"
+              variant="contained"
               size="small"
-              startIcon={<DownloadIcon />}
-              sx={{
-                borderColor: colors.primary.light,
-                color: colors.primary.main,
-                '&:hover': {
-                  borderColor: colors.primary.main,
-                  bgcolor: 'rgba(19, 59, 107, 0.04)',
-                }
+              startIcon={<AssignmentIcon />}
+              onClick={() => setBatchActionDialog(true)}
+              sx={{ 
+                bgcolor: colors.primary.main,
+                '&:hover': { bgcolor: colors.primary.dark },
+                height: 32
               }}
             >
-              Exportar
+              {selectedRows.length} seleccionadas
             </Button>
-            {selectedRows.length > 0 && (
-              <Button
-                variant="contained"
-                size="small"
-                startIcon={<AssignmentIcon />}
-                onClick={() => setBatchActionDialog(true)}
-                sx={{ 
-                  bgcolor: colors.primary.main,
-                  '&:hover': { bgcolor: colors.primary.dark }
-                }}
-              >
-                Acciones ({selectedRows.length})
-              </Button>
-            )}
-          </Stack>
-        </Box>
+          )}
+        </Stack>
+      </Box>
 
-        {/* Filtros Rápidos */}
-        <Paper elevation={0} sx={{ 
-          p: 2, 
-          mb: 2, 
-          bgcolor: colors.background.paper,
-          border: `1px solid ${colors.primary.light}20`,
+      {/* Tabla principal que contiene TODO */}
+      <Paper elevation={2} sx={{ 
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        border: `1px solid ${alpha(colors.primary.main, 0.1)}`,
+        borderRadius: 2
+      }}>
+        
+        {/* SECCIÓN 1: KPI - Integrados en la tabla */}
+        {showStats && (
+          <Box sx={{ 
+            p: 1.5,
+            borderBottom: `1px solid ${alpha(colors.primary.main, 0.1)}`,
+            bgcolor: alpha(colors.primary.main, 0.02)
+          }}>
+            <Grid container spacing={1}>
+              {kpiItems.map((kpi, index) => (
+                <Grid item xs={2} key={index}>
+                  <Tooltip title={kpi.tooltip} arrow>
+                    <Box sx={{ 
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      p: 0.5,
+                      borderRadius: 1,
+                      cursor: 'pointer',
+                      '&:hover': { bgcolor: alpha(kpi.color, 0.1) }
+                    }}>
+                      <Avatar sx={{ 
+                        width: 28, 
+                        height: 28, 
+                        bgcolor: alpha(kpi.color, 0.1),
+                        color: kpi.color
+                      }}>
+                        {kpi.icon}
+                      </Avatar>
+                      <Box>
+                        <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', lineHeight: 1.2 }}>
+                          {kpi.label}
+                        </Typography>
+                        <Typography variant="subtitle2" sx={{ color: kpi.color, fontWeight: 'bold' }}>
+                          {kpi.value}{kpi.label === 'Tiempo Prom.' ? 'h' : ''}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Tooltip>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        )}
+
+        {/* SECCIÓN 2: Barra de búsqueda y filtros rápidos - Integrada */}
+        <Box sx={{ 
+          p: 1.5,
+          borderBottom: `1px solid ${alpha(colors.primary.main, 0.1)}`,
+          bgcolor: alpha(colors.primary.main, 0.02)
         }}>
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} md={4}>
+          <Grid container spacing={1} alignItems="center">
+            <Grid item xs={12} sm={4}>
               <TextField
                 fullWidth
                 size="small"
-                placeholder="Buscar certificaciones..."
+                placeholder="Buscar por certificación, solicitante o código..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    color: colors.primary.dark,
-                    '& fieldset': {
-                      borderColor: colors.primary.light,
-                    },
-                    '&:hover fieldset': {
-                      borderColor: colors.primary.main,
-                    },
-                    '&.Mui-focused fieldset': {
-                      borderColor: colors.primary.dark,
-                    },
-                  },
-                }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -449,33 +540,34 @@ const CommitteeReview = () => {
                   ),
                   endAdornment: searchTerm && (
                     <InputAdornment position="end">
-                      <IconButton size="small" onClick={() => setSearchTerm('')} sx={{ color: colors.text.secondary }}>
-                        <RefreshIcon fontSize="small" />
+                      <IconButton size="small" onClick={() => setSearchTerm('')}>
+                        <CloseIcon fontSize="small" />
                       </IconButton>
                     </InputAdornment>
                   )
                 }}
+                sx={{ 
+                  '& .MuiOutlinedInput-root': {
+                    bgcolor: 'white',
+                    '& fieldset': { borderColor: alpha(colors.primary.main, 0.2) }
+                  }
+                }}
               />
             </Grid>
             
-            <Grid item xs={12} md={2}>
+            <Grid item xs={6} sm={2}>
               <FormControl fullWidth size="small">
-                <InputLabel sx={{ color: colors.text.secondary }}>Estado</InputLabel>
                 <Select
                   value={filterStatus}
-                  label="Estado"
                   onChange={(e) => setFilterStatus(e.target.value)}
-                  sx={{
-                    color: colors.primary.dark,
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: colors.primary.light,
-                    },
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: colors.primary.main,
-                    },
+                  displayEmpty
+                  sx={{ bgcolor: 'white' }}
+                  renderValue={(selected) => {
+                    if (selected === 'all') return <Typography color="textSecondary">Estado: Todos</Typography>;
+                    return selected;
                   }}
                 >
-                  <MenuItem value="all">Todos</MenuItem>
+                  <MenuItem value="all">Todos los estados</MenuItem>
                   {statusOptions.map(status => (
                     <MenuItem key={status} value={status}>{status}</MenuItem>
                   ))}
@@ -483,24 +575,19 @@ const CommitteeReview = () => {
               </FormControl>
             </Grid>
             
-            <Grid item xs={12} md={2}>
+            <Grid item xs={6} sm={2}>
               <FormControl fullWidth size="small">
-                <InputLabel sx={{ color: colors.text.secondary }}>Prioridad</InputLabel>
                 <Select
                   value={filterPriority}
-                  label="Prioridad"
                   onChange={(e) => setFilterPriority(e.target.value)}
-                  sx={{
-                    color: colors.primary.dark,
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: colors.primary.light,
-                    },
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: colors.primary.main,
-                    },
+                  displayEmpty
+                  sx={{ bgcolor: 'white' }}
+                  renderValue={(selected) => {
+                    if (selected === 'all') return <Typography color="textSecondary">Prioridad: Todas</Typography>;
+                    return selected;
                   }}
                 >
-                  <MenuItem value="all">Todas</MenuItem>
+                  <MenuItem value="all">Todas las prioridades</MenuItem>
                   {priorityOptions.map(priority => (
                     <MenuItem key={priority} value={priority}>{priority}</MenuItem>
                   ))}
@@ -508,24 +595,19 @@ const CommitteeReview = () => {
               </FormControl>
             </Grid>
             
-            <Grid item xs={12} md={2}>
+            <Grid item xs={6} sm={2}>
               <FormControl fullWidth size="small">
-                <InputLabel sx={{ color: colors.text.secondary }}>Región</InputLabel>
                 <Select
                   value={filterRegion}
-                  label="Región"
                   onChange={(e) => setFilterRegion(e.target.value)}
-                  sx={{
-                    color: colors.primary.dark,
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: colors.primary.light,
-                    },
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: colors.primary.main,
-                    },
+                  displayEmpty
+                  sx={{ bgcolor: 'white' }}
+                  renderValue={(selected) => {
+                    if (selected === 'all') return <Typography color="textSecondary">Región: Todas</Typography>;
+                    return selected;
                   }}
                 >
-                  <MenuItem value="all">Todas</MenuItem>
+                  <MenuItem value="all">Todas las regiones</MenuItem>
                   {regionOptions.map(region => (
                     <MenuItem key={region} value={region}>{region}</MenuItem>
                   ))}
@@ -533,499 +615,294 @@ const CommitteeReview = () => {
               </FormControl>
             </Grid>
             
-            <Grid item xs={12} md={2}>
-              <Stack direction="row" spacing={1}>
-                <Tooltip title="Filtros avanzados">
-                  <IconButton 
-                    size="small"
-                    onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-                    sx={{ 
-                      color: showAdvancedFilters ? colors.primary.main : colors.text.secondary,
-                      '&:hover': {
-                        bgcolor: 'rgba(19, 59, 107, 0.04)',
-                      }
-                    }}
-                  >
-                    <FilterIcon />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Ordenar">
-                  <IconButton size="small" sx={{ color: colors.text.secondary }}>
-                    <SortIcon />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Cambiar vista">
-                  <IconButton 
-                    size="small"
-                    onClick={() => setActiveView(activeView === 'list' ? 'grid' : 'list')}
-                    sx={{ color: colors.text.secondary }}
-                  >
-                    <ViewColumnIcon />
-                  </IconButton>
-                </Tooltip>
-              </Stack>
+            <Grid item xs={6} sm={2}>
+              <FormControl fullWidth size="small">
+                <Select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  displayEmpty
+                  sx={{ bgcolor: 'white' }}
+                  renderValue={(selected) => {
+                    const labels = { priority: 'Prioridad', days: 'Días', date: 'Fecha', compliance: 'Cumplimiento' };
+                    return `Orden: ${labels[selected]}`;
+                  }}
+                >
+                  <MenuItem value="priority">Por Prioridad</MenuItem>
+                  <MenuItem value="days">Por Días pendientes</MenuItem>
+                  <MenuItem value="date">Por Fecha de carga</MenuItem>
+                  <MenuItem value="compliance">Por Cumplimiento</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
           </Grid>
 
-          {/* Filtros Avanzados */}
-          {showAdvancedFilters && (
+          {/* Filtros expandidos */}
+          {showFilters && (
             <Box sx={{ 
-              mt: 2, 
-              pt: 2, 
-              borderTop: `1px dashed ${colors.primary.light}` 
+              mt: 1.5,
+              pt: 1.5,
+              borderTop: `1px dashed ${alpha(colors.primary.main, 0.2)}`,
+              display: 'flex',
+              gap: 1,
+              alignItems: 'center'
             }}>
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={3}>
-                  <FormControl fullWidth size="small">
-                    <InputLabel sx={{ color: colors.text.secondary }}>Tipo</InputLabel>
-                    <Select
-                      value={filterType}
-                      label="Tipo"
-                      onChange={(e) => setFilterType(e.target.value)}
-                      sx={{
-                        color: colors.primary.dark,
-                        '& .MuiOutlinedInput-notchedOutline': {
-                          borderColor: colors.primary.light,
-                        },
-                      }}
-                    >
-                      <MenuItem value="all">Todos</MenuItem>
-                      {typeOptions.map(type => (
-                        <MenuItem key={type} value={type}>{type}</MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                
-                <Grid item xs={12} md={3}>
-                  <FormControl fullWidth size="small">
-                    <InputLabel sx={{ color: colors.text.secondary }}>Ordenar por</InputLabel>
-                    <Select
-                      value={sortBy}
-                      label="Ordenar por"
-                      onChange={(e) => setSortBy(e.target.value)}
-                      sx={{
-                        color: colors.primary.dark,
-                        '& .MuiOutlinedInput-notchedOutline': {
-                          borderColor: colors.primary.light,
-                        },
-                      }}
-                    >
-                      <MenuItem value="priority">Prioridad</MenuItem>
-                      <MenuItem value="days">Días pendientes</MenuItem>
-                      <MenuItem value="date">Fecha de carga</MenuItem>
-                      <MenuItem value="compliance">Cumplimiento</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
-                
-                <Grid item xs={12} md={3}>
-                  <FormControl fullWidth size="small">
-                    <InputLabel sx={{ color: colors.text.secondary }}>Categoría</InputLabel>
-                    <Select
-                      value="all"
-                      label="Categoría"
-                      sx={{
-                        color: colors.primary.dark,
-                        '& .MuiOutlinedInput-notchedOutline': {
-                          borderColor: colors.primary.light,
-                        },
-                      }}
-                    >
-                      <MenuItem value="all">Todas</MenuItem>
-                      {categoryOptions.map(cat => (
-                        <MenuItem key={cat} value={cat}>{cat}</MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                
-                <Grid item xs={12} md={3}>
-                  <Button
-                    fullWidth
-                    size="small"
-                    variant="outlined"
-                    startIcon={<RefreshIcon />}
-                    onClick={() => {
-                      setFilterStatus('all');
-                      setFilterPriority('all');
-                      setFilterRegion('all');
-                      setFilterType('all');
-                      setSearchTerm('');
-                      setSortBy('priority');
-                    }}
-                    sx={{
-                      borderColor: colors.primary.light,
-                      color: colors.primary.main,
-                      '&:hover': {
-                        borderColor: colors.primary.main,
-                        bgcolor: 'rgba(19, 59, 107, 0.04)',
+              <Chip 
+                label="Tipo: Todos" 
+                size="small"
+                onClick={() => {}}
+                onDelete={() => {}}
+                deleteIcon={<KeyboardArrowDownIcon />}
+                sx={{ bgcolor: 'white' }}
+              />
+              <Chip 
+                label="Categoría: Todas" 
+                size="small"
+                onClick={() => {}}
+                onDelete={() => {}}
+                deleteIcon={<KeyboardArrowDownIcon />}
+                sx={{ bgcolor: 'white' }}
+              />
+              <Chip 
+                label="Asignado: Cualquiera" 
+                size="small"
+                onClick={() => {}}
+                onDelete={() => {}}
+                deleteIcon={<KeyboardArrowDownIcon />}
+                sx={{ bgcolor: 'white' }}
+              />
+              <Button 
+                size="small" 
+                startIcon={<RefreshIcon />}
+                onClick={() => {
+                  setFilterStatus('all');
+                  setFilterPriority('all');
+                  setFilterRegion('all');
+                  setFilterType('all');
+                  setSearchTerm('');
+                  setSortBy('priority');
+                }}
+                sx={{ color: colors.text.secondary, ml: 'auto' }}
+              >
+                Limpiar
+              </Button>
+            </Box>
+          )}
+        </Box>
+
+        {/* SECCIÓN 3: Tabla de datos - Ocupa el resto del espacio */}
+        <Box sx={{ flex: 1, overflow: 'auto' }}>
+          <TableContainer sx={{ height: '100%' }}>
+            <Table size="small" stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <TableCell padding="checkbox" sx={{ bgcolor: colors.background.subtle, width: 30 }}>
+                    <input
+                      type="checkbox"
+                      checked={selectedRows.length === sortedCertifications.length && sortedCertifications.length > 0}
+                      onChange={handleSelectAll}
+                      style={{ cursor: 'pointer' }}
+                    />
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, bgcolor: colors.background.subtle }}>Certificación</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, bgcolor: colors.background.subtle }}>Solicitante</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, bgcolor: colors.background.subtle }}>Estado</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, bgcolor: colors.background.subtle }}>Tiempo</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, bgcolor: colors.background.subtle }}>Docs</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: colors.primary.dark, bgcolor: colors.background.subtle }} align="right">Acciones</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {sortedCertifications.map((cert) => (
+                  <TableRow 
+                    key={cert.id} 
+                    hover
+                    selected={selectedRows.includes(cert.id)}
+                    onClick={() => handleRowSelect(cert.id)}
+                    sx={{ 
+                      cursor: 'pointer',
+                      borderLeft: `3px solid ${cert.color}`,
+                      '&.Mui-selected': {
+                        bgcolor: alpha(colors.primary.main, 0.08),
+                        '&:hover': { bgcolor: alpha(colors.primary.main, 0.12) }
                       }
                     }}
                   >
-                    Limpiar Filtros
-                  </Button>
-                </Grid>
-              </Grid>
-            </Box>
-          )}
-        </Paper>
-      </Box>
-
-      {/* Contenido Principal - Tabla Expandida */}
-      <Box sx={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        {/* KPI Rápidas - Fila superior */}
-        <Grid container spacing={1.5} sx={{ mb: 2 }}>
-          {[
-            { 
-              label: 'Urgentes', 
-              value: stats.urgent, 
-              color: colors.status.error, 
-              icon: <PriorityHighIcon />,
-              tooltip: 'Certificaciones con vencimiento en 3 días o menos'
-            },
-            { 
-              label: 'Pendientes', 
-              value: stats.pending, 
-              color: colors.status.warning, 
-              icon: <TimerIcon />,
-              tooltip: 'Certificaciones pendientes de revisión'
-            },
-            { 
-              label: 'Asignadas a mí', 
-              value: stats.assignedToMe, 
-              color: colors.primary.main, 
-              icon: <AssignmentIcon />,
-              tooltip: 'Certificaciones asignadas a tu usuario'
-            },
-            { 
-              label: 'Alta Prioridad', 
-              value: stats.highPriority, 
-              color: colors.accents.purple, 
-              icon: <WarningIcon />,
-              tooltip: 'Certificaciones con prioridad ALTA'
-            },
-            { 
-              label: 'Tiempo Prom.', 
-              value: stats.avgReviewTime, 
-              color: colors.accents.blue, 
-              icon: <SpeedIcon />,
-              tooltip: 'Tiempo promedio de revisión'
-            },
-            { 
-              label: 'Total', 
-              value: stats.total, 
-              color: colors.status.success, 
-              icon: <FolderOpenIcon />,
-              tooltip: 'Total de certificaciones activas'
-            },
-          ].map((kpi, index) => (
-            <Grid item xs={6} sm={4} md={2} key={index}>
-              <Tooltip title={kpi.tooltip}>
-                <Card 
-                  sx={{ 
-                    p: 1.5, 
-                    textAlign: 'center',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                    border: `1px solid ${colors.primary.light}20`,
-                    '&:hover': {
-                      transform: 'translateY(-2px)',
-                      boxShadow: 3,
-                      borderColor: colors.primary.light,
-                    }
-                  }}
-                >
-                  <Box sx={{ color: kpi.color, mb: 1 }}>
-                    {kpi.icon}
-                  </Box>
-                  <Typography variant="h6" sx={{ color: kpi.color, fontWeight: 'bold', lineHeight: 1 }}>
-                    {kpi.value}
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                    {kpi.label}
-                  </Typography>
-                </Card>
-              </Tooltip>
-            </Grid>
-          ))}
-        </Grid>
-
-        {/* Tabla de Certificaciones - OCUPA TODO EL ESPACIO DISPONIBLE */}
-        <Paper elevation={1} sx={{ 
-          flex: 1, 
-          display: 'flex', 
-          flexDirection: 'column', 
-          overflow: 'hidden',
-          border: `1px solid ${colors.primary.light}20`,
-        }}>
-          <Box sx={{ 
-            p: 2, 
-            borderBottom: `1px solid ${colors.primary.light}`,
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            bgcolor: colors.background.subtle
-          }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
-              {sortedCertifications.length} certificaciones para revisión
-            </Typography>
-            
-            <Stack direction="row" spacing={1} alignItems="center">
-              {selectedRows.length > 0 && (
-                <Chip 
-                  label={`${selectedRows.length} seleccionadas`}
-                  size="small"
-                  sx={{
-                    bgcolor: colors.primary.main,
-                    color: 'white',
-                    height: 20,
-                    fontSize: '0.7rem'
-                  }}
-                  onDelete={() => setSelectedRows([])}
-                />
-              )}
-              <IconButton size="small" sx={{ color: colors.text.secondary }}>
-                <MoreVertIcon />
-              </IconButton>
-            </Stack>
-          </Box>
-
-          {/* Tabla - Scroll Interno */}
-          <Box sx={{ flex: 1, overflowY: 'auto' }}>
-            <TableContainer>
-              <Table size="small" stickyHeader>
-                <TableHead>
-                  <TableRow>
-                    <TableCell padding="checkbox" sx={{ width: 40 }}>
-                      <Tooltip title="Seleccionar todo">
-                        <input
-                          type="checkbox"
-                          checked={selectedRows.length === sortedCertifications.length && sortedCertifications.length > 0}
-                          onChange={handleSelectAll}
-                          style={{ cursor: 'pointer' }}
+                    <TableCell padding="checkbox">
+                      <input
+                        type="checkbox"
+                        checked={selectedRows.includes(cert.id)}
+                        onChange={() => handleRowSelect(cert.id)}
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    </TableCell>
+                    
+                    <TableCell>
+                      <Box>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
+                          {cert.type.length > 40 ? cert.type.substring(0, 40) + '...' : cert.type}
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: colors.text.secondary, fontFamily: 'monospace' }}>
+                          {cert.code}
+                        </Typography>
+                      </Box>
+                    </TableCell>
+                    
+                    <TableCell>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Avatar sx={{ width: 24, height: 24, fontSize: '0.7rem', bgcolor: colors.primary.main }}>
+                          {cert.applicant.avatar}
+                        </Avatar>
+                        <Box>
+                          <Typography variant="body2" sx={{ color: colors.primary.dark }}>
+                            {cert.applicant.name}
+                          </Typography>
+                          <LinearProgress 
+                            variant="determinate" 
+                            value={cert.applicant.complianceScore}
+                            sx={{ 
+                              width: 50, 
+                              height: 3,
+                              borderRadius: 1,
+                              bgcolor: alpha(colors.primary.main, 0.1),
+                              '& .MuiLinearProgress-bar': {
+                                bgcolor: getComplianceColor(cert.applicant.complianceScore)
+                              }
+                            }}
+                          />
+                        </Box>
+                      </Box>
+                    </TableCell>
+                    
+                    <TableCell>
+                      <Stack spacing={0.5}>
+                        <Chip 
+                          label={cert.status}
+                          size="small"
+                          sx={{
+                            height: 20,
+                            fontSize: '0.7rem',
+                            bgcolor: cert.status === 'PENDIENTE' ? alpha(colors.status.warning, 0.1) :
+                                    cert.status === 'EN REVISIÓN' ? alpha(colors.accents.blue, 0.1) :
+                                    cert.status === 'REQUIERE INFO' ? alpha(colors.status.error, 0.1) :
+                                    alpha(colors.primary.main, 0.1),
+                            color: cert.status === 'PENDIENTE' ? colors.status.warning :
+                                   cert.status === 'EN REVISIÓN' ? colors.accents.blue :
+                                   cert.status === 'REQUIERE INFO' ? colors.status.error :
+                                   colors.primary.main,
+                            fontWeight: 'bold',
+                          }}
                         />
+                        <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+                          {cert.priority}
+                        </Typography>
+                      </Stack>
+                    </TableCell>
+                    
+                    <TableCell>
+                      <Typography variant="body2" sx={{ fontWeight: 'bold', color: getDaysColor(cert.daysPending) }}>
+                        {cert.daysPending} días
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
+                        Vence: {cert.dueDate}
+                      </Typography>
+                    </TableCell>
+                    
+                    <TableCell>
+                      <Tooltip title={`${cert.documents.completed}/${cert.documents.total} documentos`}>
+                        <Box>
+                          <LinearProgress 
+                            variant="determinate" 
+                            value={(cert.documents.completed / cert.documents.total) * 100}
+                            sx={{ 
+                              height: 4,
+                              borderRadius: 2,
+                              width: 50,
+                              bgcolor: alpha(colors.primary.main, 0.1),
+                              '& .MuiLinearProgress-bar': {
+                                bgcolor: colors.primary.main,
+                              }
+                            }}
+                          />
+                          <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+                            {cert.documents.completed}/{cert.documents.total}
+                          </Typography>
+                        </Box>
                       </Tooltip>
                     </TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', width: '25%', color: colors.primary.dark }}>Certificación</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', width: '20%', color: colors.primary.dark }}>Solicitante</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', width: '10%', color: colors.primary.dark }}>Estado</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', width: '15%', color: colors.primary.dark }}>Tiempo</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', width: '10%', color: colors.primary.dark }}>Documentos</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', width: '20%', color: colors.primary.dark }} align="right">Acciones</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {sortedCertifications.map((cert) => (
-                    <TableRow 
-                      key={cert.id} 
-                      hover
-                      selected={selectedRows.includes(cert.id)}
-                      onClick={() => handleRowSelect(cert.id)}
-                      sx={{ 
-                        cursor: 'pointer',
-                        '&:hover': { bgcolor: 'rgba(58, 110, 165, 0.04)' },
-                        borderLeft: `4px solid ${cert.color}`,
-                        bgcolor: selectedRows.includes(cert.id) ? 'rgba(58, 110, 165, 0.08)' : 'transparent'
-                      }}
-                    >
-                      <TableCell padding="checkbox">
-                        <input
-                          type="checkbox"
-                          checked={selectedRows.includes(cert.id)}
-                          onChange={() => handleRowSelect(cert.id)}
-                          onClick={(e) => e.stopPropagation()}
-                          style={{ cursor: 'pointer' }}
-                        />
-                      </TableCell>
-                      
-                      <TableCell>
-                        <Box>
-                          <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: colors.primary.dark }}>
-                            {cert.type}
-                          </Typography>
-                          <Stack direction="row" spacing={0.5} alignItems="center" sx={{ mt: 0.5 }}>
-                            <Typography variant="caption" sx={{ color: colors.text.secondary, fontFamily: 'monospace' }}>
-                              {cert.code}
-                            </Typography>
-                            <Chip 
-                              label={cert.category}
-                              size="small"
-                              variant="outlined"
-                              sx={{ 
-                                height: 18, 
-                                ml: 1,
-                                color: colors.text.secondary,
-                                borderColor: colors.primary.light,
-                              }}
-                            />
-                          </Stack>
-                        </Box>
-                      </TableCell>
-                      
-                      <TableCell>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <Avatar 
-                            sx={{ 
-                              width: 28, 
-                              height: 28, 
-                              fontSize: '0.75rem',
-                              bgcolor: colors.primary.main
-                            }}
+                    
+                    <TableCell align="right">
+                      <Stack direction="row" spacing={0.5} justifyContent="flex-end">
+                        <Tooltip title="Ver detalles">
+                          <IconButton 
+                            size="small"
+                            component={Link}
+                            to={`/committee/review/${cert.id}`}
+                            onClick={(e) => e.stopPropagation()}
+                            sx={{ color: colors.text.secondary }}
                           >
-                            {cert.applicant.avatar}
-                          </Avatar>
-                          <Box>
-                            <Typography variant="body2" sx={{ fontWeight: 'medium', color: colors.primary.dark }}>
-                              {cert.applicant.name}
-                            </Typography>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                              <LinearProgress 
-                                variant="determinate" 
-                                value={cert.applicant.complianceScore}
-                                sx={{ 
-                                  width: 40, 
-                                  height: 4,
-                                  borderRadius: 2,
-                                  bgcolor: colors.primary.light,
-                                  '& .MuiLinearProgress-bar': {
-                                    bgcolor: getComplianceColor(cert.applicant.complianceScore)
-                                  }
-                                }}
-                              />
-                              <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                                {cert.applicant.complianceScore}%
-                              </Typography>
-                            </Box>
-                          </Box>
-                        </Box>
-                      </TableCell>
-                      
-                      <TableCell>
-                        <Stack spacing={0.5}>
-                          <Chip 
-                            label={cert.status}
-                            size="small"
-                            sx={{
-                              height: 20,
-                              bgcolor: cert.status === 'PENDIENTE' ? colors.status.warning :
-                                      cert.status === 'EN REVISIÓN' ? colors.accents.blue :
-                                      cert.status === 'REQUIERE INFO' ? colors.status.error :
-                                      colors.primary.main,
-                              color: cert.status === 'PENDIENTE' ? colors.primary.dark : 'white',
-                              fontWeight: 'bold',
-                            }}
-                          />
-                          <Chip 
-                            label={cert.priority}
-                            size="small"
-                            variant="outlined"
-                            sx={{
-                              height: 18,
-                              color: cert.priority === 'ALTA' ? colors.status.error :
-                                     cert.priority === 'MEDIA' ? colors.status.warning :
-                                     colors.status.success,
-                              borderColor: cert.priority === 'ALTA' ? colors.status.error :
-                                          cert.priority === 'MEDIA' ? colors.status.warning :
-                                          colors.status.success,
-                            }}
-                          />
-                        </Stack>
-                      </TableCell>
-                      
-                      <TableCell>
-                        <Box>
-                          <Typography variant="body2" sx={{ 
-                            fontWeight: 'bold',
-                            color: getDaysColor(cert.daysPending)
-                          }}>
-                            {cert.daysPending} días
-                          </Typography>
-                          <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                            Vence: {cert.dueDate}
-                          </Typography>
-                          <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block' }}>
-                            Est: {cert.reviewEstimate}
-                          </Typography>
-                        </Box>
-                      </TableCell>
-                      
-                      <TableCell>
-                        <Tooltip title={`${cert.documents.completed}/${cert.documents.total} documentos`}>
-                          <Box>
-                            <LinearProgress 
-                              variant="determinate" 
-                              value={(cert.documents.completed / cert.documents.total) * 100}
-                              sx={{ 
-                                height: 6,
-                                borderRadius: 3,
-                                mb: 0.5,
-                                bgcolor: colors.primary.light,
-                                '& .MuiLinearProgress-bar': {
-                                  bgcolor: colors.primary.main,
-                                }
-                              }}
-                            />
-                            <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                              {cert.documents.completed}/{cert.documents.total}
-                            </Typography>
-                          </Box>
+                            <VisibilityIcon fontSize="small" />
+                          </IconButton>
                         </Tooltip>
-                      </TableCell>
-                      
-                      <TableCell align="right">
-                        <Stack direction="row" spacing={0.5} justifyContent="flex-end">
-                          <Tooltip title="Ver detalles">
-                            <IconButton 
-                              size="small"
-                              component={Link}
-                              to={`/committee/review/${cert.id}`}
-                              onClick={(e) => e.stopPropagation()}
-                              sx={{ color: colors.text.secondary }}
-                            >
-                              <VisibilityIcon fontSize="small" />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="Revisar certificación">
-                            <Button
-                              component={Link}
-                              to={`/committee/review/${cert.id}`}
-                              variant="contained"
-                              size="small"
-                              startIcon={<GavelIcon />}
-                              onClick={(e) => e.stopPropagation()}
-                              sx={{ 
-                                bgcolor: colors.primary.main,
-                                '&:hover': { bgcolor: colors.primary.dark },
-                                minWidth: 'auto',
-                                px: 1.5
-                              }}
-                            >
-                              Revisar
-                            </Button>
-                          </Tooltip>
-                        </Stack>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                        <Button
+                          component={Link}
+                          to={`/committee/review/${cert.id}`}
+                          size="small"
+                          variant="contained"
+                          onClick={(e) => e.stopPropagation()}
+                          sx={{ 
+                            bgcolor: colors.primary.main,
+                            '&:hover': { bgcolor: colors.primary.dark },
+                            height: 24,
+                            fontSize: '0.7rem'
+                          }}
+                        >
+                          Revisar
+                        </Button>
+                      </Stack>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                
+                {sortedCertifications.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={7} sx={{ py: 6, textAlign: 'center' }}>
+                      <FolderOpenIcon sx={{ fontSize: 40, color: colors.primary.light, mb: 2 }} />
+                      <Typography color="textSecondary">No hay certificaciones que coincidan</Typography>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
 
-            {sortedCertifications.length === 0 && (
-              <Box sx={{ p: 8, textAlign: 'center' }}>
-                <FolderOpenIcon sx={{ fontSize: 60, color: colors.primary.light, mb: 2 }} />
-                <Typography variant="h6" sx={{ color: colors.text.secondary, mb: 1 }}>
-                  No hay certificaciones que coincidan
-                </Typography>
-                <Typography variant="body2" sx={{ color: colors.primary.light }}>
-                  Intenta ajustar los filtros de búsqueda
-                </Typography>
-              </Box>
-            )}
-          </Box>
-        </Paper>
-      </Box>
+        {/* SECCIÓN 4: Footer de la tabla con resumen */}
+        <Box sx={{ 
+          p: 1,
+          borderTop: `1px solid ${alpha(colors.primary.main, 0.1)}`,
+          bgcolor: colors.background.subtle,
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+            Mostrando {sortedCertifications.length} de {certifications.length} certificaciones
+          </Typography>
+          
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+              {selectedRows.length} seleccionadas
+            </Typography>
+            <Divider orientation="vertical" flexItem sx={{ height: 16 }} />
+            <IconButton size="small" sx={{ color: colors.text.secondary }}>
+              <DownloadIcon fontSize="small" />
+            </IconButton>
+            <IconButton size="small" sx={{ color: colors.text.secondary }}>
+              <ViewColumnIcon fontSize="small" />
+            </IconButton>
+          </Stack>
+        </Box>
+      </Paper>
 
       {/* Diálogo de Acciones Masivas */}
       <Dialog 
@@ -1033,21 +910,13 @@ const CommitteeReview = () => {
         onClose={() => setBatchActionDialog(false)} 
         maxWidth="sm" 
         fullWidth
-        PaperProps={{
-          sx: {
-            border: `1px solid ${colors.primary.light}`,
-          }
-        }}
+        PaperProps={{ sx: { borderRadius: 2 } }}
       >
-        <DialogTitle sx={{ color: colors.primary.dark }}>
+        <DialogTitle sx={{ color: colors.primary.dark, pb: 1 }}>
           Acciones en Lote ({selectedRows.length} certificaciones)
         </DialogTitle>
         <DialogContent>
-          <Typography variant="body2" sx={{ mb: 3, color: colors.text.secondary }}>
-            Selecciona una acción para aplicar a todas las certificaciones seleccionadas:
-          </Typography>
-          
-          <Grid container spacing={2}>
+          <Grid container spacing={2} sx={{ mt: 0 }}>
             {[
               { icon: <AssignmentIcon />, label: 'Asignar a', color: colors.accents.blue },
               { icon: <CheckCircleIcon />, label: 'Marcar como revisadas', color: colors.status.success },
@@ -1060,10 +929,10 @@ const CommitteeReview = () => {
                     p: 2, 
                     textAlign: 'center',
                     cursor: 'pointer',
-                    border: `1px solid ${colors.primary.light}`,
+                    border: `1px solid ${alpha(action.color, 0.2)}`,
                     '&:hover': {
                       borderColor: action.color,
-                      bgcolor: `${action.color}10`
+                      bgcolor: alpha(action.color, 0.04)
                     }
                   }}
                   onClick={() => handleBatchAction(action.label.toLowerCase())}
@@ -1071,46 +940,24 @@ const CommitteeReview = () => {
                   <Box sx={{ color: action.color, mb: 1 }}>
                     {action.icon}
                   </Box>
-                  <Typography variant="body2" sx={{ fontWeight: 'medium', color: colors.primary.dark }}>
+                  <Typography variant="body2" sx={{ color: colors.primary.dark }}>
                     {action.label}
                   </Typography>
                 </Card>
               </Grid>
             ))}
           </Grid>
-          
-          <Alert severity="info" sx={{ 
-            mt: 3, 
-            fontSize: '0.8rem',
-            bgcolor: 'rgba(58, 110, 165, 0.08)',
-            color: colors.primary.dark,
-            '& .MuiAlert-icon': {
-              color: colors.primary.main
-            }
-          }}>
-            Esta acción se aplicará a {selectedRows.length} certificaciones seleccionadas.
-          </Alert>
         </DialogContent>
-        <DialogActions>
-          <Button 
-            onClick={() => setBatchActionDialog(false)}
-            sx={{ color: colors.text.secondary }}
-          >
+        <DialogActions sx={{ p: 2 }}>
+          <Button onClick={() => setBatchActionDialog(false)} sx={{ color: colors.text.secondary }}>
             Cancelar
           </Button>
           <Button 
+            variant="contained"
             onClick={() => setBatchActionDialog(false)}
-            variant="outlined"
-            sx={{
-              borderColor: colors.primary.light,
-              color: colors.primary.main,
-              '&:hover': {
-                borderColor: colors.primary.main,
-                bgcolor: 'rgba(19, 59, 107, 0.04)',
-              }
-            }}
+            sx={{ bgcolor: colors.primary.main }}
           >
-            Continuar después
+            Aplicar
           </Button>
         </DialogActions>
       </Dialog>
