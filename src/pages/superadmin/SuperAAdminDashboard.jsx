@@ -265,7 +265,7 @@ const SystemInstancesDashboard = () => {
             variant="h5"
             sx={{ color: institutionalColors.primary, fontWeight: "bold", mb: 0.5 }}
           >
-            Dashboard de Instancias
+            Panel de control de Instancias
           </Typography>
           <Typography variant="caption" sx={{ color: institutionalColors.textSecondary }}>
             Supervisión y estado de todas las instancias del sistema SICAG

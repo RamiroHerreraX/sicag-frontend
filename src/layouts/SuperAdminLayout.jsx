@@ -77,7 +77,7 @@ const SuperAdminLayout = () => {
   // MENÚ PRINCIPAL para Super Administrador - Solo acceso multi-sistema
   const menuItems = [
     {
-      text: "DASHBOARD",
+      text: "PANEL DE CONTROL",
       icon: <DashboardIcon />,
       path: "/supera/dashboard",
       description: "Panel de control multi-sistema",

@@ -33,7 +33,6 @@ import {
   Logout as LogoutIcon,
   Menu as MenuIcon,
   ArrowDropDown as ArrowDropDownIcon,
-  Person as PersonIcon,
   Settings as SettingsIcon,
   AccountCircle as AccountCircleIcon,
   Email as EmailIcon,
@@ -72,7 +71,7 @@ const CommitteeLayout = () => {
   // MENÚ PRINCIPAL - Solo rutas que existen
   const menuItems = [
     {
-      text: "DASHBOARD",
+      text: "PANEL DE CONTROL",
       icon: <DashboardIcon />,
       path: "/association/dashboard",
       description: "Panel de control general",
@@ -652,7 +651,7 @@ const CommitteeLayout = () => {
                       fontWeight: 500,
                     }}
                   >
-                    Comité de Cumplimiento
+                    Asociación Aduanal 
                   </Typography>
                 </Box>
 
