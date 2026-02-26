@@ -83,21 +83,21 @@ const UserDashboard = () => {
   return (
     <Box sx={{ maxWidth: '1300px', px: { xs: 2, sm: 3 } }}>
       {/* Header */}
-       <Box>
-                  <Typography variant="h5" sx={{ 
-                    color: colors.primary.dark, 
-                    fontWeight: 'bold', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: 1 
-                  }}>
-                    <InsightsIcon sx={{ color: colors.primary.main }} />
-                    Panel de Control del Agente
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: colors.text.secondary }}>
-                    Gestión integral de expedientes
-                  </Typography>
-                </Box>
+       <Box sx={{ paddingLeft: 8 }}>
+  <Typography variant="h5" sx={{ 
+    color: colors.primary.dark, 
+    fontWeight: 'bold', 
+    display: 'flex', 
+    alignItems: 'center', 
+    gap: 1 
+  }}>
+    <InsightsIcon sx={{ color: colors.primary.main }} />
+    Panel de Control del Agente
+  </Typography>
+  <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+    Gestión integral de expedientes
+  </Typography>
+</Box>
 
       {/* Estatus Global - AUMENTADO EL ESPACIO ABAJO */}
       <Card sx={{ 
