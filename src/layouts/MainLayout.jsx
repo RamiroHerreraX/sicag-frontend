@@ -123,7 +123,7 @@ const MainLayout = () => {
   };
 
   const menuItems = [
-    { text: 'DASHBOARD', icon: <DashboardIcon />, path: '/dashboard', description: 'Panel de control general' },
+    { text: 'PANEL DE CONTROL', icon: <DashboardIcon />, path: '/dashboard', description: 'Panel de control general' },
     { text: 'EXPEDIENTE', icon: <ExpedienteIcon />, path: '/expediente', description: 'Gestión de expedientes' },
     { text: 'CERTIFICADOS', icon: <CertificationsIcon />, path: '/certifications', description: 'Certificaciones y documentos' },
     { text: 'DECLARACIÓN', icon: <DeclaracionesIcon2 />, path: '/declaraciones', description: 'Declaraciones aduanales' },

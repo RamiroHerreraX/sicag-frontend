@@ -285,6 +285,15 @@ const Expediente = () => {
     }
   };
 
+  // Función para reiniciar estado de validación de una sección
+  const reiniciarEstadoValidacion = (sectionId) => {
+    setEstadosValidacion(prev => {
+      const newState = { ...prev };
+      delete newState[sectionId];
+      return newState;
+    });
+  };
+
   // Función para guardar nuevo documento en cualquier sección
   const handleGuardarDocumento = () => {
     if (addDialog.archivo) {
@@ -304,6 +313,9 @@ const Expediente = () => {
       // Actualizar según la sección
       const sectionId = addDialog.sectionId;
       const itemName = addDialog.itemName;
+      
+      // Reiniciar estado de validación para esta sección si existe
+      reiniciarEstadoValidacion(sectionId);
       
       if (sectionId === 'certificados') {
         // Manejar certificados (múltiples documentos permitidos)
@@ -334,7 +346,7 @@ const Expediente = () => {
             seguridadCadenaSuministro: {
               ...prev.seguridadCadenaSuministro,
               documento: nuevoDocumento.archivo,
-              estado: 'en_revision',
+              estado: 'pendiente',
               fechaRevision: nuevoDocumento.fechaSubida,
               nombreDocumento: nuevoDocumento.nombreArchivo
             }
@@ -345,7 +357,7 @@ const Expediente = () => {
             antisobornos: {
               ...prev.antisobornos,
               documento: nuevoDocumento.archivo,
-              estado: 'en_revision',
+              estado: 'pendiente',
               fechaRevision: nuevoDocumento.fechaSubida,
               nombreDocumento: nuevoDocumento.nombreArchivo
             }
@@ -509,6 +521,8 @@ const Expediente = () => {
           }
         };
       });
+      // Reiniciar estado de validación para certificados
+      reiniciarEstadoValidacion('certificados');
     } else if (seccion === 'actualizacionTecnica') {
       setCertificadosData(prev => {
         const certificacion = prev.actualizacionTecnica.certificaciones.find(c => c.id === documentoId);
@@ -521,6 +535,8 @@ const Expediente = () => {
           }
         };
       });
+      // Reiniciar estado de validación para certificados
+      reiniciarEstadoValidacion('certificados');
     } else if (seccion === 'seguridadCadenaSuministro' || seccion === 'antisobornos') {
       setCumplimientoData(prev => ({
         ...prev,
@@ -532,12 +548,17 @@ const Expediente = () => {
           nombreDocumento: ''
         }
       }));
+      // Reiniciar estado de validación para cumplimiento organizacional
+      reiniciarEstadoValidacion('cumplimiento_organizacional');
     } else {
       // Otras secciones
       setDocumentosData(prev => ({
         ...prev,
         [seccion]: (prev[seccion] || []).filter((_, idx) => idx !== itemIndex)
       }));
+
+      // Reiniciar estado de validación para esta sección
+      reiniciarEstadoValidacion(seccion);
 
       // Verificar si quedan documentos para este item
       const documentosRestantes = documentosData[seccion]?.filter((_, idx) => idx !== itemIndex).filter(doc => doc.nombre === itemName) || [];
@@ -646,11 +667,14 @@ const Expediente = () => {
         [tipo]: {
           ...prev[tipo],
           documento: nuevoDocumento.archivo,
-          estado: 'en_revision',
+          estado: 'pendiente',
           fechaRevision: nuevoDocumento.fechaSubida,
           nombreDocumento: nuevoDocumento.nombreArchivo
         }
       }));
+
+      // Reiniciar estado de validación para cumplimiento organizacional
+      reiniciarEstadoValidacion('cumplimiento_organizacional');
 
       setSnackbar({
         open: true,
@@ -710,12 +734,12 @@ const Expediente = () => {
     
     setEstadosValidacion(prev => ({
       ...prev,
-      [apartado]: { enviado: true, fechaEnvio: fecha, estado: 'en_revision' }
+      [apartado]: { enviado: true, fechaEnvio: fecha, estado: 'enviado' }
     }));
 
     setSnackbar({
       open: true,
-      message: ` Documentos de ${validacionDialog.titulo} enviados para validación`,
+      message: ` Documentos de ${validacionDialog.titulo} enviados`,
       severity: 'success'
     });
 
@@ -873,6 +897,16 @@ const Expediente = () => {
     return documentosUnicos.includes(itemName);
   };
 
+  // Función para contar documentos totales en certificados
+  const certificadosTienenDocumentos = () => {
+    return certificadosData.formacionEtica.certificaciones.length > 0 || certificadosData.actualizacionTecnica.certificaciones.length > 0;
+  };
+
+  // Función para contar documentos totales en cumplimiento organizacional
+  const cumplimientoTieneDocumentos = () => {
+    return cumplimientoData.seguridadCadenaSuministro.documento !== null || cumplimientoData.antisobornos.documento !== null;
+  };
+
   // Función para renderizar Certificados
   const renderCertificados = () => {
     const section = informacionComplementaria.find(s => s.id === 'certificados');
@@ -886,6 +920,8 @@ const Expediente = () => {
     const progresoTecnica = certificadosData.actualizacionTecnica.horasRequeridas > 0
       ? Math.min(100, Math.round((certificadosData.actualizacionTecnica.horasAcumuladas / certificadosData.actualizacionTecnica.horasRequeridas) * 100))
       : 0;
+    
+    const tieneDocumentos = certificadosTienenDocumentos();
     
     return (
       <Accordion 
@@ -942,7 +978,7 @@ const Expediente = () => {
                 />
               </Tooltip>
               {estadoValidacion.enviado && (
-                <Chip icon={<CheckCircleIcon />} label="En revisión" size="small" color="info" sx={{ height: '24px' }} />
+                <Chip icon={<CheckCircleIcon />} label="Enviado" size="small" color="info" sx={{ height: '24px' }} />
               )}
             </Box>
           </Box>
@@ -951,7 +987,7 @@ const Expediente = () => {
           
           {estadoValidacion.enviado && (
             <Alert severity="info" sx={{ mb: 3, backgroundColor: '#e3f2fd' }} icon={<VerifiedIcon />}>
-              <Typography variant="body2"><strong>Documentos enviados a revisión por el comité</strong></Typography>
+              <Typography variant="body2"><strong>Documentos enviados</strong></Typography>
               <Typography variant="body2" sx={{ mt: 0.5 }}>Los documentos de esta sección se enviaron el {estadoValidacion.fechaEnvio}</Typography>
             </Alert>
           )}
@@ -1113,20 +1149,20 @@ const Expediente = () => {
                   Validación de Certificaciones
                 </Typography>
                 <Typography variant="body2" sx={{ color: colors.text.secondary }}>
-                  Envíe las certificaciones para revisión por el comité
+                  Envíe las certificaciones para su registro
                 </Typography>
               </Box>
               
               <Button variant="contained" startIcon={<SendIcon />} onClick={() => handleAbrirValidacionDialog(section.id, section.title)}
-                disabled={estadoValidacion.enviado || certificadosData.formacionEtica.certificaciones.length === 0 && certificadosData.actualizacionTecnica.certificaciones.length === 0}
+                disabled={estadoValidacion.enviado || !tieneDocumentos}
                 sx={{ textTransform: 'none', px: 3, py: 1, bgcolor: colors.primary.main, '&:hover': { bgcolor: colors.primary.dark }, '&.Mui-disabled': { bgcolor: '#e0e0e0', color: '#9e9e9e' } }}>
-                {estadoValidacion.enviado ? 'Enviado para Revisión' : 'Enviar para Validación'}
+                {estadoValidacion.enviado ? 'Enviado' : 'Enviar'}
               </Button>
             </Box>
             
-            {(certificadosData.formacionEtica.certificaciones.length === 0 && certificadosData.actualizacionTecnica.certificaciones.length === 0) && !estadoValidacion.enviado && (
+            {!tieneDocumentos && !estadoValidacion.enviado && (
               <Alert severity="warning" sx={{ mt: 2, py: 1 }}>
-                <Typography variant="body2">Agregue al menos una certificación antes de enviar para validación</Typography>
+                <Typography variant="body2">Agregue al menos una certificación antes de enviar</Typography>
               </Alert>
             )}
           </Box>
@@ -1142,6 +1178,8 @@ const Expediente = () => {
     
     const seguridadCompleta = cumplimientoData.seguridadCadenaSuministro.documento !== null;
     const antisobornosCompleto = cumplimientoData.antisobornos.documento !== null;
+    
+    const tieneDocumentos = cumplimientoTieneDocumentos();
     
     return (
       <Accordion 
@@ -1189,7 +1227,7 @@ const Expediente = () => {
               <Tooltip title="Seguridad / Antisobornos">
                 <Chip label={`${(seguridadCompleta ? 1 : 0) + (antisobornosCompleto ? 1 : 0)}/2`} size="small" color={(seguridadCompleta && antisobornosCompleto) ? "success" : "warning"} sx={{ height: '24px', fontSize: '0.75rem', fontWeight: '600' }} />
               </Tooltip>
-              {estadoValidacion.enviado && <Chip icon={<CheckCircleIcon />} label="En revisión" size="small" color="info" sx={{ height: '24px' }} />}
+              {estadoValidacion.enviado && <Chip icon={<CheckCircleIcon />} label="Enviado" size="small" color="info" sx={{ height: '24px' }} />}
             </Box>
           </Box>
         </AccordionSummary>
@@ -1197,7 +1235,7 @@ const Expediente = () => {
           
           {estadoValidacion.enviado && (
             <Alert severity="info" sx={{ mb: 3, backgroundColor: '#e3f2fd' }} icon={<VerifiedIcon />}>
-              <Typography variant="body2"><strong>Documentos enviados a revisión por el comité</strong></Typography>
+              <Typography variant="body2"><strong>Documentos enviados</strong></Typography>
               <Typography variant="body2" sx={{ mt: 0.5 }}>Los documentos de esta sección se enviaron el {estadoValidacion.fechaEnvio}</Typography>
             </Alert>
           )}
@@ -1227,7 +1265,7 @@ const Expediente = () => {
                         <Typography variant="body2" sx={{ color: colors.text.primary, fontWeight: '500', flex: 1 }}>
                           {cumplimientoData.seguridadCadenaSuministro.nombreDocumento}
                         </Typography>
-                        <Chip label="EN REVISIÓN" size="small" color="warning" sx={{ height: '20px', fontSize: '0.7rem' }} />
+                        <Chip label="PENDIENTE" size="small" color="warning" sx={{ height: '20px', fontSize: '0.7rem' }} />
                       </Box>
                       {cumplimientoData.seguridadCadenaSuministro.fechaRevision && (
                         <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mb: 2 }}>
@@ -1287,7 +1325,7 @@ const Expediente = () => {
                         <Typography variant="body2" sx={{ color: colors.text.primary, fontWeight: '500', flex: 1 }}>
                           {cumplimientoData.antisobornos.nombreDocumento}
                         </Typography>
-                        <Chip label="EN REVISIÓN" size="small" color="warning" sx={{ height: '20px', fontSize: '0.7rem' }} />
+                        <Chip label="PENDIENTE" size="small" color="warning" sx={{ height: '20px', fontSize: '0.7rem' }} />
                       </Box>
                       {cumplimientoData.antisobornos.fechaRevision && (
                         <Typography variant="caption" sx={{ color: colors.text.secondary, display: 'block', mb: 2 }}>
@@ -1329,20 +1367,20 @@ const Expediente = () => {
                   Validación de Documentos
                 </Typography>
                 <Typography variant="body2" sx={{ color: colors.text.secondary }}>
-                  Envíe los documentos para revisión por el comité
+                  Envíe los documentos para su registro
                 </Typography>
               </Box>
               
               <Button variant="contained" startIcon={<SendIcon />} onClick={() => handleAbrirValidacionDialog(section.id, section.title)}
-                disabled={estadoValidacion.enviado || (!seguridadCompleta && !antisobornosCompleto)}
+                disabled={estadoValidacion.enviado || !tieneDocumentos}
                 sx={{ textTransform: 'none', px: 3, py: 1, bgcolor: colors.primary.main, '&:hover': { bgcolor: colors.primary.dark }, '&.Mui-disabled': { bgcolor: '#e0e0e0', color: '#9e9e9e' } }}>
-                {estadoValidacion.enviado ? 'Enviado para Revisión' : 'Enviar para Validación'}
+                {estadoValidacion.enviado ? 'Enviado' : 'Enviar'}
               </Button>
             </Box>
             
-            {(!seguridadCompleta && !antisobornosCompleto) && !estadoValidacion.enviado && (
+            {!tieneDocumentos && !estadoValidacion.enviado && (
               <Alert severity="warning" sx={{ mt: 2, py: 1 }}>
-                <Typography variant="body2">Agregue al menos un documento antes de enviar para validación</Typography>
+                <Typography variant="body2">Agregue al menos un documento antes de enviar</Typography>
               </Alert>
             )}
           </Box>
@@ -1364,6 +1402,8 @@ const Expediente = () => {
     
     const totalItems = section.items.length;
     const completionPercentage = totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
+    
+    const tieneDocumentos = completedItems > 0;
     
     return (
       <Accordion 
@@ -1420,7 +1460,7 @@ const Expediente = () => {
               
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Chip label={`${completedItems}/${totalItems}`} size="small" color={completionPercentage === 100 ? "success" : "warning"} sx={{ height: '24px', fontSize: '0.75rem', fontWeight: '600' }} />
-                {estadoValidacion.enviado && <Chip icon={<CheckCircleIcon />} label="En revisión" size="small" color="info" sx={{ height: '24px' }} />}
+                {estadoValidacion.enviado && <Chip icon={<CheckCircleIcon />} label="Enviado" size="small" color="info" sx={{ height: '24px' }} />}
               </Box>
             </Box>
           </Box>
@@ -1429,7 +1469,7 @@ const Expediente = () => {
           
           {estadoValidacion.enviado && (
             <Alert severity="info" sx={{ mb: 3, backgroundColor: '#f8f9fa' }} icon={<VerifiedIcon />}>
-              <Typography variant="body2"><strong>Documentos enviados a revisión por el comité</strong></Typography>
+              <Typography variant="body2"><strong>Documentos enviados</strong></Typography>
               <Typography variant="body2" sx={{ mt: 0.5 }}>Los documentos de esta sección se enviaron el {estadoValidacion.fechaEnvio}</Typography>
             </Alert>
           )}
@@ -1556,20 +1596,20 @@ const Expediente = () => {
                   Validación de Documentos
                 </Typography>
                 <Typography variant="body2" sx={{ color: colors.text.secondary }}>
-                  Envíe los documentos para revisión por el comité
+                  Envíe los documentos para su registro
                 </Typography>
               </Box>
               
               <Button variant="contained" startIcon={<SendIcon />} onClick={() => handleAbrirValidacionDialog(section.id, section.title)}
-                disabled={estadoValidacion.enviado || completedItems === 0}
+                disabled={estadoValidacion.enviado || !tieneDocumentos}
                 sx={{ textTransform: 'none', px: 3, py: 1, bgcolor: colors.primary.main, '&:hover': { bgcolor: colors.primary.dark } }}>
-                {estadoValidacion.enviado ? 'Enviado para Revisión' : 'Enviar para Validación'}
+                {estadoValidacion.enviado ? 'Enviados' : 'Enviar'}
               </Button>
             </Box>
             
-            {completedItems === 0 && !estadoValidacion.enviado && (
+            {!tieneDocumentos && !estadoValidacion.enviado && (
               <Alert severity="warning" sx={{ mt: 2, py: 1 }}>
-                <Typography variant="body2">Agregue al menos un documento antes de enviar para validación</Typography>
+                <Typography variant="body2">Agregue al menos un documento antes de enviar</Typography>
               </Alert>
             )}
           </Box>
@@ -1866,7 +1906,7 @@ const Expediente = () => {
 
             <Grid item xs={12}>
               <Alert severity="info" sx={{ backgroundColor: `${colors.primary.main}10`, fontSize: '0.85rem' }}>
-                <Typography variant="body2"><strong>Nota:</strong> Los documentos se agregarán temporalmente y quedarán en estado "En revisión".</Typography>
+                <Typography variant="body2"><strong>Nota:</strong> Los documentos se agregarán temporalmente.</Typography>
               </Alert>
             </Grid>
           </Grid>
@@ -1888,20 +1928,20 @@ const Expediente = () => {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
             <SendIcon sx={{ color: colors.primary.main }} />
             <Typography variant="h6" sx={{ color: colors.primary.dark, fontWeight: '600' }}>
-              Enviar Documentos para Validación
+              Enviar Documentos
             </Typography>
           </Box>
         </DialogTitle>
         <DialogContent sx={{ pt: 3, pb: 2 }}>
           <Alert severity="info" sx={{ mb: 3, backgroundColor: '#e3f2fd' }}>
             <Typography variant="body2" sx={{ fontWeight: '600', color: colors.primary.main }}>Confirmación de Envío</Typography>
-            <Typography variant="body2" sx={{ mt: 0.5 }}>¿Está seguro de enviar los documentos para revisión por el comité?</Typography>
+            <Typography variant="body2" sx={{ mt: 0.5 }}>¿Está seguro de enviar los documentos?</Typography>
           </Alert>
           
           <Paper variant="outlined" sx={{ p: 2.5, mb: 3, backgroundColor: '#f8f9fa' }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <Typography variant="body2" sx={{ color: colors.text.secondary, fontWeight: '500', mb: 0.5 }}>Apartado a validar:</Typography>
+                <Typography variant="body2" sx={{ color: colors.text.secondary, fontWeight: '500', mb: 0.5 }}>Apartado a enviar:</Typography>
                 <Typography variant="body1" sx={{ color: colors.primary.dark, fontWeight: '600' }}>{validacionDialog.titulo}</Typography>
               </Grid>
               <Grid item xs={12}>
@@ -1910,10 +1950,6 @@ const Expediente = () => {
               </Grid>
             </Grid>
           </Paper>
-          
-          <Alert severity="warning" sx={{ backgroundColor: '#fff8e1' }}>
-            <Typography variant="body2"><strong>Nota importante:</strong> Una vez enviados, los documentos no podrán ser modificados hasta que el comité complete la revisión.</Typography>
-          </Alert>
         </DialogContent>
         <DialogActions sx={{ px: 3, py: 2, borderTop: `1px solid ${colors.primary.main}20` }}>
           <Button onClick={handleCerrarValidacionDialog} variant="outlined" sx={{ textTransform: 'none', color: colors.primary.main, borderColor: colors.primary.main }}>
